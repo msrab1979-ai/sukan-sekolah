@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengurus Pasukan — Paparan Rumah</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --house: #DC2626;
+    --house-light: #FEE2E2;
+    --house-dark: #991B1B;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F1F5F9; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* House color dynamic */
+  .house-bg { background-color: var(--house); }
+  .house-text { color: var(--house); }
+  .house-border { border-color: var(--house); }
+  .house-light-bg { background-color: var(--house-light); }
+  .house-ring { ring-color: var(--house); }
+
+  /* View-only banner */
+  .view-only-bar {
+    background: linear-gradient(90deg, #1E3A5F 0%, #1E40AF 100%);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  /* Tabs */
+  .tab-btn {
+    padding: 10px 20px;
+    border-radius: 8px 8px 0 0;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: #64748B;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    color: var(--house);
+    border-bottom-color: var(--house);
+    background: white;
+  }
+  .tab-btn:hover:not(.active) {
+    color: #374151;
+    background: #F8FAFC;
+  }
+
+  /* Cards */
+  .stat-card {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    transition: transform 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+
+  /* Student card */
+  .student-card {
+    background: white;
+    border-radius: 12px;
+    border: 1.5px solid #E2E8F0;
+    padding: 16px;
+    transition: all 0.2s;
+  }
+  .student-card:hover {
+    border-color: var(--house);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  /* Progress bar */
+  .quota-bar {
+    height: 6px;
+    border-radius: 99px;
+    background: #E2E8F0;
+    overflow: hidden;
+  }
+  .quota-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.5s ease;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal-box {
+    background: white;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+    transform: translateY(20px);
+    transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal-box {
+    transform: translateY(0);
+  }
+
+  /* Toast */
+  .toast-container {
+    position: fixed;
+    top: 80px;
+    right: 16px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 320px;
+  }
+  .toast {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Skeleton */
+  .skeleton {
+    background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Refresh badge */
+  .refresh-pulse {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #10B981;
+    animation: pulseDot 2s infinite;
+  }
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* Print styles */
+  @media print {
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    body { background: white !important; }
+    .stat-card, .student-card { box-shadow: none !important; border: 1px solid #ddd !important; }
+  }
+  .print-only { display: none; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: #F1F5F9; }
+  ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
+
+  /* Tooltip */
+  .tooltip-wrapper { position: relative; display: inline-block; }
+  .tooltip-text {
+    visibility: hidden;
+    background: #1E293B;
+    color: white;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 100;
+  }
+  .tooltip-wrapper:hover .tooltip-text { visibility: visible; }
+
+  /* Mobile bottom nav */
+  .mobile-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: white;
+    border-top: 1px solid #E2E8F0;
+    display: none;
+    padding: 8px 0 env(safe-area-inset-bottom, 8px);
+    z-index: 50;
+  }
+  @media (max-width: 640px) {
+    .mobile-nav { display: flex; }
+    .main-content { padding-bottom: 80px; }
+    .tab-bar { display: none; }
+  }
+
+  .mobile-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #94A3B8;
+    cursor: pointer;
+    padding: 6px 0;
+    border: none;
+    background: none;
+    transition: color 0.2s;
+  }
+  .mobile-nav-btn.active { color: var(--house); }
+  .mobile-nav-btn .icon { font-size: 20px; }
+
+  /* Filter bar */
+  .filter-bar {
+    background: white;
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid #E2E8F0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .filter-bar input, .filter-bar select {
+    border: 1.5px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #F8FAFC;
+  }
+  .filter-bar input:focus, .filter-bar select:focus {
+    border-color: var(--house);
+    background: white;
+  }
+
+  /* Event item in schedule */
+  .schedule-event {
+    background: white;
+    border-radius: 10px;
+    border-left: 4px solid var(--house);
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .time-badge {
+    background: var(--house-light);
+    color: var(--house-dark);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Report card */
+  .report-card {
+    background: white;
+    border-radius: 12px;
+    border: 1.5px solid #E2E8F0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .report-card:hover {
+    border-color: var(--house);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .report-icon {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+  .status-active { background: #D1FAE5; color: #065F46; }
+  .status-full { background: #FEE2E2; color: #991B1B; }
+  .status-available { background: #DBEAFE; color: #1E40AF; }
+
+  /* Acara item in modal */
+  .acara-item {
+    background: #F8FAFC;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--house);
+  }
+
+  /* Loading overlay */
+  #loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.9);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid #E2E8F0;
+    border-top-color: var(--house);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #94A3B8;
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+  /* Pagination */
+  .page-btn {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid #E2E8F0;
+    background: white;
+    transition: all 0.15s;
+  }
+  .page-btn.active {
+    background: var(--house);
+    color: white;
+    border-color: var(--house);
+  }
+  .page-btn:hover:not(.active) { background: #F1F5F9; }
+
+  /* Activity feed */
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #F1F5F9;
+  }
+  .activity-item:last-child { border-bottom: none; }
+  .activity-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Header gradient */
+  .header-gradient {
+    background: linear-gradient(135deg, var(--house-dark) 0%, var(--house) 100%);
+  }
+
+  /* Donut chart simple */
+  .donut-ring {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(var(--house) 0% 66%, #E2E8F0 66% 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .donut-hole {
+    width: 52px; height: 52px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div style="font-weight:600; color:#475569; font-size:14px;">Memuatkan data...</div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- VIEW-ONLY BANNER -->
+<div class="view-only-bar no-print">
+  🔒 MOD PAPARAN SAHAJA — Anda tidak boleh mengubah atau menambah data. Hubungi Guru Rumah untuk sebarang perubahan.
+</div>
+
+<!-- HEADER -->
+<header class="header-gradient text-white no-print" style="position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.2);">
+  <div style="max-width:1400px; margin:0 auto; padding:0 16px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0;">
+      
+      <!-- Left: House + Title -->
+      <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+        <div style="background:rgba(255,255,255,0.2); border:2px solid rgba(255,255,255,0.4); border-radius:12px; padding:8px 14px; font-weight:800; font-size:14px; letter-spacing:0.05em; flex-shrink:0; backdrop-filter:blur(10px);">
+          🏠 MERAH
+        </div>
+        <div style="min-width:0;">
+          <div style="font-weight:800; font-size:16px; line-height:1.2;" id="tournament-name">Sukan Tahunan SKSI 2025</div>
+          <div style="font-size:11px; opacity:0.8; margin-top:2px;">Pengurus Pasukan • <span id="user-name">Pn. Siti</span></div>
+        </div>
+      </div>
+
+      <!-- Right: Status + Logout -->
+      <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+        <!-- Refresh indicator -->
+        <div style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); border-radius:20px; padding:5px 10px;">
+          <div class="refresh-pulse"></div>
+          <span style="font-size:11px; font-family:'JetBrains Mono',monospace;" id="refresh-timer">60s</span>
+        </div>
+        <!-- Last updated -->
+        <div style="font-size:11px; opacity:0.7; display:none;" id="last-updated-text" class="sm-show">
+          Kemaskini: <span id="last-updated">--:--</span>
+        </div>
+        <!-- Logout -->
+        <button onclick="handleLogout()" style="background:rgba(255,255,255,0.2); border:1.5px solid rgba(255,255,255,0.4); color:white; border-radius:8px; padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; backdrop-filter:blur(10px); display:flex; align-items:center; gap:6px;">
+          🚪 <span class="hidden sm:inline">Keluar</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TABS (Desktop) -->
+    <div class="tab-bar" style="display:flex; gap:4px; overflow-x:auto; padding-bottom:0;">
+      <button class="tab-btn active" onclick="switchTab('murid')" id="tab-murid" style="color:white; border-bottom-color:white;">
+        👤 Senarai Murid
+      </button>
+      <button class="tab-btn" onclick="switchTab('pendaftaran')" id="tab-pendaftaran" style="color:rgba(255,255,255,0.7);">
+        📋 Pendaftaran
+      </button>
+      <button class="tab-btn" onclick="switchTab('jadual')" id="tab-jadual" style="color:rgba(255,255,255,0.7);">
+        📅 Jadual
+      </button>
+      <button class="tab-btn" onclick="switchTab('laporan')" id="tab-laporan" style="color:rgba(255,255,255,0.7);">
+        📊 Laporan
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="main-content" style="max-width:1400px; margin:0 auto; padding:20px 16px;">
+
+  <!-- DASHBOARD / STATS ROW -->
+  <div id="dashboard-section">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:20px;">
+      
+      <div class="stat-card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <div style="font-size:11px; font-weight:600; color:#94A3B8; text-transform:uppercase; letter-spacing:0.05em;">Jumlah Murid</div>
+          <div style="font-size:20px;">👤</div>
+        </div>
+        <div style="font-size:32px; font-weight:800; color:#0F172A;" class="mono" id="stat-students">45</div>
+        <div style="font-size:12px; color:#10B981; font-weight:500; margin-top:4px;">↑ Rumah Merah</div>
+      </div>
+
+      <div class="stat-card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <div style="font-size:11px; font-weight:600; color:#94A3B8; text-transform:uppercase; letter-spacing:0.05em;">Pendaftaran</div>
+          <div style="font-size:20px;">📋</div>
+        </div>
+        <div style="font-size:32px; font-weight:800; color:#0F172A;" class="mono" id="stat-regs">128</div>
+        <div style="font-size:12px; color:#64748B; font-weight:500; margin-top:4px;">Jumlah keseluruhan</div>
+      </div>
+
+      <div class="stat-card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <div style="font-size:11px; font-weight:600; color:#94A3B8; text-transform:uppercase; letter-spacing:0.05em;">Acara Disertai</div>
+          <div style="font-size:20px;">🏃</div>
+        </div>
+        <div style="font-size:32px; font-weight:800; color:#0F172A;" class="mono" id="stat-events">18</div>
+        <div style="font-size:12px; color:#64748B; font-weight:500; margin-top:4px;">Daripada 24 acara</div>
+      </div>
+
+      <div class="stat-card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <div style="font-size:11px; font-weight:600; color:#94A3B8; text-transform:uppercase; letter-spacing:0.05em;">Kedudukan</div>
+          <div style="font-size:20px;">🏆</div>
+        </div>
+        <div style="font-size:32px; font-weight:800;" class="mono house-text" id="stat-rank">#2</div>
+        <div style="font-size:12px; color:#F59E0B; font-weight:600; margin-top:4px;">🥈 Tempat Kedua</div>
+      </div>
+
+      <div class="stat-card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <div style="font-size:11px; font-weight:600; color:#94A3B8; text-transform:uppercase; letter-spacing:0.05em;">Penyertaan</div>
+          <div style="font-size:20px;">📈</div>
+        </div>
+        <div style="font-size:32px; font-weight:800; color:#0F172A;" class="mono">90%</div>
+        <div style="font-size:12px; color:#10B981; font-weight:500; margin-top:4px;">45 / 50 murid</div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="stat-card" style="margin-bottom:20px;">
+      <div style="font-weight:700; color:#0F172A; margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+        ⚡ Aktiviti Terbaru
+        <span style="font-size:11px; color:#94A3B8; font-weight:400; margin-left:auto;">5 pendaftaran terkini</span>
+      </div>
+      <div id="activity-feed">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB CONTENT -->
+  
+  <!-- TAB: SENARAI MURID -->
+  <div id="tab-content-murid">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
+      <h2 style="font-weight:800; font-size:18px; color:#0F172A;">👤 Senarai Murid — Rumah Merah</h2>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <select onchange="changePerPage(this.value)" style="border:1.5px solid #E2E8F0; border-radius:8px; padding:7px 10px; font-size:13px; font-family:inherit; background:#F8FAFC;">
+          <option value="20">20 / halaman</option>
+          <option value="50">50 / halaman</option>
+          <option value="100">100 / halaman</option>
+        </select>
+        <button onclick="window.print()" class="no-print" style="background:#0F172A; color:white; border:none; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;">
+          🖨️ Cetak
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <input type="text" id="search-murid" placeholder="🔍 Cari nama atau IC..." style="flex:1; min-width:200px;" oninput="debounceSearch(this.value)">
+      <select id="filter-tahap" onchange="applyFilters()">
+        <option value="">Semua Tahap</option>
+        <option value="1">Darjah 1</option>
+        <option value="2">Darjah 2</option>
+        <option value="3">Darjah 3</option>
+        <option value="4">Darjah 4</option>
+        <option value="5">Darjah 5</option>
+        <option value="6">Darjah 6</option>
+      </select>
+      <select id="filter-kategori" onchange="applyFilters()">
+        <option value="">Semua Kategori</option>
+        <option value="L1">L1</option>
+        <option value="L2">L2</option>
+        <option value="P1">P1</option>
+        <option value="P2">P2</option>
+      </select>
+      <select id="filter-jantina" onchange="applyFilters()">
+        <option value="">Semua Jantina</option>
+        <option value="L">Lelaki</option>
+        <option value="P">Perempuan</option>
+      </select>
+      <button onclick="clearFilters()" style="background:#F1F5F9; border:1.5px solid #E2E8F0; border-radius:8px; padding:8px 12px; font-size:13px; font-weight:600; cursor:pointer; color:#475569;">
+        🔄 Reset
+      </button>
+    </div>
+
+    <!-- Student Grid -->
+    <div id="students-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px;">
+      <!-- populated by JS -->
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" style="display:flex; align-items:center; justify-content:center; gap:6px; margin-top:20px; flex-wrap:wrap;">
+    </div>
+  </div>
+
+  <!-- TAB: PENDAFTARAN -->
+  <div id="tab-content-pendaftaran" style="display:none;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
+      <h2 style="font-weight:800; font-size:18px; color:#0F172A;">📋 Pendaftaran — Rumah Merah</h2>
+      <div style="display:flex; gap:8px;">
+        <div style="background:#F1F5F9; border-radius:8px; padding:2px; display:flex;">
+          <button onclick="switchView('event')" id="view-event" style="padding:6px 14px; border-radius:6px; font-size:13px; font-weight:600; border:none; cursor:pointer; background:var(--house); color:white; transition:all 0.2s;">
+            📋 Ikut Acara
+          </button>
+          <button onclick="switchView('student')" id="view-student" style="padding:6px 14px; border-radius:6px; font-size:13px; font-weight:600; border:none; cursor:pointer; background:transparent; color:#64748B; transition:all 0.2s;">
+            👤 Ikut Murid
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary stats -->
+    <div style="background:white; border-radius:12px; padding:16px 20px; border:1px solid #E2E8F0; margin-bottom:16px; display:flex; gap:24px; flex-wrap:wrap;">
+      <div>
+        <div style="font-size:11px; color:#94A3B8; font-weight:600; text-transform:uppercase;">Murid Sertai</div>
+        <div style="font-size:24px; font-weight:800; color:#0F172A;" class="mono">45</div>
+      </div>
+      <div>
+        <div style="font-size:11px; color:#94A3B8; font-weight:600; text-transform:uppercase;">Jumlah Daftar</div>
+        <div style="font-size:24px; font-weight:800; color:#0F172A;" class="mono">128</div>
+      </div>
+      <div>
+        <div style="font-size:11px; color:#94A3B8; font-weight:600; text-transform:uppercase;">Track</div>
+        <div style="font-size:24px; font-weight:800; color:#3B82F6;" class="mono">85</div>
+      </div>
+      <div>
+        <div style="font-size:11px; color:#94A3B8; font-weight:600; text-transform:uppercase;">Field</div>
+        <div style="font-size:24px; font-weight:800; color:#10B981;" class="mono">32</div>
+      </div>
+      <div>
+        <div style="font-size:11px; color:#94A3B8; font-weight:600; text-transform:uppercase;">Relay</div>
+        <div style="font-size:24px; font-weight:800; color:#8B5CF6;" class="mono">11</div>
+      </div>
+      <div style="margin-left:auto;">
+        <button onclick="window.print()" style="background:#0F172A; color:white; border:none; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer;">
+          🖨️ Cetak Laporan
+        </button>
+      </div>
+    </div>
+
+    <div id="pendaftaran-list">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- TAB: JADUAL -->
+  <div id="tab-content-jadual" style="display:none;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
+      <h2 style="font-weight:800; font-size:18px; color:#0F172A;">📅 Jadual Acara</h2>
+      <button onclick="window.print()" style="background:#0F172A; color:white; border:none; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;" class="no-print">
+        🖨️ Cetak Jadual
+      </button>
+    </div>
+
+    <!-- Day filter -->
+    <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+      <button onclick="filterDay('all')" id="day-all" style="padding:8px 18px; border-radius:8px; font-size:13px; font-weight:700; border:2px solid var(--house); background:var(--house); color:white; cursor:pointer;">
+        Semua Hari
+      </button>
+      <button onclick="filterDay(1)" id="day-1" style="padding:8px 18px; border-radius:8px; font-size:13px; font-weight:700; border:1.5px solid #E2E8F0; background:white; color:#64748B; cursor:pointer;">
+        Hari 1 - Sabtu
+      </button>
+      <button onclick="filterDay(2)" id="day-2" style="padding:8px 18px; border-radius:8px; font-size:13px; font-weight:700; border:1.5px solid #E2E8F0; background:white; color:#64748B; cursor:pointer;">
+        Hari 2 - Ahad
+      </button>
+      <button onclick="filterDay(3)" id="day-3" style="padding:8px 18px; border-radius:8px; font-size:13px; font-weight:700; border:1.5px solid #E2E8F0; background:white; color:#64748B; cursor:pointer;">
+        Hari 3 - Isnin
+      </button>
+      <label style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; border:1.5px solid #E2E8F0; background:white; cursor:pointer; font-size:13px; font-weight:600; color:#374151; margin-left:auto;">
+        <input type="checkbox" id="filter-house-only" onchange="renderSchedule()" style="accent-color:var(--house);"> 
+        🔴 Merah sahaja
+      </label>
+    </div>
+
+    <div id="schedule-content">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- TAB: LAPORAN -->
+  <div id="tab-content-laporan" style="display:none;">
+    <h2 style="font-weight:800; font-size:18px; color:#0F172A; margin-bottom:16px;">📊 Laporan & Statistik</h2>
+
+    <!-- Stats summary -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-bottom:20px;">
+      
+      <!-- Participation chart -->
+      <div class="stat-card">
+        <div style="font-weight:700; color:#0F172A; margin-bottom:14px;">📈 Kadar Penyertaan</div>
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div class="donut-ring">
+            <div class="donut-hole" style="display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:#0F172A;">90%</div>
+          </div>
+          <div>
+            <div style="font-size:13px; color:#475569; margin-bottom:6px;">45 daripada 50 murid terlibat</div>
+            <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:#94A3B8;">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--house);flex-shrink:0;"></span> Sertai: 45
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:#94A3B8; margin-top:3px;">
+              <span style="width:10px;height:10px;border-radius:50%;background:#E2E8F0;flex-shrink:0;"></span> Tidak Sertai: 5
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category breakdown -->
+      <div class="stat-card">
+        <div style="font-weight:700; color:#0F172A; margin-bottom:14px;">📊 Pecahan Kategori</div>
+        <div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span style="font-size:13px; color:#475569;">L1 (Lelaki 10-12)</span>
+            <span class="mono" style="font-size:13px; font-weight:700; color:#0F172A;">15 murid, 42 daftar</span>
+          </div>
+          <div class="quota-bar" style="margin-bottom:10px;"><div class="quota-fill" style="width:85%; background:#3B82F6;"></div></div>
+          
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span style="font-size:13px; color:#475569;">L2 (Lelaki 13-14)</span>
+            <span class="mono" style="font-size:13px; font-weight:700; color:#0F172A;">12 murid, 35 daftar</span>
+          </div>
+          <div class="quota-bar" style="margin-bottom:10px;"><div class="quota-fill" style="width:70%; background:#8B5CF6;"></div></div>
+          
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span style="font-size:13px; color:#475569;">P1 (Perempuan 10-12)</span>
+            <span class="mono" style="font-size:13px; font-weight:700; color:#0F172A;">10 murid, 28 daftar</span>
+          </div>
+          <div class="quota-bar" style="margin-bottom:10px;"><div class="quota-fill" style="width:56%; background:#EC4899;"></div></div>
+          
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span style="font-size:13px; color:#475569;">P2 (Perempuan 13-14)</span>
+            <span class="mono" style="font-size:13px; font-weight:700; color:#0F172A;">8 murid, 23 daftar</span>
+          </div>
+          <div class="quota-bar"><div class="quota-fill" style="width:46%; background:#F59E0B;"></div></div>
+        </div>
+      </div>
+
+      <!-- Top events -->
+      <div class="stat-card">
+        <div style="font-weight:700; color:#0F172A; margin-bottom:14px;">🏆 Acara Popular</div>
+        <div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #F1F5F9;">
+            <div style="width:24px;height:24px;background:var(--house-light);color:var(--house-dark);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">1</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#0F172A;">100M Lelaki 13-14</div><div style="font-size:11px;color:#94A3B8;">Track • T100L2</div></div>
+            <span class="mono" style="font-weight:700;color:var(--house);">2 reg</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #F1F5F9;">
+            <div style="width:24px;height:24px;background:#FEF9C3;color:#854D0E;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">2</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#0F172A;">200M Lelaki 13-14</div><div style="font-size:11px;color:#94A3B8;">Track • T200L2</div></div>
+            <span class="mono" style="font-weight:700;color:#F59E0B;">2 reg</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0;">
+            <div style="width:24px;height:24px;background:#F1F5F9;color:#475569;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">3</div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#0F172A;">Lompat Jauh</div><div style="font-size:11px;color:#94A3B8;">Field • MLJ</div></div>
+            <span class="mono" style="font-weight:700;color:#64748B;">2 reg</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report generator -->
+    <div style="background:white; border-radius:14px; padding:20px; border:1px solid #E2E8F0;">
+      <div style="font-weight:700; color:#0F172A; font-size:16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+        📄 Jana Laporan
+        <span style="background:#DBEAFE; color:#1E40AF; font-size:11px; padding:2px 8px; border-radius:99px; font-weight:600;">Rumah Merah Sahaja</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+
+        <div class="report-card" onclick="generateReport('house_registration')">
+          <div class="report-icon" style="background:#FEE2E2;">📋</div>
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:3px;">Senarai Pendaftaran Rumah</div>
+            <div style="font-size:12px; color:#64748B;">Semua pendaftaran mengikut acara • PDF • 8-12 muka surat</div>
+          </div>
+          <button style="background:var(--house); color:white; border:none; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;">
+            📄 Jana PDF
+          </button>
+        </div>
+
+        <div class="report-card" onclick="generateReport('participant_card')">
+          <div class="report-icon" style="background:#D1FAE5;">🎴</div>
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:3px;">Kad Peserta (Batch)</div>
+            <div style="font-size:12px; color:#64748B;">Kad individu untuk semua peserta • PDF • 4×6 inci • 45 kad</div>
+          </div>
+          <button style="background:#10B981; color:white; border:none; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;">
+            🎴 Jana Semua Kad
+          </button>
+        </div>
+
+        <div class="report-card" onclick="generateReport('schedule')">
+          <div class="report-icon" style="background:#DBEAFE;">📅</div>
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:3px;">Jadual Acara</div>
+            <div style="font-size:12px; color:#64748B;">Jadual lengkap dengan peserta rumah • PDF • Timeline</div>
+          </div>
+          <button style="background:#3B82F6; color:white; border:none; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;">
+            📅 Jana Jadual
+          </button>
+        </div>
+
+        <div class="report-card" onclick="generateReport('excel')">
+          <div class="report-icon" style="background:#EDE9FE;">📊</div>
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:3px;">Senarai Induk (Excel)</div>
+            <div style="font-size:12px; color:#64748B;">Data lengkap semua pendaftaran • Excel • 3 helaian</div>
+          </div>
+          <button style="background:#8B5CF6; color:white; border:none; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;">
+            📊 Export Excel
+          </button>
+        </div>
+
+        <div class="report-card" onclick="generateReport('statistics')">
+          <div class="report-icon" style="background:#FEF9C3;">📈</div>
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:3px;">Ringkasan Statistik</div>
+            <div style="font-size:12px; color:#64748B;">Grafik dan analisis pendaftaran • PDF • Carta & Jadual</div>
+          </div>
+          <button style="background:#F59E0B; color:white; border:none; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;">
+            📈 Jana Statistik
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main-content -->
+
+<!-- FOOTER -->
+<footer class="no-print" style="background:white; border-top:1px solid #E2E8F0; padding:12px 16px; margin-top:20px;">
+  <div style="max-width:1400px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+    <div style="font-size:12px; color:#94A3B8;">© 2025 SK Sultan Ismail, Kemaman • Sistem Pengurusan Sukan</div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:#64748B;" id="connection-status">
+        <div style="width:8px;height:8px;border-radius:50%;background:#10B981;"></div>
+        Bersambung
+      </div>
+      <div style="font-size:12px; color:#94A3B8; font-family:'JetBrains Mono',monospace;" id="footer-timer">
+        Auto-refresh: 60s
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-nav">
+  <button class="mobile-nav-btn active" onclick="switchTab('murid')" id="mob-murid">
+    <span class="icon">👤</span>Murid
+  </button>
+  <button class="mobile-nav-btn" onclick="switchTab('pendaftaran')" id="mob-pendaftaran">
+    <span class="icon">📋</span>Daftar
+  </button>
+  <button class="mobile-nav-btn" onclick="switchTab('jadual')" id="mob-jadual">
+    <span class="icon">📅</span>Jadual
+  </button>
+  <button class="mobile-nav-btn" onclick="switchTab('laporan')" id="mob-laporan">
+    <span class="icon">📊</span>Laporan
+  </button>
+</nav>
+
+<!-- STUDENT DETAIL MODAL -->
+<div class="modal-overlay" id="student-modal">
+  <div class="modal-box">
+    <div style="padding:20px 20px 0;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+        <div style="font-weight:800; font-size:16px; color:#0F172A;">📋 Maklumat Murid</div>
+        <button onclick="closeModal('student-modal')" style="background:#F1F5F9; border:none; width:32px;height:32px; border-radius:8px; cursor:pointer; font-size:18px; display:flex;align-items:center;justify-content:center; color:#475569;">×</button>
+      </div>
+      <div id="modal-content">
+        <!-- populated by JS -->
+      </div>
+    </div>
+    <div style="padding:16px 20px; border-top:1px solid #E2E8F0; display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+      <button onclick="printParticipantCard()" style="background:var(--house); color:white; border:none; border-radius:8px; padding:9px 18px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;">
+        📄 Cetak Kad Peserta
+      </button>
+      <button onclick="closeModal('student-modal')" style="background:#F1F5F9; border:1.5px solid #E2E8F0; border-radius:8px; padding:9px 18px; font-size:13px; font-weight:600; cursor:pointer; color:#475569;">
+        Tutup
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PDF GENERATION OVERLAY -->
+<div id="pdf-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9998; align-items:center; justify-content:center;">
+  <div style="background:white; border-radius:16px; padding:32px; text-align:center; max-width:320px; width:90%;">
+    <div style="font-size:40px; margin-bottom:12px;">⏳</div>
+    <div style="font-weight:700; font-size:16px; color:#0F172A; margin-bottom:8px;" id="pdf-title">Menjana laporan...</div>
+    <div style="font-size:13px; color:#64748B; margin-bottom:20px;" id="pdf-desc">Sila tunggu sebentar</div>
+    <div style="background:#E2E8F0; border-radius:99px; height:6px; overflow:hidden;">
+      <div id="pdf-progress" style="height:100%; background:var(--house); border-radius:99px; width:0%; transition:width 0.3s;"></div>
+    </div>
+    <div style="font-size:12px; color:#94A3B8; margin-top:8px;" id="pdf-percent">0%</div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// SESSION & CONFIG
+// ═══════════════════════════════════════════
+const session = {
+  username: 'pengurus_merah',
+  full_name: 'Pn. Siti',
+  role: 'Pengurus',
+  id_rumah: 1,
+  login_time: '2025-03-01T19:00:00'
+};
+
+const HOUSE_COLORS = {
+  1: { name: 'MERAH', color: '#DC2626', light: '#FEE2E2', dark: '#991B1B' },
+  2: { name: 'BIRU', color: '#2563EB', light: '#DBEAFE', dark: '#1E40AF' },
+  3: { name: 'HIJAU', color: '#16A34A', light: '#DCFCE7', dark: '#14532D' },
+  4: { name: 'KUNING', color: '#CA8A04', light: '#FEF9C3', dark: '#713F12' },
+};
+
+// Apply house color
+const house = HOUSE_COLORS[session.id_rumah] || HOUSE_COLORS[1];
+document.documentElement.style.setProperty('--house', house.color);
+document.documentElement.style.setProperty('--house-light', house.light);
+document.documentElement.style.setProperty('--house-dark', house.dark);
+
+// ═══════════════════════════════════════════
+// MOCK DATA
+// ═══════════════════════════════════════════
+const mockStudents = [
+  { no_kp:'040512-01-1234', nama:'Ahmad Ali bin Ahmad', darjah:'Darjah 5 Amal', kategori:'L2', jantina:'L', tahap:5, acara:['100M L2','200M L2','Lompat Jauh'], quota:{ind_kat:{used:2,max:2}, grp_kat:{used:1,max:2}, ind_trb:{used:0,max:1}, grp_trb:{used:0,max:1}} },
+  { no_kp:'040601-01-5678', nama:'Hafiz Ahmad bin Salleh', darjah:'Darjah 5 Bakti', kategori:'L2', jantina:'L', tahap:5, acara:['100M L2','400M L2'], quota:{ind_kat:{used:2,max:2}, grp_kat:{used:0,max:2}, ind_trb:{used:0,max:1}, grp_trb:{used:0,max:1}} },
+  { no_kp:'050301-02-4321', nama:'Siti Aminah bt Zakaria', darjah:'Darjah 4 Aman', kategori:'P2', jantina:'P', tahap:4, acara:['100M P2','Lompat Tinggi'], quota:{ind_kat:{used:2,max:2}, grp_kat:{used:0,max:2}, ind_trb:{used:0,max:1}, grp_trb:{used:0,max:1}} },
+  { no_kp:'050615-03-8765', nama:'Nurul Hana bt Ibrahim', darjah:'Darjah 4 Bijak', kategori:'P2', jantina:'P', tahap:4, acara:['200M P2'], quota:{ind_kat:{used:1,max:2}, grp_kat:{used:1,max:2}, ind_trb:{used:0,max:1}, grp_trb:{used:0,max:1}} },
+  { no_kp:'061023-01-1122', nama:'Muhammad Luqman bin Hassan', darjah:'Darjah 3 Cerdik', kategori:'L1', jantina:'L', tahap:3, acara:['100M L1','Lompat Jauh','Lontar Peluru'], quota:{ind_kat:{used:2,max:2}, grp_kat:{used:1,max:2}, ind_trb:{used:0,max:1}, grp_trb:{used:0,max:1}} },
+  { no_kp:'070812-02-3344', nama:'Aisyah Nur bt Ahmad', darjah:'Darjah 2 Cemerlang', kategori:'P1', jantina:'P', tahap:2, acara:['100M P1'], quota:{ind_kat:{used:1,max:2}, grp_kat:{used:0,max:2}, ind_trb:{used:0,max:1}, grp_trb:{used:0,max:1}} },
+  { no_kp:'060215-01-5566', nama:'Zulhairi bin Zulkifli', darjah:'Darjah 3 Aktif', kategori:'L1', jantina:'L', tahap:3, acara:['400M L1','Lompat Jauh'], quota:{ind_kat:{used:2,max:2}, grp_kat:{used:0,max:2}, ind_trb:{used:0,max:1}, grp_trb:{used:0,max:1}} },
+  { no_kp:'050720-03-7788', nama:'Fazlin bt Faizul', darjah:'Darjah 4 Dedikasi', kategori:'P2', jantina:'P', tahap:4, acara:['100M P2','200M P2','Lompat Tinggi'], quota:{ind_kat:{used:2,max:2}, grp_kat:{used:1,max:2}, ind_trb:{used:0,max:1}, grp_trb:{used:0,max:1}} },
+];
+
+const mockEvents = [
+  { kod:'T100L2', nama:'100M Lelaki 13-14', hari:1, masa:'09:00 AM', venue:'Track', jenis:'Track', peserta_merah:2 },
+  { kod:'T100P2', nama:'100M Perempuan 13-14', hari:1, masa:'09:30 AM', venue:'Track', jenis:'Track', peserta_merah:2 },
+  { kod:'T200L2', nama:'200M Lelaki 13-14', hari:1, masa:'10:00 AM', venue:'Track', jenis:'Track', peserta_merah:2 },
+  { kod:'T200P2', nama:'200M Perempuan 13-14', hari:1, masa:'10:30 AM', venue:'Track', jenis:'Track', peserta_merah:1 },
+  { kod:'T400L1', nama:'400M Lelaki 10-12', hari:1, masa:'11:00 AM', venue:'Track', jenis:'Track', peserta_merah:1 },
+  { kod:'T100L1', nama:'100M Lelaki 10-12', hari:1, masa:'02:00 PM', venue:'Track', jenis:'Track', peserta_merah:2 },
+  { kod:'MLJ', nama:'Lompat Jauh', hari:2, masa:'09:00 AM', venue:'Field A', jenis:'Field', peserta_merah:3 },
+  { kod:'MLT', nama:'Lompat Tinggi', hari:2, masa:'10:00 AM', venue:'Field B', jenis:'Field', peserta_merah:2 },
+  { kod:'MLP', nama:'Lontar Peluru', hari:2, masa:'11:00 AM', venue:'Field C', jenis:'Field', peserta_merah:1 },
+  { kod:'RL4x100', nama:'Relay 4x100M', hari:3, masa:'09:00 AM', venue:'Track', jenis:'Relay', peserta_merah:4 },
+  { kod:'T400P1', nama:'400M Perempuan 10-12', hari:2, masa:'02:00 PM', venue:'Track', jenis:'Track', peserta_merah:0 },
+  { kod:'MBL', nama:'Balingan Cakera', hari:3, masa:'10:00 AM', venue:'Field A', jenis:'Field', peserta_merah:1 },
+];
+
+const mockActivity = [
+  { nama:'Ahmad Ali', acara:'100M Lelaki L2', masa:'10 minit lepas' },
+  { nama:'Hafiz Ahmad', acara:'200M Lelaki L2', masa:'25 minit lepas' },
+  { nama:'Siti Aminah', acara:'100M Perempuan P2', masa:'1 jam lepas' },
+  { nama:'Nurul Hana', acara:'200M Perempuan P2', masa:'2 jam lepas' },
+  { nama:'Muhammad Luqman', acara:'Lontar Peluru', masa:'3 jam lepas' },
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let currentTab = 'murid';
+let currentView = 'event';
+let currentPage = 1;
+let perPage = 20;
+let filteredStudents = [...mockStudents];
+let searchTimeout;
+let refreshSeconds = 60;
+let refreshInterval;
+let selectedStudent = null;
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    document.getElementById('loading-overlay').style.display = 'none';
+    initApp();
+  }, 1200);
+});
+
+function initApp() {
+  document.getElementById('user-name').textContent = session.full_name;
+  renderActivity();
+  renderStudents();
+  renderPendaftaran();
+  renderSchedule();
+  updateTimestamp();
+  startRefreshTimer();
+  checkOffline();
+  showToast('✅ Data berjaya dimuatkan', 'success');
+}
+
+// ═══════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  const tabs = ['murid','pendaftaran','jadual','laporan'];
+  
+  tabs.forEach(t => {
+    const content = document.getElementById(`tab-content-${t}`);
+    const btn = document.getElementById(`tab-${t}`);
+    const mob = document.getElementById(`mob-${t}`);
+    
+    if (content) content.style.display = t === tab ? 'block' : 'none';
+    
+    if (btn) {
+      if (t === tab) {
+        btn.classList.add('active');
+        btn.style.color = 'white';
+        btn.style.borderBottomColor = 'white';
+      } else {
+        btn.classList.remove('active');
+        btn.style.color = 'rgba(255,255,255,0.7)';
+        btn.style.borderBottomColor = 'transparent';
+      }
+    }
+    
+    if (mob) {
+      mob.classList.toggle('active', t === tab);
+    }
+  });
+
+  // Show/hide dashboard
+  document.getElementById('dashboard-section').style.display = tab === 'murid' ? 'block' : 'none';
+}
+
+// ═══════════════════════════════════════════
+// ACTIVITY FEED
+// ═══════════════════════════════════════════
+function renderActivity() {
+  const feed = document.getElementById('activity-feed');
+  feed.innerHTML = mockActivity.map(a => `
+    <div class="activity-item">
+      <div class="activity-dot" style="background:var(--house);"></div>
+      <div style="flex:1;">
+        <span style="font-weight:600; font-size:13px; color:#0F172A;">${a.nama}</span>
+        <span style="font-size:13px; color:#475569;"> didaftarkan untuk </span>
+        <span style="font-weight:600; font-size:13px; color:var(--house);">${a.acara}</span>
+      </div>
+      <div style="font-size:11px; color:#94A3B8; white-space:nowrap; font-family:'JetBrains Mono',monospace;">${a.masa}</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// STUDENTS
+// ═══════════════════════════════════════════
+function renderStudents() {
+  const grid = document.getElementById('students-grid');
+  
+  // Paginate
+  const start = (currentPage - 1) * perPage;
+  const paged = filteredStudents.slice(start, start + perPage);
+  
+  if (paged.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;">
+        <div class="empty-state">
+          <div class="icon">🔍</div>
+          <div style="font-weight:600; margin-bottom:6px;">Tiada murid dijumpai</div>
+          <div style="font-size:13px;">Cuba ubah carian atau filter anda</div>
+        </div>
+      </div>`;
+    renderPagination();
+    return;
+  }
+
+  grid.innerHTML = paged.map(s => {
+    const indKatPct = (s.quota.ind_kat.used / s.quota.ind_kat.max) * 100;
+    const grpKatPct = (s.quota.grp_kat.used / s.quota.grp_kat.max) * 100;
+    
+    const quotaStatus = (q) => {
+      const pct = (q.used / q.max) * 100;
+      if (pct >= 100) return { icon:'🔴', label:'PENUH', color:'#EF4444' };
+      if (pct > 0) return { icon:'🟡', label:'Ada', color:'#F59E0B' };
+      return { icon:'🟢', label:'Kosong', color:'#10B981' };
+    };
+
+    return `
+      <div class="student-card">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px;">
+          <div style="min-width:0;">
+            <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.nama}</div>
+            <div style="font-size:12px; color:#64748B; font-family:'JetBrains Mono',monospace;">${s.no_kp} • ${s.darjah}</div>
+          </div>
+          <div style="display:flex; gap:6px; flex-shrink:0; margin-left:8px;">
+            <span style="background:${s.jantina==='L'?'#DBEAFE':'#FCE7F3'}; color:${s.jantina==='L'?'#1E40AF':'#9D174D'}; font-size:11px; padding:2px 8px; border-radius:99px; font-weight:700;">${s.kategori}</span>
+            <span style="background:#F1F5F9; color:#475569; font-size:11px; padding:2px 8px; border-radius:99px; font-weight:700;">${s.jantina==='L'?'👦':'👧'}</span>
+          </div>
+        </div>
+        
+        <div style="border-top:1px solid #F1F5F9; padding-top:10px; margin-bottom:10px;">
+          <div style="font-size:11px; font-weight:600; color:#94A3B8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Kuota</div>
+          
+          <div style="margin-bottom:6px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+              <span style="font-size:11px; color:#475569;">Individu Kategori</span>
+              <span style="font-size:11px; font-weight:700; color:${quotaStatus(s.quota.ind_kat).color};">${s.quota.ind_kat.used}/${s.quota.ind_kat.max} ${quotaStatus(s.quota.ind_kat).icon}</span>
+            </div>
+            <div class="quota-bar"><div class="quota-fill" style="width:${indKatPct}%; background:${indKatPct>=100?'#EF4444':'#10B981'};"></div></div>
+          </div>
+          
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+              <span style="font-size:11px; color:#475569;">Kumpulan Kategori</span>
+              <span style="font-size:11px; font-weight:700; color:${quotaStatus(s.quota.grp_kat).color};">${s.quota.grp_kat.used}/${s.quota.grp_kat.max} ${quotaStatus(s.quota.grp_kat).icon}</span>
+            </div>
+            <div class="quota-bar"><div class="quota-fill" style="width:${grpKatPct}%; background:${grpKatPct>=100?'#EF4444':'#F59E0B'};"></div></div>
+          </div>
+        </div>
+        
+        <div style="display:flex; align-items:center; justify-content:space-between; border-top:1px solid #F1F5F9; padding-top:10px;">
+          <span style="font-size:12px; color:#64748B;">Acara: <strong style="color:#0F172A;">${s.acara.length}</strong></span>
+          <button onclick="openStudentModal('${s.no_kp}')" style="background:var(--house-light); color:var(--house-dark); border:1px solid var(--house); border-radius:7px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;">
+            👁️ Lihat Detail
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  renderPagination();
+}
+
+function renderPagination() {
+  const total = filteredStudents.length;
+  const pages = Math.ceil(total / perPage);
+  const pag = document.getElementById('pagination');
+  
+  if (pages <= 1) { pag.innerHTML = ''; return; }
+  
+  let html = `<span style="font-size:12px;color:#94A3B8;margin-right:8px;">${total} murid</span>`;
+  
+  if (currentPage > 1) html += `<button class="page-btn" onclick="goPage(${currentPage-1})">‹</button>`;
+  
+  for (let i = 1; i <= pages; i++) {
+    if (i === 1 || i === pages || Math.abs(i - currentPage) <= 2) {
+      html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 3) {
+      html += `<span style="padding:0 4px;color:#94A3B8;">…</span>`;
+    }
+  }
+  
+  if (currentPage < pages) html += `<button class="page-btn" onclick="goPage(${currentPage+1})">›</button>`;
+  pag.innerHTML = html;
+}
+
+function goPage(p) {
+  currentPage = p;
+  renderStudents();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function changePerPage(val) {
+  perPage = parseInt(val);
+  currentPage = 1;
+  renderStudents();
+}
+
+// ═══════════════════════════════════════════
+// FILTERS
+// ═══════════════════════════════════════════
+function debounceSearch(val) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => applyFilters(val), 400);
+}
+
+function applyFilters(searchVal) {
+  const q = searchVal !== undefined ? searchVal : document.getElementById('search-murid').value;
+  const tahap = document.getElementById('filter-tahap').value;
+  const kat = document.getElementById('filter-kategori').value;
+  const jantina = document.getElementById('filter-jantina').value;
+  
+  filteredStudents = mockStudents.filter(s => {
+    const matchQ = !q || s.nama.toLowerCase().includes(q.toLowerCase()) || s.no_kp.includes(q);
+    const matchTahap = !tahap || s.tahap == tahap;
+    const matchKat = !kat || s.kategori === kat;
+    const matchJantina = !jantina || s.jantina === jantina;
+    return matchQ && matchTahap && matchKat && matchJantina;
+  });
+  
+  currentPage = 1;
+  renderStudents();
+}
+
+function clearFilters() {
+  document.getElementById('search-murid').value = '';
+  document.getElementById('filter-tahap').value = '';
+  document.getElementById('filter-kategori').value = '';
+  document.getElementById('filter-jantina').value = '';
+  filteredStudents = [...mockStudents];
+  currentPage = 1;
+  renderStudents();
+}
+
+// ═══════════════════════════════════════════
+// STUDENT MODAL
+// ═══════════════════════════════════════════
+function openStudentModal(no_kp) {
+  const s = mockStudents.find(x => x.no_kp === no_kp);
+  if (!s) return;
+  selectedStudent = s;
+  
+  const modalContent = document.getElementById('modal-content');
+  modalContent.innerHTML = `
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+      <div>
+        <div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;margin-bottom:3px;">Nama</div>
+        <div style="font-weight:700;font-size:14px;color:#0F172A;">${s.nama}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;margin-bottom:3px;">No. IC</div>
+        <div style="font-weight:600;font-size:13px;color:#0F172A;font-family:'JetBrains Mono',monospace;">${s.no_kp}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;margin-bottom:3px;">Tahap</div>
+        <div style="font-weight:600;font-size:13px;color:#0F172A;">${s.darjah}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;margin-bottom:3px;">Rumah</div>
+        <div style="font-weight:700;font-size:13px;color:var(--house);">🏠 ${house.name}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;margin-bottom:3px;">Kategori</div>
+        <span style="background:var(--house-light);color:var(--house-dark);font-weight:700;font-size:13px;padding:3px 10px;border-radius:99px;">${s.kategori}</span>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;margin-bottom:3px;">Jantina</div>
+        <div style="font-weight:600;font-size:13px;color:#0F172A;">${s.jantina==='L'?'👦 Lelaki':'👧 Perempuan'}</div>
+      </div>
+    </div>
+    
+    <div style="background:#F8FAFC; border-radius:10px; padding:14px; margin-bottom:14px;">
+      <div style="font-weight:700; font-size:13px; color:#0F172A; margin-bottom:10px;">📊 Status Kuota</div>
+      ${renderQuotaRow('Individu Kategori', s.quota.ind_kat)}
+      ${renderQuotaRow('Kumpulan Kategori', s.quota.grp_kat)}
+      ${renderQuotaRow('Individu Terbuka', s.quota.ind_trb)}
+      ${renderQuotaRow('Kumpulan Terbuka', s.quota.grp_trb)}
+    </div>
+    
+    <div style="font-weight:700; font-size:13px; color:#0F172A; margin-bottom:10px;">🏃 Acara Disertai (${s.acara.length})</div>
+    ${s.acara.map((a, i) => `
+      <div class="acara-item">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+          <div style="font-weight:700; font-size:13px; color:#0F172A;">${i+1}. ${a}</div>
+          <span class="status-badge status-active">✅ Aktif</span>
+        </div>
+        <div style="font-size:11px; color:#64748B;">📅 Hari ${i+1} • ${['09:00 AM','10:30 AM','02:00 PM'][i]}</div>
+      </div>
+    `).join('')}
+  `;
+  
+  document.getElementById('student-modal').classList.add('open');
+}
+
+function renderQuotaRow(label, q) {
+  const pct = (q.used / q.max) * 100;
+  const color = pct >= 100 ? '#EF4444' : pct > 0 ? '#F59E0B' : '#10B981';
+  const icon = pct >= 100 ? '🔴' : pct > 0 ? '🟡' : '🟢';
+  return `
+    <div style="margin-bottom:8px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+        <span style="font-size:12px; color:#475569;">${label}</span>
+        <span style="font-size:12px; font-weight:700; color:${color};">${q.used}/${q.max} ${icon}</span>
+      </div>
+      <div class="quota-bar"><div class="quota-fill" style="width:${pct}%; background:${color};"></div></div>
+    </div>
+  `;
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// Close modal on overlay click
+document.getElementById('student-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal('student-modal');
+});
+
+// ═══════════════════════════════════════════
+// PENDAFTARAN
+// ═══════════════════════════════════════════
+function switchView(view) {
+  currentView = view;
+  document.getElementById('view-event').style.background = view==='event'?'var(--house)':'transparent';
+  document.getElementById('view-event').style.color = view==='event'?'white':'#64748B';
+  document.getElementById('view-student').style.background = view==='student'?'var(--house)':'transparent';
+  document.getElementById('view-student').style.color = view==='student'?'white':'#64748B';
+  renderPendaftaran();
+}
+
+function renderPendaftaran() {
+  const list = document.getElementById('pendaftaran-list');
+  
+  if (currentView === 'event') {
+    const eventsWithParticipants = mockEvents.filter(e => e.peserta_merah > 0);
+    list.innerHTML = eventsWithParticipants.map(e => `
+      <div style="background:white; border-radius:12px; border:1.5px solid #E2E8F0; padding:16px; margin-bottom:12px; transition:all 0.2s;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:3px;">
+              ${e.jenis==='Track'?'🏃':'e.jenis==='Field'?'⛹️':'🔄'} ${e.nama} <span class="mono" style="font-size:12px; color:#94A3B8;">(${e.kod})</span>
+            </div>
+            <div style="font-size:12px; color:#64748B;">📅 Hari ${e.hari} • ⏰ ${e.masa} • 📍 ${e.venue}</div>
+          </div>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span style="background:${e.jenis==='Track'?'#DBEAFE':e.jenis==='Field'?'#D1FAE5':'#EDE9FE'}; color:${e.jenis==='Track'?'#1E40AF':e.jenis==='Field'?'#065F46':'#5B21B6'}; font-size:11px; padding:2px 8px; border-radius:99px; font-weight:700;">${e.jenis}</span>
+            <span style="background:var(--house-light); color:var(--house-dark); font-size:12px; padding:3px 10px; border-radius:99px; font-weight:700;">Merah: ${e.peserta_merah} 🔴</span>
+          </div>
+        </div>
+        
+        <div style="border-top:1px solid #F1F5F9; padding-top:10px;">
+          ${mockStudents.filter(s => s.acara.some(a => a.toLowerCase().includes(e.nama.split(' ')[0].toLowerCase()))).slice(0,e.peserta_merah).map((s,i) => `
+            <div style="display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px solid #F9FAFB;">
+              <div style="width:24px;height:24px;background:var(--house-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--house-dark);flex-shrink:0;">L${i+1}</div>
+              <div style="flex:1; min-width:0;">
+                <span style="font-weight:600;font-size:13px;color:#0F172A;">${s.nama}</span>
+                <span style="font-size:11px;color:#94A3B8;font-family:'JetBrains Mono',monospace; margin-left:6px;">${s.no_kp}</span>
+              </div>
+              <span class="status-badge status-active">✅ Aktif</span>
+            </div>
+          `).join('')}
+        </div>
+        
+        <div style="margin-top:10px; display:flex; justify-content:flex-end;">
+          <button onclick="printEventList('${e.kod}')" style="background:#F1F5F9; border:1px solid #E2E8F0; border-radius:7px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569; display:flex; align-items:center; gap:4px;">
+            📄 Cetak Senarai
+          </button>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    list.innerHTML = mockStudents.slice(0, 5).map(s => `
+      <div style="background:white; border-radius:12px; border:1.5px solid #E2E8F0; padding:16px; margin-bottom:12px;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div style="font-weight:700; font-size:14px; color:#0F172A; margin-bottom:3px;">👤 ${s.nama}</div>
+            <div style="font-size:12px; color:#64748B; font-family:'JetBrains Mono',monospace;">${s.no_kp} • ${s.darjah} • Kategori ${s.kategori}</div>
+          </div>
+          <span style="background:var(--house-light); color:var(--house-dark); font-size:12px; padding:3px 10px; border-radius:99px; font-weight:700;">Acara: ${s.acara.length}</span>
+        </div>
+        <div style="border-top:1px solid #F1F5F9; padding-top:10px;">
+          ${s.acara.map((a,i) => `
+            <div style="display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid #F9FAFB;">
+              <span style="width:20px;height:20px;background:var(--house);border-radius:50%;color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i+1}</span>
+              <div style="flex:1;font-size:13px;color:#0F172A;font-weight:500;">🏃 ${a}</div>
+              <span class="status-badge status-active">✅</span>
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top:10px;display:flex;justify-content:flex-end;">
+          <button onclick="openStudentModal('${s.no_kp}')" style="background:var(--house-light);border:1px solid var(--house);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;color:var(--house-dark);">📄 Cetak Kad</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// ═══════════════════════════════════════════
+// SCHEDULE
+// ═══════════════════════════════════════════
+function filterDay(day) {
+  ['all',1,2,3].forEach(d => {
+    const btn = document.getElementById(`day-${d}`);
+    if (btn) {
+      const isActive = d == day;
+      btn.style.background = isActive ? 'var(--house)' : 'white';
+      btn.style.color = isActive ? 'white' : '#64748B';
+      btn.style.borderColor = isActive ? 'var(--house)' : '#E2E8F0';
+    }
+  });
+  renderSchedule(day === 'all' ? null : day);
+}
+
+let currentDayFilter = null;
+function renderSchedule(dayFilter) {
+  if (dayFilter !== undefined) currentDayFilter = dayFilter;
+  const houseOnly = document.getElementById('filter-house-only')?.checked;
+  
+  let events = mockEvents;
+  if (currentDayFilter) events = events.filter(e => e.hari == currentDayFilter);
+  if (houseOnly) events = events.filter(e => e.peserta_merah > 0);
+  
+  const days = [...new Set(events.map(e => e.hari))].sort();
+  const dayNames = { 1:'Hari 1 — Sabtu, 15 Mac 2025', 2:'Hari 2 — Ahad, 16 Mac 2025', 3:'Hari 3 — Isnin, 17 Mac 2025' };
+  
+  const content = document.getElementById('schedule-content');
+  
+  if (events.length === 0) {
+    content.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📅</div>
+        <div style="font-weight:600;margin-bottom:6px;">Tiada acara</div>
+        <div style="font-size:13px;">Cuba ubah filter anda</div>
+      </div>`;
+    return;
+  }
+  
+  content.innerHTML = days.map(day => `
+    <div style="margin-bottom:24px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <div style="background:var(--house); color:white; font-weight:700; font-size:12px; padding:6px 14px; border-radius:8px;">📅 ${dayNames[day]}</div>
+        <div style="height:1px; flex:1; background:#E2E8F0;"></div>
+        <button onclick="printDaySchedule(${day})" style="background:white; border:1.5px solid #E2E8F0; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569;" class="no-print">🖨️ Cetak Hari ${day}</button>
+      </div>
+      ${events.filter(e => e.hari == day).map(e => `
+        <div class="schedule-event" style="${e.peserta_merah>0?'border-left-color:var(--house);':'border-left-color:#CBD5E1;'}">
+          <div class="time-badge">${e.masa}</div>
+          <div style="flex:1;">
+            <div style="font-weight:700; font-size:13px; color:#0F172A; margin-bottom:3px;">
+              ${e.jenis==='Track'?'🏃':e.jenis==='Field'?'⛹️':'🔄'} ${e.nama} <span style="font-size:11px;color:#94A3B8;font-family:'JetBrains Mono',monospace;">(${e.kod})</span>
+            </div>
+            <div style="font-size:12px; color:#64748B; margin-bottom:4px;">📍 ${e.venue}</div>
+            ${e.peserta_merah > 0 ? `
+              <div style="display:flex; align-items:center; gap:6px; font-size:12px;">
+                <span style="background:var(--house-light); color:var(--house-dark); padding:2px 8px; border-radius:99px; font-weight:700;">🔴 Merah: ${e.peserta_merah} peserta</span>
+              </div>
+            ` : '<div style="font-size:12px;color:#94A3B8;">— Tiada peserta Merah</div>'}
+          </div>
+          <span style="background:${e.jenis==='Track'?'#DBEAFE':e.jenis==='Field'?'#D1FAE5':'#EDE9FE'}; color:${e.jenis==='Track'?'#1E40AF':e.jenis==='Field'?'#065F46':'#5B21B6'}; font-size:11px; padding:2px 8px; border-radius:99px; font-weight:700; height:fit-content;">${e.jenis}</span>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// REPORTS
+// ═══════════════════════════════════════════
+function generateReport(type) {
+  const labels = {
+    house_registration: 'Menjana senarai pendaftaran...',
+    participant_card: 'Menjana kad peserta...',
+    schedule: 'Menjana jadual acara...',
+    excel: 'Menjana fail Excel...',
+    statistics: 'Menjana statistik...',
+  };
+  
+  const overlay = document.getElementById('pdf-overlay');
+  const title = document.getElementById('pdf-title');
+  const desc = document.getElementById('pdf-desc');
+  const progress = document.getElementById('pdf-progress');
+  const percent = document.getElementById('pdf-percent');
+  
+  title.textContent = labels[type] || 'Menjana laporan...';
+  desc.textContent = 'Sila tunggu sebentar';
+  progress.style.width = '0%';
+  percent.textContent = '0%';
+  overlay.style.display = 'flex';
+  
+  let pct = 0;
+  const interval = setInterval(() => {
+    pct += Math.random() * 15 + 5;
+    if (pct >= 100) { pct = 100; clearInterval(interval); }
+    progress.style.width = pct + '%';
+    percent.textContent = Math.round(pct) + '%';
+    
+    if (pct >= 100) {
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        showToast('✅ Laporan berjaya dijana! Memuat turun...', 'success');
+        // In production: call google.script.run.generatePDF({type, id_rumah: session.id_rumah})
+      }, 500);
+    }
+  }, 200);
+}
+
+function printParticipantCard() {
+  if (!selectedStudent) return;
+  const s = selectedStudent;
+  const win = window.open('', '_blank', 'width=500,height=600');
+  win.document.write(`
+    <!DOCTYPE html>
+    <html><head><title>Kad Peserta - ${s.nama}</title>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 20px; }
+      .card { border: 3px solid #DC2626; border-radius: 12px; padding: 20px; max-width: 350px; }
+      .header { background: #DC2626; color: white; padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; }
+      .field { margin-bottom: 10px; }
+      .label { font-size: 11px; color: #666; text-transform: uppercase; font-weight: bold; }
+      .value { font-size: 14px; font-weight: bold; color: #000; }
+      .event { background: #fee; border-left: 3px solid #DC2626; padding: 6px 10px; margin: 4px 0; border-radius: 4px; font-size: 13px; }
+    </style></head>
+    <body>
+      <div class="card">
+        <div class="header">🏠 RUMAH MERAH — KAD PESERTA</div>
+        <div class="field"><div class="label">Nama</div><div class="value">${s.nama}</div></div>
+        <div class="field"><div class="label">No. IC</div><div class="value">${s.no_kp}</div></div>
+        <div class="field"><div class="label">Tahap</div><div class="value">${s.darjah}</div></div>
+        <div class="field"><div class="label">Kategori</div><div class="value">${s.kategori}</div></div>
+        <div class="field">
+          <div class="label">Acara Disertai</div>
+          ${s.acara.map(a => `<div class="event">🏃 ${a}</div>`).join('')}
+        </div>
+        <div style="margin-top:16px;font-size:11px;color:#888;text-align:center;">Sukan Tahunan SKSI 2025</div>
+      </div>
+      <script>window.onload=()=>window.print();</script>
+    </body></html>
+  `);
+  win.document.close();
+}
+
+function printEventList(kod) {
+  showToast('🖨️ Membuka pratonton cetak...', 'info');
+  setTimeout(() => window.print(), 500);
+}
+
+function printDaySchedule(day) {
+  showToast(`🖨️ Mencetak jadual Hari ${day}...`, 'info');
+  setTimeout(() => window.print(), 500);
+}
+
+// ═══════════════════════════════════════════
+// TOAST NOTIFICATIONS
+// ═══════════════════════════════════════════
+function showToast(msg, type='info') {
+  const colors = {
+    success: { bg:'#D1FAE5', text:'#065F46', border:'#A7F3D0' },
+    error: { bg:'#FEE2E2', text:'#991B1B', border:'#FCA5A5' },
+    info: { bg:'#DBEAFE', text:'#1E40AF', border:'#93C5FD' },
+    warning: { bg:'#FEF9C3', text:'#854D0E', border:'#FDE68A' },
+  };
+  const c = colors[type] || colors.info;
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.style.cssText = `background:${c.bg}; color:${c.text}; border:1px solid ${c.border};`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity='0'; toast.style.transform='translateX(20px)'; toast.style.transition='all 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// ═══════════════════════════════════════════
+// AUTO-REFRESH
+// ═══════════════════════════════════════════
+function startRefreshTimer() {
+  refreshSeconds = 60;
+  clearInterval(refreshInterval);
+  refreshInterval = setInterval(() => {
+    refreshSeconds--;
+    document.getElementById('refresh-timer').textContent = refreshSeconds + 's';
+    document.getElementById('footer-timer').textContent = `Auto-refresh: ${refreshSeconds}s`;
+    if (refreshSeconds <= 0) {
+      loadAllData();
+      refreshSeconds = 60;
+    }
+  }, 1000);
+}
+
+function loadAllData() {
+  updateTimestamp();
+  startRefreshTimer();
+  showToast('🔄 Data diperbarui', 'info');
+  // In production: call google.script.run endpoints
+}
+
+function updateTimestamp() {
+  const now = new Date();
+  const time = now.toLocaleTimeString('ms-MY', { hour:'2-digit', minute:'2-digit' });
+  const el = document.getElementById('last-updated');
+  if (el) el.textContent = time;
+}
+
+// ═══════════════════════════════════════════
+// OFFLINE DETECTION
+// ═══════════════════════════════════════════
+function checkOffline() {
+  window.addEventListener('offline', () => {
+    document.getElementById('connection-status').innerHTML = 
+      '<div style="width:8px;height:8px;border-radius:50%;background:#EF4444;"></div> Tiada sambungan';
+    showToast('⚠️ Tiada sambungan internet', 'warning');
+  });
+  window.addEventListener('online', () => {
+    document.getElementById('connection-status').innerHTML = 
+      '<div style="width:8px;height:8px;border-radius:50%;background:#10B981;"></div> Bersambung';
+    showToast('✅ Sambungan pulih', 'success');
+    loadAllData();
+  });
+}
+
+// ═══════════════════════════════════════════
+// LOGOUT
+// ═══════════════════════════════════════════
+function handleLogout() {
+  if (!confirm('Adakah anda pasti untuk log keluar?')) return;
+  showToast('👋 Log keluar...', 'info');
+  clearInterval(refreshInterval);
+  // In production: google.script.run.withSuccessHandler(()=>{ google.script.run.handleLogout({}) }).handleLogout({});
+  setTimeout(() => {
+    alert('Log keluar berjaya. Sila tutup tab ini.');
+  }, 1000);
+}
+
+</script>
+</body>
+</html>
