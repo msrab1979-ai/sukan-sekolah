@@ -1,2323 +1,509 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <base target="_top">
-  </head>
-  <body>
-    <!DOCTYPE html>
 <html lang="ms">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel - Operasi & Pendaftaran | Sistem Atletik</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  :root {
-    --primary: #3B82F6;
-    --primary-dark: #2563EB;
-    --success: #10B981;
-    --warning: #F59E0B;
-    --danger: #EF4444;
-    --info: #6366F1;
-    --bg: #F1F5F9;
-    --card: #FFFFFF;
-    --border: #E2E8F0;
-    --text: #0F172A;
-    --text-muted: #64748B;
-    --sidebar-w: 260px;
-    --header-h: 60px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); }
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: #f1f5f9; }
-  ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel – Setup & Konfigurasi | Sistem Sukan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue:   #3B82F6;
+      --green:  #10B981;
+      --amber:  #F59E0B;
+      --red:    #EF4444;
+      --sidebar-w: 240px;
+      --header-h: 60px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F1F5F9; color: #1E293B; margin: 0; }
+    
+    /* HEADER */
+    #app-header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-h); background: #1E293B; z-index: 50; display: flex; align-items: center; padding: 0 16px; box-shadow: 0 1px 0 rgba(255,255,255,0.06); }
+    #app-header .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 15px; color: #F8FAFC; flex: 1; }
+    #app-header .logo span { color: #60A5FA; }
+    .header-btn { background: rgba(255,255,255,0.08); border: none; cursor: pointer; color: #CBD5E1; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; transition: background 0.2s; }
+    .header-btn:hover { background: rgba(255,255,255,0.15); color: #F8FAFC; }
+    .header-btn.danger:hover { background: #EF4444; color: #fff; }
 
-  /* HEADER */
-  #header {
-    position: fixed; top: 0; left: 0; right: 0; height: var(--header-h);
-    background: linear-gradient(135deg, #1E3A5F 0%, #2563EB 100%);
-    display: flex; align-items: center; padding: 0 1rem;
-    z-index: 50; box-shadow: 0 2px 12px rgba(37,99,235,0.3);
-  }
-  #header .logo { display: flex; align-items: center; gap: 10px; color: white; font-weight: 800; font-size: 1rem; }
-  #header .logo span { font-size: 1.4rem; }
-  #header .subtitle { font-size: 0.7rem; font-weight: 500; opacity: 0.8; display: block; }
-  #header .nav-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-  .header-btn { background: rgba(255,255,255,0.15); border: none; color: white; cursor: pointer;
-    padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-family: inherit;
-    display: flex; align-items: center; gap: 5px; transition: background 0.2s; }
-  .header-btn:hover { background: rgba(255,255,255,0.25); }
-  .badge-notif { background: #EF4444; color: white; border-radius: 99px; padding: 1px 6px; font-size: 0.65rem; font-weight: 700; }
-  .user-info { color: white; font-size: 0.78rem; opacity: 0.9; display: flex; align-items: center; gap: 6px; }
-  .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.2);
-    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
+    /* SIDEBAR */
+    #sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; width: var(--sidebar-w); background: #1E293B; overflow-y: auto; z-index: 40; transition: transform 0.3s ease; padding: 12px 0; }
+    .sidebar-section { padding: 8px 12px 4px; font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; margin: 1px 8px; border-radius: 8px; cursor: pointer; color: #94A3B8; font-size: 13px; font-weight: 500; transition: all 0.2s; user-select: none; }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: #E2E8F0; }
+    .nav-item.active { background: #3B82F6; color: #fff; }
+    .nav-item .icon { width: 18px; text-align: center; font-size: 15px; }
 
-  /* SIDEBAR */
-  #sidebar {
-    position: fixed; left: 0; top: var(--header-h); bottom: 0;
-    width: var(--sidebar-w); background: white;
-    border-right: 1px solid var(--border); overflow-y: auto;
-    z-index: 40; transition: transform 0.3s ease;
-    box-shadow: 2px 0 12px rgba(0,0,0,0.05);
-  }
-  .nav-section { padding: 12px 12px 4px; }
-  .nav-section-title { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin-bottom: 4px; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px;
-    cursor: pointer; font-size: 0.85rem; font-weight: 500; color: var(--text-muted);
-    transition: all 0.2s; text-decoration: none; }
-  .nav-item:hover { background: #F1F5F9; color: var(--text); }
-  .nav-item.active { background: linear-gradient(135deg, #EFF6FF, #DBEAFE); color: var(--primary); font-weight: 600; }
-  .nav-item .icon { width: 20px; text-align: center; font-size: 1rem; flex-shrink: 0; }
-  .nav-sub { padding-left: 32px; }
-  .nav-sub .nav-item { padding: 7px 10px; font-size: 0.8rem; }
-  .nav-badge { margin-left: auto; background: var(--primary); color: white; border-radius: 99px; padding: 1px 7px; font-size: 0.65rem; font-weight: 700; }
-  .nav-badge.warn { background: var(--warning); }
+    .nav-sub { padding: 7px 16px 7px 44px; margin: 1px 8px; border-radius: 8px; cursor: pointer; color: #64748B; font-size: 12.5px; font-weight: 500; transition: all 0.2s; border-left: 2px solid transparent; }
+    .nav-sub:hover { color: #94A3B8; background: rgba(255,255,255,0.04); }
+    .nav-sub.active { color: #60A5FA; border-left-color: #60A5FA; background: rgba(96,165,250,0.06); }
 
-  /* MAIN */
-  #main { margin-left: var(--sidebar-w); margin-top: var(--header-h); padding: 1.5rem; min-height: calc(100vh - var(--header-h)); }
+    /* MAIN CONTENT */
+    #main-content { margin-left: var(--sidebar-w); margin-top: var(--header-h); min-height: calc(100vh - var(--header-h)); padding: 24px; transition: margin-left 0.3s; }
+    .card { background: #fff; border-radius: 12px; border: 1px solid #E2E8F0; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .card-header { padding: 16px 20px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; gap: 10px; }
+    .card-title { font-size: 14px; font-weight: 700; color: #1E293B; margin: 0; }
+    .card-body { padding: 20px; }
 
-  /* CARDS */
-  .card { background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-  .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-  .card-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-  .card-body { padding: 20px; }
+    .stat-card { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #E2E8F0; box-shadow: 0 1px 4px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+    .stat-num { font-size: 32px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+    .stat-label { font-size: 12px; color: #64748B; font-weight: 600; margin-top: 2px; }
+    .stat-icon { font-size: 28px; }
 
-  /* STAT CARDS */
-  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
-  .stat-card { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-  .stat-value { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--text); }
-  .stat-label { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-top: 4px; }
-  .stat-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-family: inherit; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; line-height: 1; }
+    .btn-primary { background: #3B82F6; color: #fff; }
+    .btn-primary:hover { background: #2563EB; }
 
-  /* BUTTONS */
-  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px;
-    font-size: 0.82rem; font-weight: 600; cursor: pointer; border: none; font-family: inherit;
-    transition: all 0.2s; text-decoration: none; white-space: nowrap; }
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-primary:hover { background: var(--primary-dark); }
-  .btn-success { background: var(--success); color: white; }
-  .btn-success:hover { background: #059669; }
-  .btn-warning { background: var(--warning); color: white; }
-  .btn-warning:hover { background: #D97706; }
-  .btn-danger { background: var(--danger); color: white; }
-  .btn-danger:hover { background: #DC2626; }
-  .btn-outline { background: white; color: var(--text); border: 1px solid var(--border); }
-  .btn-outline:hover { background: var(--bg); }
-  .btn-ghost { background: transparent; color: var(--text-muted); }
-  .btn-ghost:hover { background: var(--bg); color: var(--text); }
-  .btn-sm { padding: 5px 10px; font-size: 0.75rem; }
-  .btn-icon { padding: 6px 8px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; }
+    .form-control { width: 100%; padding: 9px 12px; border-radius: 8px; border: 1.5px solid #E2E8F0; font-size: 13px; font-family: inherit; background: #fff; color: #1E293B; outline: none; }
+    .form-control:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
 
-  /* BADGES */
-  .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; }
-  .badge-active { background: #D1FAE5; color: #065F46; }
-  .badge-inactive { background: #F3F4F6; color: #6B7280; }
-  .badge-warning { background: #FEF3C7; color: #92400E; }
-  .badge-danger { background: #FEE2E2; color: #991B1B; }
-  .badge-info { background: #EDE9FE; color: #4C1D95; }
-  .badge-blue { background: #DBEAFE; color: #1E40AF; }
-  .rumah-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px; font-size: 0.7rem; font-weight: 700; color: white; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table thead tr { background: #F8FAFC; }
+    .data-table th { padding: 10px 14px; font-size: 11px; font-weight: 700; color: #64748B; text-align: left; text-transform: uppercase; border-bottom: 1px solid #E2E8F0; }
+    .data-table td { padding: 11px 14px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
 
-  /* TABLES */
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  thead th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size: 0.73rem; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; }
-  thead th:hover { background: #F1F5F9; }
-  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
-  tbody tr:hover { background: #F8FAFC; }
-  tbody td { padding: 10px 12px; vertical-align: middle; }
-  tbody tr:last-child { border-bottom: none; }
+    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
+    .toast { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; font-size: 13px; font-weight: 500; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+    .toast.success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+    .toast.error   { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    .toast.warning { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+    .toast.info    { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
 
-  /* FORMS */
-  .form-group { margin-bottom: 14px; }
-  .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text); margin-bottom: 5px; }
-  .form-label .req { color: var(--danger); margin-left: 3px; }
-  .form-input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
-    font-size: 0.85rem; font-family: inherit; color: var(--text); background: white;
-    transition: border-color 0.2s, box-shadow 0.2s; }
-  .form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
-  .form-input.error { border-color: var(--danger); }
-  .form-input.success { border-color: var(--success); }
-  .form-hint { font-size: 0.73rem; color: var(--text-muted); margin-top: 3px; }
-  .form-error { font-size: 0.73rem; color: var(--danger); margin-top: 3px; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  select.form-input { cursor: pointer; }
+    .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.7); z-index: 90; align-items: center; justify-content: center; }
+    .loading-overlay.show { display: flex; }
+    .spinner { width: 36px; height: 36px; border: 3px solid #E2E8F0; border-top-color: #3B82F6; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* RADIO HOUSE */
-  .house-selector { display: flex; gap: 8px; flex-wrap: wrap; }
-  .house-radio { display: none; }
-  .house-label { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px;
-    border: 2px solid var(--border); cursor: pointer; font-size: 0.8rem; font-weight: 600;
-    transition: all 0.2s; }
-  .house-radio:checked + .house-label { border-color: transparent; color: white; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    .subtab-nav { display: flex; gap: 4px; margin-bottom: 20px; background: #F1F5F9; padding: 4px; border-radius: 10px; flex-wrap: wrap; }
+    .subtab-btn { padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: none; font-family: inherit; color: #64748B; transition: all 0.2s; flex: 1; min-width: 100px; }
+    .subtab-btn.active { background: #fff; color: #3B82F6; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 
-  /* FILTER PANEL */
-  .filter-panel { background: #F8FAFC; border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 1rem; }
-  .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
-
-  /* PAGINATION */
-  .pagination { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-  .page-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-    border-radius: 6px; border: 1px solid var(--border); cursor: pointer; font-size: 0.8rem; font-weight: 600;
-    background: white; color: var(--text-muted); transition: all 0.2s; }
-  .page-btn:hover { background: var(--bg); }
-  .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-  .page-btn.disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* MODALS */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 100;
-    display: flex; align-items: center; justify-content: center; padding: 1rem;
-    opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(2px); }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal { background: white; border-radius: 16px; width: 100%; max-width: 560px; max-height: 90vh;
-    overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.15); transform: scale(0.95);
-    transition: transform 0.2s; }
-  .modal-overlay.open .modal { transform: scale(1); }
-  .modal-lg { max-width: 720px; }
-  .modal-sm { max-width: 420px; }
-  .modal-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: white; z-index: 1; border-radius: 16px 16px 0 0; }
-  .modal-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-  .modal-body { padding: 20px; }
-  .modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; background: #F8FAFC; border-radius: 0 0 16px 16px; }
-  .close-btn { width: 30px; height: 30px; border-radius: 6px; border: none; cursor: pointer;
-    background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: background 0.2s; }
-  .close-btn:hover { background: var(--border); }
-
-  /* TOAST */
-  #toast-container { position: fixed; top: 70px; right: 16px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
-  .toast { min-width: 280px; max-width: 380px; padding: 12px 16px; border-radius: 10px; font-size: 0.83rem;
-    font-weight: 500; display: flex; align-items: flex-start; gap: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-    animation: slideIn 0.3s ease; border-left: 4px solid; }
-  .toast-success { background: #F0FDF4; border-color: var(--success); color: #065F46; }
-  .toast-error { background: #FFF1F2; border-color: var(--danger); color: #881337; }
-  .toast-warning { background: #FFFBEB; border-color: var(--warning); color: #78350F; }
-  .toast-info { background: #EFF6FF; border-color: var(--primary); color: #1E40AF; }
-  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-  /* LOADING */
-  .skeleton { background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
-    background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
-  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-  .spinner { width: 20px; height: 20px; border: 2px solid #E2E8F0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* SUB-TABS */
-  .subtab-nav { display: flex; gap: 4px; border-bottom: 2px solid var(--border); margin-bottom: 1.5rem; }
-  .subtab-btn { padding: 8px 16px; font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
-    cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s;
-    background: none; border-top: none; border-left: none; border-right: none; font-family: inherit; }
-  .subtab-btn:hover { color: var(--text); }
-  .subtab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
-
-  /* PROGRESS BAR */
-  .progress-bar { width: 100%; height: 8px; background: #E2E8F0; border-radius: 99px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
-  .progress-full { background: var(--danger); }
-  .progress-high { background: var(--warning); }
-  .progress-ok { background: var(--success); }
-
-  /* IC DERIVE BOX */
-  .derive-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 10px 14px; font-size: 0.78rem; }
-  .derive-item { display: flex; gap: 8px; align-items: center; margin-bottom: 3px; color: #065F46; }
-
-  /* INFO BOX */
-  .info-box { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 10px 14px; font-size: 0.8rem; color: #1E40AF; }
-  .warn-box { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 10px 14px; font-size: 0.8rem; color: #92400E; }
-  .danger-box { background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 8px; padding: 10px 14px; font-size: 0.8rem; color: #881337; }
-
-  /* LANE GRID */
-  .lane-grid { display: grid; gap: 6px; }
-  .lane-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: white; }
-  .lane-num { width: 28px; height: 28px; border-radius: 6px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
-  .lane-empty { opacity: 0.4; font-style: italic; }
-
-  /* MOBILE OVERLAY */
-  #sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 35; }
-
-  /* DRAG DROP */
-  .drop-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.2s; }
-  .drop-zone:hover, .drop-zone.drag-over { border-color: var(--primary); background: #EFF6FF; }
-
-  /* STATUS DOT */
-  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-  .dot-green { background: var(--success); }
-  .dot-red { background: var(--danger); }
-  .dot-yellow { background: var(--warning); }
-
-  /* MOBILE */
-  @media (max-width: 768px) {
-    #sidebar { transform: translateX(-100%); }
-    #sidebar.open { transform: translateX(0); }
-    #sidebar-overlay { display: block; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
-    #sidebar-overlay.open { opacity: 1; pointer-events: all; }
-    #main { margin-left: 0; padding: 1rem; }
-    .form-row { grid-template-columns: 1fr; }
-    .stat-grid { grid-template-columns: 1fr 1fr; }
-    .header-text { display: none; }
-  }
-
-  /* PRINT */
-  @media print {
-    #header, #sidebar, #sidebar-overlay, #toast-container { display: none !important; }
-    #main { margin: 0; padding: 0; }
-    .no-print { display: none !important; }
-    .card { box-shadow: none; border: 1px solid #ddd; }
-  }
-
-  /* IC MONO */
-  .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
-
-  /* MOBILE CARD */
-  .student-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px; transition: box-shadow 0.2s; }
-  .student-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-
-  /* CHECKBOX */
-  .checkbox-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.83rem; }
-  .checkbox-wrap input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
-
-  /* Section divider */
-  .section-divider { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 4px 0; border-top: 1px solid var(--border); margin: 12px 0; }
-
-  .hidden { display: none !important; }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-  .subtab-content { display: none; }
-  .subtab-content.active { display: block; }
-</style>
+    @media (max-width: 768px) {
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.mobile-open { transform: translateX(0); }
+      #main-content { margin-left: 0; padding: 16px; }
+      .stat-grid { grid-template-columns: 1fr 1fr !important; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- TOAST CONTAINER -->
-<div id="toast-container"></div>
-
-<!-- SIDEBAR OVERLAY (mobile) -->
-<div id="sidebar-overlay" onclick="closeSidebar()"></div>
-
-<!-- HEADER -->
-<header id="header">
-  <button class="header-btn" id="menu-toggle" onclick="toggleSidebar()" style="padding:6px 8px;">☰</button>
-  <div class="logo" style="margin-left:8px;">
-    <span>🏃</span>
-    <div>
-      <div>ADMIN PANEL</div>
-      <span class="subtitle">Operasi & Pendaftaran</span>
-    </div>
+<header id="app-header">
+  <div class="logo">
+    🏆 <span>ADMIN</span>&nbsp;PANEL
+    <span style="font-size:11px; background:rgba(59,130,246,0.2); color:#60A5FA; padding:2px 8px; border-radius:20px; font-weight:700; letter-spacing:1px;">SETUP</span>
   </div>
-  <div class="nav-actions">
-    <div class="user-info header-text">
-      <div class="user-avatar">A</div>
-      <span id="header-username">Administrator</span>
-    </div>
-    <button class="header-btn" onclick="refreshAll()" title="Refresh"><span>🔄</span></button>
-    <button class="header-btn" style="position:relative;" title="Notifikasi">
-      🔔 <span class="badge-notif" id="notif-count">0</span>
-    </button>
-    <button class="header-btn" onclick="doLogout()"><span>🚪</span><span class="header-text">Log Keluar</span></button>
+  <div class="header-right">
+    <button class="header-btn" onclick="refreshCurrentTab()" title="Refresh">🔄</button>
+    <button class="header-btn danger" onclick="confirmLogout()">🚪 Log Keluar</button>
   </div>
 </header>
 
-<!-- SIDEBAR -->
 <nav id="sidebar">
-  <div style="padding:12px;">
-    <div style="padding:8px 12px;font-size:0.72rem;color:var(--text-muted);border-bottom:1px solid var(--border);margin-bottom:8px;">
-      <div id="reg-status-indicator" style="display:flex;align-items:center;gap:6px;">
-        <span class="dot dot-green"></span>
-        <span>Pendaftaran: <strong>Buka</strong></span>
-      </div>
-    </div>
+  <div style="padding:14px 16px 10px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:8px;">
+    <div style="font-size:11px; color:#64748B; font-weight:600;">SISTEM SUKAN</div>
+    <div style="font-size:12px; color:#94A3B8; margin-top:2px;" id="session-school">Memuatkan...</div>
   </div>
 
-  <div class="nav-section">
-    <div class="nav-section-title">Utama</div>
-    <div class="nav-item active" onclick="switchTab('murid')" id="nav-murid">
-      <span class="icon">📚</span> Data Murid
-      <span class="nav-badge" id="nav-murid-count">...</span>
-    </div>
+  <div class="nav-item active" onclick="Maps('admin')" id="nav-admin">
+    <span class="icon">📊</span> Dashboard Admin
   </div>
 
-  <div class="nav-section">
-    <div class="nav-section-title">Pengurusan Acara</div>
-    <div class="nav-item" onclick="switchTab('acara')" id="nav-acara">
-      <span class="icon">🏃</span> Jana Acara
-    </div>
-    <div class="nav-item" onclick="switchTab('lorong')" id="nav-lorong">
-      <span class="icon">🎲</span> Cabutan Lorong
-      <span class="nav-badge warn" id="nav-lorong-pending">0</span>
-    </div>
+  <div class="sidebar-section">Tetapan</div>
+  <div class="nav-item" onclick="Maps('settings')" id="nav-settings">
+    <span class="icon">⚙️</span> Tetapan
+  </div>
+  <div id="settings-submenu" style="display:none;">
+    <div class="nav-sub active" onclick="Maps('settings', 'asas')" id="sub-asas">Tetapan Asas</div>
+    <div class="nav-sub" onclick="Maps('settings', 'kategori')" id="sub-kategori">Kategori</div>
+    <div class="nav-sub" onclick="Maps('settings', 'rumah')" id="sub-rumah">Rumah Sukan</div>
+    <div class="nav-sub" onclick="Maps('settings', 'acara')" id="sub-acara">Acara Master</div>
   </div>
 
-  <div class="nav-section">
-    <div class="nav-section-title">Pendaftaran</div>
-    <div class="nav-item" onclick="switchTab('reg-semua')" id="nav-reg-semua">
-      <span class="icon">✅</span> Semua Pendaftaran
-    </div>
-    <div class="nav-item" onclick="switchTab('reg-rumah')" id="nav-reg-rumah">
-      <span class="icon">🏠</span> By Rumah
-    </div>
-    <div class="nav-item" onclick="switchTab('reg-acara')" id="nav-reg-acara">
-      <span class="icon">📋</span> By Acara
-    </div>
-    <div class="nav-item" onclick="switchTab('quota')" id="nav-quota">
-      <span class="icon">📊</span> Quota Monitor
-      <span class="nav-badge warn" id="nav-quota-warn">0</span>
-    </div>
-  </div>
-
-  <div class="nav-section">
-    <div class="nav-section-title">Laporan</div>
-    <div class="nav-item" onclick="switchTab('senarai')" id="nav-senarai">
-      <span class="icon">📄</span> Senarai Peserta
-    </div>
-  </div>
-
-  <div style="padding:12px;margin-top:8px;border-top:1px solid var(--border);">
-    <div style="font-size:0.72rem;color:var(--text-muted);text-align:center;">
-      Sistem Atletik v1.0<br>Admin Operations
-    </div>
+  <div class="sidebar-section">Pengguna</div>
+  <div class="nav-item" onclick="Maps('users')" id="nav-users">
+    <span class="icon">👥</span> Pengguna
   </div>
 </nav>
 
-<!-- MAIN CONTENT -->
-<main id="main">
+<main id="main-content">
+  <div class="breadcrumb" id="breadcrumb" style="font-size: 12px; color: #94A3B8; margin-bottom: 16px;">
+    Home <span style="margin: 0 4px;">›</span> <span id="bc-tab" style="color: #3B82F6; font-weight: 600;">Dashboard Admin</span>
+    <span id="bc-sub" style="display:none;"><span style="margin: 0 4px;">›</span> <span id="bc-sub-txt" style="color: #3B82F6; font-weight: 600;"></span></span>
+  </div>
 
-  <!-- ═══════════════════════════════════════ -->
-  <!-- TAB 1: DATA MURID -->
-  <!-- ═══════════════════════════════════════ -->
-  <div id="tab-murid" class="tab-content active">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px;">
+  <div id="pane-admin" class="tab-pane active">
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
       <div>
-        <h1 style="font-size:1.3rem;font-weight:800;">📚 Pengurusan Data Murid</h1>
-        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">Home › Data Murid</div>
+        <h1 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">📊 Dashboard Setup</h1>
+        <p style="font-size: 13px; color: #64748B; margin: 0;">Gambaran keseluruhan pangkalan data sistem</p>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;" class="no-print">
-        <button class="btn btn-primary" onclick="openModal('modal-add-student')">➕ Tambah Murid</button>
-        <button class="btn btn-outline" onclick="openModal('modal-import-csv')">📥 Import CSV</button>
-        <button class="btn btn-outline" onclick="exportStudents()">📤 Export</button>
-        <button class="btn btn-ghost" onclick="loadStudents()">🔄</button>
-      </div>
-    </div>
-
-    <!-- STATS -->
-    <div class="stat-grid" id="student-stats">
-      <div class="stat-card"><div class="stat-value" id="stat-total">—</div><div class="stat-label">Jumlah Murid</div><div class="stat-sub" id="stat-active-count">Memuat...</div></div>
-      <div class="stat-card"><div class="stat-value" style="font-size:1.1rem;" id="stat-by-house">—</div><div class="stat-label">By Rumah</div><div class="stat-sub" id="stat-house-detail"></div></div>
-      <div class="stat-card"><div class="stat-value" style="font-size:1.1rem;" id="stat-by-kategori">—</div><div class="stat-label">By Kategori</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-inactive">—</div><div class="stat-label">Tidak Aktif</div></div>
-    </div>
-
-    <!-- FILTER PANEL -->
-    <div class="filter-panel no-print">
-      <div style="font-size:0.8rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;">🔍 Tapis Murid</div>
-      <div class="filter-grid">
-        <div>
-          <div class="form-label">Rumah Sukan</div>
-          <select class="form-input" id="filter-rumah" onchange="applyFilters()">
-            <option value="">Semua Rumah</option>
-          </select>
-        </div>
-        <div>
-          <div class="form-label">Tahap</div>
-          <select class="form-input" id="filter-tahap" onchange="applyFilters()">
-            <option value="">Semua Tahap</option>
-          </select>
-        </div>
-        <div>
-          <div class="form-label">Kategori</div>
-          <select class="form-input" id="filter-kategori" onchange="applyFilters()">
-            <option value="">Semua Kategori</option>
-          </select>
-        </div>
-        <div>
-          <div class="form-label">Jantina</div>
-          <select class="form-input" id="filter-jantina" onchange="applyFilters()">
-            <option value="">Semua</option>
-            <option value="L">Lelaki</option>
-            <option value="P">Perempuan</option>
-          </select>
-        </div>
-        <div>
-          <div class="form-label">Status</div>
-          <select class="form-input" id="filter-status" onchange="applyFilters()">
-            <option value="">Semua</option>
-            <option value="1">Aktif</option>
-            <option value="0">Tidak Aktif</option>
-          </select>
-        </div>
-        <div>
-          <div class="form-label">Carian</div>
-          <input type="text" class="form-input" id="filter-search" placeholder="Nama atau No. KP..." oninput="debounceSearch(this.value)">
-        </div>
-      </div>
-      <div style="margin-top:10px;display:flex;gap:8px;">
-        <button class="btn btn-outline btn-sm" onclick="resetFilters()">🔄 Reset</button>
-        <button class="btn btn-primary btn-sm" onclick="applyFilters()">🔍 Tapis</button>
-      </div>
-    </div>
-
-    <!-- RESULTS INFO -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-      <div style="font-size:0.8rem;color:var(--text-muted);" id="student-count-info">Memuat...</div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:0.78rem;color:var(--text-muted);">Per halaman:</span>
-        <select class="form-input" style="width:80px;padding:4px 8px;font-size:0.78rem;" id="per-page" onchange="loadStudents(1)">
-          <option value="10">10</option>
-          <option value="20" selected>20</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- TABLE (desktop) -->
-    <div class="card no-print" style="display:block;" id="student-table-wrap">
-      <div class="table-wrap">
-        <table id="student-table">
-          <thead>
-            <tr>
-              <th style="width:40px;">Bil</th>
-              <th onclick="sortStudents('no_kp')">No. KP ↕</th>
-              <th onclick="sortStudents('nama')">Nama ↕</th>
-              <th onclick="sortStudents('tahap')">Tahap/Kelas ↕</th>
-              <th>Rumah / Kategori</th>
-              <th style="width:100px;text-align:center;">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="student-tbody">
-            <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">
-              <div class="spinner" style="margin:0 auto 8px;"></div>
-              Memuatkan data...
-            </td></tr>
-          </tbody>
-        </table>
-      </div>
-      <!-- PAGINATION -->
-      <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-        <div style="font-size:0.78rem;color:var(--text-muted);" id="pagination-info"></div>
-        <div class="pagination" id="student-pagination"></div>
-      </div>
-    </div>
-  </div><!-- /tab-murid -->
-
-  <!-- ═══════════════════════════════════════ -->
-  <!-- TAB 2: JANA ACARA -->
-  <!-- ═══════════════════════════════════════ -->
-  <div id="tab-acara" class="tab-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px;">
       <div>
-        <h1 style="font-size:1.3rem;font-weight:800;">🏃 Jana Acara Pertandingan</h1>
-        <div style="font-size:0.78rem;color:var(--text-muted);">Home › Pengurusan Acara › Jana Acara</div>
+        <button class="btn btn-primary btn-sm" onclick="loadDashboard()">🔄 Refresh Data</button>
       </div>
     </div>
 
-    <!-- STATUS BAR -->
-    <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));">
-      <div class="stat-card"><div class="stat-value" id="stat-masters">48</div><div class="stat-label">Jumlah Master</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-events-gen">—</div><div class="stat-label">Events Dijana</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-events-pending">—</div><div class="stat-label">Belum Dijana</div></div>
-    </div>
-
-    <!-- EVENT MASTERS LIST -->
-    <div id="event-masters-list">
-      <div style="text-align:center;padding:40px;color:var(--text-muted);">
-        <div class="spinner" style="margin:0 auto 8px;"></div>Memuatkan event masters...
+    <div class="stat-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px;">
+      <div class="stat-card" onclick="Maps('settings', 'rumah')">
+        <div style="display:flex; justify-content:space-between;">
+          <div>
+            <div class="stat-num" id="stat-rumah" style="color:#10B981;">—</div>
+            <div class="stat-label">Rumah Sukan</div>
+          </div>
+          <div class="stat-icon">🏠</div>
+        </div>
+      </div>
+      <div class="stat-card" onclick="Maps('settings', 'acara')">
+        <div style="display:flex; justify-content:space-between;">
+          <div>
+            <div class="stat-num" id="stat-acara" style="color:#6366F1;">—</div>
+            <div class="stat-label">Acara Master</div>
+          </div>
+          <div class="stat-icon">🏃</div>
+        </div>
+      </div>
+      <div class="stat-card" onclick="Maps('users')">
+        <div style="display:flex; justify-content:space-between;">
+          <div>
+            <div class="stat-num" id="stat-users" style="color:#F59E0B;">—</div>
+            <div class="stat-label">Pengguna</div>
+          </div>
+          <div class="stat-icon">👥</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div style="display:flex; justify-content:space-between;">
+          <div>
+            <div class="stat-num" id="stat-murid" style="color:#3B82F6;">—</div>
+            <div class="stat-label">Penyertaan</div>
+          </div>
+          <div class="stat-icon">📚</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════ -->
-  <!-- TAB 3: CABUTAN LORONG -->
-  <!-- ═══════════════════════════════════════ -->
-  <div id="tab-lorong" class="tab-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px;">
-      <div>
-        <h1 style="font-size:1.3rem;font-weight:800;">🎲 Cabutan Lorong</h1>
-        <div style="font-size:0.78rem;color:var(--text-muted);">Home › Pengurusan Acara › Cabutan Lorong</div>
+  <div id="pane-settings" class="tab-pane">
+    <h1 style="font-size: 20px; font-weight: 800; margin: 0 0 16px;">⚙️ Tetapan Sistem</h1>
+    <div class="subtab-nav">
+      <button class="subtab-btn active" onclick="showSubTab('asas')" id="stab-asas">⚙️ Tetapan Asas</button>
+      <button class="subtab-btn" onclick="showSubTab('kategori')" id="stab-kategori">📋 Kategori</button>
+      <button class="subtab-btn" onclick="showSubTab('rumah')" id="stab-rumah">🏠 Rumah Sukan</button>
+      <button class="subtab-btn" onclick="showSubTab('acara')" id="stab-acara">🏃 Acara Master</button>
+    </div>
+
+    <div id="stpane-asas" class="tab-pane active">
+      <div class="card" style="max-width: 600px;">
+        <div class="card-header">🏫 <div class="card-title">Maklumat Tournament</div></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Nama Tournament</label>
+            <input class="form-control" id="set-tournament-name" oninput="markDirty()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bilangan Lorong Track</label>
+            <input type="number" class="form-control" id="set-track-lanes" oninput="markDirty()">
+          </div>
+          <div style="display:flex; gap:8px; margin-top:16px;">
+            <button class="btn btn-primary" onclick="saveSettings()" id="btn-save-settings" disabled>💾 Simpan</button>
+          </div>
+        </div>
       </div>
-      <div>
-        <button class="btn btn-primary" onclick="drawAllPending()">🎲 Cabut Semua Pending</button>
+    </div>
+
+    <div id="stpane-kategori" class="tab-pane">
+      <div class="card">
+        <div class="card-header">📋 <div class="card-title">Senarai Kategori</div></div>
+        <div class="card-body">
+          <table class="data-table">
+            <thead><tr><th>Kod</th><th>Nama Kategori</th><th>Status</th></tr></thead>
+            <tbody id="kategori-tbody"><tr><td colspan="3">Memuatkan...</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));">
-      <div class="stat-card"><div class="stat-value" id="stat-track-total">—</div><div class="stat-label">Track Events</div></div>
-      <div class="stat-card"><div class="stat-value text-green-600" id="stat-draw-done">—</div><div class="stat-label">✅ Selesai</div></div>
-      <div class="stat-card"><div class="stat-value text-orange-500" id="stat-draw-pending">—</div><div class="stat-label">⏳ Pending</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-track-lanes">—</div><div class="stat-label">Lorong</div></div>
+    <div id="stpane-rumah" class="tab-pane">
+      <div class="card">
+        <div class="card-header">🏠 <div class="card-title">Senarai Rumah Sukan</div></div>
+        <div class="card-body">
+          <table class="data-table">
+            <thead><tr><th>ID Rumah</th><th>Nama Rumah</th><th>Warna</th></tr></thead>
+            <tbody id="rumah-tbody"><tr><td colspan="3">Memuatkan...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
-    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;" class="no-print">
-      <select class="form-input" style="width:150px;" id="lorong-filter-status" onchange="loadLanesTab()">
-        <option value="">Semua</option>
-        <option value="done">✅ Selesai</option>
-        <option value="pending">⏳ Pending</option>
-      </select>
-      <select class="form-input" style="width:150px;" id="lorong-filter-kategori" onchange="loadLanesTab()">
-        <option value="">Semua Kategori</option>
-      </select>
-    </div>
-
-    <div id="lorong-list">
-      <div style="text-align:center;padding:40px;color:var(--text-muted);">
-        <div class="spinner" style="margin:0 auto 8px;"></div>Memuatkan...
+    <div id="stpane-acara" class="tab-pane">
+      <div class="card">
+        <div class="card-header">🏃 <div class="card-title">Acara Master</div></div>
+        <div class="card-body">
+          <table class="data-table">
+            <thead><tr><th>Kod</th><th>Nama Acara</th><th>Jenis</th></tr></thead>
+            <tbody id="acara-tbody"><tr><td colspan="3">Memuatkan...</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════ -->
-  <!-- TAB 4: SEMUA PENDAFTARAN -->
-  <!-- ═══════════════════════════════════════ -->
-  <div id="tab-reg-semua" class="tab-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px;">
-      <div>
-        <h1 style="font-size:1.3rem;font-weight:800;">✅ Semua Pendaftaran</h1>
-        <div style="font-size:0.78rem;color:var(--text-muted);">Home › Pendaftaran › Semua</div>
-      </div>
-      <div style="display:flex;gap:8px;" class="no-print">
-        <button class="btn btn-primary" onclick="openModal('modal-admin-reg')">➕ Admin Override</button>
-        <button class="btn btn-outline" onclick="exportRegistrations()">📊 Export</button>
-        <button class="btn btn-ghost" onclick="loadRegistrations()">🔄</button>
-      </div>
-    </div>
-
-    <div class="stat-grid">
-      <div class="stat-card"><div class="stat-value" id="stat-reg-total">—</div><div class="stat-label">Jumlah Pendaftaran</div></div>
-      <div class="stat-card"><div class="stat-value" style="color:var(--success);" id="stat-reg-active">—</div><div class="stat-label">✅ Aktif</div></div>
-      <div class="stat-card"><div class="stat-value" style="color:var(--danger);" id="stat-reg-withdrawn">—</div><div class="stat-label">❌ Ditarik</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-reg-events">—</div><div class="stat-label">Acara Berdaftar</div></div>
-    </div>
-
-    <div class="filter-panel no-print">
-      <div class="filter-grid">
-        <div>
-          <div class="form-label">Rumah</div>
-          <select class="form-input" id="reg-filter-rumah" onchange="loadRegistrations()">
-            <option value="">Semua Rumah</option>
-          </select>
-        </div>
-        <div>
-          <div class="form-label">Acara</div>
-          <select class="form-input" id="reg-filter-acara" onchange="loadRegistrations()">
-            <option value="">Semua Acara</option>
-          </select>
-        </div>
-        <div>
-          <div class="form-label">Status</div>
-          <select class="form-input" id="reg-filter-status" onchange="loadRegistrations()">
-            <option value="ACTIVE">Aktif</option>
-            <option value="">Semua</option>
-            <option value="WITHDRAWN">Ditarik</option>
-          </select>
-        </div>
-        <div>
-          <div class="form-label">Carian</div>
-          <input type="text" class="form-input" id="reg-search" placeholder="Nama atau acara..." oninput="debounceRegSearch(this.value)">
-        </div>
-      </div>
-    </div>
-
+  <div id="pane-users" class="tab-pane">
     <div class="card">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:40px;">Bil</th>
-              <th>Murid</th>
-              <th>Rumah</th>
-              <th>Acara</th>
-              <th>Tarikh Daftar</th>
-              <th>Status</th>
-              <th style="width:60px;text-align:center;">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="reg-tbody">
-            <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">
-              <div class="spinner" style="margin:0 auto 8px;"></div>Memuatkan...
-            </td></tr>
-          </tbody>
+      <div class="card-header">👥 <div class="card-title">Senarai Pengguna Sistem</div></div>
+      <div class="card-body">
+        <table class="data-table">
+          <thead><tr><th>Nama</th><th>Username</th><th>Peranan</th></tr></thead>
+          <tbody id="users-tbody"><tr><td colspan="3">Memuatkan...</td></tr></tbody>
         </table>
       </div>
-      <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-        <div style="font-size:0.78rem;color:var(--text-muted);" id="reg-count-info"></div>
-        <div class="pagination" id="reg-pagination"></div>
-      </div>
     </div>
   </div>
-
-  <!-- ═══════════════════════════════════════ -->
-  <!-- TAB 5: BY RUMAH -->
-  <!-- ═══════════════════════════════════════ -->
-  <div id="tab-reg-rumah" class="tab-content">
-    <div style="margin-bottom:1.5rem;">
-      <h1 style="font-size:1.3rem;font-weight:800;">🏠 Pendaftaran By Rumah</h1>
-      <div style="font-size:0.78rem;color:var(--text-muted);">Home › Pendaftaran › By Rumah</div>
-    </div>
-    <div id="reg-by-rumah-content">
-      <div style="text-align:center;padding:40px;color:var(--text-muted);">
-        <div class="spinner" style="margin:0 auto 8px;"></div>Memuatkan...
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════ -->
-  <!-- TAB 6: BY ACARA -->
-  <!-- ═══════════════════════════════════════ -->
-  <div id="tab-reg-acara" class="tab-content">
-    <div style="margin-bottom:1.5rem;">
-      <h1 style="font-size:1.3rem;font-weight:800;">📋 Pendaftaran By Acara</h1>
-      <div style="font-size:0.78rem;color:var(--text-muted);">Home › Pendaftaran › By Acara</div>
-    </div>
-    <div class="filter-panel no-print">
-      <div class="filter-grid">
-        <div>
-          <div class="form-label">Jenis Acara</div>
-          <select class="form-input" id="acara-filter-type" onchange="loadRegByAcara()">
-            <option value="">Semua</option>
-            <option value="TRACK">Track</option>
-            <option value="FIELD">Field</option>
-            <option value="RELAY">Relay</option>
-          </select>
-        </div>
-        <div>
-          <div class="form-label">Kategori</div>
-          <select class="form-input" id="acara-filter-kat" onchange="loadRegByAcara()">
-            <option value="">Semua</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div id="reg-by-acara-content">
-      <div style="text-align:center;padding:40px;color:var(--text-muted);">
-        <div class="spinner" style="margin:0 auto 8px;"></div>Memuatkan...
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════ -->
-  <!-- TAB 7: QUOTA MONITOR -->
-  <!-- ═══════════════════════════════════════ -->
-  <div id="tab-quota" class="tab-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px;">
-      <div>
-        <h1 style="font-size:1.3rem;font-weight:800;">📊 Quota Monitor</h1>
-        <div style="font-size:0.78rem;color:var(--text-muted);">Home › Pendaftaran › Quota Monitor</div>
-      </div>
-      <button class="btn btn-ghost" onclick="loadQuotaMonitor()">🔄 Refresh</button>
-    </div>
-    <div id="quota-content">
-      <div style="text-align:center;padding:40px;color:var(--text-muted);">
-        <div class="spinner" style="margin:0 auto 8px;"></div>Memuatkan...
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════ -->
-  <!-- TAB 8: SENARAI PESERTA -->
-  <!-- ═══════════════════════════════════════ -->
-  <div id="tab-senarai" class="tab-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px;">
-      <div>
-        <h1 style="font-size:1.3rem;font-weight:800;">📄 Senarai Peserta</h1>
-        <div style="font-size:0.78rem;color:var(--text-muted);">Home › Senarai Peserta</div>
-      </div>
-      <button class="btn btn-primary no-print" onclick="printSenarai()">🖨️ Cetak</button>
-    </div>
-    <div class="filter-panel no-print">
-      <div class="filter-grid">
-        <div>
-          <div class="form-label">Acara</div>
-          <select class="form-input" id="senarai-filter-acara" onchange="loadSenarai()">
-            <option value="">Pilih Acara...</option>
-          </select>
-        </div>
-        <div>
-          <div class="form-label">Rumah</div>
-          <select class="form-input" id="senarai-filter-rumah" onchange="loadSenarai()">
-            <option value="">Semua Rumah</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div id="senarai-content">
-      <div class="info-box">Sila pilih acara untuk melihat senarai peserta.</div>
-    </div>
-  </div>
-
 </main>
 
-<!-- FOOTER -->
-<div style="margin-left:var(--sidebar-w);padding:12px 1.5rem;border-top:1px solid var(--border);background:white;font-size:0.75rem;color:var(--text-muted);text-align:center;" id="footer-wrap">
-  © 2025 Sistem Atletik v1.0 | Admin Operations Panel
-</div>
+<div id="toast-container"></div>
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- MODALS -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-
-<!-- ADD/EDIT STUDENT MODAL -->
-<div class="modal-overlay" id="modal-add-student">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <div class="modal-title" id="modal-student-title">➕ Tambah Murid Baru</div>
-      <button class="close-btn" onclick="closeModal('modal-add-student')">✕</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="edit-student-kp">
-      <div class="form-group">
-        <label class="form-label">No. Kad Pengenalan (IC)<span class="req">*</span></label>
-        <input type="text" class="form-input" id="input-nokp" placeholder="040512-01-1234" maxlength="14" oninput="onICInput(this.value)" autocomplete="off">
-        <div class="form-hint">Format: YYMMDD-XX-XXXY</div>
-        <div id="ic-derive-result" style="margin-top:8px;"></div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Nama Penuh<span class="req">*</span></label>
-        <input type="text" class="form-input" id="input-nama" placeholder="Ahmad Ali bin Ahmad" maxlength="100">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Tahap<span class="req">*</span></label>
-          <select class="form-input" id="input-tahap">
-            <option value="">Pilih Tahap</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Kelas<span class="req">*</span></label>
-          <input type="text" class="form-input" id="input-kelas" placeholder="cth: Amal, Bestari...">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Rumah Sukan<span class="req">*</span></label>
-        <div class="house-selector" id="house-selector-add">
-          <!-- Filled dynamically -->
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label" style="color:var(--text-muted);">Maklumat Wali (Pilihan)</label>
-        <div class="form-row">
-          <input type="email" class="form-input" id="input-email-wali" placeholder="Email wali">
-          <input type="tel" class="form-input" id="input-phone-wali" placeholder="No. telefon wali">
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-add-student')">Batal</button>
-      <button class="btn btn-primary" onclick="submitStudent()">💾 Simpan Murid</button>
-    </div>
+<div class="loading-overlay" id="loading-overlay">
+  <div style="text-align:center;">
+    <div class="spinner"></div>
+    <div style="margin-top:10px; font-size:12px; color:#64748B;" id="loading-msg">Memuatkan...</div>
   </div>
 </div>
 
-<!-- VIEW STUDENT MODAL -->
-<div class="modal-overlay" id="modal-view-student">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <div class="modal-title">👁️ Maklumat Murid</div>
-      <button class="close-btn" onclick="closeModal('modal-view-student')">✕</button>
-    </div>
-    <div class="modal-body" id="view-student-body">
-      <div style="text-align:center;padding:30px;"><div class="spinner" style="margin:0 auto;"></div></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-view-student')">Tutup</button>
-      <button class="btn btn-primary" id="btn-edit-from-view">✏️ Edit Murid</button>
-    </div>
-  </div>
-</div>
-
-<!-- DELETE CONFIRM MODAL -->
-<div class="modal-overlay" id="modal-delete-confirm">
-  <div class="modal modal-sm">
-    <div class="modal-header">
-      <div class="modal-title" style="color:var(--danger);">⚠️ Padam Murid</div>
-      <button class="close-btn" onclick="closeModal('modal-delete-confirm')">✕</button>
-    </div>
-    <div class="modal-body" id="delete-confirm-body"></div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-delete-confirm')">Batal</button>
-      <button class="btn btn-danger" id="btn-confirm-delete">🗑️ Ya, Padam</button>
-    </div>
-  </div>
-</div>
-
-<!-- CSV IMPORT MODAL -->
-<div class="modal-overlay" id="modal-import-csv">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <div class="modal-title">📥 Import Murid (CSV)</div>
-      <button class="close-btn" onclick="closeModal('modal-import-csv')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="info-box" style="margin-bottom:12px;">
-        <strong>Format CSV:</strong><br>
-        <code style="font-family:monospace;font-size:0.78rem;">no_kp,nama,tahap,kelas,id_rumah<br>040512-01-1234,Ahmad Ali,5,Amal,1</code>
-      </div>
-      <div style="margin-bottom:12px;">
-        <button class="btn btn-outline btn-sm" onclick="downloadCSVTemplate()">📥 Download Template CSV</button>
-      </div>
-      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-file').click()">
-        <div style="font-size:2rem;margin-bottom:8px;">📁</div>
-        <div style="font-weight:600;">Klik atau drag & drop fail CSV</div>
-        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">Hanya fail .csv diterima</div>
-        <input type="file" id="csv-file" accept=".csv" style="display:none;" onchange="handleCSVFile(this)">
-      </div>
-      <div id="csv-validate-result" style="margin-top:12px;display:none;">
-        <div id="csv-result-content"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-import-csv')">Batal</button>
-      <button class="btn btn-warning" id="btn-validate-csv" onclick="validateCSV()" style="display:none;">🔍 Validate</button>
-      <button class="btn btn-primary" id="btn-import-csv" onclick="importCSV()" style="display:none;">💾 Import</button>
-    </div>
-  </div>
-</div>
-
-<!-- GENERATE EVENTS MODAL -->
-<div class="modal-overlay" id="modal-generate-event">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <div class="modal-title" id="gen-event-title">🚀 Jana Acara</div>
-      <button class="close-btn" onclick="closeModal('modal-generate-event')">✕</button>
-    </div>
-    <div class="modal-body" id="gen-event-body"></div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-generate-event')">Batal</button>
-      <button class="btn btn-primary" onclick="submitGenerateEvent()">🚀 Jana Acara</button>
-    </div>
-  </div>
-</div>
-
-<!-- DRAW LANES MODAL -->
-<div class="modal-overlay" id="modal-draw-lanes">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="draw-modal-title">🎲 Cabut Lorong</div>
-      <button class="close-btn" onclick="closeModal('modal-draw-lanes')">✕</button>
-    </div>
-    <div class="modal-body" id="draw-modal-body"></div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-draw-lanes')">Batal</button>
-      <button class="btn btn-primary" onclick="submitDrawLanes()">🎲 Laksana Cabutan</button>
-    </div>
-  </div>
-</div>
-
-<!-- LANE RESULTS MODAL -->
-<div class="modal-overlay" id="modal-lane-results">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <div class="modal-title" id="lane-results-title">✅ Keputusan Cabutan Lorong</div>
-      <button class="close-btn" onclick="closeModal('modal-lane-results')">✕</button>
-    </div>
-    <div class="modal-body" id="lane-results-body"></div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-lane-results')">Tutup</button>
-      <button class="btn btn-primary" onclick="printLanes()">📄 Cetak</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADMIN REGISTER MODAL -->
-<div class="modal-overlay" id="modal-admin-reg">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">➕ Admin Override - Daftar Murid</div>
-      <button class="close-btn" onclick="closeModal('modal-admin-reg')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="warn-box" style="margin-bottom:12px;">⚠️ Pendaftaran admin override akan bypass semua semakan quota.</div>
-      <div class="form-group">
-        <label class="form-label">No. KP Murid<span class="req">*</span></label>
-        <input type="text" class="form-input" id="admin-reg-nokp" placeholder="040512-01-1234">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Kod Acara<span class="req">*</span></label>
-        <select class="form-input" id="admin-reg-acara">
-          <option value="">Pilih Acara...</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Catatan</label>
-        <textarea class="form-input" id="admin-reg-notes" rows="2" placeholder="Sebab override..."></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-admin-reg')">Batal</button>
-      <button class="btn btn-primary" onclick="submitAdminReg()">✅ Daftar</button>
-    </div>
-  </div>
-</div>
-
-<!-- WITHDRAW CONFIRM MODAL -->
-<div class="modal-overlay" id="modal-withdraw">
-  <div class="modal modal-sm">
-    <div class="modal-header">
-      <div class="modal-title" style="color:var(--danger);">❌ Tarik Pendaftaran</div>
-      <button class="close-btn" onclick="closeModal('modal-withdraw')">✕</button>
-    </div>
-    <div class="modal-body" id="withdraw-body"></div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-withdraw')">Batal</button>
-      <button class="btn btn-danger" id="btn-confirm-withdraw">❌ Ya, Tarik</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- JAVASCRIPT -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
 <script>
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// GLOBAL STATE
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const APP = {
-  session: { username: 'admin', full_name: 'Administrator', role: 'Admin', id_rumah: null },
-  currentTab: 'murid',
-  rumahList: [],
-  kategoriList: [],
-  eventMasters: [],
-  settings: {},
-  students: { data: [], page: 1, perPage: 20, total: 0, filters: {}, sort: 'nama', sortDir: 1 },
-  regs: { data: [], page: 1, perPage: 20, total: 0 },
-  csvData: null,
-  pendingDeleteKP: null,
-  pendingWithdrawId: null,
-  pendingGenerateMaster: null,
-  pendingDrawEvent: null,
-  searchTimer: null,
-};
+let currentTab = 'admin';
+let currentSubTab = 'asas';
+let settingsDirty = false;
+let SCRIPT_URL = '';
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// GAS API WRAPPER (Replace google.script.run calls)
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function gasRun(fnName, params) {
-  return new Promise((resolve, reject) => {
-    if (typeof google !== 'undefined' && google.script) {
+const API = {
+  call(fn, params={}) {
+    return new Promise((resolve, reject) => {
+      if (typeof google === 'undefined') {
+        showToast('Local Mock Data', 'warning');
+        resolve({success: true, data: []});
+        return;
+      }
+      
       google.script.run
         .withSuccessHandler(resolve)
-        .withFailureHandler(reject)
-        [fnName](params);
-    } else {
-      // MOCK DATA for development/preview
-      setTimeout(() => resolve(mockAPI(fnName, params)), 400 + Math.random()*300);
-    }
-  });
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// MOCK API (Development mode)
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function mockAPI(fn, params) {
-  const mockRumah = [
-    { id_rumah: 1, nama_rumah: 'MERAH', warna: '#EF4444' },
-    { id_rumah: 2, nama_rumah: 'BIRU', warna: '#3B82F6' },
-    { id_rumah: 3, nama_rumah: 'HIJAU', warna: '#10B981' },
-    { id_rumah: 4, nama_rumah: 'KUNING', warna: '#F59E0B' },
-  ];
-  const mockKat = [
-    { id_kategori: 1, kod: 'L1', nama: 'Lelaki 10-12 thn', jantina: 'L' },
-    { id_kategori: 2, kod: 'L2', nama: 'Lelaki 13-14 thn', jantina: 'L' },
-    { id_kategori: 3, kod: 'P1', nama: 'Perempuan 10-12 thn', jantina: 'P' },
-    { id_kategori: 4, kod: 'P2', nama: 'Perempuan 13-14 thn', jantina: 'P' },
-  ];
-  const mockStudents = Array.from({length: 50}, (_, i) => ({
-    no_kp: `0${String(i).padStart(5,'0')}-0${(i%9)+1}-${String(1000+i)}`,
-    nama: ['Ahmad Ali', 'Siti Aminah', 'Hafiz Rahman', 'Nurul Ain', 'Faiz Ismail'][i%5] + ` ${i+1}`,
-    tahap: (i % 6) + 1,
-    kelas: ['Amal','Bestari','Cemerlang','Dedikasi'][i%4],
-    id_rumah: (i%4)+1,
-    nama_rumah: mockRumah[i%4].nama_rumah,
-    warna_rumah: mockRumah[i%4].warna,
-    id_kategori: (i%4)+1,
-    kod_kategori: mockKat[i%4].kod,
-    jantina: i%2===0?'L':'P',
-    umur: 10 + (i%7),
-    is_active: i % 15 !== 0,
-  }));
-
-  switch(fn) {
-    case 'getRumah': return { success: true, data: mockRumah };
-    case 'getKategori': return { success: true, data: mockKat };
-    case 'getSettings': return { success: true, settings: { registration_open: true, track_lanes: 8, school_type: 'RENDAH', level_term: 'Darjah' } };
-    case 'getStudents': {
-      const page = params?.page || 1;
-      const perPage = params?.perPage || 20;
-      const start = (page-1)*perPage;
-      return { success: true, students: mockStudents.slice(start, start+perPage), pagination: { current_page: page, per_page: perPage, total_records: 200, total_pages: Math.ceil(200/perPage) }, stats: { total: 200, active: 185, inactive: 15, by_house: mockRumah.map(r => ({...r, count: 50})), by_kategori: mockKat.map(k => ({...k, count: 50})) } };
-    }
-    case 'getStudentById': return { success: true, student: mockStudents[0] };
-    case 'createStudent': return { success: true, message: 'Murid berjaya ditambah', no_kp: params.no_kp };
-    case 'updateStudent': return { success: true, message: 'Murid berjaya dikemaskini' };
-    case 'deleteStudent': return { success: true, message: 'Murid berjaya dipadam' };
-    case 'searchStudents': return { success: true, students: mockStudents.slice(0,5) };
-    case 'importStudentsCSV': return { success: true, imported: 45, errors: [] };
-    case 'getEventMasters': return { success: true, masters: [
-      { id: 1, kod: 'T100', nama: '100 Meter Sprint', jenis: 'Individu', event_type: 'TRACK', requires_lanes: true },
-      { id: 2, kod: 'T200', nama: '200 Meter Sprint', jenis: 'Individu', event_type: 'TRACK', requires_lanes: true },
-      { id: 3, kod: 'T400', nama: '400 Meter', jenis: 'Individu', event_type: 'TRACK', requires_lanes: true },
-      { id: 4, kod: 'MLJ', nama: 'Lompat Jauh', jenis: 'Individu', event_type: 'FIELD', requires_lanes: false },
-      { id: 5, kod: 'MTJ', nama: 'Terjun Jauh', jenis: 'Individu', event_type: 'FIELD', requires_lanes: false },
-      { id: 6, kod: 'R4X100', nama: '4x100 Meter Relay', jenis: 'Kumpulan', event_type: 'RELAY', requires_lanes: true },
-    ]};
-    case 'getEvents': return { success: true, events: [
-      { no_acara: 'T100L1', nama_display: '100M Lelaki 10-12', event_type: 'TRACK', requires_lanes: true, jantina: 'L', had_peserta_per_rumah: 2, registered_count: 7 },
-      { no_acara: 'T100L2', nama_display: '100M Lelaki 13-14', event_type: 'TRACK', requires_lanes: true, jantina: 'L', had_peserta_per_rumah: 2, registered_count: 8 },
-      { no_acara: 'T200L1', nama_display: '200M Lelaki 10-12', event_type: 'TRACK', requires_lanes: true, jantina: 'L', had_peserta_per_rumah: 2, registered_count: 24 },
-      { no_acara: 'T200P1', nama_display: '200M Perempuan 10-12', event_type: 'TRACK', requires_lanes: true, jantina: 'P', had_peserta_per_rumah: 2, registered_count: 20 },
-    ]};
-    case 'generateEvents': return { success: true, message: `Berjaya jana ${params.kategori_ids?.length || 4} acara`, events: ['T100L1','T100L2','T100P1','T100P2'] };
-    case 'getLaneConfig': return { success: true, lanes: { 1: [{lane:2,no_kp:'001',nama:'Ahmad Ali',rumah:'MERAH',warna:'#EF4444'},{lane:4,no_kp:'002',nama:'Hafiz Ahmad',rumah:'BIRU',warna:'#3B82F6'},{lane:5,no_kp:'003',nama:'Ali Hassan',rumah:'HIJAU',warna:'#10B981'},{lane:6,no_kp:'004',nama:'Faiz Ismail',rumah:'KUNING',warna:'#F59E0B'}] } };
-    case 'drawLanes': return { success: true, message: 'Cabutan berjaya', heats: 1, participants: 8, lanes: { 1: [{lane:1,no_kp:'001',nama:'Ahmad Ali',rumah:'MERAH',warna:'#EF4444'},{lane:2,no_kp:'002',nama:'Hafiz Ahmad',rumah:'BIRU',warna:'#3B82F6'},{lane:4,no_kp:'003',nama:'Ali Hassan',rumah:'HIJAU',warna:'#10B981'},{lane:6,no_kp:'004',nama:'Faiz Ismail',rumah:'KUNING',warna:'#F59E0B'}] } };
-    case 'getRegistrations': return { success: true, registrations: Array.from({length:20},(_,i)=>({id_reg:i+1,no_kp:`00000${i}-01-100${i}`,nama:['Ahmad','Siti','Hafiz','Nurul'][i%4]+` ${i+1}`,nama_rumah:['MERAH','BIRU','HIJAU','KUNING'][i%4],warna_rumah:['#EF4444','#3B82F6','#10B981','#F59E0B'][i%4],no_acara:['T100L1','T100L2','MLJ','T200P1'][i%4],nama_acara:['100M L1','100M L2','Lompat Jauh','200M P1'][i%4],registered_at:'2025-03-01T09:00:00',status:'ACTIVE',kod_kategori:['L1','L2','P1','P2'][i%4]})), pagination: {current_page:1,per_page:20,total_records:156,total_pages:8}, stats: {total:156,active:150,withdrawn:6,events_with_reg:48} };
-    case 'registerStudent': return { success: true, message: 'Murid berjaya didaftarkan' };
-    case 'withdrawRegistration': return { success: true, message: 'Pendaftaran berjaya ditarik' };
-    case 'getRegistrationReport': return { success: true, report: { total: 156, by_house: [{id_rumah:1,nama:'MERAH',warna:'#EF4444',count:42},{id_rumah:2,nama:'BIRU',warna:'#3B82F6',count:38},{id_rumah:3,nama:'HIJAU',warna:'#10B981',count:40},{id_rumah:4,nama:'KUNING',warna:'#F59E0B',count:36}], by_event: [{no_acara:'T100L1',nama:'100M L1',count:7,quota:8,percent:87.5},{no_acara:'T100L2',nama:'100M L2',count:8,quota:8,percent:100},{no_acara:'T200L1',nama:'200M L1',count:6,quota:8,percent:75},{no_acara:'MLJ',nama:'Lompat Jauh',count:4,quota:8,percent:50}] } };
-    default: return { success: true, message: 'OK' };
+        .withFailureHandler((error) => {
+          showToast('Ralat pelayan: ' + error.message, 'error');
+          console.error(error);
+          reject(error);
+        })
+        [fn](params);
+    });
   }
-}
+};
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// INIT
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-window.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('header-username').textContent = APP.session.full_name;
-  await loadReferenceData();
-  loadStudents();
+document.addEventListener('DOMContentLoaded', () => {
+  // Praset URL bagi mengelak ralat Iframe
+  if (typeof google !== 'undefined' && google.script) {
+    google.script.run.withSuccessHandler(url => SCRIPT_URL = url).getScriptUrl();
+  }
+  initApp();
 });
 
-async function loadReferenceData() {
-  try {
-    const [r, k, s] = await Promise.all([
-      gasRun('getRumah', {}),
-      gasRun('getKategori', {}),
-      gasRun('getSettings', {}),
-    ]);
-    if (r.success) APP.rumahList = r.data;
-    if (k.success) APP.kategoriList = k.data;
-    if (s.success) APP.settings = s.settings;
-    // Helper: ambil nilai dari settings sahaja
-    window.getSetting = (key) => {
-      const val = APP.settings[key];
-      if (val === undefined || val === null || val === '') {
-        console.warn('[Settings] Key tidak ditemui:', key);
-        return null;
-      }
-      return val;
-    };
-
-    // Populate filter dropdowns
-    populateRumahSelects();
-    populateKategoriSelects();
-    populateTahapSelect();
-
-    // Build house selector in modal
-    buildHouseSelector();
-
-    // Update registration status
-    const regOpen = getSetting('registration_open');
-    const indicator = document.getElementById('reg-status-indicator');
-    indicator.innerHTML = `<span class="dot ${regOpen ? 'dot-green' : 'dot-red'}"></span>
-      <span>Pendaftaran: <strong>${regOpen ? 'Buka' : 'Tutup'}</strong></span>`;
-
-  } catch(e) { showToast('Ralat memuatkan data rujukan', 'error'); }
+async function initApp() {
+  await loadDashboard();
+  await loadSettings();
+  await loadKategori();
+  await loadRumah();
+  await loadAcara();
+  await loadUsers();
 }
 
-function populateRumahSelects() {
-  const selects = ['filter-rumah','reg-filter-rumah','senarai-filter-rumah'];
-  selects.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    APP.rumahList.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r.id_rumah;
-      opt.textContent = r.nama_rumah;
-      el.appendChild(opt);
-    });
-  });
-  // Lorong kategori filter
-  const lk = document.getElementById('lorong-filter-kategori');
-  if (lk) APP.kategoriList.forEach(k => {
-    const opt = document.createElement('option');
-    opt.value = k.kod; opt.textContent = k.kod + ' - ' + k.nama;
-    lk.appendChild(opt);
-  });
-}
-
-function populateKategoriSelects() {
-  const el = document.getElementById('filter-kategori');
-  if (el) APP.kategoriList.forEach(k => {
-    const opt = document.createElement('option');
-    opt.value = k.id_kategori; opt.textContent = k.kod + ' - ' + k.nama;
-    el.appendChild(opt);
-  });
-  const ak = document.getElementById('acara-filter-kat');
-  if (ak) APP.kategoriList.forEach(k => {
-    const opt = document.createElement('option');
-    opt.value = k.id_kategori; opt.textContent = k.kod;
-    ak.appendChild(opt);
-  });
-}
-
-function populateTahapSelect() {
-  const el = document.getElementById('input-tahap');
-  const fEl = document.getElementById('filter-tahap');
-  const term = getSetting('level_term') || 'Darjah'; // fallback display sahaja
-  const max = getSetting('school_type') === 'MENENGAH' ? 5 : 6;
-  for (let i = 1; i <= max; i++) {
-    if (el) { const o = document.createElement('option'); o.value = i; o.textContent = `${term} ${i}`; el.appendChild(o); }
-    if (fEl) { const o = document.createElement('option'); o.value = i; o.textContent = `${term} ${i}`; fEl.appendChild(o); }
+function Maps(tab, sub=null) {
+  if(settingsDirty && tab !== 'settings') {
+    if(!confirm('Terdapat perubahan yang belum disimpan. Teruskan?')) return;
   }
-}
-
-function buildHouseSelector() {
-  const container = document.getElementById('house-selector-add');
-  if (!container) return;
-  const colors = {};
-  APP.rumahList.forEach(r => colors[r.id_rumah] = r.warna || '#64748B');
-
-  container.innerHTML = APP.rumahList.map(r => `
-    <div>
-      <input type="radio" name="house-radio" id="house-${r.id_rumah}" value="${r.id_rumah}" class="house-radio">
-      <label for="house-${r.id_rumah}" class="house-label" data-color="${r.warna || '#64748B'}">
-        <span style="width:10px;height:10px;border-radius:50%;background:${r.warna || '#64748B'};display:inline-block;"></span>
-        ${r.nama_rumah}
-      </label>
-    </div>
-  `).join('');
-
-  // Style checked state dynamically
-  container.querySelectorAll('.house-radio').forEach(radio => {
-    radio.addEventListener('change', () => {
-      container.querySelectorAll('.house-label').forEach(l => {
-        l.style.background = ''; l.style.borderColor = 'var(--border)'; l.style.color = '';
-      });
-      const lbl = radio.nextElementSibling;
-      const clr = lbl.dataset.color;
-      lbl.style.background = clr;
-      lbl.style.borderColor = clr;
-      lbl.style.color = 'white';
-    });
-  });
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// NAVIGATION
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function switchTab(tab) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
-  const tabEl = document.getElementById('tab-' + tab);
-  if (tabEl) tabEl.classList.add('active');
-
-  const navEl = document.getElementById('nav-' + tab);
-  if (navEl) navEl.classList.add('active');
-
-  APP.currentTab = tab;
-  closeSidebar();
-
-  // Load data for tab
-  switch(tab) {
-    case 'murid': loadStudents(); break;
-    case 'acara': loadEventMasters(); break;
-    case 'lorong': loadLanesTab(); break;
-    case 'reg-semua': loadRegistrations(); break;
-    case 'reg-rumah': loadRegByRumah(); break;
-    case 'reg-acara': loadRegByAcara(); break;
-    case 'quota': loadQuotaMonitor(); break;
-    case 'senarai': loadSenariFilters(); break;
-  }
-}
-
-function toggleSidebar() {
-  const sb = document.getElementById('sidebar');
-  const ov = document.getElementById('sidebar-overlay');
-  sb.classList.toggle('open');
-  ov.classList.toggle('open');
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebar-overlay').classList.remove('open');
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// MODALS
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function openModal(id) {
-  document.getElementById(id).classList.add('open');
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open')); });
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
-});
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// TOAST
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function showToast(msg, type = 'info', duration = 3500) {
-  const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
-  const el = document.createElement('div');
-  el.className = `toast toast-${type}`;
-  el.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
-  document.getElementById('toast-container').appendChild(el);
-  setTimeout(() => el.remove(), duration);
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// STUDENTS - LOAD & RENDER
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function loadStudents(page = 1) {
-  APP.students.page = page;
-  APP.students.perPage = parseInt(document.getElementById('per-page').value);
-
-  const filters = {
-    id_rumah: document.getElementById('filter-rumah').value || undefined,
-    tahap: document.getElementById('filter-tahap').value || undefined,
-    id_kategori: document.getElementById('filter-kategori').value || undefined,
-    jantina: document.getElementById('filter-jantina').value || undefined,
-    is_active: document.getElementById('filter-status').value !== '' ? document.getElementById('filter-status').value : undefined,
-    search: document.getElementById('filter-search').value || undefined,
-  };
-
-  document.getElementById('student-tbody').innerHTML = `
-    <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">
-      <div class="spinner" style="margin:0 auto 8px;"></div>Memuatkan...
-    </td></tr>`;
-
-  try {
-    const res = await gasRun('getStudents', { page, perPage: APP.students.perPage, filters });
-    if (res.success) {
-      renderStudentTable(res.students);
-      renderPagination(res.pagination, 'student-pagination', loadStudents);
-      document.getElementById('student-count-info').textContent =
-        `Papar ${((page-1)*APP.students.perPage)+1}–${Math.min(page*APP.students.perPage, res.pagination.total_records)} daripada ${res.pagination.total_records} murid`;
-      document.getElementById('pagination-info').textContent =
-        `Halaman ${res.pagination.current_page} / ${res.pagination.total_pages}`;
-      if (res.stats) updateStudentStats(res.stats);
-    }
-  } catch(e) {
-    document.getElementById('student-tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--danger);">Ralat memuatkan data</td></tr>`;
-  }
-}
-
-function updateStudentStats(stats) {
-  document.getElementById('stat-total').textContent = stats.total?.toLocaleString() || '—';
-  document.getElementById('stat-active-count').textContent = `Aktif: ${stats.active || 0} | Tidak Aktif: ${stats.inactive || 0}`;
-  document.getElementById('stat-inactive').textContent = stats.inactive || '—';
-
-  if (stats.by_house) {
-    document.getElementById('stat-by-house').innerHTML = stats.by_house.map(h =>
-      `<span class="rumah-badge" style="background:${h.warna || '#64748B'};margin-right:2px;font-size:0.65rem;">${h.nama_rumah} ${h.count}</span>`
-    ).join('');
-  }
-  if (stats.by_kategori) {
-    document.getElementById('stat-by-kategori').innerHTML = stats.by_kategori.map(k =>
-      `<span class="badge badge-blue" style="margin-right:2px;font-size:0.65rem;">${k.kod}: ${k.count}</span>`
-    ).join('');
-  }
-  document.getElementById('nav-murid-count').textContent = stats.total || '...';
-}
-
-function renderStudentTable(students) {
-  const term = getSetting('level_term') || 'D'; // dari tbl_settings
-  const tbody = document.getElementById('student-tbody');
-  if (!students.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">Tiada murid ditemui</td></tr>`;
+  
+  const targetPane = document.getElementById('pane-'+tab);
+  if (!targetPane) {
+    console.error('Routing failed: Element pane-' + tab + ' not found.');
     return;
   }
-  tbody.innerHTML = students.map((s, i) => {
-    const jColor = s.jantina === 'L' ? '#3B82F6' : '#EC4899';
-    const hWarna = s.warna_rumah || '#64748B';
-    const statusBadge = s.is_active
-      ? `<span class="dot dot-green"></span>`
-      : `<span class="dot dot-red"></span>`;
-    return `<tr>
-      <td style="color:var(--text-muted);font-size:0.78rem;">${((APP.students.page-1)*APP.students.perPage)+i+1}</td>
-      <td>
-        <div class="mono">${s.no_kp}</div>
-        <div style="margin-top:3px;display:flex;gap:6px;align-items:center;">
-          <span style="font-size:0.7rem;font-weight:700;color:${jColor};background:${jColor}20;padding:1px 6px;border-radius:4px;">${s.jantina==='L'?'♂ L':'♀ P'}</span>
-          <span style="font-size:0.7rem;color:var(--text-muted);">${s.umur || '?'} thn</span>
-        </div>
-      </td>
-      <td>
-        <div style="font-weight:600;">${s.nama}</div>
-        <div style="font-size:0.73rem;color:var(--text-muted);">${statusBadge} ${s.is_active ? 'Aktif' : 'Tidak Aktif'}</div>
-      </td>
-      <td>
-        <div style="font-weight:500;">${term[0]}${s.tahap}</div>
-        <div style="font-size:0.73rem;color:var(--text-muted);">${s.kelas || '—'}</div>
-      </td>
-      <td>
-        <span class="rumah-badge" style="background:${hWarna};">${s.nama_rumah || '—'}</span>
-        <span class="badge badge-blue" style="margin-left:4px;">${s.kod_kategori || '—'}</span>
-      </td>
-      <td style="text-align:center;">
-        <div style="display:flex;gap:4px;justify-content:center;">
-          <button class="btn btn-ghost btn-icon btn-sm" onclick="viewStudent('${s.no_kp}')" title="Lihat">👁️</button>
-          <button class="btn btn-ghost btn-icon btn-sm" onclick="editStudent('${s.no_kp}')" title="Edit">✏️</button>
-          <button class="btn btn-ghost btn-icon btn-sm" style="color:var(--danger);" onclick="confirmDelete('${s.no_kp}','${s.nama}')" title="Padam">🗑️</button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
 
-function renderPagination(pagination, containerId, loadFn) {
-  const { current_page, total_pages } = pagination;
-  const el = document.getElementById(containerId);
-  if (!el) return;
-  let html = `<button class="page-btn ${current_page===1?'disabled':''}" onclick="${loadFn.name}(${current_page-1})">‹</button>`;
-  const pages = [];
-  if (total_pages <= 7) { for (let i=1;i<=total_pages;i++) pages.push(i); }
-  else {
-    pages.push(1);
-    if (current_page > 3) pages.push('...');
-    for (let i=Math.max(2,current_page-1);i<=Math.min(total_pages-1,current_page+1);i++) pages.push(i);
-    if (current_page < total_pages-2) pages.push('...');
-    pages.push(total_pages);
-  }
-  pages.forEach(p => {
-    if (p === '...') html += `<button class="page-btn disabled">…</button>`;
-    else html += `<button class="page-btn ${p===current_page?'active':''}" onclick="${loadFn.name}(${p})">${p}</button>`;
-  });
-  html += `<button class="page-btn ${current_page===total_pages?'disabled':''}" onclick="${loadFn.name}(${current_page+1})">›</button>`;
-  el.innerHTML = html;
-}
+  currentTab = tab;
+  window.location.hash = sub ? `${tab}-${sub}` : tab;
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// STUDENTS - CRUD
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function openAddStudent() {
-  document.getElementById('modal-student-title').textContent = '➕ Tambah Murid Baru';
-  document.getElementById('edit-student-kp').value = '';
-  document.getElementById('input-nokp').value = '';
-  document.getElementById('input-nokp').disabled = false;
-  document.getElementById('input-nama').value = '';
-  document.getElementById('input-tahap').value = '';
-  document.getElementById('input-kelas').value = '';
-  document.getElementById('input-email-wali').value = '';
-  document.getElementById('input-phone-wali').value = '';
-  document.getElementById('ic-derive-result').innerHTML = '';
-  document.querySelectorAll('.house-radio').forEach(r => r.checked = false);
-  document.querySelectorAll('.house-label').forEach(l => {
-    l.style.background = ''; l.style.borderColor = 'var(--border)'; l.style.color = '';
-  });
-  openModal('modal-add-student');
-}
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  targetPane.classList.add('active');
 
-async function editStudent(no_kp) {
-  openModal('modal-add-student');
-  document.getElementById('modal-student-title').textContent = '✏️ Kemaskini Murid';
-  document.getElementById('edit-student-kp').value = no_kp;
-  document.getElementById('input-nokp').disabled = true;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const ni = document.getElementById('nav-'+tab);
+  if(ni) ni.classList.add('active');
 
-  try {
-    const res = await gasRun('getStudentById', { no_kp });
-    if (res.success && res.student) {
-      const s = res.student;
-      document.getElementById('input-nokp').value = s.no_kp;
-      document.getElementById('input-nama').value = s.nama;
-      document.getElementById('input-tahap').value = s.tahap;
-      document.getElementById('input-kelas').value = s.kelas;
-      document.getElementById('input-email-wali').value = s.email_wali || '';
-      document.getElementById('input-phone-wali').value = s.phone_wali || '';
-      onICInput(s.no_kp);
-
-      // Select house
-      const radio = document.querySelector(`input[name="house-radio"][value="${s.id_rumah}"]`);
-      if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
-    }
-  } catch(e) { showToast('Ralat memuatkan data murid', 'error'); }
-}
-
-function onICInput(val) {
-  const el = document.getElementById('ic-derive-result');
-  const clean = val.replace(/\D/g, '');
-  if (clean.length < 6) { el.innerHTML = ''; return; }
-
-  // Derive info
-  let yy = parseInt(clean.substring(0,2));
-  const mm = parseInt(clean.substring(2,4));
-  const dd = parseInt(clean.substring(4,6));
-  const fullYear = yy <= 24 ? 2000+yy : 1900+yy;
-  const currentYear = new Date().getFullYear();
-  const age = currentYear - fullYear;
-  const lastDigit = clean.length >= 12 ? parseInt(clean[11]) : null;
-  const jantina = lastDigit !== null ? (lastDigit % 2 === 1 ? 'L' : 'P') : '?';
-  const jantinaLabel = jantina === 'L' ? '♂ Lelaki' : jantina === 'P' ? '♀ Perempuan' : '?';
-
-  // Find matching kategori
-  let kategori = '—';
-  APP.kategoriList.forEach(k => {
-    if (k.jantina === jantina) {
-      // Simple age matching (adjust based on actual kategori config)
-      if ((age >= 10 && age <= 12 && k.kod.endsWith('1')) ||
-          (age >= 13 && age <= 15 && k.kod.endsWith('2'))) {
-        kategori = `${k.kod} – ${k.nama}`;
-      }
-    }
-  });
-
-  const isValid = clean.length >= 12;
-  document.getElementById('input-nokp').className = `form-input ${isValid ? 'success' : ''}`;
-
-  el.innerHTML = `
-    <div class="derive-box">
-      <div class="derive-item">✅ <strong>Tahun Lahir:</strong> ${fullYear} &nbsp;|&nbsp; <strong>Umur:</strong> ${age} tahun</div>
-      <div class="derive-item">✅ <strong>Jantina:</strong> ${jantinaLabel} (digit terakhir: ${lastDigit ?? '?'})</div>
-      <div class="derive-item">✅ <strong>Kategori:</strong> ${kategori}</div>
-    </div>`;
-}
-
-async function submitStudent() {
-  const editKP = document.getElementById('edit-student-kp').value;
-  const isEdit = !!editKP;
-
-  const no_kp = editKP || document.getElementById('input-nokp').value.trim();
-  const nama = document.getElementById('input-nama').value.trim();
-  const tahap = document.getElementById('input-tahap').value;
-  const kelas = document.getElementById('input-kelas').value.trim();
-  const houseRadio = document.querySelector('input[name="house-radio"]:checked');
-  const id_rumah = houseRadio ? houseRadio.value : '';
-
-  if (!no_kp || !nama || !tahap || !kelas || !id_rumah) {
-    showToast('Sila lengkapkan semua medan wajib ⚠️', 'warning'); return;
-  }
-
-  const payload = {
-    no_kp, nama, tahap: parseInt(tahap), kelas,
-    id_rumah: parseInt(id_rumah),
-    email_wali: document.getElementById('input-email-wali').value,
-    phone_wali: document.getElementById('input-phone-wali').value,
-  };
-
-  try {
-    const fn = isEdit ? 'updateStudent' : 'createStudent';
-    const res = await gasRun(fn, payload);
-    if (res.success) {
-      showToast(res.message || 'Berjaya!', 'success');
-      closeModal('modal-add-student');
-      loadStudents(APP.students.page);
-    } else {
-      showToast(res.message || 'Ralat', 'error');
-    }
-  } catch(e) { showToast('Ralat semasa menyimpan', 'error'); }
-}
-
-async function viewStudent(no_kp) {
-  openModal('modal-view-student');
-  document.getElementById('view-student-body').innerHTML = `<div style="text-align:center;padding:30px;"><div class="spinner" style="margin:0 auto;"></div></div>`;
-  document.getElementById('btn-edit-from-view').onclick = () => { closeModal('modal-view-student'); editStudent(no_kp); };
-
-  try {
-    const res = await gasRun('getStudentById', { no_kp });
-    if (res.success) {
-      const s = res.student;
-      const term = getSetting('level_term') || 'Darjah'; // fallback display sahaja
-      const jColor = s.jantina === 'L' ? '#3B82F6' : '#EC4899';
-      const hWarna = s.warna_rumah || '#64748B';
-      document.getElementById('view-student-body').innerHTML = `
-        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;">
-          <div style="width:64px;height:64px;border-radius:12px;background:${hWarna}20;border:2px solid ${hWarna};display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;">👤</div>
-          <div>
-            <div style="font-size:1.1rem;font-weight:700;">${s.nama}</div>
-            <div class="mono" style="color:var(--text-muted);">${s.no_kp}</div>
-            <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
-              <span style="font-size:0.75rem;font-weight:700;color:${jColor};background:${jColor}20;padding:2px 8px;border-radius:4px;">${s.jantina==='L'?'♂ Lelaki':'♀ Perempuan'}</span>
-              <span class="badge badge-blue">${s.umur || '?'} tahun</span>
-              <span class="${s.is_active ? 'badge-active' : 'badge-inactive'} badge">${s.is_active ? '✅ Aktif' : '❌ Tidak Aktif'}</span>
-            </div>
-          </div>
-        </div>
-        <div class="section-divider">MAKLUMAT ASAS</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.83rem;">
-          <div><span style="color:var(--text-muted);">Tahap/Kelas</span><div style="font-weight:600;">${term} ${s.tahap} ${s.kelas}</div></div>
-          <div><span style="color:var(--text-muted);">Rumah Sukan</span><div><span class="rumah-badge" style="background:${hWarna};">${s.nama_rumah || '—'}</span></div></div>
-          <div><span style="color:var(--text-muted);">Kategori</span><div><span class="badge badge-blue">${s.kod_kategori || '—'}</span></div></div>
-          <div><span style="color:var(--text-muted);">Umur</span><div style="font-weight:600;">${s.umur || '?'} tahun (${2025 - (s.umur || 0)})</div></div>
-        </div>
-        ${(s.email_wali || s.phone_wali) ? `
-        <div class="section-divider">MAKLUMAT WALI</div>
-        <div style="font-size:0.83rem;">
-          ${s.email_wali ? `<div>📧 ${s.email_wali}</div>` : ''}
-          ${s.phone_wali ? `<div>📱 ${s.phone_wali}</div>` : ''}
-        </div>` : ''}
-      `;
-    }
-  } catch(e) { showToast('Ralat memuatkan maklumat murid', 'error'); }
-}
-
-async function confirmDelete(no_kp, nama) {
-  APP.pendingDeleteKP = no_kp;
-  document.getElementById('delete-confirm-body').innerHTML = `
-    <div style="font-size:0.9rem;margin-bottom:12px;">Adakah anda pasti untuk memadam:</div>
-    <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:12px;">
-      <div style="font-weight:700;">📋 ${nama}</div>
-      <div class="mono" style="font-size:0.8rem;color:var(--text-muted);">${no_kp}</div>
-    </div>
-    <div class="warn-box">⚠️ Tindakan ini tidak boleh dibatalkan. Murid yang mempunyai rekod pendaftaran tidak boleh dipadam.</div>`;
-  document.getElementById('btn-confirm-delete').onclick = doDeleteStudent;
-  openModal('modal-delete-confirm');
-}
-
-async function doDeleteStudent() {
-  try {
-    const res = await gasRun('deleteStudent', { no_kp: APP.pendingDeleteKP });
-    if (res.success) {
-      showToast('Murid berjaya dipadam', 'success');
-      closeModal('modal-delete-confirm');
-      loadStudents(APP.students.page);
-    } else {
-      showToast(res.message || 'Tidak boleh dipadam', 'error');
-    }
-  } catch(e) { showToast('Ralat semasa memadam', 'error'); }
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// FILTERS & SEARCH
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function applyFilters() { loadStudents(1); }
-function resetFilters() {
-  ['filter-rumah','filter-tahap','filter-kategori','filter-jantina','filter-status'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  document.getElementById('filter-search').value = '';
-  loadStudents(1);
-}
-function debounceSearch(val) {
-  clearTimeout(APP.searchTimer);
-  APP.searchTimer = setTimeout(() => loadStudents(1), 500);
-}
-function debounceRegSearch(val) {
-  clearTimeout(APP.searchTimer);
-  APP.searchTimer = setTimeout(() => loadRegistrations(1), 500);
-}
-function sortStudents(col) {
-  if (APP.students.sort === col) APP.students.sortDir *= -1;
-  else { APP.students.sort = col; APP.students.sortDir = 1; }
-  loadStudents(APP.students.page);
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CSV IMPORT
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function downloadCSVTemplate() {
-  const csv = 'no_kp,nama,tahap,kelas,id_rumah\n040512-01-1234,Ahmad Ali bin Ahmad,5,Amal,1\n040601-01-5678,Siti Aminah binti Ali,5,Bakti,2';
-  const blob = new Blob([csv], {type:'text/csv'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'template_murid.csv';
-  a.click();
-}
-
-function handleCSVFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    APP.csvData = e.target.result;
-    document.getElementById('drop-zone').innerHTML = `<div style="font-size:1.5rem;">✅</div><div style="font-weight:600;">${file.name}</div><div style="font-size:0.78rem;color:var(--text-muted);">${(file.size/1024).toFixed(1)} KB</div>`;
-    document.getElementById('btn-validate-csv').style.display = '';
-    document.getElementById('btn-import-csv').style.display = 'none';
-  };
-  reader.readAsText(file);
-}
-
-function validateCSV() {
-  if (!APP.csvData) return;
-  const lines = APP.csvData.trim().split('\n');
-  let valid = 0, errors = [], warnings = [];
-  lines.slice(1).forEach((line, i) => {
-    const parts = line.split(',');
-    if (parts.length < 5) { errors.push(`Baris ${i+2}: Format tidak betul`); return; }
-    const no_kp = parts[0].trim();
-    if (!/^\d{6}-\d{2}-\d{4}$/.test(no_kp)) errors.push(`Baris ${i+2}: Format IC tidak sah (${no_kp})`);
-    else valid++;
-  });
-  document.getElementById('csv-validate-result').style.display = '';
-  document.getElementById('csv-result-content').innerHTML = `
-    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:12px;font-size:0.82rem;">
-      <div style="color:#065F46;">✅ Valid: <strong>${valid}</strong> rekod</div>
-      ${warnings.length ? `<div style="color:#92400E;">⚠️ Amaran: ${warnings.length} rekod</div>` : ''}
-      ${errors.length ? `<div style="color:#991B1B;">❌ Ralat: ${errors.length} rekod</div>` : ''}
-      ${errors.slice(0,3).map(e => `<div style="color:#991B1B;font-size:0.75rem;margin-top:4px;">• ${e}</div>`).join('')}
-    </div>`;
-  if (valid > 0) {
-    document.getElementById('btn-import-csv').textContent = `💾 Import (${valid} rekod)`;
-    document.getElementById('btn-import-csv').style.display = '';
-  }
-}
-
-async function importCSV() {
-  if (!APP.csvData) return;
-  try {
-    const res = await gasRun('importStudentsCSV', { csvData: APP.csvData });
-    if (res.success) {
-      showToast(`✅ Berjaya import ${res.imported} murid`, 'success');
-      closeModal('modal-import-csv');
-      loadStudents(1);
-    }
-  } catch(e) { showToast('Ralat semasa import', 'error'); }
-}
-
-function exportStudents() { showToast('Fungsi export sedang dibangunkan...', 'info'); }
-
-// Drop zone drag events
-const dz = document.getElementById('drop-zone');
-if (dz) {
-  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
-  dz.addEventListener('drop', e => {
-    e.preventDefault(); dz.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file) { const dt = new DataTransfer(); dt.items.add(file); document.getElementById('csv-file').files = dt.files; handleCSVFile(document.getElementById('csv-file')); }
-  });
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// EVENT MASTERS
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function loadEventMasters() {
-  const container = document.getElementById('event-masters-list');
-  container.innerHTML = `<div style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto 8px;"></div>Memuatkan...</div>`;
-
-  try {
-    const [mastersRes, eventsRes] = await Promise.all([
-      gasRun('getEventMasters', {}),
-      gasRun('getEvents', {}),
-    ]);
-
-    const masters = mastersRes.masters || [];
-    const events = eventsRes.events || [];
-    APP.eventMasters = masters;
-
-    // Group events by master kod prefix
-    const eventsByMaster = {};
-    events.forEach(e => {
-      const masterKod = e.no_acara.replace(/[LP][12]$/, '').replace(/OPEN$/, '');
-      if (!eventsByMaster[masterKod]) eventsByMaster[masterKod] = [];
-      eventsByMaster[masterKod].push(e);
-    });
-
-    // Group masters by type
-    const groups = {};
-    masters.forEach(m => {
-      if (!groups[m.event_type]) groups[m.event_type] = [];
-      groups[m.event_type].push(m);
-    });
-
-    const typeLabels = { TRACK: '🏃 Track Events', FIELD: '⛹️ Field Events', RELAY: '🔄 Relay Events', SUKANEKA: '🎉 Sukaneka' };
-    let totalGen = 0, totalPending = 0;
-
-    let html = '';
-    Object.entries(groups).forEach(([type, list]) => {
-      html += `<div style="font-size:0.9rem;font-weight:800;color:var(--text);margin:1.5rem 0 0.75rem;padding:8px 0;border-bottom:2px solid var(--border);">${typeLabels[type] || type} (${list.length})</div>`;
-      html += `<div style="display:grid;gap:10px;">`;
-      list.forEach(m => {
-        const genEvents = eventsByMaster[m.kod] || [];
-        const isGenerated = genEvents.length > 0;
-        if (isGenerated) totalGen += genEvents.length; else totalPending++;
-        html += `
-          <div class="card" style="border-left:3px solid ${isGenerated ? 'var(--success)' : 'var(--border)'};">
-            <div style="padding:14px 16px;">
-              <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-                <div>
-                  <div style="font-weight:700;font-size:0.9rem;">${m.kod} – ${m.nama}</div>
-                  <div style="font-size:0.75rem;color:var(--text-muted);margin-top:3px;">
-                    ${type} | ${m.jenis} ${m.requires_lanes ? '| 🏁 Lorong' : ''}
-                  </div>
-                </div>
-                <div style="display:flex;gap:6px;flex-shrink:0;">
-                  ${isGenerated
-                    ? `<button class="btn btn-outline btn-sm" onclick="openGenerateModal(${m.id},'${m.kod}','${m.nama}')">🔄 Jana Semula</button>`
-                    : `<button class="btn btn-primary btn-sm" onclick="openGenerateModal(${m.id},'${m.kod}','${m.nama}')">🚀 Jana Acara</button>`
-                  }
-                </div>
-              </div>
-              ${isGenerated ? `
-                <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">
-                  ${genEvents.map(e => `
-                    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:6px;padding:4px 10px;font-size:0.75rem;">
-                      ✅ <strong>${e.no_acara}</strong> – ${e.nama_display} <span style="color:var(--text-muted);">(${e.registered_count || 0} peserta)</span>
-                    </div>`).join('')}
-                </div>` : `<div class="warn-box" style="margin-top:10px;font-size:0.78rem;">⏳ Belum dijana – klik Jana Acara untuk buat event instances</div>`}
-            </div>
-          </div>`;
-      });
-      html += `</div>`;
-    });
-
-    document.getElementById('stat-events-gen').textContent = totalGen;
-    document.getElementById('stat-events-pending').textContent = totalPending;
-    container.innerHTML = html;
-
-  } catch(e) {
-    container.innerHTML = `<div class="danger-box">Ralat memuatkan event masters</div>`;
-  }
-}
-
-function openGenerateModal(masterId, kod, nama) {
-  APP.pendingGenerateMaster = { masterId, kod, nama };
-  document.getElementById('gen-event-title').textContent = `🚀 Jana Acara: ${kod} – ${nama}`;
-  document.getElementById('gen-event-body').innerHTML = `
-    <div class="form-group">
-      <label class="form-label">Pilih Kategori</label>
-      <div style="display:flex;flex-direction:column;gap:6px;border:1px solid var(--border);border-radius:8px;padding:12px;">
-        ${APP.kategoriList.map(k => `
-          <label class="checkbox-wrap">
-            <input type="checkbox" name="gen-kategori" value="${k.id_kategori}" checked>
-            ${k.kod} – ${k.nama}
-          </label>`).join('')}
-        <div style="display:flex;gap:8px;margin-top:4px;">
-          <button class="btn btn-outline btn-sm" onclick="document.querySelectorAll('input[name=gen-kategori]').forEach(c=>c.checked=true)">✓ Semua</button>
-          <button class="btn btn-outline btn-sm" onclick="document.querySelectorAll('input[name=gen-kategori]').forEach(c=>c.checked=false)">✕ Kosong</button>
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Kuota Per Rumah (Kategori)</label>
-      <input type="number" class="form-input" id="gen-quota-kat" value="2" min="1" max="10">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Jana Acara TERBUKA?</label>
-      <label class="checkbox-wrap">
-        <input type="checkbox" id="gen-open-check" onchange="toggleOpenConfig(this.checked)">
-        Ya, jana acara Terbuka (semua kategori boleh sertai)
-      </label>
-    </div>
-    <div id="open-config" style="display:none;background:var(--bg);border-radius:8px;padding:12px;margin-top:6px;">
-      <div class="form-group">
-        <label class="form-label">Jantina (Terbuka)</label>
-        <div style="display:flex;gap:12px;">
-          <label class="checkbox-wrap"><input type="radio" name="open-jantina" value="C" checked> Gabungan (L+P)</label>
-          <label class="checkbox-wrap"><input type="radio" name="open-jantina" value="L"> Lelaki</label>
-          <label class="checkbox-wrap"><input type="radio" name="open-jantina" value="P"> Perempuan</label>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Kuota Per Rumah (Terbuka)</label>
-        <input type="number" class="form-input" id="gen-quota-open" value="3" min="1" max="10">
-      </div>
-    </div>`;
-  openModal('modal-generate-event');
-}
-
-function toggleOpenConfig(show) {
-  document.getElementById('open-config').style.display = show ? '' : 'none';
-}
-
-async function submitGenerateEvent() {
-  const { masterId, kod, nama } = APP.pendingGenerateMaster;
-  const katChecked = [...document.querySelectorAll('input[name="gen-kategori"]:checked')].map(c => parseInt(c.value));
-  const genOpen = document.getElementById('gen-open-check').checked;
-
-  if (!katChecked.length) { showToast('Pilih sekurang-kurangnya satu kategori', 'warning'); return; }
-
-  try {
-    const payload = {
-      id_acara_master: masterId,
-      kategori_ids: katChecked,
-      generate_open: genOpen,
-      open_jantina: genOpen ? document.querySelector('input[name="open-jantina"]:checked').value : null,
-      kategori_quota: parseInt(document.getElementById('gen-quota-kat').value),
-      open_quota: genOpen ? parseInt(document.getElementById('gen-quota-open').value) : null,
-    };
-    const res = await gasRun('generateEvents', payload);
-    if (res.success) {
-      showToast(res.message || 'Acara berjaya dijana!', 'success');
-      closeModal('modal-generate-event');
-      loadEventMasters();
-    } else {
-      showToast(res.message || 'Ralat', 'error');
-    }
-  } catch(e) { showToast('Ralat semasa menjana acara', 'error'); }
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// LANE DRAW
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function loadLanesTab() {
-  const container = document.getElementById('lorong-list');
-  container.innerHTML = `<div style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto 8px;"></div></div>`;
-
-  try {
-    const res = await gasRun('getEvents', {});
-    const trackEvents = (res.events || []).filter(e => e.requires_lanes);
-    const statusFilter = document.getElementById('lorong-filter-status').value;
-
-    const lanes = getSetting('track_lanes'); // dari tbl_settings: 4, 6, atau 8
-    if (!lanes) { showToast('⚠️ Bilangan lorong belum ditetapkan dalam Settings', 'warning'); }
-    document.getElementById('stat-track-total').textContent = trackEvents.length;
-    document.getElementById('stat-track-lanes').textContent = lanes ? `${lanes} lorong` : '— (belum set)';
-
-    // Get lane configs to check drawn status
-    let drawn = 0, pending = 0;
-    const eventCards = await Promise.all(trackEvents.map(async e => {
-      // In real app, check if lane draw exists
-      const isDone = Math.random() > 0.5; // Mock
-      if (isDone) drawn++; else pending++;
-      const heats = Math.ceil((e.registered_count || 0) / lanes);
-
-      return `
-        <div class="card" style="border-left:3px solid ${isDone ? 'var(--success)' : 'var(--warning)'};">
-          <div style="padding:14px 16px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-            <div style="flex:1;">
-              <div style="font-weight:700;">${e.no_acara} – ${e.nama_display}</div>
-              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:3px;">
-                ${e.registered_count || 0} peserta | ${heats > 0 ? heats + ' heat' : 'Tiada peserta'}
-              </div>
-              <div style="margin-top:6px;">
-                ${isDone
-                  ? `<span class="badge badge-active">✅ Selesai</span>`
-                  : `<span class="badge badge-warning">⏳ Pending</span>`}
-              </div>
-            </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              ${isDone
-                ? `<button class="btn btn-outline btn-sm" onclick="viewLanes('${e.no_acara}','${e.nama_display}')">👁️ Lihat</button>
-                   <button class="btn btn-warning btn-sm" onclick="openDrawModal('${e.no_acara}','${e.nama_display}',${e.registered_count||0})">🔄 Cabut Semula</button>`
-                : `<button class="btn btn-primary btn-sm" onclick="openDrawModal('${e.no_acara}','${e.nama_display}',${e.registered_count||0})" ${!e.registered_count ? 'disabled' : ''}>🎲 Cabut Lorong</button>`}
-            </div>
-          </div>
-        </div>`;
-    }));
-
-    document.getElementById('stat-draw-done').textContent = drawn;
-    document.getElementById('stat-draw-pending').textContent = pending;
-    document.getElementById('nav-lorong-pending').textContent = pending;
-    container.innerHTML = `<div style="display:grid;gap:8px;">${eventCards.join('')}</div>`;
-
-  } catch(e) {
-    container.innerHTML = `<div class="danger-box">Ralat memuatkan data lorong</div>`;
-  }
-}
-
-function openDrawModal(no_acara, nama, count) {
-  APP.pendingDrawEvent = { no_acara, nama, count };
-  const lanes = getSetting('track_lanes'); // dari tbl_settings: 4, 6, atau 8
-  if (!lanes) { showToast('⚠️ Bilangan lorong belum ditetapkan dalam Settings', 'warning'); return; }
-  const heats = Math.ceil(count / lanes);
-  document.getElementById('draw-modal-title').textContent = `🎲 Cabut Lorong: ${no_acara}`;
-  document.getElementById('draw-modal-body').innerHTML = `
-    <div class="info-box" style="margin-bottom:12px;">
-      <strong>${nama}</strong><br>
-      ${count} peserta | ${lanes} lorong | ${heats} heat diperlukan
-    </div>
-    <div class="form-group">
-      <label class="form-label">Kaedah Cabutan</label>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <label class="checkbox-wrap"><input type="radio" name="draw-method" value="balanced" checked> ⚖️ Seimbang – Agih rumah sukan secara merata</label>
-        <label class="checkbox-wrap"><input type="radio" name="draw-method" value="random"> 🎲 Rawak – Cabutan tulen secara rawak</label>
-        <label class="checkbox-wrap"><input type="radio" name="draw-method" value="seeded"> 🏆 Seed – Berdasarkan masa layak (jika ada)</label>
-      </div>
-    </div>
-    <div class="warn-box">⚠️ Cabutan baru akan gantikan assignment lorong sedia ada (jika ada).</div>`;
-  openModal('modal-draw-lanes');
-}
-
-async function submitDrawLanes() {
-  const { no_acara, nama } = APP.pendingDrawEvent;
-  const method = document.querySelector('input[name="draw-method"]:checked').value;
-  try {
-    const res = await gasRun('drawLanes', { no_acara, method });
-    if (res.success) {
-      closeModal('modal-draw-lanes');
-      showLaneResults(no_acara, nama, res);
-    }
-  } catch(e) { showToast('Ralat semasa cabutan lorong', 'error'); }
-}
-
-async function viewLanes(no_acara, nama) {
-  try {
-    const res = await gasRun('getLaneConfig', { no_acara });
-    if (res.success) showLaneResults(no_acara, nama, { lanes: res.lanes });
-  } catch(e) { showToast('Ralat memuatkan konfigurasi lorong', 'error'); }
-}
-
-function showLaneResults(no_acara, nama, data) {
-  const lanes = getSetting('track_lanes'); // dari tbl_settings: 4, 6, atau 8
-  document.getElementById('lane-results-title').textContent = `✅ Lorong: ${no_acara} – ${nama}`;
-  const heatsData = data.lanes || {};
-  let html = '';
-  Object.entries(heatsData).forEach(([heat, participants]) => {
-    html += `<div style="margin-bottom:16px;"><div style="font-weight:700;margin-bottom:8px;">🏁 Heat ${heat}</div>`;
-    html += `<div class="lane-grid" style="grid-template-columns:1fr;">`;
-    for (let l = 1; l <= lanes; l++) {
-      const p = participants.find(x => x.lane === l);
-      html += `<div class="lane-item ${!p ? 'lane-empty' : ''}">
-        <div class="lane-num">${l}</div>
-        ${p
-          ? `<div style="flex:1;">
-              <div style="font-weight:600;">${p.nama}</div>
-            </div>
-            <span class="rumah-badge" style="background:${p.warna || '#64748B'};">${p.rumah}</span>`
-          : `<div style="flex:1;color:var(--text-muted);">— Kosong —</div>`}
-      </div>`;
-    }
-    html += `</div></div>`;
-  });
-  document.getElementById('lane-results-body').innerHTML = html;
-  openModal('modal-lane-results');
-}
-
-async function drawAllPending() { showToast('Cabutan semua acara pending sedang diproses...', 'info'); }
-function printLanes() { window.print(); }
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// REGISTRATIONS
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function loadRegistrations(page = 1) {
-  APP.regs.page = page;
-  const tbody = document.getElementById('reg-tbody');
-  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;"><div class="spinner" style="margin:0 auto 8px;"></div>Memuatkan...</td></tr>`;
-
-  try {
-    const filters = {
-      id_rumah: document.getElementById('reg-filter-rumah').value || undefined,
-      no_acara: document.getElementById('reg-filter-acara').value || undefined,
-      status: document.getElementById('reg-filter-status').value || undefined,
-    };
-    const res = await gasRun('getRegistrations', filters);
-    if (res.success) {
-      if (res.stats) {
-        document.getElementById('stat-reg-total').textContent = res.stats.total?.toLocaleString() || '—';
-        document.getElementById('stat-reg-active').textContent = res.stats.active?.toLocaleString() || '—';
-        document.getElementById('stat-reg-withdrawn').textContent = res.stats.withdrawn?.toLocaleString() || '—';
-        document.getElementById('stat-reg-events').textContent = res.stats.events_with_reg || '—';
-      }
-      renderRegistrationTable(res.registrations);
-      if (res.pagination) {
-        renderPagination(res.pagination, 'reg-pagination', loadRegistrations);
-        document.getElementById('reg-count-info').textContent = `${res.pagination.total_records} pendaftaran`;
-      }
-    }
-  } catch(e) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--danger);">Ralat</td></tr>`; }
-}
-
-function renderRegistrationTable(regs) {
-  const tbody = document.getElementById('reg-tbody');
-  if (!regs.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted);">Tiada rekod</td></tr>`; return; }
-  tbody.innerHTML = regs.map((r, i) => `
-    <tr>
-      <td style="color:var(--text-muted);">${i+1}</td>
-      <td>
-        <div style="font-weight:600;">${r.nama}</div>
-        <div class="mono" style="font-size:0.72rem;color:var(--text-muted);">${r.no_kp}</div>
-        ${r.kod_kategori ? `<span class="badge badge-blue" style="font-size:0.65rem;">${r.kod_kategori}</span>` : ''}
-      </td>
-      <td><span class="rumah-badge" style="background:${r.warna_rumah || '#64748B'};">${r.nama_rumah || '—'}</span></td>
-      <td>
-        <div style="font-weight:600;">${r.no_acara}</div>
-        <div style="font-size:0.73rem;color:var(--text-muted);">${r.nama_acara || ''}</div>
-      </td>
-      <td style="font-size:0.78rem;color:var(--text-muted);">${formatDate(r.registered_at)}</td>
-      <td>${r.status === 'ACTIVE' ? `<span class="badge badge-active">✅ Aktif</span>` : `<span class="badge badge-danger">❌ Ditarik</span>`}</td>
-      <td style="text-align:center;">
-        ${r.status === 'ACTIVE' ? `<button class="btn btn-ghost btn-icon btn-sm" style="color:var(--danger);" onclick="confirmWithdraw(${r.id_reg},'${r.nama}','${r.no_acara}')" title="Tarik">❌</button>` : ''}
-      </td>
-    </tr>`).join('');
-}
-
-function confirmWithdraw(id_reg, nama, no_acara) {
-  APP.pendingWithdrawId = id_reg;
-  document.getElementById('withdraw-body').innerHTML = `
-    <div style="font-size:0.88rem;margin-bottom:10px;">Tarik pendaftaran berikut?</div>
-    <div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:10px;">
-      <div style="font-weight:700;">${nama}</div>
-      <div style="color:var(--text-muted);font-size:0.8rem;">Acara: ${no_acara}</div>
-    </div>
-    <div class="warn-box">Quota rumah akan dibebaskan semula.</div>`;
-  document.getElementById('btn-confirm-withdraw').onclick = doWithdraw;
-  openModal('modal-withdraw');
-}
-
-async function doWithdraw() {
-  try {
-    const res = await gasRun('withdrawRegistration', { id_reg: APP.pendingWithdrawId });
-    if (res.success) {
-      showToast('Pendaftaran berjaya ditarik', 'success');
-      closeModal('modal-withdraw');
-      loadRegistrations(APP.regs.page);
-    }
-  } catch(e) { showToast('Ralat', 'error'); }
-}
-
-async function submitAdminReg() {
-  const no_kp = document.getElementById('admin-reg-nokp').value.trim();
-  const no_acara = document.getElementById('admin-reg-acara').value;
-  const notes = document.getElementById('admin-reg-notes').value;
-  if (!no_kp || !no_acara) { showToast('Sila lengkapkan semua medan', 'warning'); return; }
-  try {
-    const res = await gasRun('registerStudent', { no_kp, no_acara, notes });
-    if (res.success) {
-      showToast('Murid berjaya didaftarkan', 'success');
-      closeModal('modal-admin-reg');
-      loadRegistrations(1);
-    } else showToast(res.message || 'Ralat', 'error');
-  } catch(e) { showToast('Ralat', 'error'); }
-}
-
-function exportRegistrations() { showToast('Export sedang dibangunkan...', 'info'); }
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// REG BY RUMAH
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function loadRegByRumah() {
-  const container = document.getElementById('reg-by-rumah-content');
-  container.innerHTML = `<div style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto 8px;"></div></div>`;
-  try {
-    const res = await gasRun('getRegistrationReport', {});
-    if (res.success && res.report) {
-      const { by_house } = res.report;
-      container.innerHTML = `
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;">
-          ${by_house.map(h => `
-            <div class="card">
-              <div class="card-header" style="background:${h.warna}10;border-color:${h.warna}30;">
-                <div style="font-weight:800;color:${h.warna};font-size:1.1rem;">${h.nama}</div>
-                <span class="badge" style="background:${h.warna};color:white;">${h.count} pendaftaran</span>
-              </div>
-              <div class="card-body">
-                <div class="progress-bar" style="margin-bottom:8px;">
-                  <div class="progress-fill progress-ok" style="width:${Math.min((h.count/res.report.total)*100,100)}%;background:${h.warna};"></div>
-                </div>
-                <div style="font-size:0.78rem;color:var(--text-muted);">${((h.count/res.report.total)*100).toFixed(1)}% daripada jumlah pendaftaran</div>
-              </div>
-            </div>`).join('')}
-        </div>`;
-    }
-  } catch(e) { container.innerHTML = `<div class="danger-box">Ralat</div>`; }
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// REG BY ACARA
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function loadRegByAcara() {
-  const container = document.getElementById('reg-by-acara-content');
-  container.innerHTML = `<div style="text-align:center;padding:30px;"><div class="spinner" style="margin:0 auto 8px;"></div></div>`;
-  try {
-    const res = await gasRun('getRegistrationReport', {});
-    if (res.success && res.report) {
-      const { by_event } = res.report;
-      container.innerHTML = `
-        <div class="card">
-          <div class="table-wrap">
-            <table>
-              <thead><tr>
-                <th>Acara</th>
-                <th>Terdaftar</th>
-                <th>Quota Max</th>
-                <th style="min-width:160px;">Pengisian</th>
-                <th>Status</th>
-              </tr></thead>
-              <tbody>
-                ${by_event.map(e => {
-                  const pct = e.percent || 0;
-                  const fillClass = pct >= 100 ? 'progress-full' : pct >= 80 ? 'progress-high' : 'progress-ok';
-                  return `<tr>
-                    <td><div style="font-weight:600;">${e.no_acara}</div><div style="font-size:0.73rem;color:var(--text-muted);">${e.nama}</div></td>
-                    <td style="font-weight:700;">${e.count}</td>
-                    <td style="color:var(--text-muted);">${e.quota}</td>
-                    <td>
-                      <div class="progress-bar"><div class="progress-fill ${fillClass}" style="width:${pct}%;"></div></div>
-                      <div style="font-size:0.73rem;color:var(--text-muted);margin-top:2px;">${pct.toFixed(0)}%</div>
-                    </td>
-                    <td>${pct >= 100 ? `<span class="badge badge-danger">🔴 Penuh</span>` : pct >= 80 ? `<span class="badge badge-warning">🟡 Hampir Penuh</span>` : `<span class="badge badge-active">🟢 Tersedia</span>`}</td>
-                  </tr>`;
-                }).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>`;
-    }
-  } catch(e) { container.innerHTML = `<div class="danger-box">Ralat</div>`; }
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// QUOTA MONITOR
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function loadQuotaMonitor() {
-  const container = document.getElementById('quota-content');
-  container.innerHTML = `<div style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto 8px;"></div></div>`;
-  try {
-    const res = await gasRun('getRegistrationReport', {});
-    if (res.success) {
-      const { by_event } = res.report;
-      const full = by_event.filter(e => e.percent >= 100);
-      const nearFull = by_event.filter(e => e.percent >= 80 && e.percent < 100);
-      const ok = by_event.filter(e => e.percent < 80);
-
-      let warnCount = full.length + nearFull.length;
-      document.getElementById('nav-quota-warn').textContent = warnCount;
-
-      container.innerHTML = `
-        ${full.length ? `
-          <div style="margin-bottom:16px;">
-            <div style="font-weight:700;color:var(--danger);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-              🔴 Penuh (${full.length} acara)
-            </div>
-            <div style="display:grid;gap:6px;">
-              ${full.map(e => quotaCard(e, 'danger')).join('')}
-            </div>
-          </div>` : ''}
-        ${nearFull.length ? `
-          <div style="margin-bottom:16px;">
-            <div style="font-weight:700;color:var(--warning);margin-bottom:8px;">🟡 Hampir Penuh (${nearFull.length} acara)</div>
-            <div style="display:grid;gap:6px;">
-              ${nearFull.map(e => quotaCard(e, 'warning')).join('')}
-            </div>
-          </div>` : ''}
-        <div>
-          <div style="font-weight:700;color:var(--success);margin-bottom:8px;">🟢 Tersedia (${ok.length} acara)</div>
-          <div style="display:grid;gap:6px;">
-            ${ok.map(e => quotaCard(e, 'ok')).join('')}
-          </div>
-        </div>`;
-    }
-  } catch(e) { container.innerHTML = `<div class="danger-box">Ralat</div>`; }
-}
-
-function quotaCard(e, type) {
-  const colors = { danger: 'var(--danger)', warning: 'var(--warning)', ok: 'var(--success)' };
-  const bgColors = { danger: '#FFF1F2', warning: '#FFFBEB', ok: '#F0FDF4' };
-  return `
-    <div style="background:${bgColors[type]};border:1px solid ${colors[type]}30;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <div style="flex:1;">
-        <span style="font-weight:700;">${e.no_acara}</span>
-        <span style="color:var(--text-muted);font-size:0.78rem;margin-left:8px;">${e.nama}</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div class="progress-bar" style="width:120px;">
-          <div class="progress-fill ${type === 'danger' ? 'progress-full' : type === 'warning' ? 'progress-high' : 'progress-ok'}" style="width:${e.percent}%;"></div>
-        </div>
-        <span style="font-size:0.82rem;font-weight:700;color:${colors[type]};">${e.count}/${e.quota}</span>
-      </div>
-    </div>`;
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// SENARAI PESERTA
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function loadSenariFilters() {
-  try {
-    const res = await gasRun('getEvents', {});
-    const el = document.getElementById('senarai-filter-acara');
-    el.innerHTML = '<option value="">Pilih Acara...</option>';
-    (res.events || []).forEach(e => {
-      const opt = document.createElement('option');
-      opt.value = e.no_acara; opt.textContent = `${e.no_acara} – ${e.nama_display}`;
-      el.appendChild(opt);
-    });
-    // Populate rumah
-    const rEl = document.getElementById('senarai-filter-rumah');
-    APP.rumahList.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r.id_rumah; opt.textContent = r.nama_rumah;
-      rEl.appendChild(opt);
-    });
-  } catch(e) {}
-}
-
-async function loadSenarai() {
-  const no_acara = document.getElementById('senarai-filter-acara').value;
-  const id_rumah = document.getElementById('senarai-filter-rumah').value;
-  if (!no_acara) { document.getElementById('senarai-content').innerHTML = `<div class="info-box">Sila pilih acara untuk melihat senarai peserta.</div>`; return; }
-
-  const container = document.getElementById('senarai-content');
-  container.innerHTML = `<div style="text-align:center;padding:30px;"><div class="spinner" style="margin:0 auto 8px;"></div></div>`;
-
-  try {
-    const res = await gasRun('getRegistrations', { no_acara, id_rumah: id_rumah || undefined, status: 'ACTIVE' });
-    if (res.success) {
-      const peserta = res.registrations;
-      container.innerHTML = `
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">📋 Senarai Peserta: ${no_acara} (${peserta.length} orang)</div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr>
-                <th>Bil</th>
-                <th>Nama</th>
-                <th>No. KP</th>
-                <th>Rumah</th>
-                <th>Kategori</th>
-                <th>Lorong/Heat</th>
-              </tr></thead>
-              <tbody>
-                ${peserta.map((p, i) => `
-                  <tr>
-                    <td>${i+1}</td>
-                    <td style="font-weight:600;">${p.nama}</td>
-                    <td class="mono">${p.no_kp}</td>
-                    <td><span class="rumah-badge" style="background:${p.warna_rumah||'#64748B'};">${p.nama_rumah||'—'}</span></td>
-                    <td><span class="badge badge-blue">${p.kod_kategori||'—'}</span></td>
-                    <td style="color:var(--text-muted);">—</td>
-                  </tr>`).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>`;
-    }
-  } catch(e) { container.innerHTML = `<div class="danger-box">Ralat memuatkan senarai</div>`; }
-}
-
-function printSenarai() { window.print(); }
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// UTILITIES
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function formatDate(dateStr) {
-  if (!dateStr) return '—';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('ms-MY', { day:'2-digit', month:'2-digit', year:'numeric' });
-}
-
-function refreshAll() {
-  const tab = APP.currentTab;
-  switchTab(tab);
-  showToast('Data diperbarui', 'info', 2000);
-}
-
-function doLogout() {
-  if (typeof google !== 'undefined' && google.script) {
-    google.script.run.doLogout();
+  const sm = document.getElementById('settings-submenu');
+  if(tab === 'settings') {
+    sm.style.display = 'block';
+    showSubTab(sub || 'asas');
   } else {
-    showToast('Logging out...', 'info');
-    setTimeout(() => window.location.href = 'Login.html', 1000);
+    sm.style.display = 'none';
+  }
+
+  updateBreadcrumb(tab, sub);
+}
+
+function showSubTab(sub) {
+  currentSubTab = sub;
+  document.querySelectorAll('[id^="stpane-"]').forEach(p => p.classList.remove('active'));
+  document.getElementById('stpane-'+sub)?.classList.add('active');
+  document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('stab-'+sub)?.classList.add('active');
+  document.querySelectorAll('.nav-sub').forEach(b => b.classList.remove('active'));
+  document.getElementById('sub-'+sub)?.classList.add('active');
+  updateBreadcrumb('settings', sub);
+}
+
+function updateBreadcrumb(tab, sub) {
+  const labels = {
+    admin:'Dashboard Admin', settings:'Tetapan', users:'Pengguna',
+    asas:'Tetapan Asas', kategori:'Kategori', rumah:'Rumah Sukan', acara:'Acara Master'
+  };
+  document.getElementById('bc-tab').textContent = labels[tab] || tab;
+  if(sub) {
+    document.getElementById('bc-sub').style.display = 'inline';
+    document.getElementById('bc-sub-txt').textContent = labels[sub] || sub;
+  } else {
+    document.getElementById('bc-sub').style.display = 'none';
   }
 }
 
-// Populate events in admin reg modal when opened
-document.getElementById('modal-admin-reg').addEventListener('click', async function init() {
-  this.removeEventListener('click', init);
-  const res = await gasRun('getEvents', {});
-  const el = document.getElementById('admin-reg-acara');
-  (res.events || []).forEach(e => {
-    const opt = document.createElement('option');
-    opt.value = e.no_acara; opt.textContent = `${e.no_acara} – ${e.nama_display}`;
-    el.appendChild(opt);
-  });
-});
-
-// Sidebar tab open buttons
-document.getElementById('modal-add-student')?.addEventListener('click', function(e) {
-  if (e.target === this) closeModal('modal-add-student');
-});
-
-// Update footer margin on resize
-function updateLayout() {
-  const footer = document.getElementById('footer-wrap');
-  if (window.innerWidth <= 768) { footer.style.marginLeft = '0'; }
-  else { footer.style.marginLeft = 'var(--sidebar-w)'; }
+function refreshCurrentTab() {
+  if(currentTab === 'admin') loadDashboard();
+  else if(currentTab === 'settings') {
+    if(currentSubTab === 'asas') loadSettings();
+    else if(currentSubTab === 'kategori') loadKategori();
+    else if(currentSubTab === 'rumah') loadRumah();
+    else if(currentSubTab === 'acara') loadAcara();
+  }
+  else if(currentTab === 'users') loadUsers();
 }
-window.addEventListener('resize', updateLayout);
-updateLayout();
+
+async function loadDashboard() {
+  showLoading(true, 'Memuatkan dashboard...');
+  try {
+    const r = await API.call('getPublicData');
+    if(r && r.success) {
+      const c = r.counts || { murid: 0, rumah: 0, acara: 0, users: 0 };
+      document.getElementById('stat-murid').textContent  = c.murid;
+      document.getElementById('stat-rumah').textContent  = c.rumah;
+      document.getElementById('stat-acara').textContent  = c.acara;
+      document.getElementById('stat-users').textContent  = c.users;
+    }
+  } finally {
+    showLoading(false);
+  }
+}
+
+async function loadSettings() {
+  const r = await API.call('getSettings');
+  if(r && r.success) {
+    const s = r.settings;
+    document.getElementById('set-tournament-name').value = s.tournament_name || '';
+    document.getElementById('set-track-lanes').value = s.track_lanes || '8';
+    document.getElementById('session-school').textContent = s.tournament_name || 'Sekolah';
+    settingsDirty = false;
+    document.getElementById('btn-save-settings').disabled = true;
+  }
+}
+
+function markDirty() {
+  settingsDirty = true;
+  document.getElementById('btn-save-settings').disabled = false;
+}
+
+async function saveSettings() {
+  showLoading(true, 'Menyimpan tetapan...');
+  const data = {
+    tournament_name: document.getElementById('set-tournament-name').value,
+    track_lanes: document.getElementById('set-track-lanes').value
+  };
+  const r = await API.call('updateSettings', { settings: data });
+  showLoading(false);
+  if (r && r.success) {
+    settingsDirty = false;
+    document.getElementById('btn-save-settings').disabled = true;
+    showToast('Tetapan disimpan!', 'success');
+  }
+}
+
+async function loadKategori() {
+  const r = await API.call('getKategori');
+  if(r && r.success) {
+    const list = r.kategori || [];
+    document.getElementById('kategori-tbody').innerHTML = list.length === 0 
+      ? '<tr><td colspan="3">Tiada rekod.</td></tr>' 
+      : list.map(k => `<tr><td>${k.kod || k.kod_kategori || ''}</td><td>${k.nama || k.nama_kategori || ''}</td><td>Aktif</td></tr>`).join('');
+  }
+}
+
+async function loadRumah() {
+  const r = await API.call('getRumah');
+  if(r && r.success) {
+    const list = r.rumah || [];
+    document.getElementById('rumah-tbody').innerHTML = list.length === 0 
+      ? '<tr><td colspan="3">Tiada rekod.</td></tr>' 
+      : list.map(h => `<tr><td>${h.id_rumah}</td><td>${h.nama_rumah || h.nama}</td><td><span style="padding:2px 8px;border-radius:4px;background:${h.warna||h.warna_bg};color:#fff;">Warna</span></td></tr>`).join('');
+  }
+}
+
+async function loadAcara() {
+  const r = await API.call('getEventMasters');
+  if(r && r.success) {
+    const list = r.masters || [];
+    document.getElementById('acara-tbody').innerHTML = list.length === 0 
+      ? '<tr><td colspan="3">Tiada rekod.</td></tr>' 
+      : list.map(a => `<tr><td>${a.kod || a.kod_acara || ''}</td><td>${a.nama || a.nama_acara || ''}</td><td>${a.event_type || 'TRACK'}</td></tr>`).join('');
+  }
+}
+
+async function loadUsers() {
+  const r = await API.call('getUsers');
+  if(r && r.success) {
+    const list = r.users || [];
+    document.getElementById('users-tbody').innerHTML = list.length === 0 
+      ? '<tr><td colspan="3">Tiada rekod.</td></tr>' 
+      : list.map(u => `<tr><td>${u.full_name || u.nama || ''}</td><td>${u.username || ''}</td><td>${u.role || ''}</td></tr>`).join('');
+  }
+}
+
+// NAVIGASI LOG KELUAR - BYPASS SANDBOX (Top Target Method)
+function confirmLogout() {
+  if(confirm('Adakah anda pasti mahu log keluar?')) {
+    if (SCRIPT_URL) {
+      window.top.location.href = SCRIPT_URL + '?page=login';
+    } else {
+      window.location.href = '?page=login';
+    }
+  }
+}
+
+function showToast(msg, type='success') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  const icons = { success:'✅', error:'❌', warning:'⚠️', info:'ℹ️' };
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>${icons[type]||''}</span><span style="flex:1;">${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+function showLoading(show, msg='Memuatkan...') {
+  const el = document.getElementById('loading-overlay');
+  document.getElementById('loading-msg').textContent = msg;
+  el.classList.toggle('show', show);
+}
 </script>
 </body>
-</html>
-  </body>
 </html>
