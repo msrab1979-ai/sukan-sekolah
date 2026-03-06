@@ -3,93 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sukan Tahunan - Home</title>
+  <title>Sukan Tahunan Sekolah</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    .header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 20px; border-radius: 12px; margin-bottom: 30px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .btn { padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
-    .btn-primary { background: #3b82f6; color: white; }
-    .btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); }
-    .skeleton { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
-    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+    .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 40px; width: 90%; max-width: 800px; text-align: center; }
+    .portal-btn { transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 16px; border-radius: 16px; border: 2px solid transparent; cursor: pointer; background: #f8fafc; }
+    .portal-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3); border-color: #3b82f6; background: #eff6ff; }
+    .icon-large { font-size: 48px; margin-bottom: 12px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1 style="font-size: 32px; font-weight: bold; color: #1f2937; margin-bottom: 8px;">
-        🏆 <span id="tournament-name">Memuatkan...</span>
-      </h1>
-      <p style="color: #6b7280; font-size: 16px;">Sistem Pengurusan Sukan Tahunan</p>
-      <div style="margin-top: 16px;">
-       <!-- Disembunyikan seketika sehingga URL dibina -->
-       <a href="#" id="login-link" target="_top" class="btn btn-primary" style="display: none;">
-         🔐 Log Masuk Petugas
-       </a>
-      </div>
-    </div>
-    
-    <div id="error-container"></div>
-    <div id="loading-state" style="display: none;">
-      <div class="card"><div class="skeleton" style="height: 40px; width: 60%; margin-bottom: 16px;"></div></div>
+
+  <div class="glass-card">
+    <div style="margin-bottom: 40px;">
+      <h1 class="text-4xl font-extrabold text-gray-900 mb-2">🏆 Sistem Sukan Sekolah</h1>
+      <p class="text-gray-500 text-lg">Sila pilih portal log masuk mengikut peranan anda di bawah.</p>
     </div>
 
-    <!-- Paparan Maklumat Awam -->
-    <div class="card">
-      <h2 style="font-size: 24px; font-weight: bold; color: #1f2937; margin-bottom: 20px;">🏅 Kedudukan Rumah</h2>
-      <div id="medal-tally">
-        <p style="color: #6b7280;">Sila tunggu, sedang mendapatkan data terkini...</p>
+    <!-- PENYELESAIAN 2: 4 Butang Portal -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <div class="portal-btn" onclick="forceRedirect('?page=login&role=admin')">
+        <span class="icon-large">⚙️</span>
+        <span class="font-bold text-gray-800 text-lg">Admin</span>
+        <span class="text-xs text-gray-500 mt-1">Pengurusan Sistem</span>
       </div>
+
+      <div class="portal-btn" onclick="forceRedirect('?page=login&role=guru_rumah')">
+        <span class="icon-large">🏠</span>
+        <span class="font-bold text-gray-800 text-lg">Guru Rumah</span>
+        <span class="text-xs text-gray-500 mt-1">Urus Atlet & Rumah</span>
+      </div>
+
+      <div class="portal-btn" onclick="forceRedirect('?page=login&role=pengurus')">
+        <span class="icon-large">📋</span>
+        <span class="font-bold text-gray-800 text-lg">Pengurus</span>
+        <span class="text-xs text-gray-500 mt-1">Semakan & Laporan</span>
+      </div>
+
+      <div class="portal-btn" onclick="forceRedirect('?page=pencatat')">
+        <span class="icon-large">⏱️</span>
+        <span class="font-bold text-gray-800 text-lg">Pencatat</span>
+        <span class="text-xs text-gray-500 mt-1">Keputusan Padang</span>
+      </div>
+
     </div>
   </div>
-  
+
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      loadData();
-      prepareLoginLink();
-    });
-
-    function loadData() {
-      document.getElementById('loading-state').style.display = 'block';
-      if (typeof google === 'undefined') {
-        document.getElementById('loading-state').style.display = 'none';
-        document.getElementById('tournament-name').textContent = "Sistem Sukan Tempatan";
-        document.getElementById('login-link').href = '?page=login';
-        document.getElementById('login-link').style.display = 'inline-flex';
-        return;
-      }
-
-      google.script.run
-        .withSuccessHandler(function(res) {
-          document.getElementById('loading-state').style.display = 'none';
-          if(res && res.data && res.data.tournament) {
-            document.getElementById('tournament-name').textContent = res.data.tournament.name;
-          }
-        })
-        .withFailureHandler(function(err) {
-          document.getElementById('loading-state').style.display = 'none';
-          document.getElementById('error-container').innerHTML = '<div style="background:#fee2e2; color:#991b1b; padding:16px; border-radius:8px;">Ralat memuatkan data.</div>';
-        })
-        .getPublicData({ type: 'home' });
-    }
-
-    // TEKNIK NAVIGASI SELAMAT (Sandbox Bypass)
-    // Bina elemen <a> sebenar yang apabila diklik akan selamat menavigasi tetingkap (_top)
-    function prepareLoginLink() {
+    // PENYELESAIAN 1: BYPASS SANDBOX SECURITY ERROR
+    // Hasilkan elemen <a> secara dinamik dan sasarkan '_top'
+    function forceRedirect(params = '') {
       if (typeof google !== 'undefined' && google.script) {
-        google.script.run
-          .withSuccessHandler(function(url) {
-            const loginLink = document.getElementById('login-link');
-            loginLink.href = url + '?page=login';
-            loginLink.style.display = 'inline-flex';
-          })
-          .getScriptUrl();
+        // Paparkan status loading
+        document.body.style.opacity = '0.5';
+        
+        google.script.run.withSuccessHandler(function(baseUrl) {
+          const link = document.createElement('a');
+          link.href = baseUrl + params;
+          link.target = '_top'; // Wajib untuk bypass iframe Google
+          document.body.appendChild(link);
+          link.click();
+        }).withFailureHandler(function(err) {
+          alert("Ralat memuatkan URL: " + err.message);
+          document.body.style.opacity = '1';
+        }).getScriptUrl();
+      } else {
+        // Fallback untuk local testing
+        window.location.href = params;
       }
     }
   </script>
+
 </body>
 </html>

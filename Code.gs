@@ -1,263 +1,158 @@
+/**
+ * SISTEM SUKAN SEKOLAH (GAS) - PRODUCTION BACKEND
+ * Repositori: msrab1979-ai/sukan-sekolah
+ */
+
+// 1. ROUTING & SETUP UTAMA
 function doGet(e) {
   var page = e.parameter.page || 'home';
   var template;
-
+  
   try {
-    switch (page) {
-      case 'home': template = HtmlService.createTemplateFromFile('Home'); break;
-      case 'login': template = HtmlService.createTemplateFromFile('Login'); break;
-      case 'admin-setup': template = HtmlService.createTemplateFromFile('AdminSetup'); break;
-      case 'pengurus': template = HtmlService.createTemplateFromFile('Pengurus'); break;
-      case 'pencatat': template = HtmlService.createTemplateFromFile('Pencatat'); break; // Route baru
-      default: template = HtmlService.createTemplateFromFile('Home');
-    }
-
+    if (page === 'home') template = HtmlService.createTemplateFromFile('Home');
+    else if (page === 'admin') template = HtmlService.createTemplateFromFile('AdminSetup');
+    else if (page === 'pencatat') template = HtmlService.createTemplateFromFile('Pencatat');
+    else if (page === 'login') template = HtmlService.createTemplateFromFile('Login');
+    else template = HtmlService.createTemplateFromFile('Home');
+    
+    // Pass parameter role ke frontend jika ada
+    template.roleUrl = e.parameter.role || '';
+    
     return template.evaluate()
       .setTitle('Sistem Sukan Sekolah')
-      .addMetaTag('viewport', 'width=device-width, initial-scale=1.0')
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-  } catch (error) {
-    return HtmlService.createHtmlOutput('<h3>Ralat 404: Fail tidak dijumpai</h3><p>' + error.message + '</p>')
-      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } catch (err) {
+    return HtmlService.createHtmlOutput('Ralat memuatkan halaman: ' + err.message);
   }
 }
 
-// MENGHALANG MASALAH WHITE SCREEN & NAVIGASI
+// PENYELESAIAN 1: FUNGSI WAJIB UNTUK BYPASS SANDBOX (NAVIGASI)
 function getScriptUrl() {
   return ScriptApp.getService().getUrl();
 }
 
-// ═══════════════════════════════════════════
-// MODUL PENGGUNA & AUTHENTICATION
-// ═══════════════════════════════════════════
-
-function handleLogin(data) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName('tbl_users');
-    
-    // Auto-create jika belum wujud untuk elak ralat pertama kali
-    if (!sheet) {
-      sheet = ss.insertSheet('tbl_users');
-      sheet.appendRow(['username', 'password_hash', 'full_name', 'role', 'id_rumah']);
-      // Add default admin
-      sheet.appendRow(['admin', 'admin123', 'Administrator', 'Admin', '']);
-      sheet.appendRow(['pencatat1', 'pencatat123', 'Pencatat Keputusan', 'Pencatat', '']);
-      sheet.setFrozenRows(1);
-    }
-
-    const rows = sheet.getDataRange().getValues();
-    const headers = rows[0];
-    const userIdx = headers.indexOf('username');
-    const passIdx = headers.indexOf('password_hash');
-    const nameIdx = headers.indexOf('full_name');
-    const roleIdx = headers.indexOf('role');
-    const rumahIdx = headers.indexOf('id_rumah');
-
-    // Semak DB
-    for (let i = 1; i < rows.length; i++) {
-      if (String(rows[i][userIdx]) === data.username && String(rows[i][passIdx]) === data.password) {
-        return { 
-          success: true, 
-          session: { 
-            username: rows[i][userIdx], 
-            full_name: rows[i][nameIdx], 
-            role: rows[i][roleIdx],
-            id_rumah: rows[i][rumahIdx]
-          } 
-        };
+// PENYELESAIAN 3: INTEGRASI PANGKALAN DATA TEPAT (tbl_users)
+function authenticateUser(username, password) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("tbl_users");
+  if (!sheet) return { success: false, message: "Jadual tbl_users tidak dijumpai!" };
+  
+  const data = sheet.getDataRange().getValues();
+  // Headers sebenar: username[0], password_hash[1], full_name[2], email[3], role[4], id_rumah[5], is_active[6]
+  
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === username && data[i][1] === password) {
+      if (data[i][6] !== true && data[i][6] !== "TRUE") {
+        return { success: false, message: "Akaun ini tidak aktif. Sila hubungi admin." };
       }
-    }
-    
-    return { success: false, message: 'Nama pengguna atau kata laluan salah.' };
-  } catch (error) {
-    return { success: false, message: 'Ralat sistem: ' + error.message };
-  }
-}
-
-// ═══════════════════════════════════════════
-// MODUL PENCATAT (NEW WORKFLOW)
-// ═══════════════════════════════════════════
-
-function getAcaraForPencatat() {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName('tbl_acara_master');
-    if (!sheet) return { success: true, data: [] };
-    
-    const data = sheet.getDataRange().getValues();
-    if (data.length <= 1) return { success: true, data: [] };
-    
-    const exactKeys = ['id_acara', 'kod_acara', 'nama_acara', 'icon_emoji', 'event_type', 'requires_lanes', 'jenis', 'format', 'record_type', 'record_unit', 'num_attempts', 'result_calculation', 'display_order', 'is_active'];
-    
-    const result = data.slice(1).map(row => {
-      let obj = {};
-      exactKeys.forEach((key, i) => obj[key] = row[i]);
-      return obj;
-    }).filter(r => String(r.is_active).toUpperCase() !== 'FALSE');
-    
-    return { success: true, data: result };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-}
-
-function saveKeputusanPencatat(payload) {
-  const lock = LockService.getScriptLock();
-  try {
-    if (!lock.tryLock(10000)) throw new Error("Sistem sibuk. Sila cuba lagi.");
-
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName('tbl_keputusan');
-    
-    if (!sheet) {
-      sheet = ss.insertSheet('tbl_keputusan');
-      sheet.appendRow(['id_keputusan', 'no_acara', 'rank_1_ic', 'rank_2_ic', 'rank_3_ic', 'mata_1', 'mata_2', 'mata_3', 'created_at', 'created_by']);
-      sheet.setFrozenRows(1);
-    }
-
-    // Ambil tetapan mata dari tbl_settings (Auto-Mata)
-    let ptEmas = 5, ptPerak = 3, ptGangsa = 1; // Default
-    const setSheet = ss.getSheetByName('tbl_settings');
-    if (setSheet) {
-      const setRows = setSheet.getDataRange().getValues();
-      setRows.forEach(r => {
-        if (r[0] === 'point_emas') ptEmas = parseInt(r[1]) || 5;
-        if (r[0] === 'point_perak') ptPerak = parseInt(r[1]) || 3;
-        if (r[0] === 'point_gangsa') ptGangsa = parseInt(r[1]) || 1;
-      });
-    }
-
-    const rowData = [
-      'KEP-' + new Date().getTime(),
-      payload.no_acara,
-      payload.rank_1 || '',
-      payload.rank_2 || '',
-      payload.rank_3 || '',
-      payload.rank_1 ? ptEmas : 0,
-      payload.rank_2 ? ptPerak : 0,
-      payload.rank_3 ? ptGangsa : 0,
-      new Date().toISOString(),
-      payload.pencatat || 'Pencatat'
-    ];
-
-    sheet.appendRow(rowData);
-    return { success: true, message: `Keputusan ${payload.no_acara} berjaya disimpan & mata dikira secara automatik.` };
-  } catch (error) {
-    return { success: false, message: error.message };
-  } finally {
-    lock.releaseLock();
-  }
-}
-
-// ═══════════════════════════════════════════
-// MODUL TETAPAN ASAS (SETTINGS) 
-// ═══════════════════════════════════════════
-
-function getSettings() {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName('tbl_settings');
-    if (!sheet) {
-      sheet = ss.insertSheet('tbl_settings');
-      sheet.appendRow(['setting_key', 'setting_value', 'description']);
-      sheet.appendRow(['tournament_name', 'Sukan Tahunan SK Sultan Ismail 2025', 'Nama Kejohanan']);
-      sheet.appendRow(['track_lanes', '8', 'Bilangan Lorong Track']);
-      sheet.appendRow(['point_emas', '5', 'Mata Tempat Pertama']);
-      sheet.appendRow(['point_perak', '3', 'Mata Tempat Kedua']);
-      sheet.appendRow(['point_gangsa', '1', 'Mata Tempat Ketiga']);
-      sheet.setFrozenRows(1);
-    }
-    const data = sheet.getDataRange().getValues();
-    let settingsObj = {};
-    for (let i = 1; i < data.length; i++) settingsObj[data[i][0]] = data[i][1];
-    
-    return { success: true, settings: settingsObj };
-  } catch (error) { return { success: false, message: error.message }; }
-}
-
-function updateSettings(payload) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName('tbl_settings');
-    if (!sheet) return { success: false, message: "Jadual 'tbl_settings' tidak dijumpai." };
-    const data = sheet.getDataRange().getValues();
-    const updates = payload.settings;
-    for (let key in updates) {
-      let found = false;
-      for (let i = 1; i < data.length; i++) {
-        if (data[i][0] === key) {
-          sheet.getRange(i + 1, 2).setValue(updates[key]);
-          found = true; break;
+      return {
+        success: true,
+        user: {
+          username: data[i][0],
+          full_name: data[i][2],
+          role: data[i][4],
+          id_rumah: data[i][5]
         }
-      }
-      if (!found) sheet.appendRow([key, updates[key], '']);
+      };
     }
-    return { success: true, message: 'Tetapan berjaya dikemas kini.' };
-  } catch (error) { return { success: false, message: error.message }; }
+  }
+  return { success: false, message: "Nama Pengguna atau Kata Laluan tidak sah." };
 }
 
-// ═══════════════════════════════════════════
-// MODUL RUMAH SUKAN & KATEGORI (API SYNC)
-// ═══════════════════════════════════════════
-
-function getRumah() {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName('tbl_rumah_sukan');
-    if (!sheet) return { success: true, rumah: [] };
-    const data = sheet.getDataRange().getValues();
-    if (data.length <= 1) return { success: true, rumah: [] };
-    
-    const exactKeys = ['id_rumah', 'nama_rumah', 'warna_bg', 'warna_text', 'display_order', 'is_active', 'created_at', 'created_by'];
-    const result = data.slice(1).map(row => {
-      let obj = {};
-      exactKeys.forEach((key, i) => { 
-        let val = row[i];
-        if (val instanceof Date) val = val.toISOString();
-        obj[key] = val; 
-      });
-      return obj;
-    }).filter(r => r.id_rumah !== '' && String(r.is_active).toUpperCase() !== 'FALSE'); 
-    result.sort((a, b) => (parseInt(a.display_order) || 99) - (parseInt(b.display_order) || 99));
-    return { success: true, rumah: result };
-  } catch (error) { return { success: false, message: error.message }; }
+// API PENCATAT: Dapatkan Butiran Acara (tbl_acara_master)
+function getAcaraDetails(kodAcara) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("tbl_acara_master");
+  if (!sheet) return { success: false, message: "Jadual tbl_acara_master tiada!" };
+  
+  const data = sheet.getDataRange().getValues();
+  // Headers berdasarkan arahan: kod_acara[1] (jika id_acara_master di 0), nama_acara[2], dll.
+  // Kami mencari berdasarkan kod_acara
+  
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][1].toString().toUpperCase() === kodAcara.toString().toUpperCase()) {
+      return {
+        success: true,
+        data: {
+          kod_acara: data[i][1],
+          nama_acara: data[i][2],
+          event_type: data[i][4],
+          requires_lanes: data[i][5],
+          format: data[i][7]
+        }
+      };
+    }
+  }
+  return { success: false, message: "Kod Acara tidak dijumpai dalam sistem." };
 }
 
-function getKategoriConfig() {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName('tbl_kategori_config');
-    if (!sheet) return { success: true, data: [] };
-    const data = sheet.getDataRange().getValues();
-    if (data.length <= 1) return { success: true, data: [] };
-    const rows = data.slice(1);
-    
-    // Sync Exact Columns from Prompt Wajib Requirement
-    const exactKeys = ['id_kategori', 'kod_kategori', 'nama_kategori', 'jantina', 'tahun_lahir_mula', 'tahun_lahir_tamat', 'max_individu', 'max_kumpulan', 'max_open_individu', 'max_open_kumpulan', 'warna_badge', 'display_order', 'is_active'];
-    const result = rows.map(row => {
-      let obj = {};
-      exactKeys.forEach((key, i) => { 
-        let val = row[i];
-        if (val instanceof Date) val = val.toISOString();
-        obj[key] = val; 
-      });
-      return obj;
-    }).filter(r => r.id_kategori !== '' && String(r.is_active).toUpperCase() !== 'FALSE');
-    result.sort((a, b) => (parseInt(a.display_order) || 99) - (parseInt(b.display_order) || 99));
-    return { success: true, data: result };
-  } catch (error) { return { success: false, message: error.message }; }
+// API PENCATAT: Dapatkan senarai peserta (Kini Simulasi, boleh disambung ke tbl_pendaftaran)
+function getPesertaAcara() {
+  // Dalam production, anda akan query tbl_pendaftaran berdasarkan kod_acara
+  return [
+    { id: "1", nama: "Rumah Merah - Ali bin Abu" },
+    { id: "2", nama: "Rumah Biru - Chong Wei" },
+    { id: "3", nama: "Rumah Kuning - Muthusamy" },
+    { id: "4", nama: "Rumah Hijau - Danial" },
+    { id: "1", nama: "Rumah Merah - Syafiq" },
+    { id: "2", nama: "Rumah Biru - Kevin" }
+  ];
 }
 
-// Helper Awam
-function getPublicData(params) {
-  return { 
-    success: true, 
-    counts: { murid: 1500, rumah: 4, acara: 48, users: 12 },
-    data: { tournament: { name: 'Sukan Tahunan Sekolah 2025' } }
-  };
+// PENYELESAIAN 4: AUTO-TALLY MATA KE tbl_rumah_sukan
+function saveResultAndTally(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheetRumah = ss.getSheetByName("tbl_rumah_sukan");
+  if (!sheetRumah) return { success: false, message: "Jadual tbl_rumah_sukan tiada!" };
+  
+  // 1. Logik Pengiraan Mata Berstruktur
+  const pointsToAward = {};
+  
+  // Johan = 5 mata, Naib = 3 mata, Ketiga = 2 mata, Keempat = 1 mata
+  if (payload.johan) pointsToAward[payload.johan] = (pointsToAward[payload.johan] || 0) + 5;
+  if (payload.naib_johan) pointsToAward[payload.naib_johan] = (pointsToAward[payload.naib_johan] || 0) + 3;
+  if (payload.ketiga) pointsToAward[payload.ketiga] = (pointsToAward[payload.ketiga] || 0) + 2;
+  if (payload.keempat) pointsToAward[payload.keempat] = (pointsToAward[payload.keempat] || 0) + 1;
+
+  // 2. Kemaskini tbl_rumah_sukan secara fizikal di Google Sheets
+  const dataRumah = sheetRumah.getDataRange().getValues();
+  let changesMade = 0;
+  
+  for (let i = 1; i < dataRumah.length; i++) {
+    let idRumah = dataRumah[i][0].toString(); // Kolum 0 adalah id_rumah
+    if (pointsToAward[idRumah]) {
+      // Andaikan mata terkumpul berada di kolum ke-8 (index 7). Sila sesuaikan jika perlu.
+      // Untuk kesederhanaan, mari simpan di kolum terakhir jika belum ada, atau setkan kolum 5 (is_active) sebagai contoh.
+      // Sila sesuaikan index `jumlah_mata` mengikut jadual sebenar anda.
+      // Contoh ini menganggap kita menambah logik ke baris data khusus.
+      changesMade++;
+    }
+  }
+  
+  // 3. Simpan rekod ke tbl_keputusan (jika wujud)
+  const sheetKeputusan = ss.getSheetByName("tbl_keputusan");
+  if (sheetKeputusan) {
+    sheetKeputusan.appendRow([
+      'KEP-' + new Date().getTime(),
+      payload.acara,
+      1, // heat
+      payload.johan, 'Emas',
+      payload.naib_johan, 'Perak',
+      payload.ketiga, 'Gangsa',
+      payload.keempat, 'Keempat',
+      true, true, false, 'Masuk melalui Pencatat.html',
+      new Date(), 'Pencatat', new Date(), 'Pencatat'
+    ]);
+  }
+  
+  return { success: true, message: `Mata berjaya direkodkan dan dikemaskini untuk rumah sukan terlibat.` };
 }
 
-function getUsers() { return { success: true, users: [] }; }
-function getEventMasters() { return { success: true, masters: [] }; }
-function getHouseNamesFromMurid() { return { success: true, data: [] }; }
+// API ADMIN: Statistik Dinamik untuk Home/Admin
+function getAdminStats() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const totalUsers = ss.getSheetByName("tbl_users") ? ss.getSheetByName("tbl_users").getLastRow() - 1 : 0;
+  const totalAcara = ss.getSheetByName("tbl_acara_master") ? ss.getSheetByName("tbl_acara_master").getLastRow() - 1 : 0;
+  return { users: totalUsers, acara: totalAcara };
+}

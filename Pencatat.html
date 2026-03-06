@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pencatat Keputusan Padang</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0fdf4; }
+    .card { background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 32px; max-width: 600px; margin: 40px auto; border: 1px solid #dcfce7; }
+    .input-field { width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 15px; transition: all 0.2s; outline: none; }
+    .input-field:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1); }
+    .btn-green { background: #16a34a; color: white; padding: 12px 24px; border-radius: 10px; font-weight: 600; transition: all 0.2s; cursor: pointer; width: 100%; display: block; text-align: center; }
+    .btn-green:hover { background: #15803d; transform: translateY(-1px); }
+    .rank-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; }
+    .rank-medal { font-size: 24px; min-width: 40px; text-align: center; }
+    #loader { display: none; text-align: center; padding: 20px; color: #16a34a; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <!-- Butang Kembali ke Utama (Bypass Sandbox) -->
+  <div class="max-w-3xl mx-auto p-4">
+    <button onclick="goHome()" class="text-sm font-semibold text-green-700 bg-green-100 px-4 py-2 rounded-lg hover:bg-green-200 transition">
+      ← Kembali ke Utama
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">⏱️ Pencatat Keputusan</h1>
+      <p class="text-gray-500 mt-2">Sila masukkan kod acara untuk memulakan sesi</p>
+    </div>
+
+    <!-- Bahagian 1: Cari Acara -->
+    <div id="section-search">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Kod Acara (Contoh: T100, MLJ)</label>
+      <div class="flex gap-3">
+        <input type="text" id="kod_acara" class="input-field" placeholder="Masukkan kod...">
+        <button onclick="cariAcara()" class="bg-green-600 hover:bg-green-700 text-white font-bold px-6 rounded-lg transition">Cari</button>
+      </div>
+    </div>
+
+    <div id="loader">⏳ Sedang memproses...</div>
+
+    <!-- Bahagian 2: Input Keputusan -->
+    <div id="section-result" style="display: none;" class="mt-8 pt-8 border-t border-gray-100">
+      <div class="bg-green-50 rounded-xl p-4 mb-6 border border-green-200 text-center">
+        <h2 id="display_nama_acara" class="text-xl font-bold text-green-800">Nama Acara</h2>
+        <p id="display_format" class="text-sm text-green-600 mt-1">Jenis Format</p>
+      </div>
+
+      <h3 class="font-bold text-gray-700 mb-4">Masukkan Pemenang:</h3>
+      
+      <div class="rank-box">
+        <div class="rank-medal">🥇</div>
+        <div class="flex-1">
+          <label class="text-xs font-bold text-gray-500 uppercase">Johan (5 Mata)</label>
+          <select id="rank_1" class="input-field mt-1"></select>
+        </div>
+      </div>
+
+      <div class="rank-box">
+        <div class="rank-medal">🥈</div>
+        <div class="flex-1">
+          <label class="text-xs font-bold text-gray-500 uppercase">Naib Johan (3 Mata)</label>
+          <select id="rank_2" class="input-field mt-1"></select>
+        </div>
+      </div>
+
+      <div class="rank-box">
+        <div class="rank-medal">🥉</div>
+        <div class="flex-1">
+          <label class="text-xs font-bold text-gray-500 uppercase">Ketiga (2 Mata)</label>
+          <select id="rank_3" class="input-field mt-1"></select>
+        </div>
+      </div>
+
+      <div class="rank-box">
+        <div class="rank-medal">4️⃣</div>
+        <div class="flex-1">
+          <label class="text-xs font-bold text-gray-500 uppercase">Keempat (1 Mata)</label>
+          <select id="rank_4" class="input-field mt-1"></select>
+        </div>
+      </div>
+
+      <button onclick="simpanDanKira()" class="btn-green mt-6">💾 Simpan Keputusan & Kira Mata</button>
+    </div>
+  </div>
+
+  <script>
+    // FUNGSI NAVIGASI BYPASS SANDBOX
+    function goHome() {
+      if(typeof google !== 'undefined') {
+        google.script.run.withSuccessHandler(url => {
+          const a = document.createElement('a'); a.href = url + '?page=home'; a.target = '_top';
+          document.body.appendChild(a); a.click();
+        }).getScriptUrl();
+      }
+    }
+
+    // FUNGSI 1: CARI ACARA
+    function cariAcara() {
+      const kod = document.getElementById('kod_acara').value.trim();
+      if(!kod) return alert('Sila masukkan Kod Acara!');
+
+      document.getElementById('section-search').style.display = 'none';
+      document.getElementById('loader').style.display = 'block';
+
+      google.script.run.withSuccessHandler(res => {
+        if(res.success) {
+          document.getElementById('display_nama_acara').textContent = res.data.nama_acara;
+          document.getElementById('display_format').textContent = res.data.format + ' | ' + res.data.event_type;
+          
+          // Muat turun senarai peserta untuk dropdown
+          google.script.run.withSuccessHandler(binaDropdown).getPesertaAcara();
+        } else {
+          document.getElementById('loader').style.display = 'none';
+          document.getElementById('section-search').style.display = 'block';
+          alert(res.message);
+        }
+      }).getAcaraDetails(kod);
+    }
+
+    // FUNGSI 2: BINA DROPDOWN
+    function binaDropdown(peserta) {
+      const selects = ['rank_1', 'rank_2', 'rank_3', 'rank_4'];
+      let options = '<option value="">-- Pilih Pemenang --</option>';
+      
+      peserta.forEach(p => {
+        // Value di sini menggunakan id rumah untuk mudahkan auto-tally mata backend
+        options += `<option value="${p.id}">${p.nama}</option>`;
+      });
+
+      selects.forEach(id => document.getElementById(id).innerHTML = options);
+
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('section-result').style.display = 'block';
+    }
+
+    // FUNGSI 3: SIMPAN DAN AUTO TALLY
+    function simpanDanKira() {
+      const payload = {
+        acara: document.getElementById('kod_acara').value,
+        johan: document.getElementById('rank_1').value,
+        naib_johan: document.getElementById('rank_2').value,
+        ketiga: document.getElementById('rank_3').value,
+        keempat: document.getElementById('rank_4').value
+      };
+
+      if(!payload.johan) return alert('Pemenang Johan wajib dipilih!');
+
+      document.getElementById('section-result').style.display = 'none';
+      document.getElementById('loader').textContent = '💾 Menyimpan data & mengira markah...';
+      document.getElementById('loader').style.display = 'block';
+
+      google.script.run.withSuccessHandler(res => {
+        document.getElementById('loader').style.display = 'none';
+        if(res.success) {
+          alert('Berjaya! ' + res.message);
+          window.location.reload(); // Refresh halaman untuk acara seterusnya
+        } else {
+          alert('Ralat: ' + res.message);
+          document.getElementById('section-result').style.display = 'block';
+        }
+      }).saveResultAndTally(payload);
+    }
+  </script>
+</body>
+</html>
