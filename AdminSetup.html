@@ -1,66 +1,1325 @@
 <!DOCTYPE html>
-<html>
+<html lang="ms">
 <head>
-  <base target="_top">
-  <style>
-    body { font-family: sans-serif; background: #f8f9fa; margin: 0; padding: 20px; }
-    /* PENYELESAIAN 2: Selesaikan White Screen dengan ID yang betul */
-    #pane-admin { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 1000px; margin: auto; }
-    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 25px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-    .stat-card { background: #e8f0fe; padding: 20px; border-radius: 8px; border-left: 5px solid #1a73e8; }
-    .stat-card h3 { margin: 0 0 10px 0; color: #555; font-size: 14px; text-transform: uppercase; }
-    .stat-card .value { font-size: 32px; font-weight: bold; color: #1a73e8; }
-    .btn-back { background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Setup — Sistem Sukan Tahunan</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0F1E;--bg2:#0F1629;--bg3:#141D35;--card:#161E36;--card2:#1C2540;--border:rgba(99,120,200,0.15);--border2:rgba(99,120,200,0.25);--blue:#4F8EF7;--blue2:#3B7BF0;--cyan:#22D3EE;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--purple:#8B5CF6;--gold:#F6C90E;--text:#E2E8F0;--text2:#94A3B8;--text3:#64748B;--sidebar-w:248px;--header-h:58px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+#header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:100;background:rgba(10,15,30,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px}
+.logo-badge{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff;letter-spacing:-0.3px}
+.logo-badge .tag{font-size:10px;font-family:'DM Mono',monospace;font-weight:500;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;padding:2px 8px;border-radius:20px;letter-spacing:1px}
+.header-spacer{flex:1}
+.header-meta{font-size:11px;color:var(--text3);text-align:right;line-height:1.4}
+.header-meta strong{color:var(--text2);display:block}
+.hbtn{background:var(--card2);border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.hbtn:hover{background:var(--card);border-color:var(--blue);color:var(--blue)}
+.hbtn.danger:hover{border-color:var(--red);color:var(--red)}
+#hamburger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:4px;padding:4px}
+#hamburger span{display:block;width:20px;height:2px;background:var(--text2);border-radius:2px;transition:all 0.3s}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(2px);z-index:89}
+#sidebar-overlay.show{display:block}
+#sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);z-index:90;overflow-y:auto;padding:12px 8px 80px;transition:transform 0.3s ease}
+@media(max-width:900px){#sidebar{transform:translateX(-100%)}#sidebar.mobile-open{transform:translateX(0)}#main-content{margin-left:0!important}#hamburger{display:flex}}
+.sb-section{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:1.5px;padding:12px 10px 4px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all 0.2s;margin-bottom:1px}
+.nav-item:hover{background:var(--card);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,rgba(79,142,247,0.15),rgba(34,211,238,0.08));color:var(--blue);border:1px solid rgba(79,142,247,0.2)}
+.nav-item .icon{font-size:15px;width:20px;text-align:center}
+.nav-badge{margin-left:auto;font-size:10px;background:var(--blue);color:#fff;padding:1px 6px;border-radius:10px;font-family:'DM Mono',monospace}
+.nav-sub{display:flex;align-items:center;gap:7px;padding:7px 12px 7px 34px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3);transition:all 0.2s;margin-bottom:1px}
+.nav-sub:hover{background:var(--card);color:var(--text2)}
+.nav-sub.active{color:var(--cyan);background:rgba(34,211,238,0.06)}
+.nav-sub::before{content:'›';color:var(--text3);font-size:14px}
+.nav-sub.active::before{color:var(--cyan)}
+.sb-footer{position:absolute;bottom:0;left:0;right:0;padding:12px 16px;border-top:1px solid var(--border);background:var(--bg2);font-size:10px;color:var(--text3);text-align:center}
+.status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.status-dot.green{background:var(--green);box-shadow:0 0 6px var(--green)}
+.status-dot.red{background:var(--red);box-shadow:0 0 6px var(--red)}
+.status-dot.amber{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+#main-content{margin-left:var(--sidebar-w);margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));padding:24px}
+.tab-pane{display:none}.tab-pane.active{display:block}
+.stpane{display:none}.stpane.active{display:block}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);margin-bottom:20px;font-family:'DM Mono',monospace}
+.breadcrumb .sep{color:var(--text3)}.breadcrumb .current{color:var(--cyan)}
+.page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.page-sub{font-size:12px;color:var(--text3);margin-top:3px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.card-sm{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.section-title{font-size:13px;font-weight:700;color:var(--text);letter-spacing:0.2px}
+.section-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:22px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;transition:all 0.3s}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-color,var(--blue));border-radius:12px 12px 0 0}
+.stat-card .stat-icon{font-size:26px;margin-bottom:8px}
+.stat-card .stat-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.stat-card .stat-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;line-height:1}
+.stat-card .stat-trend{font-size:11px;color:var(--text3);margin-top:6px}
+.stat-card .stat-trend.up{color:var(--green)}.stat-card .stat-trend.warn{color:var(--amber)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:all 0.2s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff}
+.btn-primary:hover{opacity:0.9;transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,142,247,0.4)}
+.btn-success{background:linear-gradient(135deg,#059669,var(--green));color:#fff}
+.btn-success:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-danger{background:linear-gradient(135deg,#DC2626,var(--red));color:#fff}
+.btn-danger:hover{opacity:0.9}
+.btn-ghost{background:var(--card2);border:1px solid var(--border);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.btn-amber{background:linear-gradient(135deg,#D97706,var(--amber));color:#fff}
+.btn-sm{padding:5px 11px;font-size:11px}.btn-xs{padding:3px 8px;font-size:10px;border-radius:6px}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:0.3px;text-transform:uppercase}
+.form-hint{font-size:10px;color:var(--text3);margin-top:4px}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;transition:all 0.2s;outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,142,247,0.12)}
+.form-input::placeholder{color:var(--text3)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-select option{background:var(--bg2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+.toggle-wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.toggle-wrap:last-child{border-bottom:none}
+.toggle-info .toggle-label{font-size:13px;font-weight:600;color:var(--text)}
+.toggle-info .toggle-desc{font-size:11px;color:var(--text3);margin-top:2px}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--card2);border:1px solid var(--border2);border-radius:22px;cursor:pointer;transition:all 0.3s}
+.toggle-slider::before{content:'';position:absolute;height:16px;width:16px;background:var(--text3);border-radius:50%;bottom:2px;left:2px;transition:all 0.3s}
+.toggle input:checked+.toggle-slider{background:var(--green);border-color:var(--green)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);background:#fff}
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead tr{background:var(--card2)}
+thead th{padding:10px 14px;text-align:left;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background 0.15s}
+tbody tr:hover{background:var(--card2)}
+tbody tr:last-child{border-bottom:none}
+tbody td{padding:11px 14px;color:var(--text2);vertical-align:middle}
+.td-mono{font-family:'DM Mono',monospace;font-size:11px;color:var(--cyan)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:0.5px}
+.badge-blue{background:rgba(79,142,247,0.15);color:var(--blue);border:1px solid rgba(79,142,247,0.25)}
+.badge-green{background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.25)}
+.badge-amber{background:rgba(245,158,11,0.15);color:var(--amber);border:1px solid rgba(245,158,11,0.25)}
+.badge-red{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.25)}
+.badge-purple{background:rgba(139,92,246,0.15);color:var(--purple);border:1px solid rgba(139,92,246,0.25)}
+.badge-cyan{background:rgba(34,211,238,0.15);color:var(--cyan);border:1px solid rgba(34,211,238,0.25)}
+.badge-gray{background:rgba(100,116,139,0.15);color:var(--text3);border:1px solid rgba(100,116,139,0.2)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:modal-in 0.2s ease}
+@keyframes modal-in{from{opacity:0;transform:scale(0.95) translateY(10px)}to{opacity:1;transform:none}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border)}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#fff}
+.modal-close{background:var(--card2);border:1px solid var(--border);color:var(--text2);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.modal-close:hover{border-color:var(--red);color:var(--red)}
+.modal-body{padding:20px}
+.modal-footer{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border)}
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:toast-in 0.3s ease}
+@keyframes toast-in{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+.toast.success{border-color:rgba(16,185,129,0.4)}.toast.error{border-color:rgba(239,68,68,0.4)}.toast.info{border-color:rgba(79,142,247,0.4)}.toast.warn{border-color:rgba(245,158,11,0.4)}
+#loading-overlay{display:none;position:fixed;inset:0;background:rgba(10,15,30,0.8);backdrop-filter:blur(4px);z-index:300;align-items:center;justify-content:center}
+#loading-overlay.show{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.colour-preview{width:36px;height:36px;border-radius:8px;border:2px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;transition:all 0.2s}
+.prog-bar{height:6px;background:var(--card2);border-radius:6px;overflow:hidden}
+.prog-bar-fill{height:100%;border-radius:6px;transition:width 0.5s ease;background:linear-gradient(90deg,var(--blue2),var(--cyan))}
+.alert{padding:12px 14px;border-radius:8px;font-size:12px;display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.alert-info{background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.2);color:var(--blue)}
+.alert-warn{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:var(--amber)}
+.alert-danger{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+.alert-success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green)}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;transition:all 0.2s;border:1px solid var(--border);background:var(--card2);color:var(--text2)}
+.chip:hover,.chip.active{background:rgba(79,142,247,0.12);border-color:var(--blue);color:var(--blue)}
+.qa-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.25s;text-align:center}
+.qa-card:hover{border-color:var(--blue);background:var(--card2);transform:translateY(-2px)}
+.qa-card .qa-icon{font-size:24px;margin-bottom:8px}.qa-card .qa-label{font-size:11px;font-weight:600;color:var(--text2)}
+.sys-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.sys-row:last-child{border-bottom:none}
+.sys-row .sys-key{color:var(--text3);font-family:'DM Mono',monospace;font-size:11px}.sys-row .sys-val{color:var(--text);font-weight:600}
+input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1px solid var(--border);background:var(--card2);cursor:pointer}
+.subtab-strip{display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap}
+.subtab-btn{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card2);color:var(--text2);transition:all 0.2s}
+.subtab-btn.active{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff;border-color:transparent}
+.subtab-btn:hover:not(.active){border-color:var(--blue);color:var(--blue)}
+.log-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px}
+.log-item:last-child{border-bottom:none}
+.log-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);white-space:nowrap}
+.emoji-grid{display:flex;flex-wrap:wrap;gap:4px;max-height:140px;overflow-y:auto}
+.emoji-btn{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:var(--card2);cursor:pointer;font-size:16px;transition:all 0.15s;display:flex;align-items:center;justify-content:center}
+.emoji-btn:hover,.emoji-btn.selected{background:rgba(79,142,247,0.15);border-color:var(--blue)}
+.pts-preview{background:var(--bg3);border-radius:8px;padding:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.pts-cell{text-align:center;padding:8px;border-radius:6px;background:var(--card)}
+.pts-cell .pos{font-size:10px;color:var(--text3);margin-bottom:4px}
+.pts-cell .pts{font-family:'Syne',sans-serif;font-size:20px;font-weight:800}
+.dash-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+@media(max-width:900px){.dash-grid{grid-template-columns:1fr}}
+.rumah-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.rumah-card{border-radius:12px;padding:18px;position:relative;overflow:hidden;border:1px solid var(--border);transition:all 0.3s}
+.rumah-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.rumah-card-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;margin-bottom:4px}
+.check-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:12px}
+.check-item.done{background:rgba(16,185,129,0.06);color:var(--green)}
+.check-item.pending{background:rgba(245,158,11,0.06);color:var(--amber)}
+.check-item.err{background:rgba(239,68,68,0.06);color:var(--red)}
+.check-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.check-item.done .check-icon{background:var(--green);color:#fff}
+.check-item.pending .check-icon{background:var(--amber);color:#fff}
+.check-item.err .check-icon{background:var(--red);color:#fff}
+@keyframes fade-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.fade-up{animation:fade-up 0.35s ease both}
+.fade-up-1{animation-delay:0.05s}.fade-up-2{animation-delay:0.1s}.fade-up-3{animation-delay:0.15s}.fade-up-4{animation-delay:0.2s}
+</style>
 </head>
 <body>
+<div id="loading-overlay"><div style="text-align:center"><div class="spinner" style="margin:auto"></div><div style="color:var(--text2);font-size:12px;margin-top:10px" id="loading-msg">Memuatkan...</div></div></div>
+<div id="toast-container"></div>
+<header id="header">
+  <button id="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <div class="logo-badge">🏆 <span>ADMIN</span>&nbsp;PANEL <span class="tag">SETUP</span></div>
+  <div class="header-spacer"></div>
+  <div class="header-meta" id="user-info-header" style="display:none"><strong id="hdr-username">Administrator</strong><span id="hdr-last-login">—</span></div>
+  <button class="hbtn" onclick="refreshCurrentTab()">🔄</button>
+  <button class="hbtn" onclick="goToModule('admin-ops')">⚙️ Ops</button>
+  <button class="hbtn" onclick="goToModule('admin-results')">📊 Results</button>
+  <button class="hbtn danger" onclick="confirmLogout()">🚪 Keluar</button>
+</header>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+<nav id="sidebar">
+  <div style="padding:10px 10px 8px;border-bottom:1px solid var(--border);margin-bottom:8px">
+    <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:1px">SISTEM SUKAN</div>
+    <div style="font-size:12px;color:var(--text2);margin-top:2px;font-weight:600" id="sb-school">SK Sultan Ismail</div>
+    <div style="font-size:10px;color:var(--text3)" id="sb-year">Sukan Tahunan 2025</div>
+  </div>
+  <div class="sb-section">Utama</div>
+  <div class="nav-item active" onclick="navigate('dashboard')" id="nav-dashboard"><span class="icon">📊</span> Dashboard</div>
+  <div class="sb-section">Konfigurasi</div>
+  <div class="nav-item" onclick="navigate('settings','asas')" id="nav-settings"><span class="icon">⚙️</span> Tetapan</div>
+  <div id="settings-submenu" style="display:none">
+    <div class="nav-sub" onclick="navigate('settings','asas')" id="sub-asas">Tetapan Asas</div>
+    <div class="nav-sub" onclick="navigate('settings','mata')" id="sub-mata">Sistem Mata</div>
+    <div class="nav-sub" onclick="navigate('settings','kategori')" id="sub-kategori">Kategori</div>
+    <div class="nav-sub" onclick="navigate('settings','rumah')" id="sub-rumah">Rumah Sukan</div>
+    <div class="nav-sub" onclick="navigate('settings','acara')" id="sub-acara">Acara Master</div>
+  </div>
+  <div class="sb-section">Pengguna</div>
+  <div class="nav-item" onclick="navigate('users')" id="nav-users"><span class="icon">👥</span> Pengguna <span class="nav-badge" id="badge-users">0</span></div>
+  <div class="sb-footer"><span class="status-dot green" id="sys-dot"></span><span id="sys-txt" style="color:var(--text3)">Sistem Aktif</span><div style="margin-top:4px;font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)" id="sb-time">—</div></div>
+</nav>
+<main id="main-content">
+  <div class="breadcrumb"><span>Admin</span><span class="sep">›</span><span id="bc-tab" class="current">Dashboard</span><span class="sep" id="bc-sep2" style="display:none">›</span><span id="bc-sub-txt" class="current" style="display:none"></span></div>
 
-  <!-- ID diubah dari pane-dashboard ke pane-admin -->
-  <div id="pane-admin" class="pane-content">
-    <div class="header">
-      <h2>⚙️ Panel Kawalan Admin</h2>
-      <button class="btn-back" onclick="goHome()">Kembali ke Utama</button>
+<!-- TAB DASHBOARD -->
+<div class="tab-pane active" id="pane-dashboard">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div><div class="page-title">📊 Dashboard Kawalan</div><div class="page-sub">Gambaran keseluruhan sistem sukan tahunan</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><div id="reg-status-badge" class="badge badge-green">● Pendaftaran Aktif</div><div class="badge badge-gray" style="font-family:'DM Mono',monospace">v2.0.0</div></div>
+  </div>
+  <div class="stat-grid fade-up">
+    <div class="stat-card fade-up-1" style="--accent-color:var(--blue)"><div class="stat-icon">👥</div><div class="stat-label">Jumlah Murid</div><div class="stat-value" id="stat-murid">—</div><div class="stat-trend" id="stat-murid-trend">memuatkan...</div></div>
+    <div class="stat-card fade-up-2" style="--accent-color:var(--green)"><div class="stat-icon">🏃</div><div class="stat-label">Acara Master</div><div class="stat-value" id="stat-acara">—</div><div class="stat-trend" id="stat-acara-trend">memuatkan...</div></div>
+    <div class="stat-card fade-up-3" style="--accent-color:var(--purple)"><div class="stat-icon">📋</div><div class="stat-label">Pendaftaran</div><div class="stat-value" id="stat-reg">—</div><div class="stat-trend" id="stat-reg-trend">memuatkan...</div></div>
+    <div class="stat-card fade-up-4" style="--accent-color:var(--amber)"><div class="stat-icon">👤</div><div class="stat-label">Pengguna Aktif</div><div class="stat-value" id="stat-users-dash">—</div><div class="stat-trend">dalam sistem</div></div>
+    <div class="stat-card" style="--accent-color:var(--cyan)"><div class="stat-icon">🏠</div><div class="stat-label">Rumah Sukan</div><div class="stat-value" id="stat-rumah">—</div><div class="stat-trend">tersetup</div></div>
+    <div class="stat-card" style="--accent-color:var(--gold)"><div class="stat-icon">🏅</div><div class="stat-label">Keputusan Diterbit</div><div class="stat-value" id="stat-keputusan">—</div><div class="stat-trend">rekod</div></div>
+  </div>
+  <div class="dash-grid fade-up fade-up-2">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="section-header"><div><div class="section-title">✅ Kemajuan Persediaan</div><div class="section-sub">Status konfigurasi sistem</div></div><div id="prog-pct" style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--cyan)">0%</div></div>
+        <div class="prog-bar" style="margin-bottom:14px"><div class="prog-bar-fill" id="prog-bar" style="width:0%"></div></div>
+        <div id="checklist-container" style="display:flex;flex-direction:column;gap:2px"></div>
+      </div>
+      <div class="card">
+        <div class="section-header"><div class="section-title">⚡ Tindakan Pantas</div></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+          <div class="qa-card" onclick="navigate('settings','asas')"><div class="qa-icon">⚙️</div><div class="qa-label">Tetapan Asas</div></div>
+          <div class="qa-card" onclick="navigate('settings','rumah')"><div class="qa-icon">🏠</div><div class="qa-label">Rumah Sukan</div></div>
+          <div class="qa-card" onclick="navigate('settings','acara')"><div class="qa-icon">🏃</div><div class="qa-label">Acara Master</div></div>
+          <div class="qa-card" onclick="navigate('users')"><div class="qa-icon">👥</div><div class="qa-label">Pengguna</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-header"><div class="section-title">🕐 Log Aktiviti Terkini</div><button class="btn btn-ghost btn-xs" onclick="loadActivityLog()">Muat semula</button></div>
+        <div id="activity-log"><div style="color:var(--text3);font-size:12px;text-align:center;padding:20px">Memuatkan log...</div></div>
+      </div>
     </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="section-header"><div class="section-title">🖥️ Status Sistem</div></div>
+        <div class="sys-row"><span class="sys-key">Versi</span><span class="sys-val">2.0.0</span></div>
+        <div class="sys-row"><span class="sys-key">Persekitaran</span><span class="sys-val" id="ss-env">—</span></div>
+        <div class="sys-row"><span class="sys-key">Pangkalan Data</span><span class="sys-val"><span class="status-dot green"></span>Google Sheets</span></div>
+        <div class="sys-row"><span class="sys-key">Pendaftaran</span><span class="sys-val" id="ss-reg">—</span></div>
+        <div class="sys-row"><span class="sys-key">Lorong Trek</span><span class="sys-val" id="ss-lorong">—</span></div>
+        <div class="sys-row"><span class="sys-key">Kategori</span><span class="sys-val" id="ss-kat">—</span></div>
+        <div class="sys-row"><span class="sys-key">Rumah Sukan</span><span class="sys-val" id="ss-rumah">—</span></div>
+      </div>
+      <div class="card">
+        <div class="section-header"><div class="section-title">🔒 Kawalan Sistem</div></div>
+        <div class="toggle-wrap"><div class="toggle-info"><div class="toggle-label">Pendaftaran Peserta</div><div class="toggle-desc">Buka/tutup pendaftaran acara</div></div><label class="toggle"><input type="checkbox" id="tgl-reg" onchange="toggleSetting('pendaftaran_buka',this.checked)"><span class="toggle-slider"></span></label></div>
+        <div class="toggle-wrap"><div class="toggle-info"><div class="toggle-label">Paparan Awam Keputusan</div><div class="toggle-desc">Tunjuk keputusan di laman utama</div></div><label class="toggle"><input type="checkbox" id="tgl-pub" onchange="toggleSetting('paparan_awam',this.checked)"><span class="toggle-slider"></span></label></div>
+        <div class="toggle-wrap"><div class="toggle-info"><div class="toggle-label">Mod Penyelenggaraan</div><div class="toggle-desc">Halang akses semua pengguna</div></div><label class="toggle"><input type="checkbox" id="tgl-maint" onchange="toggleSetting('mod_penyelenggaraan',this.checked)"><span class="toggle-slider"></span></label></div>
+      </div>
+      <div class="card">
+        <div class="section-header"><div class="section-title">🔔 Amaran Sistem</div></div>
+        <div id="alerts-list"><div style="color:var(--text3);font-size:12px;text-align:center;padding:12px">Tiada amaran</div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- Papan Pemuka Dinamik untuk Jangka Panjang -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <h3>Jumlah Pengguna Aktif</h3>
-        <div class="value" id="stat-users">Memuatkan...</div>
+<!-- TAB SETTINGS -->
+<div class="tab-pane" id="pane-settings">
+  <div style="margin-bottom:20px"><div class="page-title">⚙️ Tetapan Sistem</div><div class="page-sub">Konfigurasi asas, sistem mata, kategori, rumah sukan & acara master</div></div>
+  <div class="subtab-strip">
+    <button class="subtab-btn active" id="stbtn-asas" onclick="showSubTab('asas')">⚙️ Tetapan Asas</button>
+    <button class="subtab-btn" id="stbtn-mata" onclick="showSubTab('mata')">🥇 Sistem Mata</button>
+    <button class="subtab-btn" id="stbtn-kategori" onclick="showSubTab('kategori')">📋 Kategori</button>
+    <button class="subtab-btn" id="stbtn-rumah" onclick="showSubTab('rumah')">🏠 Rumah Sukan</button>
+    <button class="subtab-btn" id="stbtn-acara" onclick="showSubTab('acara')">🏃 Acara Master</button>
+  </div>
+
+  <!-- ASAS -->
+  <div id="stpane-asas" class="stpane active" style="display:block">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="section-header"><div><div class="section-title">🏫 Maklumat Pertandingan</div></div><button class="btn btn-success btn-sm" onclick="saveSettings()">💾 Simpan</button></div>
+        <div class="form-group"><label class="form-label">Nama Sekolah</label><input class="form-input" id="set-sekolah" placeholder="cth: SK Sultan Ismail"></div>
+        <div class="form-group"><label class="form-label">Nama Pertandingan</label><input class="form-input" id="set-nama" placeholder="cth: Sukan Tahunan 2025"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Tahun</label><select class="form-select" id="set-tahun"></select></div>
+          <div class="form-group"><label class="form-label">Jenis Sekolah</label><select class="form-select" id="set-jenis"><option value="rendah">Sekolah Rendah</option><option value="menengah">Sekolah Menengah</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Tarikh Sukan</label><input class="form-input" type="date" id="set-tarikh"></div>
+          <div class="form-group"><label class="form-label">Lokasi / Padang</label><input class="form-input" id="set-lokasi" placeholder="cth: Padang Utama"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Tema Sukan (Slogan)</label><input class="form-input" id="set-tema" placeholder="cth: Gemilang Bersama"></div>
       </div>
-      <div class="stat-card">
-        <h3>Jumlah Acara Didaftarkan</h3>
-        <div class="value" id="stat-acara">Memuatkan...</div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <div class="section-header"><div><div class="section-title">🏟️ Konfigurasi Trek</div></div></div>
+          <div class="form-group"><label class="form-label">Bilangan Lorong Trek</label><select class="form-select" id="set-lorong" onchange="updateLorongPreview()"><option value="4">4 Lorong</option><option value="6">6 Lorong</option><option value="8">8 Lorong</option></select><div class="form-hint">Digunakan untuk undian lorong acara balapan</div></div>
+          <div id="lorong-preview" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"></div>
+        </div>
+        <div class="card">
+          <div class="section-header"><div><div class="section-title">📊 Tetapan Paparan</div></div></div>
+          <div class="form-group"><label class="form-label">Bilangan Tempat Podium</label><select class="form-select" id="set-podium"><option value="3">3 Tempat (Emas/Perak/Gangsa)</option><option value="4">4 Tempat (+ Ke-4)</option><option value="8">8 Tempat (Penuh)</option></select></div>
+          <div class="form-group"><label class="form-label">Format Paparan Nama</label><select class="form-select" id="set-nama-format"><option value="penuh">Nama Penuh</option><option value="pendek">Nama Pendek</option></select></div>
+        </div>
       </div>
-    </div>
-    
-    <div id="admin-modules">
-      <p>Modul Tetapan Pengguna & Acara akan dimuatkan di sini...</p>
-      <!-- Integrasikan komponen setup rumah, user, dan acara anda di sini -->
     </div>
   </div>
 
-  <script>
-    // Muatkan statistik secara dinamik apabila halaman dibuka
-    document.addEventListener("DOMContentLoaded", loadAdminStats);
+  <!-- MATA -->
+  <div id="stpane-mata" class="stpane" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="section-header"><div><div class="section-title">🥇 Konfigurasi Mata Tempat</div><div class="section-sub">Standard MSSD / MSSM / SUKMA</div></div><button class="btn btn-success btn-sm" onclick="saveMata()">💾 Simpan</button></div>
+        <div class="alert alert-info"><span>ℹ️</span><span>Standard Malaysia: Johan 5, Naib 3, Ke-3 2, Ke-4 1. Boleh disesuaikan mengikut perlembagaan sekolah.</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label class="form-label">🥇 Johan (1st)</label><input class="form-input" type="number" id="mata-1" value="5" min="1" max="20" oninput="updateMataPreview()"></div>
+          <div class="form-group"><label class="form-label">🥈 Naib Johan (2nd)</label><input class="form-input" type="number" id="mata-2" value="3" min="1" max="20" oninput="updateMataPreview()"></div>
+          <div class="form-group"><label class="form-label">🥉 Ke-3 (3rd)</label><input class="form-input" type="number" id="mata-3" value="2" min="0" max="20" oninput="updateMataPreview()"></div>
+          <div class="form-group"><label class="form-label">4️⃣ Ke-4 (4th)</label><input class="form-input" type="number" id="mata-4" value="1" min="0" max="20" oninput="updateMataPreview()"></div>
+          <div class="form-group"><label class="form-label">5️⃣ Ke-5 (5th)</label><input class="form-input" type="number" id="mata-5" value="0" min="0" max="20" oninput="updateMataPreview()"></div>
+          <div class="form-group"><label class="form-label">6️⃣ Ke-6 (6th)</label><input class="form-input" type="number" id="mata-6" value="0" min="0" max="20" oninput="updateMataPreview()"></div>
+        </div>
+        <div class="form-group" style="margin-top:8px"><label class="form-label">Preset Standard</label><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="chip" onclick="applyPreset('mssd')">🏅 MSSD (5-3-2-1)</button><button class="chip" onclick="applyPreset('mssm')">🏆 MSSM (8-5-3-2)</button><button class="chip" onclick="applyPreset('sukma')">⭐ SUKMA (10-7-5-3)</button></div></div>
+      </div>
+      <div class="card">
+        <div class="section-header"><div><div class="section-title">📊 Pratonton Kiraan Mata</div></div></div>
+        <div class="pts-preview" id="pts-preview">
+          <div class="pts-cell"><div class="pos">🥇 Johan</div><div class="pts" style="color:var(--gold)" id="pv-1">5</div></div>
+          <div class="pts-cell"><div class="pos">🥈 Naib</div><div class="pts" style="color:#C0C0C0" id="pv-2">3</div></div>
+          <div class="pts-cell"><div class="pos">🥉 Ke-3</div><div class="pts" style="color:#CD7F32" id="pv-3">2</div></div>
+          <div class="pts-cell"><div class="pos">4️⃣ Ke-4</div><div class="pts" style="color:var(--text2)" id="pv-4">1</div></div>
+        </div>
+        <div style="margin-top:14px"><div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-family:'DM Mono',monospace">SIMULASI — 4 RUMAH SUKAN:</div><div id="mata-sim" style="font-size:12px;color:var(--text2)"></div></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+          <div class="section-title" style="margin-bottom:10px">🏅 Label Medal / Sijil</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:60px;color:var(--gold);font-weight:700">🥇 Emas</span><input class="form-input" id="med-1" value="Johan"></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:60px;color:#C0C0C0;font-weight:700">🥈 Perak</span><input class="form-input" id="med-2" value="Naib Johan"></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:60px;color:#CD7F32;font-weight:700">🥉 Gangsa</span><input class="form-input" id="med-3" value="Tempat Ke-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    function loadAdminStats() {
-      google.script.run.withSuccessHandler(function(stats) {
-        document.getElementById('stat-users').innerText = stats.users;
-        document.getElementById('stat-acara').innerText = stats.acara;
-      }).getAdminStats();
-    }
+  <!-- KATEGORI -->
+  <div id="stpane-kategori" class="stpane" style="display:none">
+    <div class="card">
+      <div class="section-header"><div><div class="section-title">📋 Kategori Peserta</div><div class="section-sub">Urus kategori L1, L2, P1, P2 — umur & jantina</div></div><button class="btn btn-primary btn-sm" onclick="openKatModal()">＋ Tambah Kategori</button></div>
+      <div class="tbl-wrap"><table><thead><tr><th>KOD</th><th>NAMA KATEGORI</th><th>JANTINA</th><th>UMUR</th><th>KUOTA/ACARA</th><th>WARNA</th><th>STATUS</th><th>TINDAKAN</th></tr></thead><tbody id="kat-tbody"><tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px">Memuatkan...</td></tr></tbody></table></div>
+    </div>
+  </div>
 
-    function goHome() {
-      google.script.run.withSuccessHandler(function(url) {
-        const link = document.createElement('a');
-        link.href = url + '?page=home';
-        link.target = '_top';
-        document.body.appendChild(link);
-        link.click();
-      }).getScriptUrl();
+  <!-- RUMAH -->
+  <div id="stpane-rumah" class="stpane" style="display:none">
+    <div class="card">
+      <div class="section-header"><div><div class="section-title">🏠 Rumah Sukan</div><div class="section-sub">Urus 4 rumah sukan & warna identiti</div></div><button class="btn btn-primary btn-sm" onclick="openRumahModal()">＋ Tambah Rumah</button></div>
+      <div class="rumah-grid" id="rumah-grid"><div style="color:var(--text3);font-size:12px;text-align:center;padding:24px;grid-column:1/-1">Memuatkan...</div></div>
+    </div>
+  </div>
+
+  <!-- ACARA -->
+  <div id="stpane-acara" class="stpane" style="display:none">
+    <div class="card">
+      <div class="section-header">
+        <div><div class="section-title">🏃 Acara Master</div><div class="section-sub">Senarai acara track, field & road</div></div>
+        <div style="display:flex;gap:8px">
+          <select class="form-select" id="acara-filter" style="width:auto;font-size:12px;padding:5px 10px" onchange="filterAcara()"><option value="">Semua Jenis</option><option value="track">🏃 Track</option><option value="field">🏋️ Field</option><option value="road">🚶 Road</option></select>
+          <button class="btn btn-primary btn-sm" onclick="openAcaraModal()">＋ Tambah Acara</button>
+        </div>
+      </div>
+      <div class="tbl-wrap"><table><thead><tr><th>EMOJI</th><th>KOD</th><th>NAMA ACARA</th><th>JENIS</th><th>KATEGORI</th><th>LORONG</th><th>FORMAT</th><th>STATUS</th><th>TINDAKAN</th></tr></thead><tbody id="acara-tbody"><tr><td colspan="9" style="text-align:center;color:var(--text3);padding:24px">Memuatkan...</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB USERS -->
+<div class="tab-pane" id="pane-users">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div><div class="page-title">👥 Pengurusan Pengguna</div><div class="page-sub">Urus akaun, kata laluan & hak akses sistem</div></div>
+    <button class="btn btn-primary" onclick="openUserModal()">＋ Tambah Pengguna</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <input class="form-input" id="user-search" placeholder="🔍 Cari nama / username..." style="max-width:240px;font-size:12px" oninput="filterUsers()">
+    <select class="form-select" id="user-role-filter" style="width:auto;font-size:12px;padding:5px 10px" onchange="filterUsers()"><option value="">Semua Role</option><option value="Admin">Admin</option><option value="Guru Rumah">Guru Rumah</option><option value="Pengurus">Pengurus</option><option value="Pencatat">Pencatat</option></select>
+  </div>
+  <div class="card"><div class="tbl-wrap"><table><thead><tr><th>USERNAME</th><th>NAMA PENUH</th><th>ROLE</th><th>RUMAH</th><th>LOG MASUK TERAKHIR</th><th>STATUS</th><th>TINDAKAN</th></tr></thead><tbody id="users-tbody"><tr><td colspan="7" style="text-align:center;color:var(--text3);padding:24px">Memuatkan...</td></tr></tbody></table></div></div>
+</div>
+
+</main>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-kat">
+  <div class="modal"><div class="modal-header"><div class="modal-title" id="kat-modal-title">Tambah Kategori</div><button class="modal-close" onclick="closeModal('modal-kat')">✕</button></div>
+  <div class="modal-body">
+    <input type="hidden" id="kat-id">
+    <div class="form-row"><div class="form-group"><label class="form-label">Kod Kategori</label><input class="form-input" id="kat-kod" placeholder="cth: L1" maxlength="5" style="text-transform:uppercase"></div><div class="form-group"><label class="form-label">Nama Kategori</label><input class="form-input" id="kat-nama" placeholder="cth: Lelaki Bawah 12"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Jantina</label><select class="form-select" id="kat-jantina"><option value="L">Lelaki</option><option value="P">Perempuan</option></select></div><div class="form-group"><label class="form-label">Kuota Max / Acara</label><input class="form-input" type="number" id="kat-kuota" placeholder="cth: 3" min="1" max="10"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Umur Minimum</label><input class="form-input" type="number" id="kat-umin" placeholder="7" min="5" max="19"></div><div class="form-group"><label class="form-label">Umur Maksimum</label><input class="form-input" type="number" id="kat-umax" placeholder="11" min="5" max="19"></div></div>
+    <div class="form-group"><label class="form-label">Warna Identiti</label><div style="display:flex;align-items:center;gap:10px"><input type="color" id="kat-warna" value="#4F8EF7" oninput="updateKatPreview()"><div class="colour-preview" id="kat-colour-prev" style="background:#4F8EF7;color:#fff">L1</div><span style="font-size:11px;color:var(--text3)" id="kat-contrast-msg"></span></div></div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-kat')">Batal</button><button class="btn btn-primary" onclick="saveKategori()">💾 Simpan</button></div></div>
+</div>
+
+<div class="modal-overlay" id="modal-rumah">
+  <div class="modal"><div class="modal-header"><div class="modal-title" id="rumah-modal-title">Tambah Rumah Sukan</div><button class="modal-close" onclick="closeModal('modal-rumah')">✕</button></div>
+  <div class="modal-body">
+    <input type="hidden" id="rumah-id">
+    <div class="form-row"><div class="form-group"><label class="form-label">Nama Rumah</label><input class="form-input" id="rumah-nama" placeholder="cth: MERAH" style="text-transform:uppercase"></div><div class="form-group"><label class="form-label">Kod Rumah</label><input class="form-input" id="rumah-kod" placeholder="cth: R1" maxlength="5" style="text-transform:uppercase"></div></div>
+    <div class="form-group"><label class="form-label">Warna Utama</label><div style="display:flex;align-items:center;gap:10px"><input type="color" id="rumah-warna" value="#EF4444" oninput="updateRumahPreview()"><div id="rumah-colour-prev" style="background:#EF4444;color:#fff;padding:8px 16px;border-radius:8px;font-weight:800;font-family:'Syne',sans-serif;font-size:14px;min-width:80px;text-align:center">MERAH</div></div></div>
+    <div class="form-group"><label class="form-label">Warna Teks</label><div style="display:flex;gap:12px"><label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer"><input type="radio" name="rumah-txt" value="#ffffff" checked onchange="updateRumahPreview()"> Putih</label><label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer"><input type="radio" name="rumah-txt" value="#000000" onchange="updateRumahPreview()"> Hitam</label></div><div class="form-hint" id="rumah-contrast-msg">—</div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Guru Rumah</label><input class="form-input" id="rumah-guru" placeholder="Nama guru rumah"></div><div class="form-group"><label class="form-label">Pengurus Rumah</label><input class="form-input" id="rumah-pengurus" placeholder="Nama pengurus"></div></div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-rumah')">Batal</button><button class="btn btn-primary" onclick="saveRumah()">💾 Simpan</button></div></div>
+</div>
+
+<div class="modal-overlay" id="modal-acara">
+  <div class="modal" style="max-width:600px"><div class="modal-header"><div class="modal-title" id="acara-modal-title">Tambah Acara Master</div><button class="modal-close" onclick="closeModal('modal-acara')">✕</button></div>
+  <div class="modal-body">
+    <input type="hidden" id="acara-id">
+    <div class="form-row"><div class="form-group"><label class="form-label">Kod Acara</label><input class="form-input" id="acara-kod" placeholder="cth: 100M" style="text-transform:uppercase"></div><div class="form-group"><label class="form-label">Nama Acara</label><input class="form-input" id="acara-nama" placeholder="cth: Lari 100 Meter"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Jenis Acara</label><select class="form-select" id="acara-jenis" onchange="toggleLorongField()"><option value="track">🏃 Track (Balapan)</option><option value="field">🏋️ Field (Padang)</option><option value="road">🚶 Road (Jalan Raya)</option></select></div><div class="form-group"><label class="form-label">Format Perlawanan</label><select class="form-select" id="acara-format"><option value="final">Terus Final</option><option value="heat_final">Heat → Final</option><option value="cubaan">Cubaan (Field)</option></select></div></div>
+    <div class="form-group" id="lorong-field"><label class="form-label">Perlukan Lorong?</label><select class="form-select" id="acara-lorong"><option value="1">Ya — guna lorong trek</option><option value="0">Tidak — bebas</option></select></div>
+    <div class="form-group"><label class="form-label">Kategori Terlibat</label><div id="acara-kat-checks" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px"></div></div>
+    <div class="form-group"><label class="form-label">Emoji Acara</label><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div id="acara-emoji-preview" style="font-size:28px;width:40px;height:40px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center">🏃</div><input class="form-input" id="acara-emoji" value="🏃" maxlength="4" style="width:80px;font-size:18px;text-align:center" oninput="updateAcaraEmojiPreview()"></div><div class="emoji-grid" id="emoji-grid"></div></div>
+    <div class="form-group"><label class="form-label">Catatan</label><textarea class="form-textarea" id="acara-catatan" placeholder="Catatan tambahan..."></textarea></div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-acara')">Batal</button><button class="btn btn-amber btn-sm" id="acara-clone-btn" onclick="cloneAcara()" style="display:none">📋 Klon</button><button class="btn btn-primary" onclick="saveAcara()">💾 Simpan</button></div></div>
+</div>
+
+<div class="modal-overlay" id="modal-user">
+  <div class="modal"><div class="modal-header"><div class="modal-title" id="user-modal-title">Tambah Pengguna</div><button class="modal-close" onclick="closeModal('modal-user')">✕</button></div>
+  <div class="modal-body">
+    <input type="hidden" id="user-id">
+    <div class="form-row"><div class="form-group"><label class="form-label">Username</label><input class="form-input" id="user-username" placeholder="cth: cg_merah"></div><div class="form-group"><label class="form-label">Kata Laluan</label><div style="position:relative"><input class="form-input" type="password" id="user-password" placeholder="Min 6 aksara"><button type="button" onclick="toggleUserPw()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px">👁️</button></div></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Nama Penuh</label><input class="form-input" id="user-nama" placeholder="Nama penuh"></div><div class="form-group"><label class="form-label">E-mel</label><input class="form-input" type="email" id="user-email" placeholder="email@sekolah.edu.my"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Role / Peranan</label><select class="form-select" id="user-role" onchange="toggleRumahField()"><option value="Admin">Admin</option><option value="Guru Rumah">Guru Rumah</option><option value="Pengurus">Pengurus</option><option value="Pencatat">Pencatat</option></select></div><div class="form-group" id="user-rumah-group"><label class="form-label">Rumah Sukan</label><select class="form-select" id="user-rumah"><option value="">— Pilih Rumah —</option></select></div></div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-user')">Batal</button><button class="btn btn-primary" onclick="saveUser()">💾 Simpan</button></div></div>
+</div>
+
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal" style="max-width:400px"><div class="modal-header"><div class="modal-title">⚠️ Sahkan Tindakan</div><button class="modal-close" onclick="closeModal('modal-confirm')">✕</button></div>
+  <div class="modal-body"><div class="alert alert-danger"><span>🗑️</span><span id="confirm-msg">Padam rekod ini?</span></div><div style="font-size:12px;color:var(--text3)">Tindakan ini tidak boleh dibatalkan.</div></div>
+  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-confirm')">Batal</button><button class="btn btn-danger" id="confirm-ok-btn">Ya, Padam</button></div></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// MOCK DATA (GAS stub — tukar ke google.script.run)
+// ═══════════════════════════════════════════════════
+const IS_GAS = (typeof google !== 'undefined' && google.script);
+
+let _settings = {
+  nama_sekolah:'SK Sultan Ismail',nama_pertandingan:'Sukan Tahunan 2025',
+  tahun:'2025',jenis_sekolah:'rendah',tarikh_sukan:'2025-08-20',
+  lokasi:'Padang Utama SK Sultan Ismail',tema:'Cemerlang Bersama',
+  lorong_trek:'6',podium:'4',nama_format:'penuh',
+  pendaftaran_buka:true,paparan_awam:true,mod_penyelenggaraan:false,
+  mata_1:5,mata_2:3,mata_3:2,mata_4:1,mata_5:0,mata_6:0,
+  med_1:'Johan',med_2:'Naib Johan',med_3:'Tempat Ke-3'
+};
+let _kategori = [
+  {id:'K1',kod:'L1',nama:'Lelaki Bawah 12',jantina:'L',umin:7,umax:11,kuota:3,warna:'#4F8EF7',aktif:true},
+  {id:'K2',kod:'L2',nama:'Lelaki Bawah 15',jantina:'L',umin:12,umax:14,kuota:3,warna:'#10B981',aktif:true},
+  {id:'K3',kod:'P1',nama:'Perempuan Bawah 12',jantina:'P',umin:7,umax:11,kuota:3,warna:'#EC4899',aktif:true},
+  {id:'K4',kod:'P2',nama:'Perempuan Bawah 15',jantina:'P',umin:12,umax:14,kuota:3,warna:'#8B5CF6',aktif:true},
+];
+let _rumah = [
+  {id:'R1',kod:'R1',nama:'MERAH',warna:'#EF4444',warna_teks:'#ffffff',guru:'Cikgu Ahmad',pengurus:'Ali',aktif:true},
+  {id:'R2',kod:'R2',nama:'BIRU',warna:'#3B82F6',warna_teks:'#ffffff',guru:'Cikgu Siti',pengurus:'Chong',aktif:true},
+  {id:'R3',kod:'R3',nama:'HIJAU',warna:'#10B981',warna_teks:'#ffffff',guru:'Cikgu Kumar',pengurus:'Danial',aktif:true},
+  {id:'R4',kod:'R4',nama:'KUNING',warna:'#F59E0B',warna_teks:'#000000',guru:'Cikgu Nora',pengurus:'Farah',aktif:true},
+];
+let _acara = [
+  {id:'A1',kod:'100M',nama:'Lari 100 Meter',jenis:'track',format:'heat_final',lorong:true,kategori:['L1','L2','P1','P2'],emoji:'🏃',catatan:'',aktif:true},
+  {id:'A2',kod:'200M',nama:'Lari 200 Meter',jenis:'track',format:'heat_final',lorong:true,kategori:['L1','L2','P1','P2'],emoji:'🏃',catatan:'',aktif:true},
+  {id:'A3',kod:'400M',nama:'Lari 400 Meter',jenis:'track',format:'final',lorong:true,kategori:['L2','P2'],emoji:'🏃',catatan:'',aktif:true},
+  {id:'A4',kod:'4X100',nama:'Lari Berganti 4x100m',jenis:'track',format:'final',lorong:true,kategori:['L1','L2','P1','P2'],emoji:'🤝',catatan:'',aktif:true},
+  {id:'A5',kod:'LJK',nama:'Lompat Jauh',jenis:'field',format:'cubaan',lorong:false,kategori:['L1','L2','P1','P2'],emoji:'🦘',catatan:'3 cubaan',aktif:true},
+  {id:'A6',kod:'LTK',nama:'Lompat Tinggi',jenis:'field',format:'cubaan',lorong:false,kategori:['L2','P2'],emoji:'⬆️',catatan:'',aktif:true},
+  {id:'A7',kod:'PEL',nama:'Peluru',jenis:'field',format:'cubaan',lorong:false,kategori:['L2','P2'],emoji:'⚾',catatan:'',aktif:true},
+  {id:'A8',kod:'JRL',nama:'Jalan Raya 3km',jenis:'road',format:'final',lorong:false,kategori:['L2','P2'],emoji:'🚶',catatan:'',aktif:true},
+];
+let _users = [
+  {id:'U1',username:'admin',full_name:'Rizal Admin',email:'admin@sk.edu.my',role:'Admin',id_rumah:'',is_active:true,last_login:'2025-03-07T07:00:00'},
+  {id:'U2',username:'cg_merah',full_name:'Cikgu Ahmad',email:'ahmad@sk.edu.my',role:'Guru Rumah',id_rumah:'R1',is_active:true,last_login:'2025-03-06T08:30:00'},
+  {id:'U3',username:'cg_biru',full_name:'Cikgu Siti',email:'siti@sk.edu.my',role:'Guru Rumah',id_rumah:'R2',is_active:true,last_login:'2025-03-05T09:00:00'},
+  {id:'U4',username:'cg_hijau',full_name:'Cikgu Kumar',email:'kumar@sk.edu.my',role:'Guru Rumah',id_rumah:'R3',is_active:true,last_login:'2025-03-06T10:00:00'},
+  {id:'U5',username:'cg_kuning',full_name:'Cikgu Nora',email:'nora@sk.edu.my',role:'Guru Rumah',id_rumah:'R4',is_active:false,last_login:null},
+  {id:'U6',username:'pencatat1',full_name:'Pencatat Sukan',email:'pencatat@sk.edu.my',role:'Pencatat',id_rumah:'',is_active:true,last_login:'2025-03-07T07:30:00'},
+];
+let _activityLog = [
+  {time:'2025-03-07T07:45:00',user:'admin',action:'Kemaskini tetapan sistem',type:'info'},
+  {time:'2025-03-06T15:20:00',user:'cg_merah',action:'Tambah peserta acara 100M',type:'success'},
+  {time:'2025-03-06T14:10:00',user:'admin',action:'Acara LJK ditambah ke master',type:'success'},
+  {time:'2025-03-05T11:30:00',user:'admin',action:'Reset kata laluan cg_kuning',type:'warn'},
+  {time:'2025-03-05T09:00:00',user:'cg_biru',action:'Log masuk sistem',type:'info'},
+];
+
+// GAS API wrapper
+function gasRun(fn, ...args) {
+  return new Promise((resolve) => {
+    if (IS_GAS) {
+      let call = google.script.run.withSuccessHandler(resolve).withFailureHandler(e => { showToast('Ralat: '+e.message,'error'); resolve(null); });
+      call[fn](...args);
+    } else {
+      // Mock responses
+      setTimeout(() => resolve(mockApi(fn, ...args)), 300);
     }
-  </script>
+  });
+}
+
+function mockApi(fn, ...args) {
+  const mocks = {
+    getSettings:    () => ({success:true, data:{..._settings}}),
+    saveSettings:   (d) => { Object.assign(_settings,d); return {success:true}; },
+    getKategori:    () => ({success:true, data:[..._kategori]}),
+    createKategori: (d) => { const n={...d,id:'K'+Date.now(),aktif:true}; _kategori.push(n); return {success:true,data:n}; },
+    updateKategori: (d) => { const i=_kategori.findIndex(k=>k.id===d.id); if(i>=0) _kategori[i]={..._kategori[i],...d}; return {success:true}; },
+    deleteKategori: (d) => { _kategori=_kategori.filter(k=>k.id!==d.id); return {success:true}; },
+    getRumah:       () => ({success:true, data:[..._rumah]}),
+    createRumah:    (d) => { const n={...d,id:'R'+Date.now(),aktif:true}; _rumah.push(n); return {success:true,data:n}; },
+    updateRumah:    (d) => { const i=_rumah.findIndex(r=>r.id===d.id); if(i>=0) _rumah[i]={..._rumah[i],...d}; return {success:true}; },
+    deleteRumah:    (d) => { _rumah=_rumah.filter(r=>r.id!==d.id); return {success:true}; },
+    getAcara:       () => ({success:true, data:[..._acara]}),
+    createAcara:    (d) => { const n={...d,id:'A'+Date.now(),aktif:true}; _acara.push(n); return {success:true,data:n}; },
+    updateAcara:    (d) => { const i=_acara.findIndex(a=>a.id===d.id); if(i>=0) _acara[i]={..._acara[i],...d}; return {success:true}; },
+    deleteAcara:    (d) => { _acara=_acara.filter(a=>a.id!==d.id); return {success:true}; },
+    getUsers:       () => ({success:true, data:[..._users]}),
+    createUser:     (d) => { const n={...d,id:'U'+Date.now(),is_active:true,last_login:null}; _users.push(n); return {success:true,data:n}; },
+    updateUser:     (d) => { const i=_users.findIndex(u=>u.id===d.id); if(i>=0) _users[i]={..._users[i],...d}; return {success:true}; },
+    deleteUser:     (d) => { _users=_users.filter(u=>u.id!==d.id); return {success:true}; },
+    getDashboardStats: () => ({success:true, data:{murid:_kategori.length*120,acara:_acara.length,reg:_acara.length*16,users:_users.filter(u=>u.is_active).length,rumah:_rumah.length,keputusan:8}}),
+    getScriptUrl:   () => 'https://script.google.com/macros/s/DEMO/exec',
+  };
+  return mocks[fn] ? mocks[fn](...args) : {success:false,message:'Unknown fn: '+fn};
+}
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+let currentTab = 'dashboard', currentSubTab = 'asas', settingsDirty = false;
+
+function navigate(tab, sub=null) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pane = document.getElementById('pane-'+tab);
+  if(pane) pane.classList.add('active');
+  const ni = document.getElementById('nav-'+tab);
+  if(ni) ni.classList.add('active');
+  const sm = document.getElementById('settings-submenu');
+  if(tab==='settings'){
+    sm.style.display='block';
+    showSubTab(sub||'asas');
+    document.getElementById('nav-settings').classList.add('active');
+  } else {
+    sm.style.display='none';
+  }
+  updateBreadcrumb(tab, sub);
+  if(window.innerWidth<=900) closeSidebar();
+  if(tab==='dashboard') loadDashboard();
+  else if(tab==='users') loadUsers();
+}
+
+function showSubTab(sub) {
+  currentSubTab = sub;
+  document.querySelectorAll('.stpane').forEach(p=>{p.style.display='none';p.classList.remove('active')});
+  document.querySelectorAll('.subtab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nav-sub').forEach(b=>b.classList.remove('active'));
+  const pane = document.getElementById('stpane-'+sub);
+  const btn  = document.getElementById('stbtn-'+sub);
+  const nav  = document.getElementById('sub-'+sub);
+  if(pane){pane.style.display='block';pane.classList.add('active')}
+  if(btn) btn.classList.add('active');
+  if(nav) nav.classList.add('active');
+  updateBreadcrumb('settings', sub);
+  if(sub==='asas') loadSettings();
+  else if(sub==='mata') loadMata();
+  else if(sub==='kategori') loadKategori();
+  else if(sub==='rumah') loadRumah();
+  else if(sub==='acara') loadAcara();
+}
+
+function updateBreadcrumb(tab, sub) {
+  const lbl = {dashboard:'Dashboard',settings:'Tetapan',users:'Pengguna',asas:'Tetapan Asas',mata:'Sistem Mata',kategori:'Kategori',rumah:'Rumah Sukan',acara:'Acara Master'};
+  document.getElementById('bc-tab').textContent = lbl[tab]||tab;
+  if(sub){document.getElementById('bc-sep2').style.display='inline';document.getElementById('bc-sub-txt').style.display='inline';document.getElementById('bc-sub-txt').textContent=lbl[sub]||sub;}
+  else{document.getElementById('bc-sep2').style.display='none';document.getElementById('bc-sub-txt').style.display='none';}
+}
+
+function refreshCurrentTab() {
+  if(currentTab==='dashboard') loadDashboard();
+  else if(currentTab==='settings') showSubTab(currentSubTab);
+  else if(currentTab==='users') loadUsers();
+  showToast('Disegar semula','info');
+}
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+async function loadDashboard() {
+  const r = await gasRun('getDashboardStats');
+  if(!r||!r.success) return;
+  const d = r.data;
+  document.getElementById('stat-murid').textContent = d.murid||0;
+  document.getElementById('stat-acara').textContent = d.acara||0;
+  document.getElementById('stat-reg').textContent = d.reg||0;
+  document.getElementById('stat-users-dash').textContent = d.users||0;
+  document.getElementById('stat-rumah').textContent = d.rumah||0;
+  document.getElementById('stat-keputusan').textContent = d.keputusan||0;
+  document.getElementById('stat-murid-trend').textContent = (d.murid||0)+' murid berdaftar';
+  document.getElementById('stat-acara-trend').textContent = (d.acara||0)+' acara tersedia';
+  document.getElementById('stat-reg-trend').textContent = (d.reg||0)+' pendaftaran aktif';
+  document.getElementById('ss-env').textContent = IS_GAS ? 'Google Apps Script' : 'Development (Mock)';
+  document.getElementById('ss-reg').textContent = _settings.pendaftaran_buka ? '✅ Dibuka' : '🔒 Ditutup';
+  document.getElementById('ss-lorong').textContent = (_settings.lorong_trek||6)+' Lorong';
+  document.getElementById('ss-kat').textContent = _kategori.length+' Kategori';
+  document.getElementById('ss-rumah').textContent = _rumah.length+' Rumah';
+  document.getElementById('sb-school').textContent = _settings.nama_sekolah||'SK Sultan Ismail';
+  document.getElementById('sb-year').textContent = _settings.nama_pertandingan||'Sukan Tahunan 2025';
+  document.getElementById('badge-users').textContent = d.users;
+  buildChecklist();
+  loadActivityLog();
+  loadAlerts();
+}
+
+function buildChecklist() {
+  const items = [
+    {label:'Tetapan Asas dikonfigur',done:!!_settings.nama_sekolah},
+    {label:'Sistem Mata ditetapkan',done:!!_settings.mata_1},
+    {label:'Kategori peserta ditambah',done:_kategori.length>0},
+    {label:'Rumah Sukan ditambah',done:_rumah.length>0},
+    {label:'Acara Master ditambah',done:_acara.length>0},
+    {label:'Pengguna sistem ditambah',done:_users.length>1},
+  ];
+  const done = items.filter(i=>i.done).length;
+  const pct = Math.round(done/items.length*100);
+  document.getElementById('prog-pct').textContent = pct+'%';
+  document.getElementById('prog-bar').style.width = pct+'%';
+  const cont = document.getElementById('checklist-container');
+  cont.innerHTML = items.map(i=>`
+    <div class="check-item ${i.done?'done':'pending'}">
+      <div class="check-icon">${i.done?'✓':'!'}</div>
+      <span>${i.label}</span>
+      ${!i.done?'<span style="margin-left:auto;font-size:10px;cursor:pointer;color:var(--blue)" onclick="navigate(\'settings\',\'asas\')">Setup →</span>':''}
+    </div>`).join('');
+}
+
+function loadActivityLog() {
+  const cont = document.getElementById('activity-log');
+  const colors = {info:'var(--blue)',success:'var(--green)',warn:'var(--amber)',error:'var(--red)'};
+  cont.innerHTML = _activityLog.slice(0,5).map(l=>`
+    <div class="log-item">
+      <div style="width:8px;height:8px;border-radius:50%;background:${colors[l.type]||'var(--blue)'};flex-shrink:0;margin-top:4px"></div>
+      <div style="flex:1"><div style="color:var(--text);font-weight:500">${l.action}</div><div style="color:var(--text3);font-size:10px;margin-top:2px">oleh <strong>${l.user}</strong></div></div>
+      <div class="log-time">${formatDateTime(l.time)}</div>
+    </div>`).join('');
+}
+
+function loadAlerts() {
+  const alerts = [];
+  if(!_settings.pendaftaran_buka) alerts.push({type:'warn',msg:'Pendaftaran peserta masih tertutup'});
+  if(_kategori.length===0) alerts.push({type:'danger',msg:'Tiada kategori ditambah — acara tidak boleh dijana'});
+  if(_rumah.length===0) alerts.push({type:'danger',msg:'Tiada rumah sukan — sistem tidak lengkap'});
+  const cont = document.getElementById('alerts-list');
+  if(alerts.length===0){cont.innerHTML='<div style="color:var(--green);font-size:12px;text-align:center;padding:12px">✅ Tiada amaran sistem</div>';return;}
+  cont.innerHTML = alerts.map(a=>`<div class="alert alert-${a.type==='danger'?'danger':'warn'}"><span>${a.type==='danger'?'🔴':'🟡'}</span><span>${a.msg}</span></div>`).join('');
+}
+
+async function toggleSetting(key, val) {
+  _settings[key] = val;
+  const r = await gasRun('saveSettings', {[key]:val});
+  if(r&&r.success){showToast(key+' dikemaskini','success');loadDashboard();}
+  else showToast('Gagal kemaskini tetapan','error');
+}
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════
+// SETTINGS — ASAS
+// ═══════════════════════════════════════════════════
+async function loadSettings() {
+  const r = await gasRun('getSettings');
+  if(!r||!r.success) return;
+  const d = r.data;
+  Object.assign(_settings,d);
+  setValue('set-sekolah',d.nama_sekolah);setValue('set-nama',d.nama_pertandingan);
+  setValue('set-tahun',d.tahun);setValue('set-jenis',d.jenis_sekolah);
+  setValue('set-tarikh',d.tarikh_sukan);setValue('set-lokasi',d.lokasi);
+  setValue('set-tema',d.tema);setValue('set-lorong',d.lorong_trek||'6');
+  setValue('set-podium',d.podium||'4');setValue('set-nama-format',d.nama_format||'penuh');
+  setToggle('tgl-reg',d.pendaftaran_buka);setToggle('tgl-pub',d.paparan_awam);setToggle('tgl-maint',d.mod_penyelenggaraan);
+  updateLorongPreview();
+}
+
+async function saveSettings() {
+  const payload = {
+    nama_sekolah:getVal('set-sekolah'),nama_pertandingan:getVal('set-nama'),
+    tahun:getVal('set-tahun'),jenis_sekolah:getVal('set-jenis'),
+    tarikh_sukan:getVal('set-tarikh'),lokasi:getVal('set-lokasi'),tema:getVal('set-tema'),
+    lorong_trek:getVal('set-lorong'),podium:getVal('set-podium'),nama_format:getVal('set-nama-format')
+  };
+  if(!payload.nama_sekolah||!payload.nama_pertandingan){showToast('Nama sekolah & pertandingan wajib','error');return;}
+  showLoading('Menyimpan tetapan...');
+  const r = await gasRun('saveSettings', payload);
+  hideLoading();
+  if(r&&r.success){Object.assign(_settings,payload);showToast('Tetapan berjaya disimpan ✅','success');buildChecklist();}
+  else showToast('Gagal simpan tetapan','error');
+}
+
+function updateLorongPreview() {
+  const n = parseInt(getVal('set-lorong')||'6');
+  const cont = document.getElementById('lorong-preview');
+  const colors = ['#4F8EF7','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#22D3EE','#F97316'];
+  cont.innerHTML = Array.from({length:n},(_,i)=>`<div style="background:${colors[i%colors.length]};color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;font-family:'DM Mono',monospace">L${i+1}</div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// SETTINGS — SISTEM MATA
+// ═══════════════════════════════════════════════════
+async function loadMata() {
+  const r = await gasRun('getSettings');
+  if(!r||!r.success) return;
+  const d = r.data;
+  for(let i=1;i<=6;i++) setValue('mata-'+i, d['mata_'+i]||0);
+  setValue('med-1',d.med_1||'Johan');setValue('med-2',d.med_2||'Naib Johan');setValue('med-3',d.med_3||'Tempat Ke-3');
+  updateMataPreview();
+}
+
+async function saveMata() {
+  const payload = {};
+  for(let i=1;i<=6;i++) payload['mata_'+i]=parseInt(getVal('mata-'+i)||'0');
+  payload.med_1=getVal('med-1');payload.med_2=getVal('med-2');payload.med_3=getVal('med-3');
+  showLoading('Menyimpan sistem mata...');
+  const r = await gasRun('saveSettings', payload);
+  hideLoading();
+  if(r&&r.success){Object.assign(_settings,payload);showToast('Sistem mata berjaya disimpan ✅','success');}
+  else showToast('Gagal simpan sistem mata','error');
+}
+
+function updateMataPreview() {
+  for(let i=1;i<=4;i++){
+    const v = parseInt(getVal('mata-'+i)||'0');
+    const el = document.getElementById('pv-'+i);
+    if(el) el.textContent=v;
+  }
+  // Simulation
+  const m = [1,2,3,4].map(i=>parseInt(getVal('mata-'+i)||'0'));
+  const sim = document.getElementById('mata-sim');
+  if(sim) sim.innerHTML = _rumah.map((r,idx)=>{
+    const pts = m[idx%m.length];
+    return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text)">${r.nama}</span><span style="font-weight:700;color:var(--gold)">${pts} mata</span></div>`;
+  }).join('');
+}
+
+function applyPreset(type) {
+  const presets = {
+    mssd:  [5,3,2,1,0,0],
+    mssm:  [8,5,3,2,1,0],
+    sukma: [10,7,5,3,2,1],
+  };
+  const p = presets[type];
+  if(!p) return;
+  p.forEach((v,i)=>setValue('mata-'+(i+1),v));
+  updateMataPreview();
+  showToast('Preset '+type.toUpperCase()+' digunakan','success');
+}
+
+// ═══════════════════════════════════════════════════
+// KATEGORI
+// ═══════════════════════════════════════════════════
+async function loadKategori() {
+  const r = await gasRun('getKategori');
+  if(!r||!r.success) return;
+  _kategori = r.data;
+  const tbody = document.getElementById('kat-tbody');
+  if(_kategori.length===0){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px">Tiada kategori. Klik "+ Tambah Kategori"</td></tr>';return;}
+  tbody.innerHTML = _kategori.map(k=>`
+    <tr>
+      <td><span class="td-mono">${k.kod}</span></td>
+      <td style="color:var(--text);font-weight:600">${k.nama}</td>
+      <td><span class="badge ${k.jantina==='L'?'badge-blue':'badge-purple'}">${k.jantina==='L'?'♂ Lelaki':'♀ Perempuan'}</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px">${k.umin}–${k.umax} tahun</td>
+      <td style="font-family:'DM Mono',monospace">${k.kuota||3}/acara</td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div style="width:18px;height:18px;background:${k.warna};border-radius:4px"></div><span style="font-size:11px;color:var(--text3)">${k.warna}</span></div></td>
+      <td><span class="badge ${k.aktif?'badge-green':'badge-gray'}">${k.aktif?'Aktif':'Tidak Aktif'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-xs" onclick="editKategori('${k.id}')">✏️</button>
+          <button class="btn btn-danger btn-xs" onclick="confirmDelete('Padam kategori ${k.kod}?',()=>deleteKategori('${k.id}'))">🗑️</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openKatModal(id=null) {
+  clearKatForm();
+  document.getElementById('kat-modal-title').textContent = id ? 'Edit Kategori' : 'Tambah Kategori';
+  openModal('modal-kat');
+  if(id) {
+    const k = _kategori.find(x=>x.id===id);
+    if(!k) return;
+    setValue('kat-id',k.id);setValue('kat-kod',k.kod);setValue('kat-nama',k.nama);
+    setValue('kat-jantina',k.jantina);setValue('kat-kuota',k.kuota);
+    setValue('kat-umin',k.umin);setValue('kat-umax',k.umax);
+    document.getElementById('kat-warna').value = k.warna||'#4F8EF7';
+    updateKatPreview();
+  }
+}
+function editKategori(id){openKatModal(id);}
+
+function clearKatForm(){['kat-id','kat-kod','kat-nama','kat-kuota','kat-umin','kat-umax'].forEach(id=>setValue(id,''));setValue('kat-jantina','L');document.getElementById('kat-warna').value='#4F8EF7';updateKatPreview();}
+
+function updateKatPreview(){
+  const w=document.getElementById('kat-warna').value;
+  const k=document.getElementById('kat-kod').value||'KAT';
+  const prev=document.getElementById('kat-colour-prev');
+  prev.style.background=w;prev.textContent=k;
+  const lum = hexLuminance(w);
+  prev.style.color = lum>0.5?'#000':'#fff';
+  document.getElementById('kat-contrast-msg').textContent = lum>0.5?'Teks: Hitam ✓':'Teks: Putih ✓';
+}
+
+async function saveKategori(){
+  const kod=getVal('kat-kod').toUpperCase();
+  const nama=getVal('kat-nama');
+  if(!kod||!nama){showToast('Kod dan nama wajib diisi','error');return;}
+  const payload={id:getVal('kat-id'),kod,nama,jantina:getVal('kat-jantina'),kuota:parseInt(getVal('kat-kuota')||'3'),umin:parseInt(getVal('kat-umin')||'7'),umax:parseInt(getVal('kat-umax')||'11'),warna:document.getElementById('kat-warna').value};
+  showLoading('Menyimpan kategori...');
+  const r = await gasRun(payload.id?'updateKategori':'createKategori',payload);
+  hideLoading();closeModal('modal-kat');
+  if(r&&r.success){showToast(payload.id?'Kategori dikemaskini ✅':'Kategori ditambah ✅','success');loadKategori();}
+  else showToast('Gagal simpan kategori','error');
+}
+
+async function deleteKategori(id){
+  showLoading('Mempadam...');
+  const r=await gasRun('deleteKategori',{id});
+  hideLoading();
+  if(r&&r.success){showToast('Kategori dipadam','success');loadKategori();}
+  else showToast('Gagal padam','error');
+}
+
+// ═══════════════════════════════════════════════════
+// RUMAH SUKAN
+// ═══════════════════════════════════════════════════
+async function loadRumah() {
+  const r = await gasRun('getRumah');
+  if(!r||!r.success) return;
+  _rumah = r.data;
+  const grid = document.getElementById('rumah-grid');
+  if(_rumah.length===0){grid.innerHTML='<div style="color:var(--text3);font-size:12px;text-align:center;padding:24px;grid-column:1/-1">Tiada rumah sukan. Klik "+ Tambah Rumah"</div>';return;}
+  grid.innerHTML = _rumah.map(r=>`
+    <div class="rumah-card" style="background:${r.warna}15;border-color:${r.warna}40">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:40px;height:40px;background:${r.warna};border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;color:${r.warna_teks||'#fff'};font-size:14px">${r.kod}</div>
+        <div>
+          <div class="rumah-card-name" style="color:${r.warna}">${r.nama}</div>
+          <div class="rumah-card-code" style="color:var(--text3)">Rumah ${r.kod}</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:4px">👨‍🏫 ${r.guru||'—'}</div>
+      <div style="font-size:11px;color:var(--text2)">🏆 ${r.pengurus||'—'}</div>
+      <div style="display:flex;gap:6px;margin-top:12px">
+        <button class="btn btn-ghost btn-xs" style="flex:1" onclick="editRumah('${r.id}')">✏️ Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="confirmDelete('Padam rumah ${r.nama}?',()=>deleteRumah('${r.id}'))">🗑️</button>
+      </div>
+    </div>`).join('');
+  populateUserRumahSelect();
+}
+
+function openRumahModal(id=null){
+  clearRumahForm();
+  document.getElementById('rumah-modal-title').textContent=id?'Edit Rumah Sukan':'Tambah Rumah Sukan';
+  openModal('modal-rumah');
+  if(id){
+    const r=_rumah.find(x=>x.id===id);
+    if(!r)return;
+    setValue('rumah-id',r.id);setValue('rumah-nama',r.nama);setValue('rumah-kod',r.kod);
+    setValue('rumah-guru',r.guru);setValue('rumah-pengurus',r.pengurus);
+    document.getElementById('rumah-warna').value=r.warna||'#EF4444';
+    const radios=document.querySelectorAll('input[name="rumah-txt"]');
+    radios.forEach(rd=>rd.checked=(rd.value===(r.warna_teks||'#ffffff')));
+    updateRumahPreview();
+  }
+}
+function editRumah(id){openRumahModal(id);}
+function clearRumahForm(){['rumah-id','rumah-nama','rumah-kod','rumah-guru','rumah-pengurus'].forEach(id=>setValue(id,''));document.getElementById('rumah-warna').value='#EF4444';updateRumahPreview();}
+
+function updateRumahPreview(){
+  const w=document.getElementById('rumah-warna').value;
+  const nama=getVal('rumah-nama')||'RUMAH';
+  const txtEl=document.querySelector('input[name="rumah-txt"]:checked');
+  const txt=txtEl?txtEl.value:'#ffffff';
+  const prev=document.getElementById('rumah-colour-prev');
+  prev.style.background=w;prev.style.color=txt;prev.textContent=nama;
+  const ratio=contrastRatio(w,txt);
+  const msg=document.getElementById('rumah-contrast-msg');
+  msg.textContent=`Kontras: ${ratio.toFixed(1)}:1 ${ratio>=4.5?'✅ WCAG AA':'⚠️ Rendah'}`;
+  msg.style.color=ratio>=4.5?'var(--green)':'var(--amber)';
+}
+
+async function saveRumah(){
+  const nama=getVal('rumah-nama').toUpperCase();
+  const kod=getVal('rumah-kod').toUpperCase();
+  if(!nama||!kod){showToast('Nama dan kod rumah wajib diisi','error');return;}
+  const txtEl=document.querySelector('input[name="rumah-txt"]:checked');
+  const payload={id:getVal('rumah-id'),nama,kod,warna:document.getElementById('rumah-warna').value,warna_teks:txtEl?txtEl.value:'#ffffff',guru:getVal('rumah-guru'),pengurus:getVal('rumah-pengurus')};
+  showLoading('Menyimpan rumah...');
+  const r=await gasRun(payload.id?'updateRumah':'createRumah',payload);
+  hideLoading();closeModal('modal-rumah');
+  if(r&&r.success){showToast(payload.id?'Rumah dikemaskini ✅':'Rumah ditambah ✅','success');loadRumah();}
+  else showToast('Gagal simpan','error');
+}
+
+async function deleteRumah(id){
+  showLoading('Mempadam...');
+  const r=await gasRun('deleteRumah',{id});
+  hideLoading();
+  if(r&&r.success){showToast('Rumah dipadam','success');loadRumah();}
+  else showToast('Gagal padam','error');
+}
+
+// ═══════════════════════════════════════════════════
+// ACARA MASTER
+// ═══════════════════════════════════════════════════
+const EMOJIS = ['🏃','🏋️','🚶','🤸','⬆️','🦘','⚾','🏌️','🎯','🥊','🤼','🚴','🏊','⛹️','🤾','🤺','🏹','🛶','🧗','🎽','🥅','🏑','🏒','🏓','🏸','🥇','🏅','🎖️','🏆','🌟'];
+
+function buildEmojiGrid(){
+  const grid=document.getElementById('emoji-grid');
+  if(!grid)return;
+  grid.innerHTML=EMOJIS.map(e=>`<button type="button" class="emoji-btn" onclick="selectEmoji('${e}')">${e}</button>`).join('');
+}
+
+function selectEmoji(e){
+  setValue('acara-emoji',e);
+  document.getElementById('acara-emoji-preview').textContent=e;
+  document.querySelectorAll('.emoji-btn').forEach(b=>{b.classList.toggle('selected',b.textContent===e)});
+}
+
+function updateAcaraEmojiPreview(){
+  const e=getVal('acara-emoji');
+  document.getElementById('acara-emoji-preview').textContent=e;
+}
+
+function buildKatChecks(){
+  const cont=document.getElementById('acara-kat-checks');
+  if(!cont)return;
+  cont.innerHTML=_kategori.map(k=>`
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--card2);font-size:12px;color:var(--text2)">
+      <input type="checkbox" class="kat-check" value="${k.kod}"> ${k.kod}
+    </label>`).join('');
+}
+
+function toggleLorongField(){
+  const jenis=getVal('acara-jenis');
+  document.getElementById('lorong-field').style.display=jenis==='track'?'block':'none';
+  if(jenis!=='track') setValue('acara-lorong','0');
+}
+
+async function loadAcara(){
+  const r=await gasRun('getAcara');
+  if(!r||!r.success)return;
+  _acara=r.data;
+  renderAcaraTable(_acara);
+}
+
+function renderAcaraTable(data){
+  const tbody=document.getElementById('acara-tbody');
+  if(data.length===0){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:24px">Tiada acara. Klik "+ Tambah Acara"</td></tr>';return;}
+  const jenisLabel={track:'🏃 Track',field:'🏋️ Field',road:'🚶 Road'};
+  const formatLabel={final:'Terus Final',heat_final:'Heat→Final',cubaan:'Cubaan'};
+  tbody.innerHTML=data.map(a=>`
+    <tr>
+      <td style="font-size:20px">${a.emoji||'🏃'}</td>
+      <td><span class="td-mono">${a.kod}</span></td>
+      <td style="color:var(--text);font-weight:500">${a.nama}</td>
+      <td><span class="badge ${a.jenis==='track'?'badge-blue':a.jenis==='field'?'badge-green':'badge-amber'}">${jenisLabel[a.jenis]||a.jenis}</span></td>
+      <td style="font-size:11px">${(a.kategori||[]).join(', ')}</td>
+      <td><span class="badge ${a.lorong?'badge-cyan':'badge-gray'}">${a.lorong?'Ya':'Tidak'}</span></td>
+      <td style="font-size:11px;color:var(--text3)">${formatLabel[a.format]||a.format}</td>
+      <td><span class="badge ${a.aktif?'badge-green':'badge-gray'}">${a.aktif?'Aktif':'Tidak'}</span></td>
+      <td><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-xs" onclick="editAcara('${a.id}')">✏️</button><button class="btn btn-amber btn-xs" onclick="cloneAcaraById('${a.id}')">📋</button><button class="btn btn-danger btn-xs" onclick="confirmDelete('Padam acara ${a.kod}?',()=>deleteAcara('${a.id}'))">🗑️</button></div></td>
+    </tr>`).join('');
+}
+
+function filterAcara(){
+  const f=getVal('acara-filter');
+  renderAcaraTable(f?_acara.filter(a=>a.jenis===f):_acara);
+}
+
+function openAcaraModal(id=null){
+  clearAcaraForm();
+  document.getElementById('acara-modal-title').textContent=id?'Edit Acara':'Tambah Acara Master';
+  document.getElementById('acara-clone-btn').style.display=id?'inline-flex':'none';
+  buildEmojiGrid();buildKatChecks();toggleLorongField();
+  openModal('modal-acara');
+  if(id){
+    const a=_acara.find(x=>x.id===id);
+    if(!a)return;
+    setValue('acara-id',a.id);setValue('acara-kod',a.kod);setValue('acara-nama',a.nama);
+    setValue('acara-jenis',a.jenis);setValue('acara-format',a.format);
+    setValue('acara-lorong',a.lorong?'1':'0');setValue('acara-emoji',a.emoji||'🏃');
+    setValue('acara-catatan',a.catatan||'');
+    document.getElementById('acara-emoji-preview').textContent=a.emoji||'🏃';
+    setTimeout(()=>{document.querySelectorAll('.kat-check').forEach(cb=>{cb.checked=(a.kategori||[]).includes(cb.value)});},100);
+    toggleLorongField();
+  }
+}
+function editAcara(id){openAcaraModal(id);}
+function clearAcaraForm(){['acara-id','acara-kod','acara-nama','acara-catatan'].forEach(id=>setValue(id,''));setValue('acara-jenis','track');setValue('acara-format','heat_final');setValue('acara-lorong','1');setValue('acara-emoji','🏃');document.getElementById('acara-emoji-preview').textContent='🏃';}
+
+async function saveAcara(){
+  const kod=getVal('acara-kod').toUpperCase();
+  const nama=getVal('acara-nama');
+  if(!kod||!nama){showToast('Kod dan nama acara wajib','error');return;}
+  const kats=Array.from(document.querySelectorAll('.kat-check:checked')).map(cb=>cb.value);
+  const payload={id:getVal('acara-id'),kod,nama,jenis:getVal('acara-jenis'),format:getVal('acara-format'),lorong:getVal('acara-lorong')==='1',kategori:kats,emoji:getVal('acara-emoji')||'🏃',catatan:getVal('acara-catatan')};
+  showLoading('Menyimpan acara...');
+  const r=await gasRun(payload.id?'updateAcara':'createAcara',payload);
+  hideLoading();closeModal('modal-acara');
+  if(r&&r.success){showToast(payload.id?'Acara dikemaskini ✅':'Acara ditambah ✅','success');loadAcara();}
+  else showToast('Gagal simpan acara','error');
+}
+
+async function cloneAcaraById(id){
+  const a=_acara.find(x=>x.id===id);
+  if(!a)return;
+  const clone={...a,id:'',kod:a.kod+'_KLON',nama:a.nama+' (Klon)'};
+  showLoading('Mengklon acara...');
+  const r=await gasRun('createAcara',clone);
+  hideLoading();
+  if(r&&r.success){showToast('Acara berjaya diklon ✅','success');loadAcara();}
+}
+function cloneAcara(){const id=getVal('acara-id');if(id){closeModal('modal-acara');cloneAcaraById(id);}}
+
+async function deleteAcara(id){
+  showLoading('Mempadam...');
+  const r=await gasRun('deleteAcara',{id});
+  hideLoading();
+  if(r&&r.success){showToast('Acara dipadam','success');loadAcara();}
+  else showToast('Gagal padam','error');
+}
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════
+// USERS
+// ═══════════════════════════════════════════════════
+async function loadUsers(){
+  const r=await gasRun('getUsers');
+  if(!r||!r.success)return;
+  _users=r.data;
+  document.getElementById('badge-users').textContent=_users.filter(u=>u.is_active).length;
+  renderUsersTable(_users);
+}
+
+function renderUsersTable(data){
+  const tbody=document.getElementById('users-tbody');
+  if(data.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:24px">Tiada pengguna</td></tr>';return;}
+  const roleBadge={Admin:'badge-red',Guru Rumah:'badge-blue',Pengurus:'badge-amber',Pencatat:'badge-cyan'};
+  tbody.innerHTML=data.map(u=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--blue)">${(u.username||'?').charAt(0).toUpperCase()}</div>
+        <span class="td-mono" style="font-size:12px">${u.username}</span>
+      </div></td>
+      <td style="color:var(--text);font-weight:500">${u.full_name||'—'}</td>
+      <td><span class="badge ${roleBadge[u.role]||'badge-gray'}">${u.role||'—'}</span></td>
+      <td style="font-size:11px;color:var(--text3)">${getRumahNama(u.id_rumah)||'—'}</td>
+      <td style="font-size:11px;color:var(--text3)">${u.last_login?formatDateTime(u.last_login):'Belum log masuk'}</td>
+      <td><span class="badge ${u.is_active?'badge-green':'badge-gray'}">${u.is_active?'Aktif':'Tidak Aktif'}</span></td>
+      <td><div style="display:flex;gap:5px">
+        <button class="btn btn-ghost btn-xs" onclick="editUser('${u.id}')">✏️</button>
+        <button class="btn btn-amber btn-xs" onclick="resetPassword('${u.id}','${u.username}')">🔑</button>
+        <button class="btn btn-${u.is_active?'danger':'success'} btn-xs" onclick="toggleUserStatus('${u.id}',${!u.is_active})">${u.is_active?'🚫':'✅'}</button>
+        ${u.role!=='Admin'?`<button class="btn btn-danger btn-xs" onclick="confirmDelete('Padam pengguna ${u.username}?',()=>deleteUser('${u.id}'))">🗑️</button>`:''}
+      </div></td>
+    </tr>`).join('');
+}
+
+function filterUsers(){
+  const q=getVal('user-search').toLowerCase();
+  const r=getVal('user-role-filter');
+  renderUsersTable(_users.filter(u=>{
+    const matchQ=!q||(u.username||'').toLowerCase().includes(q)||(u.full_name||'').toLowerCase().includes(q);
+    const matchR=!r||u.role===r;
+    return matchQ&&matchR;
+  }));
+}
+
+function getRumahNama(id){const r=_rumah.find(x=>x.id===id);return r?r.nama:'';}
+
+function openUserModal(id=null){
+  clearUserForm();
+  document.getElementById('user-modal-title').textContent=id?'Edit Pengguna':'Tambah Pengguna';
+  populateUserRumahSelect();
+  openModal('modal-user');
+  if(id){
+    const u=_users.find(x=>x.id===id);
+    if(!u)return;
+    setValue('user-id',u.id);setValue('user-username',u.username);
+    setValue('user-nama',u.full_name);setValue('user-email',u.email||'');
+    setValue('user-role',u.role);setValue('user-rumah',u.id_rumah||'');
+    document.getElementById('user-password').placeholder='Kosong = tak tukar kata laluan';
+    toggleRumahField();
+  }
+}
+function editUser(id){openUserModal(id);}
+function clearUserForm(){['user-id','user-username','user-password','user-nama','user-email'].forEach(id=>setValue(id,''));setValue('user-role','Admin');setValue('user-rumah','');toggleRumahField();}
+
+function populateUserRumahSelect(){
+  const sel=document.getElementById('user-rumah');
+  if(!sel)return;
+  sel.innerHTML='<option value="">— Pilih Rumah —</option>'+_rumah.map(r=>`<option value="${r.id}">${r.nama}</option>`).join('');
+}
+
+function toggleRumahField(){
+  const role=getVal('user-role');
+  const grp=document.getElementById('user-rumah-group');
+  grp.style.display=['Guru Rumah','Pengurus'].includes(role)?'block':'none';
+}
+
+function toggleUserPw(){
+  const pw=document.getElementById('user-password');
+  pw.type=pw.type==='password'?'text':'password';
+}
+
+async function saveUser(){
+  const username=getVal('user-username');
+  const nama=getVal('user-nama');
+  if(!username||!nama){showToast('Username dan nama wajib diisi','error');return;}
+  const password=getVal('user-password');
+  const id=getVal('user-id');
+  const payload={id,username,full_name:nama,email:getVal('user-email'),role:getVal('user-role'),id_rumah:getVal('user-rumah')};
+  if(password) payload.password=password;
+  else if(!id){showToast('Kata laluan wajib untuk pengguna baru','error');return;}
+  showLoading('Menyimpan pengguna...');
+  const r=await gasRun(id?'updateUser':'createUser',payload);
+  hideLoading();closeModal('modal-user');
+  if(r&&r.success){showToast(id?'Pengguna dikemaskini ✅':'Pengguna ditambah ✅','success');loadUsers();}
+  else showToast('Gagal simpan pengguna','error');
+}
+
+async function toggleUserStatus(id,newStatus){
+  const r=await gasRun('updateUser',{id,is_active:newStatus});
+  if(r&&r.success){showToast('Status pengguna dikemaskini','success');loadUsers();}
+  else showToast('Gagal tukar status','error');
+}
+
+function resetPassword(id,username){
+  if(!confirm(`Reset kata laluan untuk "${username}"?\nKata laluan baru akan dipaparkan.`))return;
+  const np=username+'123';
+  gasRun('updateUser',{id,password:np}).then(r=>{
+    if(r&&r.success) showToast(`Kata laluan baru: ${np}  (salin sekarang)`, 'warn');
+    else showToast('Gagal reset kata laluan','error');
+  });
+}
+
+async function deleteUser(id){
+  showLoading('Mempadam...');
+  const r=await gasRun('deleteUser',{id});
+  hideLoading();
+  if(r&&r.success){showToast('Pengguna dipadam','success');loadUsers();}
+  else showToast('Gagal padam','error');
+}
+
+// ═══════════════════════════════════════════════════
+// MODAL & CONFIRM HELPERS
+// ═══════════════════════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+function confirmDelete(msg,cb){
+  document.getElementById('confirm-msg').textContent=msg;
+  const btn=document.getElementById('confirm-ok-btn');
+  btn.onclick=()=>{closeModal('modal-confirm');cb();};
+  openModal('modal-confirm');
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o) o.classList.remove('show');});
+});
+
+// ═══════════════════════════════════════════════════
+// SIDEBAR & HEADER
+// ═══════════════════════════════════════════════════
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+  document.getElementById('sidebar-overlay').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+
+function confirmLogout(){
+  if(confirm('Log keluar dari sistem?')){
+    if(IS_GAS){
+      gasRun('getScriptUrl').then(url=>{
+        if(url){const a=document.createElement('a');a.href=url+'?page=home';a.target='_top';document.body.appendChild(a);a.click();}
+      });
+    } else {
+      showToast('Log keluar (dev mode)','info');
+    }
+  }
+}
+
+function goToModule(page){
+  if(IS_GAS){
+    gasRun('getScriptUrl').then(url=>{
+      if(url){const a=document.createElement('a');a.href=url+'?page='+page;a.target='_top';document.body.appendChild(a);a.click();}
+    });
+  } else {
+    showToast('Navigate to '+page+' (dev mode)','info');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// TOAST & LOADING
+// ═══════════════════════════════════════════════════
+function showToast(msg,type='info'){
+  const icons={success:'✅',error:'❌',warn:'⚠️',info:'ℹ️'};
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span style="font-size:16px">${icons[type]||'ℹ️'}</span><span style="flex:1">${msg}</span>`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+function showLoading(msg='Memproses...'){
+  document.getElementById('loading-msg').textContent=msg;
+  document.getElementById('loading-overlay').classList.add('show');
+}
+function hideLoading(){document.getElementById('loading-overlay').classList.remove('show');}
+
+// ═══════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════
+function getVal(id){const el=document.getElementById(id);return el?el.value:'';}
+function setValue(id,val){const el=document.getElementById(id);if(el)el.value=val||'';}
+function setToggle(id,val){const el=document.getElementById(id);if(el)el.checked=!!val;}
+
+function formatDateTime(dt){
+  try{
+    const d=new Date(dt);
+    return d.toLocaleDateString('ms-MY',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+d.toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
+  }catch{return dt||'—';}
+}
+
+function hexLuminance(hex){
+  try{
+    hex=hex.replace('#','');
+    if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+    let r=parseInt(hex.slice(0,2),16)/255;
+    let g=parseInt(hex.slice(2,4),16)/255;
+    let b=parseInt(hex.slice(4,6),16)/255;
+    [r,g,b]=[r,g,b].map(c=>c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4));
+    return 0.2126*r+0.7152*g+0.0722*b;
+  }catch{return 0.5;}
+}
+
+function contrastRatio(bg,txt){
+  const l1=hexLuminance(bg),l2=hexLuminance(txt);
+  const bright=Math.max(l1,l2),dark=Math.min(l1,l2);
+  return (bright+0.05)/(dark+0.05);
+}
+
+// Sidebar clock
+function updateClock(){
+  const el=document.getElementById('sb-time');
+  if(el)el.textContent=new Date().toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async ()=>{
+  // Year select
+  const ysel=document.getElementById('set-tahun');
+  if(ysel){for(let y=2030;y>=2020;y--){const o=document.createElement('option');o.value=y;o.textContent=y;ysel.appendChild(o);}}
+
+  // Header info
+  document.getElementById('user-info-header').style.display='block';
+  document.getElementById('hdr-username').textContent = IS_GAS ? 'Administrator' : 'Admin (Dev)';
+  document.getElementById('hdr-last-login').textContent = 'Log masuk: '+formatDateTime(new Date().toISOString());
+
+  // Clock
+  updateClock();
+  setInterval(updateClock,1000);
+
+  // Auto refresh dashboard every 60s
+  setInterval(()=>{if(currentTab==='dashboard')loadDashboard();},60000);
+
+  // Load initial tab
+  navigate('dashboard');
+
+  // Init settings for year select default
+  document.getElementById('set-tahun').value='2025';
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.show').forEach(m=>m.classList.remove('show'));}
+});
+</script>
 </body>
 </html>

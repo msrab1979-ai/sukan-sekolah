@@ -6,126 +6,269 @@
   <title>Login - Sukan Tahunan</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #f9fafb; }
-    .role-card { transition: all 0.3s ease; }
-    .role-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
-    .gradient-admin { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 50%, #1a5276 100%); min-height: 100vh; }
+    .card-shadow { box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .gradient-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: all 0.3s ease; }
+    .gradient-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.5); }
+    .gradient-btn:disabled { opacity: 0.7; transform: none; }
+    .input-focus { transition: all 0.3s ease; }
+    .input-focus:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.2); }
     .spinner {
       border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%;
-      width: 20px; height: 20px; animation: spin 0.8s linear infinite;
+      width: 18px; height: 18px; animation: spin 0.8s linear infinite; display: inline-block;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .logo-ring { animation: pulse-ring 2s ease-in-out infinite; }
+    @keyframes pulse-ring { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
-  
+
   <div class="max-w-md w-full">
+
+    <!-- Logo & Header -->
     <div class="text-center mb-8">
-      <div class="text-6xl mb-4">🔐</div>
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Log Masuk</h1>
-      <p class="text-gray-600">Sistem Sukan Sekolah</p>
-    </div>
-    
-    <div class="role-card bg-white rounded-2xl shadow-xl p-8">
-      <div id="error-alert" class="hidden mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded text-red-700 font-medium"></div>
-      
-      <form id="login-form" onsubmit="handleLogin(event)">
-        <div class="mb-6">
-          <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">Nama Pengguna</label>
-          <input type="text" id="username" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" required>
-        </div>
-        
-        <div class="mb-6">
-          <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Kata Laluan</label>
-          <input type="password" id="password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none" required>
-        </div>
-        
-        <button type="submit" id="submit-btn" class="w-full py-3 px-4 rounded-lg font-semibold text-white gradient-admin flex items-center justify-center">
-          <span id="btn-text">🔓 Log Masuk</span>
-          <div id="btn-spinner" class="spinner hidden ml-2"></div>
-        </button>
-      </form>
-      
-      <div class="mt-6 text-center" id="back-container">
-        <!-- Pautan dibina secara dinamik -->
-        <a id="back-link" href="#" class="text-sm text-gray-600 hover:text-blue-600 transition-colors">← Kembali ke Laman Utama</a>
+      <div class="logo-ring inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur mb-4">
+        <span class="text-4xl">🏆</span>
       </div>
+      <h1 class="text-3xl font-bold text-white mb-1">Log Masuk</h1>
+      <p class="text-blue-200 text-sm">Sistem Pengurusan Sukan Tahunan</p>
+      <p class="text-blue-300 text-xs mt-1">SK Sultan Ismail, Kemaman</p>
     </div>
+
+    <!-- Card -->
+    <div class="bg-white rounded-2xl card-shadow p-8">
+
+      <!-- Error Alert -->
+      <div id="error-alert" class="hidden mb-5 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg flex items-start gap-3">
+        <span class="text-red-500 text-lg mt-0.5">⚠️</span>
+        <span id="error-msg" class="text-red-700 font-medium text-sm"></span>
+      </div>
+
+      <!-- Success Alert -->
+      <div id="success-alert" class="hidden mb-5 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg flex items-start gap-3">
+        <span class="text-green-500 text-lg mt-0.5">✅</span>
+        <span id="success-msg" class="text-green-700 font-medium text-sm"></span>
+      </div>
+
+      <form id="login-form" onsubmit="handleLogin(event)">
+
+        <!-- Username -->
+        <div class="mb-5">
+          <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
+            👤 Nama Pengguna
+          </label>
+          <input 
+            type="text" 
+            id="username" 
+            placeholder="Masukkan nama pengguna"
+            class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none text-gray-800" 
+            required
+          >
+        </div>
+
+        <!-- Password -->
+        <div class="mb-6">
+          <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+            🔑 Kata Laluan
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="password" 
+              placeholder="Masukkan kata laluan"
+              class="input-focus w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:outline-none text-gray-800" 
+              required
+            >
+            <!-- Toggle Show/Hide Password -->
+            <button 
+              type="button" 
+              onclick="togglePassword()"
+              id="toggle-pw-btn"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors p-1 rounded"
+              title="Tunjuk/Sembunyi Kata Laluan"
+            >
+              <span id="eye-icon">👁️</span>
+            </button>
+          </div>
+          <p id="pw-hint" class="hidden mt-1 text-xs text-gray-400">Kata laluan sedang dipaparkan</p>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          id="submit-btn" 
+          class="gradient-btn w-full py-3.5 px-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2"
+        >
+          <span id="btn-icon">🔓</span>
+          <span id="btn-text">Log Masuk</span>
+          <div id="btn-spinner" class="spinner hidden"></div>
+        </button>
+
+      </form>
+
+      <!-- Redirect Button (muncul selepas login berjaya) -->
+      <div id="redirect-container" class="hidden mt-4">
+        <a 
+          id="redirect-link" 
+          href="#" 
+          target="_top" 
+          class="w-full py-3.5 px-4 rounded-xl font-semibold text-white bg-green-600 hover:bg-green-700 flex items-center justify-center gap-2 transition-all text-center no-underline block"
+        >
+          ✅ Log Masuk Berjaya! Klik untuk Teruskan →
+        </a>
+      </div>
+
+      <!-- Back Link -->
+      <div class="mt-6 text-center border-t border-gray-100 pt-5">
+        <a id="back-link" href="#" target="_top" class="text-sm text-gray-500 hover:text-blue-600 transition-colors">
+          ← Kembali ke Laman Utama
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Footer note -->
+    <p class="text-center text-blue-300/60 text-xs mt-6">
+      Sukan Tahunan 2025 · SK Sultan Ismail
+    </p>
+
   </div>
 
   <script>
     let SCRIPT_URL = '';
+    let passwordVisible = false;
 
+    // ─── TOGGLE SHOW/HIDE PASSWORD ───────────────────────────────
+    function togglePassword() {
+      const pwField = document.getElementById('password');
+      const eyeIcon = document.getElementById('eye-icon');
+      const hint    = document.getElementById('pw-hint');
+
+      passwordVisible = !passwordVisible;
+
+      if (passwordVisible) {
+        pwField.type = 'text';
+        eyeIcon.textContent = '🙈';
+        hint.classList.remove('hidden');
+      } else {
+        pwField.type = 'password';
+        eyeIcon.textContent = '👁️';
+        hint.classList.add('hidden');
+      }
+    }
+
+    // ─── ON LOAD: DAPATKAN SCRIPT URL ────────────────────────────
     document.addEventListener('DOMContentLoaded', () => {
-      // Dapatkan URL sistem awal-awal (on load) bagi mengelak ralat tak segerak (async block)
       if (typeof google !== 'undefined' && google.script) {
         google.script.run
-          .withSuccessHandler((url) => {
+          .withSuccessHandler(function(url) {
             SCRIPT_URL = url;
-            document.getElementById('back-link').href = SCRIPT_URL + '?page=home';
-            document.getElementById('back-link').target = '_top';
+            document.getElementById('back-link').href = url + '?page=home';
+          })
+          .withFailureHandler(function(err) {
+            console.warn('getScriptUrl gagal:', err.message);
           })
           .getScriptUrl();
       }
     });
 
+    // ─── HANDLE LOGIN ─────────────────────────────────────────────
     function handleLogin(event) {
       event.preventDefault();
+
       const user = document.getElementById('username').value.trim();
       const pass = document.getElementById('password').value;
-      
+
       if (!user || !pass) return;
 
-      document.getElementById('submit-btn').disabled = true;
-      document.getElementById('btn-text').textContent = 'Mengesahkan...';
-      document.getElementById('btn-spinner').classList.remove('hidden');
-      document.getElementById('error-alert').classList.add('hidden');
+      // Set loading state
+      setLoading(true);
+      hideAlerts();
 
-      if (typeof google === 'undefined') {
-        setTimeout(() => handleLoginSuccess({ role: 'Admin' }), 1000);
+      // ── MODE DEV (tanpa GAS) ──
+      if (typeof google === 'undefined' || !google.script) {
+        setTimeout(() => {
+          handleLoginSuccess({ role: 'Admin', username: user, full_name: 'Admin Dev' });
+        }, 1000);
         return;
       }
 
+      // ── MODE PRODUCTION (GAS) ──
+      // FIX: Nama function betul = authenticateUser (bukan handleLogin)
       google.script.run
         .withSuccessHandler(function(response) {
-          if (response.success) {
-            handleLoginSuccess(response.session);
+          setLoading(false);
+          if (response && response.success) {
+            handleLoginSuccess(response.user);
           } else {
-            showError(response.message || 'Log masuk gagal.');
+            showError(response ? response.message : 'Log masuk gagal. Cuba semula.');
           }
         })
         .withFailureHandler(function(error) {
-          showError('Ralat pelayan: ' + error.message);
+          setLoading(false);
+          showError('Ralat pelayan: ' + (error.message || 'Tidak dapat sambung ke sistem.'));
         })
-        .handleLogin({ username: user, password: pass });
+        .authenticateUser(user, pass); // ✅ BETUL — sesuai dengan Code.gs
     }
 
-    function handleLoginSuccess(session) {
-      const role = session.role || 'Admin';
-      const redirectPage = (role === 'Admin') ? 'admin-setup' : 'pengurus';
+    // ─── SELEPAS LOGIN BERJAYA ────────────────────────────────────
+    function handleLoginSuccess(user) {
+      const role = (user && user.role) ? user.role.toLowerCase() : 'admin';
+
+      // Map role → page
+      const pageMap = {
+        'admin'    : 'admin-setup',
+        'guru rumah': 'rumah',
+        'pengurus' : 'pengurus',
+        'pencatat' : 'pencatat'
+      };
+      const redirectPage = pageMap[role] || 'admin-setup';
+
+      showSuccess('Log masuk berjaya! Selamat datang, ' + (user.full_name || user.username || 'Pengguna') + '.');
 
       if (SCRIPT_URL) {
-        // Bina pautan fizikal (real anchor) dengan target='_top'
-        // Pengguna perlu klik ini untuk menyelesaikan navigasi tanpa dihalang Sandbox.
-        const btn = document.getElementById('submit-btn');
-        btn.outerHTML = `
-          <a href="${SCRIPT_URL}?page=${redirectPage}" target="_top" class="w-full py-3 px-4 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 flex items-center justify-center transition-all text-center no-underline">
-            ✅ Log Masuk Berjaya! Klik untuk Teruskan
-          </a>
-        `;
-        document.getElementById('error-alert').classList.add('hidden');
+        const link = document.getElementById('redirect-link');
+        link.href = SCRIPT_URL + '?page=' + redirectPage;
+        document.getElementById('redirect-container').classList.remove('hidden');
+        document.getElementById('login-form').classList.add('hidden');
       } else {
-        window.location.href = '?page=' + redirectPage;
+        window.top.location.href = '?page=' + redirectPage;
+      }
+    }
+
+    // ─── HELPERS ──────────────────────────────────────────────────
+    function setLoading(isLoading) {
+      const btn     = document.getElementById('submit-btn');
+      const txt     = document.getElementById('btn-text');
+      const spinner = document.getElementById('btn-spinner');
+      const icon    = document.getElementById('btn-icon');
+
+      btn.disabled = isLoading;
+      if (isLoading) {
+        txt.textContent = 'Mengesahkan...';
+        icon.textContent = '';
+        spinner.classList.remove('hidden');
+      } else {
+        txt.textContent = 'Log Masuk';
+        icon.textContent = '🔓';
+        spinner.classList.add('hidden');
       }
     }
 
     function showError(msg) {
-      document.getElementById('submit-btn').disabled = false;
-      document.getElementById('btn-text').textContent = '🔓 Log Masuk';
-      document.getElementById('btn-spinner').classList.add('hidden');
-      const err = document.getElementById('error-alert');
-      err.textContent = msg;
-      err.classList.remove('hidden');
+      document.getElementById('error-msg').textContent = msg;
+      document.getElementById('error-alert').classList.remove('hidden');
+    }
+
+    function showSuccess(msg) {
+      document.getElementById('success-msg').textContent = msg;
+      document.getElementById('success-alert').classList.remove('hidden');
+    }
+
+    function hideAlerts() {
+      document.getElementById('error-alert').classList.add('hidden');
+      document.getElementById('success-alert').classList.add('hidden');
     }
   </script>
 </body>

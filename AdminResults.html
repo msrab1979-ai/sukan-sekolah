@@ -590,12 +590,7 @@
 // ============================================================
 // CONFIG - Update URL selepas deploy Google Apps Script
 // ============================================================
-const API_URL = typeof ScriptApp !== 'undefined' 
-  ? ScriptApp.getService().getUrl() 
-  : '<?= ScriptApp.getService().getUrl() ?>';
 
-// Fallback untuk development/testing
-const GAS_URL = window.GAS_URL || API_URL;
 
 // ============================================================
 // STATE
@@ -632,7 +627,7 @@ function checkSession() {
   const sess = JSON.parse(sessionStorage.getItem('adminSession') || 'null');
   if (!sess) {
     showToast('Sila log masuk dahulu', 'error');
-    setTimeout(() => { window.location.href = 'Login.html'; }, 1500);
+    setTimeout(() => { window.top.location.href = '?page=login'; }, 1500);
     return;
   }
   state.session = sess;
@@ -643,7 +638,7 @@ async function loadMasterData() {
   try {
     const [katRes, acaraRes, settingsRes] = await Promise.all([
       apiCall('getKategori'),
-      apiCall('getAcara'),
+      apiCall('getEventMasters'),
       apiCall('getSettings')
     ]);
     
@@ -666,40 +661,31 @@ async function loadMasterData() {
 }
 
 // ============================================================
-// API HELPER
+// API HELPER — google.script.run wrapper
 // ============================================================
-async function apiCall(action, params = {}) {
-  try {
-    const url = new URL(GAS_URL);
-    url.searchParams.set('action', action);
-    url.searchParams.set('session', state.session?.token || '');
-    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
-
-    const res = await fetch(url.toString());
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return await res.json();
-  } catch(e) {
-    console.error(`API ${action} error:`, e);
-    return { success: false, message: e.message };
-  }
+function gasRun(fn, ...args) {
+  return new Promise((resolve, reject) => {
+    if (typeof google === 'undefined') {
+      console.warn('[DEV] Mock:', fn, args);
+      resolve({ success: false, data: [], message: 'Dev mode - tiada GAS' });
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(resolve)
+      .withFailureHandler(e => { console.error(fn, e); reject(e); })
+      [fn](...args);
+  });
 }
 
-async function apiPost(action, data = {}) {
-  try {
-    const url = new URL(GAS_URL);
-    url.searchParams.set('action', action);
-    
-    const res = await fetch(url.toString(), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, session: state.session?.token || '' })
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return await res.json();
-  } catch(e) {
-    console.error(`API POST ${action} error:`, e);
-    return { success: false, message: e.message };
-  }
+// Alias untuk compatibility
+async function apiCall(fn, params = {}) {
+  try { return await gasRun(fn, params); }
+  catch(e) { return { success: false, message: e.message }; }
+}
+
+async function apiPost(fn, data = {}) {
+  try { return await gasRun(fn, data); }
+  catch(e) { return { success: false, message: e.message }; }
 }
 
 // ============================================================
@@ -1675,7 +1661,7 @@ function showToast(msg, type = 'success') {
 
 function logout() {
   sessionStorage.removeItem('adminSession');
-  window.location.href = 'Login.html';
+  window.top.location.href = '?page=login';
 }
 
 // Close modal on backdrop click

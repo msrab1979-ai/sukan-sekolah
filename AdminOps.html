@@ -1,508 +1,1451 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel – Setup & Konfigurasi | Sistem Sukan</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --blue:   #3B82F6;
-      --green:  #10B981;
-      --amber:  #F59E0B;
-      --red:    #EF4444;
-      --sidebar-w: 240px;
-      --header-h: 60px;
-    }
-    *, *::before, *::after { box-sizing: border-box; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F1F5F9; color: #1E293B; margin: 0; }
-    
-    /* HEADER */
-    #app-header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-h); background: #1E293B; z-index: 50; display: flex; align-items: center; padding: 0 16px; box-shadow: 0 1px 0 rgba(255,255,255,0.06); }
-    #app-header .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 15px; color: #F8FAFC; flex: 1; }
-    #app-header .logo span { color: #60A5FA; }
-    .header-btn { background: rgba(255,255,255,0.08); border: none; cursor: pointer; color: #CBD5E1; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; transition: background 0.2s; }
-    .header-btn:hover { background: rgba(255,255,255,0.15); color: #F8FAFC; }
-    .header-btn.danger:hover { background: #EF4444; color: #fff; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Operasi | Sistem Sukan Tahunan</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sidebar-w: 240px;
+  --header-h: 58px;
+  --blue: #3B82F6;
+  --green: #10B981;
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --purple: #8B5CF6;
+}
+*,*::before,*::after{box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B;margin:0;}
 
-    /* SIDEBAR */
-    #sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; width: var(--sidebar-w); background: #1E293B; overflow-y: auto; z-index: 40; transition: transform 0.3s ease; padding: 12px 0; }
-    .sidebar-section { padding: 8px 12px 4px; font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1px; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; margin: 1px 8px; border-radius: 8px; cursor: pointer; color: #94A3B8; font-size: 13px; font-weight: 500; transition: all 0.2s; user-select: none; }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: #E2E8F0; }
-    .nav-item.active { background: #3B82F6; color: #fff; }
-    .nav-item .icon { width: 18px; text-align: center; font-size: 15px; }
+/* HEADER */
+#app-header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:#1E293B;z-index:50;display:flex;align-items:center;padding:0 16px;box-shadow:0 1px 0 rgba(255,255,255,0.06);}
+#app-header .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;color:#F8FAFC;flex:1;}
+#app-header .logo span{color:#60A5FA;}
+.header-btn{background:rgba(255,255,255,0.08);border:none;cursor:pointer;color:#CBD5E1;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:500;transition:background 0.2s;font-family:inherit;}
+.header-btn:hover{background:rgba(255,255,255,0.15);color:#F8FAFC;}
+.header-btn.danger:hover{background:#EF4444;color:#fff;}
 
-    .nav-sub { padding: 7px 16px 7px 44px; margin: 1px 8px; border-radius: 8px; cursor: pointer; color: #64748B; font-size: 12.5px; font-weight: 500; transition: all 0.2s; border-left: 2px solid transparent; }
-    .nav-sub:hover { color: #94A3B8; background: rgba(255,255,255,0.04); }
-    .nav-sub.active { color: #60A5FA; border-left-color: #60A5FA; background: rgba(96,165,250,0.06); }
+/* SIDEBAR */
+#sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:#1E293B;overflow-y:auto;z-index:40;transition:transform 0.3s ease;padding:12px 0;}
+.sidebar-section{padding:8px 12px 4px;font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;margin:1px 8px;border-radius:8px;cursor:pointer;color:#94A3B8;font-size:13px;font-weight:500;transition:all 0.2s;user-select:none;}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:#E2E8F0;}
+.nav-item.active{background:#3B82F6;color:#fff;}
+.nav-item .icon{width:18px;text-align:center;font-size:15px;}
 
-    /* MAIN CONTENT */
-    #main-content { margin-left: var(--sidebar-w); margin-top: var(--header-h); min-height: calc(100vh - var(--header-h)); padding: 24px; transition: margin-left 0.3s; }
-    .card { background: #fff; border-radius: 12px; border: 1px solid #E2E8F0; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-    .card-header { padding: 16px 20px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; gap: 10px; }
-    .card-title { font-size: 14px; font-weight: 700; color: #1E293B; margin: 0; }
-    .card-body { padding: 20px; }
+/* MAIN */
+#main-content{margin-left:var(--sidebar-w);margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));padding:24px;transition:margin-left 0.3s;}
 
-    .stat-card { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #E2E8F0; box-shadow: 0 1px 4px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s; }
-    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
-    .stat-num { font-size: 32px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
-    .stat-label { font-size: 12px; color: #64748B; font-weight: 600; margin-top: 2px; }
-    .stat-icon { font-size: 28px; }
+/* CARDS */
+.card{background:#fff;border-radius:12px;border:1px solid #E2E8F0;box-shadow:0 1px 4px rgba(0,0,0,0.05);}
+.card-header{padding:14px 18px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.card-title{font-size:14px;font-weight:700;color:#1E293B;margin:0;}
+.card-body{padding:18px;}
 
-    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-family: inherit; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; line-height: 1; }
-    .btn-primary { background: #3B82F6; color: #fff; }
-    .btn-primary:hover { background: #2563EB; }
+/* STAT CARDS */
+.stat-card{background:#fff;border-radius:12px;padding:18px;border:1px solid #E2E8F0;box-shadow:0 1px 4px rgba(0,0,0,0.05);transition:all 0.2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.08);}
+.stat-num{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.stat-label{font-size:12px;color:#64748B;font-weight:600;margin-top:2px;}
 
-    .form-group { margin-bottom: 16px; }
-    .form-label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; }
-    .form-control { width: 100%; padding: 9px 12px; border-radius: 8px; border: 1.5px solid #E2E8F0; font-size: 13px; font-family: inherit; background: #fff; color: #1E293B; outline: none; }
-    .form-control:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-family:inherit;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;line-height:1;}
+.btn-primary{background:#3B82F6;color:#fff;}.btn-primary:hover{background:#2563EB;}
+.btn-success{background:#10B981;color:#fff;}.btn-success:hover{background:#059669;}
+.btn-danger{background:#EF4444;color:#fff;}.btn-danger:hover{background:#DC2626;}
+.btn-warning{background:#F59E0B;color:#fff;}.btn-warning:hover{background:#D97706;}
+.btn-ghost{background:rgba(59,130,246,0.08);color:#3B82F6;border:1px solid rgba(59,130,246,0.2);}.btn-ghost:hover{background:rgba(59,130,246,0.15);}
+.btn-sm{padding:6px 10px;font-size:12px;}
+.btn-xs{padding:4px 8px;font-size:11px;}
 
-    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .data-table thead tr { background: #F8FAFC; }
-    .data-table th { padding: 10px 14px; font-size: 11px; font-weight: 700; color: #64748B; text-align: left; text-transform: uppercase; border-bottom: 1px solid #E2E8F0; }
-    .data-table td { padding: 11px 14px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+/* FORMS */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;}
+.form-label.required::after{content:' *';color:#EF4444;}
+.form-control{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;background:#fff;color:#1E293B;outline:none;transition:border-color 0.2s;}
+.form-control:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,0.1);}
+select.form-control{cursor:pointer;}
 
-    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
-    .toast { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; font-size: 13px; font-weight: 500; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
-    .toast.success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
-    .toast.error   { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
-    .toast.warning { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
-    .toast.info    { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table thead tr{background:#F8FAFC;}
+.data-table th{padding:10px 14px;font-size:11px;font-weight:700;color:#64748B;text-align:left;text-transform:uppercase;border-bottom:1px solid #E2E8F0;white-space:nowrap;}
+.data-table td{padding:10px 14px;border-bottom:1px solid #F1F5F9;vertical-align:middle;}
+.data-table tbody tr:hover{background:#F8FAFC;}
+.data-table tbody tr:last-child td{border-bottom:none;}
 
-    .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.7); z-index: 90; align-items: center; justify-content: center; }
-    .loading-overlay.show { display: flex; }
-    .spinner { width: 36px; height: 36px; border: 3px solid #E2E8F0; border-top-color: #3B82F6; border-radius: 50%; animation: spin 0.8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+/* TABS */
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.tab-nav{display:flex;gap:2px;background:#F1F5F9;padding:4px;border-radius:10px;flex-wrap:wrap;margin-bottom:20px;}
+.tab-btn{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;font-family:inherit;color:#64748B;transition:all 0.2s;white-space:nowrap;}
+.tab-btn.active{background:#fff;color:#3B82F6;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
 
-    .tab-pane { display: none; }
-    .tab-pane.active { display: block; }
-    .subtab-nav { display: flex; gap: 4px; margin-bottom: 20px; background: #F1F5F9; padding: 4px; border-radius: 10px; flex-wrap: wrap; }
-    .subtab-btn { padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: none; font-family: inherit; color: #64748B; transition: all 0.2s; flex: 1; min-width: 100px; }
-    .subtab-btn.active { background: #fff; color: #3B82F6; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-blue{background:#EFF6FF;color:#1D4ED8;}
+.badge-green{background:#ECFDF5;color:#065F46;}
+.badge-red{background:#FEF2F2;color:#991B1B;}
+.badge-amber{background:#FFFBEB;color:#92400E;}
+.badge-purple{background:#F5F3FF;color:#5B21B6;}
+.badge-gray{background:#F1F5F9;color:#475569;}
 
-    @media (max-width: 768px) {
-      #sidebar { transform: translateX(-100%); }
-      #sidebar.mobile-open { transform: translateX(0); }
-      #main-content { margin-left: 0; padding: 16px; }
-      .stat-grid { grid-template-columns: 1fr 1fr !important; }
-    }
-  </style>
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);z-index:100;align-items:center;justify-content:center;padding:16px;}
+.modal-bg.show{display:flex;}
+.modal-box{background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.modal-header{padding:18px 20px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-size:15px;font-weight:700;color:#1E293B;}
+.modal-body{padding:20px;}
+.modal-footer{padding:14px 20px;border-top:1px solid #F1F5F9;display:flex;justify-content:flex-end;gap:8px;}
+.modal-close{background:none;border:none;cursor:pointer;color:#94A3B8;font-size:18px;line-height:1;padding:2px;}
+.modal-close:hover{color:#475569;}
+
+/* TOAST */
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,0.12);animation:slideUp 0.3s ease;pointer-events:auto;}
+.toast.success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;}
+.toast.error{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;}
+.toast.warning{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A;}
+.toast.info{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;}
+@keyframes slideUp{from{transform:translateY(10px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+/* LOADING */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,0.75);z-index:90;align-items:center;justify-content:center;}
+.loading-overlay.show{display:flex;}
+.spinner{width:36px;height:36px;border:3px solid #E2E8F0;border-top-color:#3B82F6;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* LANE DRAW */
+.lane-card{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:12px;text-align:center;transition:all 0.2s;}
+.lane-card.filled{background:#EFF6FF;border-color:#BFDBFE;}
+.lane-card .lane-num{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;color:#94A3B8;}
+.lane-card.filled .lane-num{color:#3B82F6;}
+.lane-card .lane-name{font-size:11px;font-weight:600;color:#64748B;margin-top:4px;}
+.lane-card.filled .lane-name{color:#1E293B;}
+
+/* RUMAH COLORS */
+.rumah-MERAH{background:#FEF2F2;border-left:3px solid #EF4444;color:#991B1B;}
+.rumah-BIRU{background:#EFF6FF;border-left:3px solid #3B82F6;color:#1D4ED8;}
+.rumah-HIJAU{background:#ECFDF5;border-left:3px solid #10B981;color:#065F46;}
+.rumah-KUNING{background:#FFFBEB;border-left:3px solid #F59E0B;color:#92400E;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  #sidebar{transform:translateX(-100%);}
+  #sidebar.open{transform:translateX(0);}
+  #main-content{margin-left:0;padding:16px;}
+}
+</style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header id="app-header">
   <div class="logo">
-    🏆 <span>ADMIN</span>&nbsp;PANEL
-    <span style="font-size:11px; background:rgba(59,130,246,0.2); color:#60A5FA; padding:2px 8px; border-radius:20px; font-weight:700; letter-spacing:1px;">SETUP</span>
+    🏃 <span>ADMIN</span>&nbsp;OPS
+    <span style="font-size:11px;background:rgba(16,185,129,0.2);color:#34D399;padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:1px;">OPERASI</span>
   </div>
-  <div class="header-right">
-    <button class="header-btn" onclick="refreshCurrentTab()" title="Refresh">🔄</button>
-    <button class="header-btn danger" onclick="confirmLogout()">🚪 Log Keluar</button>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span style="font-size:12px;color:#64748B;" id="hdr-user">—</span>
+    <button class="header-btn" onclick="refreshTab()">🔄</button>
+    <button class="header-btn" onclick="goToSetup()">⚙️ Setup</button>
+    <button class="header-btn danger" onclick="confirmLogout()">🚪 Keluar</button>
   </div>
 </header>
 
+<!-- SIDEBAR -->
 <nav id="sidebar">
-  <div style="padding:14px 16px 10px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:8px;">
-    <div style="font-size:11px; color:#64748B; font-weight:600;">SISTEM SUKAN</div>
-    <div style="font-size:12px; color:#94A3B8; margin-top:2px;" id="session-school">Memuatkan...</div>
+  <div style="padding:14px 16px 10px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:8px;">
+    <div style="font-size:11px;color:#64748B;font-weight:600;">SISTEM SUKAN</div>
+    <div style="font-size:12px;color:#94A3B8;margin-top:2px;" id="sidebar-sekolah">Memuatkan...</div>
   </div>
 
-  <div class="nav-item active" onclick="Maps('admin')" id="nav-admin">
-    <span class="icon">📊</span> Dashboard Admin
-  </div>
+  <div class="nav-item active" onclick="goTab('dashboard')" id="nav-dashboard"><span class="icon">📊</span>Dashboard</div>
 
-  <div class="sidebar-section">Tetapan</div>
-  <div class="nav-item" onclick="Maps('settings')" id="nav-settings">
-    <span class="icon">⚙️</span> Tetapan
-  </div>
-  <div id="settings-submenu" style="display:none;">
-    <div class="nav-sub active" onclick="Maps('settings', 'asas')" id="sub-asas">Tetapan Asas</div>
-    <div class="nav-sub" onclick="Maps('settings', 'kategori')" id="sub-kategori">Kategori</div>
-    <div class="nav-sub" onclick="Maps('settings', 'rumah')" id="sub-rumah">Rumah Sukan</div>
-    <div class="nav-sub" onclick="Maps('settings', 'acara')" id="sub-acara">Acara Master</div>
-  </div>
+  <div class="sidebar-section">Pengurusan Murid</div>
+  <div class="nav-item" onclick="goTab('murid')" id="nav-murid"><span class="icon">👤</span>Murid</div>
 
-  <div class="sidebar-section">Pengguna</div>
-  <div class="nav-item" onclick="Maps('users')" id="nav-users">
-    <span class="icon">👥</span> Pengguna
-  </div>
+  <div class="sidebar-section">Acara & Pendaftaran</div>
+  <div class="nav-item" onclick="goTab('acara')" id="nav-acara"><span class="icon">🏃</span>Jana Acara</div>
+  <div class="nav-item" onclick="goTab('pendaftaran')" id="nav-pendaftaran"><span class="icon">📋</span>Pendaftaran</div>
+
+  <div class="sidebar-section">Undian Lorong</div>
+  <div class="nav-item" onclick="goTab('lorong')" id="nav-lorong"><span class="icon">🎰</span>Undian Lorong</div>
+
+  <div class="sidebar-section">Laporan</div>
+  <div class="nav-item" onclick="goTab('laporan')" id="nav-laporan"><span class="icon">📄</span>Laporan Ops</div>
 </nav>
 
+<!-- MAIN -->
 <main id="main-content">
-  <div class="breadcrumb" id="breadcrumb" style="font-size: 12px; color: #94A3B8; margin-bottom: 16px;">
-    Home <span style="margin: 0 4px;">›</span> <span id="bc-tab" style="color: #3B82F6; font-weight: 600;">Dashboard Admin</span>
-    <span id="bc-sub" style="display:none;"><span style="margin: 0 4px;">›</span> <span id="bc-sub-txt" style="color: #3B82F6; font-weight: 600;"></span></span>
-  </div>
 
-  <div id="pane-admin" class="tab-pane active">
-    <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+  <!-- ═══ DASHBOARD ═══ -->
+  <div id="pane-dashboard" class="tab-pane active">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
       <div>
-        <h1 style="font-size: 20px; font-weight: 800; margin: 0 0 4px;">📊 Dashboard Setup</h1>
-        <p style="font-size: 13px; color: #64748B; margin: 0;">Gambaran keseluruhan pangkalan data sistem</p>
+        <h1 style="font-size:20px;font-weight:800;margin:0 0 4px;">📊 Dashboard Operasi</h1>
+        <p style="font-size:13px;color:#64748B;margin:0;" id="dash-subtitle">Memuatkan...</p>
       </div>
-      <div>
-        <button class="btn btn-primary btn-sm" onclick="loadDashboard()">🔄 Refresh Data</button>
+      <button class="btn btn-ghost btn-sm" onclick="loadDashboard()">🔄 Refresh</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;" class="stat-grid">
+      <div class="stat-card" style="cursor:pointer;" onclick="goTab('murid')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div><div class="stat-num" id="d-murid" style="color:#3B82F6;">—</div><div class="stat-label">Jumlah Murid</div></div>
+          <span style="font-size:26px;">👤</span>
+        </div>
+      </div>
+      <div class="stat-card" style="cursor:pointer;" onclick="goTab('pendaftaran')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div><div class="stat-num" id="d-reg" style="color:#10B981;">—</div><div class="stat-label">Pendaftaran</div></div>
+          <span style="font-size:26px;">📋</span>
+        </div>
+      </div>
+      <div class="stat-card" style="cursor:pointer;" onclick="goTab('acara')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div><div class="stat-num" id="d-acara" style="color:#8B5CF6;">—</div><div class="stat-label">Acara Dijana</div></div>
+          <span style="font-size:26px;">🏃</span>
+        </div>
+      </div>
+      <div class="stat-card" style="cursor:pointer;" onclick="goTab('lorong')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div><div class="stat-num" id="d-lorong" style="color:#F59E0B;">—</div><div class="stat-label">Undian Selesai</div></div>
+          <span style="font-size:26px;">🎰</span>
+        </div>
       </div>
     </div>
 
-    <div class="stat-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px;">
-      <div class="stat-card" onclick="Maps('settings', 'rumah')">
-        <div style="display:flex; justify-content:space-between;">
-          <div>
-            <div class="stat-num" id="stat-rumah" style="color:#10B981;">—</div>
-            <div class="stat-label">Rumah Sukan</div>
-          </div>
-          <div class="stat-icon">🏠</div>
+    <!-- Ringkasan Rumah -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">🏠 Penyertaan Mengikut Rumah</span></div>
+        <div class="card-body" id="dash-rumah-list">
+          <div style="text-align:center;padding:20px;color:#94A3B8;">Memuatkan...</div>
         </div>
       </div>
-      <div class="stat-card" onclick="Maps('settings', 'acara')">
-        <div style="display:flex; justify-content:space-between;">
-          <div>
-            <div class="stat-num" id="stat-acara" style="color:#6366F1;">—</div>
-            <div class="stat-label">Acara Master</div>
-          </div>
-          <div class="stat-icon">🏃</div>
-        </div>
-      </div>
-      <div class="stat-card" onclick="Maps('users')">
-        <div style="display:flex; justify-content:space-between;">
-          <div>
-            <div class="stat-num" id="stat-users" style="color:#F59E0B;">—</div>
-            <div class="stat-label">Pengguna</div>
-          </div>
-          <div class="stat-icon">👥</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div style="display:flex; justify-content:space-between;">
-          <div>
-            <div class="stat-num" id="stat-murid" style="color:#3B82F6;">—</div>
-            <div class="stat-label">Penyertaan</div>
-          </div>
-          <div class="stat-icon">📚</div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">⚡ Tindakan Cepat</span></div>
+        <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button class="btn btn-primary" style="justify-content:center;" onclick="goTab('murid')">👤 Tambah Murid</button>
+          <button class="btn btn-success" style="justify-content:center;" onclick="goTab('pendaftaran')">📋 Daftar Acara</button>
+          <button class="btn btn-warning" style="justify-content:center;" onclick="goTab('acara')">🏃 Jana Acara</button>
+          <button class="btn btn-ghost" style="justify-content:center;" onclick="goTab('lorong')">🎰 Undian Lorong</button>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="pane-settings" class="tab-pane">
-    <h1 style="font-size: 20px; font-weight: 800; margin: 0 0 16px;">⚙️ Tetapan Sistem</h1>
-    <div class="subtab-nav">
-      <button class="subtab-btn active" onclick="showSubTab('asas')" id="stab-asas">⚙️ Tetapan Asas</button>
-      <button class="subtab-btn" onclick="showSubTab('kategori')" id="stab-kategori">📋 Kategori</button>
-      <button class="subtab-btn" onclick="showSubTab('rumah')" id="stab-rumah">🏠 Rumah Sukan</button>
-      <button class="subtab-btn" onclick="showSubTab('acara')" id="stab-acara">🏃 Acara Master</button>
+  <!-- ═══ MURID ═══ -->
+  <div id="pane-murid" class="tab-pane">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <h1 style="font-size:20px;font-weight:800;margin:0;">👤 Pengurusan Murid</h1>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="openImportModal()">📥 Import CSV</button>
+        <button class="btn btn-primary btn-sm" onclick="openMuridModal()">+ Tambah Murid</button>
+      </div>
     </div>
 
-    <div id="stpane-asas" class="tab-pane active">
-      <div class="card" style="max-width: 600px;">
-        <div class="card-header">🏫 <div class="card-title">Maklumat Tournament</div></div>
-        <div class="card-body">
-          <div class="form-group">
-            <label class="form-label">Nama Tournament</label>
-            <input class="form-control" id="set-tournament-name" oninput="markDirty()">
+    <!-- Filter -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-body" style="padding:12px 16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;">
+          <div>
+            <label class="form-label">Cari</label>
+            <input class="form-control" id="murid-cari" placeholder="Nama / No. KP..." oninput="filterMurid()">
           </div>
-          <div class="form-group">
-            <label class="form-label">Bilangan Lorong Track</label>
-            <input type="number" class="form-control" id="set-track-lanes" oninput="markDirty()">
+          <div>
+            <label class="form-label">Rumah Sukan</label>
+            <select class="form-control" id="murid-flt-rumah" onchange="filterMurid()">
+              <option value="">Semua Rumah</option>
+            </select>
           </div>
-          <div style="display:flex; gap:8px; margin-top:16px;">
-            <button class="btn btn-primary" onclick="saveSettings()" id="btn-save-settings" disabled>💾 Simpan</button>
+          <div>
+            <label class="form-label">Kategori</label>
+            <select class="form-control" id="murid-flt-kat" onchange="filterMurid()">
+              <option value="">Semua Kategori</option>
+            </select>
           </div>
+          <button class="btn btn-ghost btn-sm" onclick="clearMuridFilter()">Reset</button>
         </div>
       </div>
     </div>
 
-    <div id="stpane-kategori" class="tab-pane">
-      <div class="card">
-        <div class="card-header">📋 <div class="card-title">Senarai Kategori</div></div>
-        <div class="card-body">
-          <table class="data-table">
-            <thead><tr><th>Kod</th><th>Nama Kategori</th><th>Status</th></tr></thead>
-            <tbody id="kategori-tbody"><tr><td colspan="3">Memuatkan...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div id="stpane-rumah" class="tab-pane">
-      <div class="card">
-        <div class="card-header">🏠 <div class="card-title">Senarai Rumah Sukan</div></div>
-        <div class="card-body">
-          <table class="data-table">
-            <thead><tr><th>ID Rumah</th><th>Nama Rumah</th><th>Warna</th></tr></thead>
-            <tbody id="rumah-tbody"><tr><td colspan="3">Memuatkan...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div id="stpane-acara" class="tab-pane">
-      <div class="card">
-        <div class="card-header">🏃 <div class="card-title">Acara Master</div></div>
-        <div class="card-body">
-          <table class="data-table">
-            <thead><tr><th>Kod</th><th>Nama Acara</th><th>Jenis</th></tr></thead>
-            <tbody id="acara-tbody"><tr><td colspan="3">Memuatkan...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="pane-users" class="tab-pane">
     <div class="card">
-      <div class="card-header">👥 <div class="card-title">Senarai Pengguna Sistem</div></div>
-      <div class="card-body">
+      <div class="card-header">
+        <span class="card-title" id="murid-count-label">Senarai Murid</span>
+        <button class="btn btn-ghost btn-xs" onclick="loadMurid()">🔄</button>
+      </div>
+      <div style="overflow-x:auto;">
         <table class="data-table">
-          <thead><tr><th>Nama</th><th>Username</th><th>Peranan</th></tr></thead>
-          <tbody id="users-tbody"><tr><td colspan="3">Memuatkan...</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>No. KP</th>
+              <th>Nama Murid</th>
+              <th>Rumah</th>
+              <th>Kategori</th>
+              <th>Jantina</th>
+              <th>Tindakan</th>
+            </tr>
+          </thead>
+          <tbody id="murid-tbody">
+            <tr><td colspan="7" style="text-align:center;padding:30px;color:#94A3B8;">Memuatkan...</td></tr>
+          </tbody>
         </table>
       </div>
+      <div style="padding:12px 16px;border-top:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12px;color:#64748B;" id="murid-footer">—</span>
+        <div style="display:flex;gap:4px;" id="murid-pagination"></div>
+      </div>
     </div>
   </div>
+
+  <!-- ═══ JANA ACARA ═══ -->
+  <div id="pane-acara" class="tab-pane">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <h1 style="font-size:20px;font-weight:800;margin:0;">🏃 Jana Acara Pertandingan</h1>
+      <button class="btn btn-primary btn-sm" onclick="janaSemuaAcara()">⚡ Jana Semua Acara</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:300px 1fr;gap:16px;">
+      <!-- Panel Jana -->
+      <div class="card" style="height:fit-content;">
+        <div class="card-header"><span class="card-title">⚙️ Tetapan Jana</span></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Kategori</label>
+            <select class="form-control" id="jana-kat" onchange="loadAcaraMasterForJana()">
+              <option value="">-- Semua Kategori --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Jenis Acara</label>
+            <select class="form-control" id="jana-jenis">
+              <option value="">Semua</option>
+              <option value="TRACK">Track (Lari)</option>
+              <option value="FIELD">Field (Padang)</option>
+              <option value="ROAD">Road</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Format</label>
+            <select class="form-control" id="jana-format">
+              <option value="FINAL">Final Terus</option>
+              <option value="HEAT_FINAL">Heat → Final</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="janaAcara()">🚀 Jana Acara</button>
+        </div>
+      </div>
+
+      <!-- Senarai Acara -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" id="acara-count-label">Senarai Acara Dijana</span>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-ghost btn-xs" onclick="loadAcara()">🔄</button>
+            <button class="btn btn-danger btn-xs" onclick="padamSemuaAcara()">🗑️ Padam Semua</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No. Acara</th>
+                <th>Nama Acara</th>
+                <th>Kategori</th>
+                <th>Jenis</th>
+                <th>Format</th>
+                <th>Lorong</th>
+                <th>Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="acara-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:30px;color:#94A3B8;">Klik "Jana Acara" untuk menjana senarai acara</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:12px 16px;border-top:1px solid #F1F5F9;">
+          <span style="font-size:12px;color:#64748B;" id="acara-footer">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PENDAFTARAN ═══ -->
+  <div id="pane-pendaftaran" class="tab-pane">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <h1 style="font-size:20px;font-weight:800;margin:0;">📋 Pendaftaran Acara</h1>
+      <button class="btn btn-primary btn-sm" onclick="openDaftarModal()">+ Daftar Murid</button>
+    </div>
+
+    <!-- Filter -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-body" style="padding:12px 16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;">
+          <div>
+            <label class="form-label">Rumah Sukan</label>
+            <select class="form-control" id="reg-flt-rumah" onchange="filterReg()">
+              <option value="">Semua Rumah</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Kategori</label>
+            <select class="form-control" id="reg-flt-kat" onchange="filterReg()">
+              <option value="">Semua Kategori</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Cari Murid/Acara</label>
+            <input class="form-control" id="reg-cari" placeholder="Nama / No. Acara..." oninput="filterReg()">
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="clearRegFilter()">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" id="reg-count-label">Senarai Pendaftaran</span>
+        <button class="btn btn-ghost btn-xs" onclick="loadPendaftaran()">🔄</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>No. Acara</th>
+              <th>Nama Acara</th>
+              <th>Murid</th>
+              <th>Rumah</th>
+              <th>Kategori</th>
+              <th>Status</th>
+              <th>Tindakan</th>
+            </tr>
+          </thead>
+          <tbody id="reg-tbody">
+            <tr><td colspan="8" style="text-align:center;padding:30px;color:#94A3B8;">Memuatkan...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:12px 16px;border-top:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12px;color:#64748B;" id="reg-footer">—</span>
+        <div style="display:flex;gap:4px;" id="reg-pagination"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ UNDIAN LORONG ═══ -->
+  <div id="pane-lorong" class="tab-pane">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <h1 style="font-size:20px;font-weight:800;margin:0;">🎰 Undian Lorong</h1>
+    </div>
+
+    <div style="display:grid;grid-template-columns:300px 1fr;gap:16px;">
+      <!-- Panel Undian -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="card-header"><span class="card-title">🎯 Pilih Acara</span></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Kategori</label>
+              <select class="form-control" id="lorong-kat" onchange="loadAcaraLorong()">
+                <option value="">-- Pilih Kategori --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Acara</label>
+              <select class="form-control" id="lorong-acara" onchange="loadPesertaLorong()">
+                <option value="">-- Pilih Acara --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Heat / Pusingan</label>
+              <select class="form-control" id="lorong-heat">
+                <option value="1">Heat 1 (Final)</option>
+                <option value="2">Heat 2</option>
+                <option value="3">Heat 3</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+              <button class="btn btn-primary" style="justify-content:center;" onclick="undianLorong()">🎰 Buat Undian</button>
+              <button class="btn btn-ghost" style="justify-content:center;" onclick="resetLorong()">🔄 Reset</button>
+              <button class="btn btn-success" style="justify-content:center;" onclick="simpanLorong()">💾 Simpan</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Peserta -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">👥 Peserta (<span id="lorong-peserta-count">0</span>)</span></div>
+          <div class="card-body" style="padding:12px;">
+            <div id="lorong-peserta-list" style="max-height:200px;overflow-y:auto;">
+              <div style="text-align:center;color:#94A3B8;font-size:12px;padding:16px;">Pilih acara dahulu</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hasil Undian -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🏁 Susunan Lorong</span>
+          <span style="font-size:12px;color:#64748B;" id="lorong-info">—</span>
+        </div>
+        <div class="card-body">
+          <div id="lorong-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+            <div style="grid-column:1/-1;text-align:center;padding:40px;color:#94A3B8;">
+              <div style="font-size:32px;margin-bottom:8px;">🎰</div>
+              <div style="font-size:13px;">Buat undian untuk lihat susunan lorong</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LAPORAN OPS ═══ -->
+  <div id="pane-laporan" class="tab-pane">
+    <h1 style="font-size:20px;font-weight:800;margin:0 0 20px;">📄 Laporan Operasi</h1>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''" onclick="cetakLaporan('murid')">
+        <div class="card-body" style="text-align:center;padding:24px;">
+          <div style="font-size:32px;margin-bottom:12px;">👤</div>
+          <div style="font-weight:700;margin-bottom:4px;">Senarai Murid</div>
+          <div style="font-size:12px;color:#64748B;">Semua murid mengikut rumah & kategori</div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:12px;">🖨️ Cetak</button>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''" onclick="cetakLaporan('pendaftaran')">
+        <div class="card-body" style="text-align:center;padding:24px;">
+          <div style="font-size:32px;margin-bottom:12px;">📋</div>
+          <div style="font-weight:700;margin-bottom:4px;">Senarai Pendaftaran</div>
+          <div style="font-size:12px;color:#64748B;">Semua pendaftaran acara mengikut rumah</div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:12px;">🖨️ Cetak</button>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''" onclick="cetakLaporan('lorong')">
+        <div class="card-body" style="text-align:center;padding:24px;">
+          <div style="font-size:32px;margin-bottom:12px;">🎰</div>
+          <div style="font-weight:700;margin-bottom:4px;">Jadual Lorong</div>
+          <div style="font-size:12px;color:#64748B;">Susunan lorong semua acara track</div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:12px;">🖨️ Cetak</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </main>
 
+<!-- TOAST -->
 <div id="toast-container"></div>
 
+<!-- LOADING -->
 <div class="loading-overlay" id="loading-overlay">
   <div style="text-align:center;">
     <div class="spinner"></div>
-    <div style="margin-top:10px; font-size:12px; color:#64748B;" id="loading-msg">Memuatkan...</div>
+    <div style="margin-top:10px;font-size:12px;color:#64748B;" id="loading-msg">Memuatkan...</div>
   </div>
 </div>
 
+<!-- ═══ MODAL: MURID ═══ -->
+<div class="modal-bg" id="modal-murid">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-murid-title">Tambah Murid</span>
+      <button class="modal-close" onclick="closeModal('modal-murid')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label required">No. Kad Pengenalan</label>
+          <input class="form-control" id="m-nokp" placeholder="contoh: 120101010001">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label required">Nama Penuh</label>
+          <input class="form-control" id="m-nama" placeholder="Nama seperti dalam IC">
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Rumah Sukan</label>
+          <select class="form-control" id="m-rumah">
+            <option value="">-- Pilih --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Kategori</label>
+          <select class="form-control" id="m-kat">
+            <option value="">-- Pilih --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Jantina</label>
+          <select class="form-control" id="m-jantina">
+            <option value="L">Lelaki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tarikh Lahir</label>
+          <input type="date" class="form-control" id="m-dob">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kelas</label>
+          <input class="form-control" id="m-kelas" placeholder="contoh: 6 Amanah">
+        </div>
+        <div class="form-group">
+          <label class="form-label">No. Dada</label>
+          <input class="form-control" id="m-nodada" placeholder="contoh: 001">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-murid')">Batal</button>
+      <button class="btn btn-primary" onclick="saveMurid()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: IMPORT CSV ═══ -->
+<div class="modal-bg" id="modal-import">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">📥 Import Murid (CSV)</span>
+      <button class="modal-close" onclick="closeModal('modal-import')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:#F8FAFC;border:2px dashed #CBD5E1;border-radius:10px;padding:24px;text-align:center;margin-bottom:16px;">
+        <div style="font-size:28px;margin-bottom:8px;">📄</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Drag & Drop fail CSV</div>
+        <div style="font-size:12px;color:#64748B;margin-bottom:12px;">atau</div>
+        <input type="file" id="import-file" accept=".csv" style="display:none;" onchange="previewImport()">
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('import-file').click()">Pilih Fail</button>
+      </div>
+      <div style="background:#EFF6FF;border-radius:8px;padding:12px;font-size:12px;color:#1D4ED8;">
+        <strong>Format CSV:</strong> no_kp, nama, id_rumah, id_kategori, jantina, tarikh_lahir, kelas, no_dada
+      </div>
+      <div id="import-preview" style="margin-top:12px;display:none;">
+        <div style="font-size:12px;font-weight:600;color:#475569;margin-bottom:8px;" id="import-count">—</div>
+        <div style="max-height:150px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;">
+          <table class="data-table" style="font-size:11px;" id="import-table"></table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-import')">Batal</button>
+      <button class="btn btn-primary" onclick="uploadImport()" id="btn-import-upload" disabled>📥 Import</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: DAFTAR ACARA ═══ -->
+<div class="modal-bg" id="modal-daftar">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">📋 Daftar Murid ke Acara</span>
+      <button class="modal-close" onclick="closeModal('modal-daftar')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label required">Kategori</label>
+          <select class="form-control" id="d-kat" onchange="loadAcaraForDaftar()">
+            <option value="">-- Pilih --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Acara</label>
+          <select class="form-control" id="d-acara">
+            <option value="">-- Pilih Kategori Dahulu --</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label required">Murid (No. KP)</label>
+          <input class="form-control" id="d-nokp" placeholder="Taip No. KP atau nama...">
+          <div id="d-murid-suggest" style="display:none;border:1px solid #E2E8F0;border-radius:8px;margin-top:4px;max-height:150px;overflow-y:auto;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>
+        </div>
+        <div class="form-group" id="d-murid-info" style="grid-column:1/-1;display:none;">
+          <div style="background:#ECFDF5;border-radius:8px;padding:12px;font-size:12px;" id="d-murid-info-content"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-daftar')">Batal</button>
+      <button class="btn btn-primary" onclick="saveDaftar()">📋 Daftar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CONFIRM DELETE ═══ -->
+<div class="modal-bg" id="modal-confirm">
+  <div class="modal-box" style="max-width:400px;">
+    <div class="modal-header">
+      <span class="modal-title">⚠️ Pengesahan</span>
+      <button class="modal-close" onclick="closeModal('modal-confirm')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:#475569;margin:0;" id="confirm-msg">Adakah anda pasti?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-confirm')">Batal</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">Padam</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ JAVASCRIPT ═══ -->
 <script>
-let currentTab = 'admin';
-let currentSubTab = 'asas';
-let settingsDirty = false;
-let SCRIPT_URL = '';
-
-const API = {
-  call(fn, params={}) {
-    return new Promise((resolve, reject) => {
-      if (typeof google === 'undefined') {
-        showToast('Local Mock Data', 'warning');
-        resolve({success: true, data: []});
-        return;
-      }
-      
-      google.script.run
-        .withSuccessHandler(resolve)
-        .withFailureHandler((error) => {
-          showToast('Ralat pelayan: ' + error.message, 'error');
-          console.error(error);
-          reject(error);
-        })
-        [fn](params);
-    });
-  }
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Praset URL bagi mengelak ralat Iframe
-  if (typeof google !== 'undefined' && google.script) {
-    google.script.run.withSuccessHandler(url => SCRIPT_URL = url).getScriptUrl();
-  }
-  initApp();
-});
-
-async function initApp() {
-  await loadDashboard();
-  await loadSettings();
-  await loadKategori();
-  await loadRumah();
-  await loadAcara();
-  await loadUsers();
+// ═══════════════════════════════════════════
+// GAS WRAPPER
+// ═══════════════════════════════════════════
+function gasRun(fn, ...args) {
+  return new Promise((resolve, reject) => {
+    if (typeof google === 'undefined') {
+      resolve(getMockData(fn, args));
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(resolve)
+      .withFailureHandler(e => { console.error(fn, e); reject(e); })
+      [fn](...args);
+  });
 }
 
-function Maps(tab, sub=null) {
-  if(settingsDirty && tab !== 'settings') {
-    if(!confirm('Terdapat perubahan yang belum disimpan. Teruskan?')) return;
+async function gas(fn, payload) {
+  try { return await gasRun(fn, payload || {}); }
+  catch(e) { showToast('Ralat: ' + e.message, 'error'); return { success: false }; }
+}
+
+// ═══════════════════════════════════════════
+// MOCK DATA (DEV MODE)
+// ═══════════════════════════════════════════
+function getMockData(fn, args) {
+  const rumahList = [
+    {id_rumah:'MERAH',nama_rumah:'Rumah Merah',warna:'#EF4444'},
+    {id_rumah:'BIRU',nama_rumah:'Rumah Biru',warna:'#3B82F6'},
+    {id_rumah:'HIJAU',nama_rumah:'Rumah Hijau',warna:'#10B981'},
+    {id_rumah:'KUNING',nama_rumah:'Rumah Kuning',warna:'#F59E0B'}
+  ];
+  const katList = [
+    {id_kategori:'L1',nama_kategori:'Lelaki 1 (12 thn ke bawah)'},
+    {id_kategori:'L2',nama_kategori:'Lelaki 2 (13-15 thn)'},
+    {id_kategori:'P1',nama_kategori:'Perempuan 1 (12 thn ke bawah)'},
+    {id_kategori:'P2',nama_kategori:'Perempuan 2 (13-15 thn)'}
+  ];
+  const muridList = [
+    {id_murid:'M001',no_kp:'120101010001',nama:'Ahmad bin Ali',id_rumah:'MERAH',id_kategori:'L1',jantina:'L',kelas:'6 Amanah',no_dada:'001'},
+    {id_murid:'M002',no_kp:'120202020002',nama:'Siti binti Abu',id_rumah:'BIRU',id_kategori:'P1',jantina:'P',kelas:'6 Bestari',no_dada:'002'},
+    {id_murid:'M003',no_kp:'100303030003',nama:'Chong Wei Ming',id_rumah:'HIJAU',id_kategori:'L2',jantina:'L',kelas:'4 Cemerlang',no_dada:'003'},
+    {id_murid:'M004',no_kp:'100404040004',nama:'Kavitha d/o Kumar',id_rumah:'KUNING',id_kategori:'P2',jantina:'P',kelas:'4 Dinamik',no_dada:'004'},
+    {id_murid:'M005',no_kp:'120505050005',nama:'Hafiz bin Hassan',id_rumah:'MERAH',id_kategori:'L1',jantina:'L',kelas:'6 Amanah',no_dada:'005'},
+  ];
+  const acaraList = [
+    {id_acara:'A001',no_acara:'001',nama_acara:'100m Lelaki 1',id_kategori:'L1',jenis:'TRACK',format:'FINAL',guna_lorong:true},
+    {id_acara:'A002',no_acara:'002',nama_acara:'200m Lelaki 2',id_kategori:'L2',jenis:'TRACK',format:'FINAL',guna_lorong:true},
+    {id_acara:'A003',no_acara:'003',nama_acara:'Lompat Jauh P1',id_kategori:'P1',jenis:'FIELD',format:'FINAL',guna_lorong:false},
+    {id_acara:'A004',no_acara:'004',nama_acara:'400m Perempuan 2',id_kategori:'P2',jenis:'TRACK',format:'HEAT_FINAL',guna_lorong:true},
+  ];
+  const regList = [
+    {id_reg:'R001',no_acara:'001',nama_acara:'100m Lelaki 1',no_kp:'120101010001',nama_murid:'Ahmad bin Ali',id_rumah:'MERAH',id_kategori:'L1',status:'AKTIF'},
+    {id_reg:'R002',no_acara:'001',nama_acara:'100m Lelaki 1',no_kp:'120505050005',nama_murid:'Hafiz bin Hassan',id_rumah:'MERAH',id_kategori:'L1',status:'AKTIF'},
+    {id_reg:'R003',no_acara:'002',nama_acara:'200m Lelaki 2',no_kp:'100303030003',nama_murid:'Chong Wei Ming',id_rumah:'HIJAU',id_kategori:'L2',status:'AKTIF'},
+  ];
+
+  const map = {
+    getRumah: () => ({success:true, rumah: rumahList}),
+    getKategori: () => ({success:true, kategori: katList}),
+    getMurid: () => ({success:true, murid: muridList, total: muridList.length}),
+    getAcaraJana: () => ({success:true, acara: acaraList, total: acaraList.length}),
+    getPendaftaran: () => ({success:true, pendaftaran: regList, total: regList.length}),
+    getDashboardOps: () => ({success:true, data:{murid:muridList.length, pendaftaran:regList.length, acara:acaraList.length, lorong:2}, rumah:[
+      {id_rumah:'MERAH',nama_rumah:'Rumah Merah',count:2,warna:'#EF4444'},
+      {id_rumah:'BIRU',nama_rumah:'Rumah Biru',count:1,warna:'#3B82F6'},
+      {id_rumah:'HIJAU',nama_rumah:'Rumah Hijau',count:1,warna:'#10B981'},
+      {id_rumah:'KUNING',nama_rumah:'Rumah Kuning',count:0,warna:'#F59E0B'}
+    ]}),
+    getSettings: () => ({success:true, settings:{tournament_name:'Sukan Tahunan 2025',track_lanes:'8'}}),
+    saveMurid: () => ({success:true, message:'Murid berjaya disimpan'}),
+    updateMurid: () => ({success:true, message:'Murid berjaya dikemaskini'}),
+    deleteMurid: () => ({success:true, message:'Murid berjaya dipadam'}),
+    janaAcara: () => ({success:true, message:'4 acara berjaya dijana', acara: acaraList}),
+    savePendaftaran: () => ({success:true, message:'Pendaftaran berjaya disimpan'}),
+    deletePendaftaran: () => ({success:true, message:'Pendaftaran berjaya dipadam'}),
+    simpanLorong: () => ({success:true, message:'Lorong berjaya disimpan'}),
+    getScriptUrl: () => ''
+  };
+  return (map[fn] || (() => ({success:false, message:'Fungsi tidak dijumpai: '+fn})))();
+}
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+const S = {
+  rumah: [], kategori: [], murid: [], acaraList: [], regList: [],
+  muridFiltered: [], regFiltered: [],
+  muridPage: 1, regPage: 1, perPage: 20,
+  editMuridId: null,
+  lorongDraw: [], lorongAcaraId: null,
+  SCRIPT_URL: ''
+};
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  if (typeof google !== 'undefined') {
+    google.script.run.withSuccessHandler(u => S.SCRIPT_URL = u).getScriptUrl();
   }
-  
-  const targetPane = document.getElementById('pane-'+tab);
-  if (!targetPane) {
-    console.error('Routing failed: Element pane-' + tab + ' not found.');
+  await loadMasterData();
+  loadDashboard();
+});
+
+async function loadMasterData() {
+  const [rRes, kRes, sRes] = await Promise.all([
+    gas('getRumah'), gas('getKategori'), gas('getSettings')
+  ]);
+  if (rRes.success) { S.rumah = rRes.rumah || []; populateRumahDropdowns(); }
+  if (kRes.success) { S.kategori = rRes.kategori || kRes.kategori || []; populateKatDropdowns(); }
+  if (sRes.success) {
+    const s = sRes.settings || {};
+    document.getElementById('sidebar-sekolah').textContent = s.tournament_name || 'Sistem Sukan';
+    document.getElementById('dash-subtitle').textContent = s.tournament_name || '';
+  }
+  // Populate lorong kat dropdown
+  const lkat = document.getElementById('lorong-kat');
+  const lkatSrc = S.kategori.length ? S.kategori : kRes.kategori || [];
+  lkatSrc.forEach(k => lkat.innerHTML += `<option value="${k.id_kategori}">${k.id_kategori} - ${k.nama_kategori||k.id_kategori}</option>`);
+  // Populate jana kat
+  const jkat = document.getElementById('jana-kat');
+  lkatSrc.forEach(k => jkat.innerHTML += `<option value="${k.id_kategori}">${k.id_kategori} - ${k.nama_kategori||k.id_kategori}</option>`);
+}
+
+function populateRumahDropdowns() {
+  const ids = ['murid-flt-rumah','reg-flt-rumah','m-rumah'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const isFilter = id.startsWith('murid-flt') || id.startsWith('reg-flt');
+    const orig = el.options[0].outerHTML;
+    el.innerHTML = orig;
+    S.rumah.forEach(r => el.innerHTML += `<option value="${r.id_rumah}">${r.nama_rumah||r.id_rumah}</option>`);
+  });
+}
+
+function populateKatDropdowns() {
+  const katSrc = S.kategori;
+  const ids = ['murid-flt-kat','reg-flt-kat','m-kat','d-kat','override-kategori'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const orig = el.options[0].outerHTML;
+    el.innerHTML = orig;
+    katSrc.forEach(k => el.innerHTML += `<option value="${k.id_kategori}">${k.id_kategori} - ${k.nama_kategori||k.id_kategori}</option>`);
+  });
+}
+
+// ═══════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════
+function goTab(tab) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('pane-'+tab).classList.add('active');
+  const ni = document.getElementById('nav-'+tab);
+  if (ni) ni.classList.add('active');
+
+  const loaders = {
+    dashboard: loadDashboard,
+    murid: loadMurid,
+    acara: loadAcara,
+    pendaftaran: loadPendaftaran
+  };
+  if (loaders[tab]) loaders[tab]();
+}
+
+function refreshTab() {
+  const active = document.querySelector('.tab-pane.active');
+  if (!active) return;
+  const id = active.id.replace('pane-','');
+  const loaders = { dashboard:loadDashboard, murid:loadMurid, acara:loadAcara, pendaftaran:loadPendaftaran };
+  if (loaders[id]) loaders[id]();
+}
+
+function goToSetup() {
+  const url = S.SCRIPT_URL || '?page=admin-setup';
+  window.top.location.href = S.SCRIPT_URL ? S.SCRIPT_URL+'?page=admin-setup' : url;
+}
+
+// ═══════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════
+async function loadDashboard() {
+  const r = await gas('getDashboardOps');
+  if (!r.success) return;
+  const d = r.data || {};
+  document.getElementById('d-murid').textContent = d.murid ?? '—';
+  document.getElementById('d-reg').textContent = d.pendaftaran ?? '—';
+  document.getElementById('d-acara').textContent = d.acara ?? '—';
+  document.getElementById('d-lorong').textContent = d.lorong ?? '—';
+
+  const rumahData = r.rumah || [];
+  const el = document.getElementById('dash-rumah-list');
+  if (!rumahData.length) { el.innerHTML = '<div style="text-align:center;color:#94A3B8;padding:20px;font-size:13px;">Tiada data</div>'; return; }
+  const max = Math.max(...rumahData.map(x => x.count || 0), 1);
+  el.innerHTML = rumahData.map(r => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="width:10px;height:10px;border-radius:50%;background:${r.warna};flex-shrink:0;"></div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:3px;">${r.nama_rumah}</div>
+        <div style="background:#F1F5F9;border-radius:4px;height:6px;overflow:hidden;">
+          <div style="height:100%;border-radius:4px;background:${r.warna};width:${Math.round((r.count/max)*100)}%;transition:width 0.5s;"></div>
+        </div>
+      </div>
+      <div style="font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#1E293B;width:24px;text-align:right;">${r.count}</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// MURID CRUD
+// ═══════════════════════════════════════════
+async function loadMurid() {
+  showLoading(true,'Memuatkan murid...');
+  const r = await gas('getMurid');
+  showLoading(false);
+  if (!r.success) { showToast('Gagal muatkan murid','error'); return; }
+  S.murid = r.murid || [];
+  filterMurid();
+}
+
+function filterMurid() {
+  const cari = (document.getElementById('murid-cari').value||'').toLowerCase();
+  const rumah = document.getElementById('murid-flt-rumah').value;
+  const kat = document.getElementById('murid-flt-kat').value;
+  S.muridFiltered = S.murid.filter(m => {
+    if (rumah && m.id_rumah !== rumah) return false;
+    if (kat && m.id_kategori !== kat) return false;
+    if (cari && !m.nama.toLowerCase().includes(cari) && !m.no_kp.includes(cari)) return false;
+    return true;
+  });
+  S.muridPage = 1;
+  renderMurid();
+}
+
+function clearMuridFilter() {
+  document.getElementById('murid-cari').value='';
+  document.getElementById('murid-flt-rumah').value='';
+  document.getElementById('murid-flt-kat').value='';
+  filterMurid();
+}
+
+function renderMurid() {
+  const start = (S.muridPage-1)*S.perPage;
+  const page = S.muridFiltered.slice(start, start+S.perPage);
+  const tbody = document.getElementById('murid-tbody');
+  document.getElementById('murid-count-label').textContent = `Murid (${S.muridFiltered.length})`;
+
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#94A3B8;">Tiada rekod ditemui</td></tr>`;
+    document.getElementById('murid-footer').textContent = '0 rekod';
+    document.getElementById('murid-pagination').innerHTML = '';
     return;
   }
 
-  currentTab = tab;
-  window.location.hash = sub ? `${tab}-${sub}` : tab;
+  const rumahMap = Object.fromEntries(S.rumah.map(r => [r.id_rumah, r]));
+  tbody.innerHTML = page.map((m, i) => {
+    const r = rumahMap[m.id_rumah] || {};
+    const colorClass = m.id_rumah ? `rumah-${m.id_rumah}` : '';
+    return `<tr>
+      <td style="color:#94A3B8;font-size:12px;">${start+i+1}</td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;">${m.no_kp}</span></td>
+      <td style="font-weight:600;">${m.nama}</td>
+      <td><span class="badge ${colorClass}" style="font-size:11px;">${m.id_rumah}</span></td>
+      <td><span class="badge badge-blue" style="font-size:11px;">${m.id_kategori}</span></td>
+      <td>${m.jantina==='L'?'👦 Lelaki':'👧 Perempuan'}</td>
+      <td>
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-ghost btn-xs" onclick="editMurid('${m.id_murid||m.no_kp}')">✏️</button>
+          <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="deleteMurid('${m.id_murid||m.no_kp}','${m.nama}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  targetPane.classList.add('active');
-
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const ni = document.getElementById('nav-'+tab);
-  if(ni) ni.classList.add('active');
-
-  const sm = document.getElementById('settings-submenu');
-  if(tab === 'settings') {
-    sm.style.display = 'block';
-    showSubTab(sub || 'asas');
-  } else {
-    sm.style.display = 'none';
-  }
-
-  updateBreadcrumb(tab, sub);
+  const total = S.muridFiltered.length;
+  document.getElementById('murid-footer').textContent = `${start+1}–${Math.min(start+S.perPage,total)} daripada ${total} murid`;
+  renderPagination('murid-pagination', total, S.muridPage, S.perPage, p => { S.muridPage=p; renderMurid(); });
 }
 
-function showSubTab(sub) {
-  currentSubTab = sub;
-  document.querySelectorAll('[id^="stpane-"]').forEach(p => p.classList.remove('active'));
-  document.getElementById('stpane-'+sub)?.classList.add('active');
-  document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('stab-'+sub)?.classList.add('active');
-  document.querySelectorAll('.nav-sub').forEach(b => b.classList.remove('active'));
-  document.getElementById('sub-'+sub)?.classList.add('active');
-  updateBreadcrumb('settings', sub);
+function openMuridModal(data=null) {
+  S.editMuridId = data ? (data.id_murid||data.no_kp) : null;
+  document.getElementById('modal-murid-title').textContent = data ? 'Edit Murid' : 'Tambah Murid';
+  document.getElementById('m-nokp').value = data?.no_kp||'';
+  document.getElementById('m-nokp').disabled = !!data;
+  document.getElementById('m-nama').value = data?.nama||'';
+  document.getElementById('m-rumah').value = data?.id_rumah||'';
+  document.getElementById('m-kat').value = data?.id_kategori||'';
+  document.getElementById('m-jantina').value = data?.jantina||'L';
+  document.getElementById('m-dob').value = data?.tarikh_lahir||'';
+  document.getElementById('m-kelas').value = data?.kelas||'';
+  document.getElementById('m-nodada').value = data?.no_dada||'';
+  openModal('modal-murid');
 }
 
-function updateBreadcrumb(tab, sub) {
-  const labels = {
-    admin:'Dashboard Admin', settings:'Tetapan', users:'Pengguna',
-    asas:'Tetapan Asas', kategori:'Kategori', rumah:'Rumah Sukan', acara:'Acara Master'
+async function saveMurid() {
+  const nokp = document.getElementById('m-nokp').value.trim();
+  const nama = document.getElementById('m-nama').value.trim();
+  const rumah = document.getElementById('m-rumah').value;
+  const kat = document.getElementById('m-kat').value;
+  if (!nokp||!nama||!rumah||!kat) { showToast('Sila isi semua medan wajib','error'); return; }
+
+  const payload = {
+    id_murid: S.editMuridId,
+    no_kp: nokp, nama, id_rumah: rumah, id_kategori: kat,
+    jantina: document.getElementById('m-jantina').value,
+    tarikh_lahir: document.getElementById('m-dob').value,
+    kelas: document.getElementById('m-kelas').value,
+    no_dada: document.getElementById('m-nodada').value
   };
-  document.getElementById('bc-tab').textContent = labels[tab] || tab;
-  if(sub) {
-    document.getElementById('bc-sub').style.display = 'inline';
-    document.getElementById('bc-sub-txt').textContent = labels[sub] || sub;
-  } else {
-    document.getElementById('bc-sub').style.display = 'none';
-  }
-}
 
-function refreshCurrentTab() {
-  if(currentTab === 'admin') loadDashboard();
-  else if(currentTab === 'settings') {
-    if(currentSubTab === 'asas') loadSettings();
-    else if(currentSubTab === 'kategori') loadKategori();
-    else if(currentSubTab === 'rumah') loadRumah();
-    else if(currentSubTab === 'acara') loadAcara();
-  }
-  else if(currentTab === 'users') loadUsers();
-}
-
-async function loadDashboard() {
-  showLoading(true, 'Memuatkan dashboard...');
-  try {
-    const r = await API.call('getPublicData');
-    if(r && r.success) {
-      const c = r.counts || { murid: 0, rumah: 0, acara: 0, users: 0 };
-      document.getElementById('stat-murid').textContent  = c.murid;
-      document.getElementById('stat-rumah').textContent  = c.rumah;
-      document.getElementById('stat-acara').textContent  = c.acara;
-      document.getElementById('stat-users').textContent  = c.users;
-    }
-  } finally {
-    showLoading(false);
-  }
-}
-
-async function loadSettings() {
-  const r = await API.call('getSettings');
-  if(r && r.success) {
-    const s = r.settings;
-    document.getElementById('set-tournament-name').value = s.tournament_name || '';
-    document.getElementById('set-track-lanes').value = s.track_lanes || '8';
-    document.getElementById('session-school').textContent = s.tournament_name || 'Sekolah';
-    settingsDirty = false;
-    document.getElementById('btn-save-settings').disabled = true;
-  }
-}
-
-function markDirty() {
-  settingsDirty = true;
-  document.getElementById('btn-save-settings').disabled = false;
-}
-
-async function saveSettings() {
-  showLoading(true, 'Menyimpan tetapan...');
-  const data = {
-    tournament_name: document.getElementById('set-tournament-name').value,
-    track_lanes: document.getElementById('set-track-lanes').value
-  };
-  const r = await API.call('updateSettings', { settings: data });
+  showLoading(true, 'Menyimpan...');
+  const r = await gas(S.editMuridId ? 'updateMurid' : 'saveMurid', payload);
   showLoading(false);
-  if (r && r.success) {
-    settingsDirty = false;
-    document.getElementById('btn-save-settings').disabled = true;
-    showToast('Tetapan disimpan!', 'success');
+
+  if (r.success) {
+    showToast(r.message||'Berjaya!','success');
+    closeModal('modal-murid');
+    loadMurid();
+  } else {
+    showToast(r.message||'Gagal menyimpan','error');
   }
 }
 
-async function loadKategori() {
-  const r = await API.call('getKategori');
-  if(r && r.success) {
-    const list = r.kategori || [];
-    document.getElementById('kategori-tbody').innerHTML = list.length === 0 
-      ? '<tr><td colspan="3">Tiada rekod.</td></tr>' 
-      : list.map(k => `<tr><td>${k.kod || k.kod_kategori || ''}</td><td>${k.nama || k.nama_kategori || ''}</td><td>Aktif</td></tr>`).join('');
-  }
+function editMurid(id) {
+  const m = S.murid.find(x => (x.id_murid||x.no_kp) == id);
+  if (m) openMuridModal(m);
 }
 
-async function loadRumah() {
-  const r = await API.call('getRumah');
-  if(r && r.success) {
-    const list = r.rumah || [];
-    document.getElementById('rumah-tbody').innerHTML = list.length === 0 
-      ? '<tr><td colspan="3">Tiada rekod.</td></tr>' 
-      : list.map(h => `<tr><td>${h.id_rumah}</td><td>${h.nama_rumah || h.nama}</td><td><span style="padding:2px 8px;border-radius:4px;background:${h.warna||h.warna_bg};color:#fff;">Warna</span></td></tr>`).join('');
-  }
+function deleteMurid(id, nama) {
+  confirmAction(`Padam murid "${nama}"? Semua pendaftaran akan turut dipadam.`, async () => {
+    const r = await gas('deleteMurid', { id_murid: id });
+    if (r.success) { showToast('Murid dipadam','success'); loadMurid(); }
+    else showToast(r.message||'Gagal','error');
+  });
 }
 
-async function loadAcara() {
-  const r = await API.call('getEventMasters');
-  if(r && r.success) {
-    const list = r.masters || [];
-    document.getElementById('acara-tbody').innerHTML = list.length === 0 
-      ? '<tr><td colspan="3">Tiada rekod.</td></tr>' 
-      : list.map(a => `<tr><td>${a.kod || a.kod_acara || ''}</td><td>${a.nama || a.nama_acara || ''}</td><td>${a.event_type || 'TRACK'}</td></tr>`).join('');
-  }
+// ═══════════════════════════════════════════
+// IMPORT CSV
+// ═══════════════════════════════════════════
+function openImportModal() { openModal('modal-import'); }
+
+function previewImport() {
+  const file = document.getElementById('import-file').files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n').filter(l => l.trim());
+    const headers = lines[0].split(',').map(h => h.trim());
+    const rows = lines.slice(1, 6);
+    document.getElementById('import-count').textContent = `${lines.length-1} murid dijumpai`;
+    document.getElementById('import-table').innerHTML = `
+      <thead><tr>${headers.map(h=>`<th style="padding:6px 8px;">${h}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(row=>`<tr>${row.split(',').map(c=>`<td style="padding:5px 8px;">${c.trim()}</td>`).join('')}</tr>`).join('')}</tbody>
+    `;
+    document.getElementById('import-preview').style.display = 'block';
+    document.getElementById('btn-import-upload').disabled = false;
+  };
+  reader.readAsText(file);
 }
 
-async function loadUsers() {
-  const r = await API.call('getUsers');
-  if(r && r.success) {
-    const list = r.users || [];
-    document.getElementById('users-tbody').innerHTML = list.length === 0 
-      ? '<tr><td colspan="3">Tiada rekod.</td></tr>' 
-      : list.map(u => `<tr><td>${u.full_name || u.nama || ''}</td><td>${u.username || ''}</td><td>${u.role || ''}</td></tr>`).join('');
-  }
-}
-
-// NAVIGASI LOG KELUAR - BYPASS SANDBOX (Top Target Method)
-function confirmLogout() {
-  if(confirm('Adakah anda pasti mahu log keluar?')) {
-    if (SCRIPT_URL) {
-      window.top.location.href = SCRIPT_URL + '?page=login';
+async function uploadImport() {
+  const file = document.getElementById('import-file').files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    showLoading(true,'Mengimport...');
+    const r = await gas('importMuridCSV', { csv: e.target.result });
+    showLoading(false);
+    if (r.success) {
+      showToast(`${r.count||'?'} murid berjaya diimport`,'success');
+      closeModal('modal-import');
+      loadMurid();
     } else {
-      window.location.href = '?page=login';
+      showToast(r.message||'Gagal import','error');
     }
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════════
+// JANA ACARA
+// ═══════════════════════════════════════════
+async function loadAcara() {
+  const r = await gas('getAcaraJana');
+  if (!r.success) return;
+  S.acaraList = r.acara || [];
+  renderAcara(S.acaraList);
+}
+
+function renderAcara(list) {
+  document.getElementById('acara-count-label').textContent = `Acara Dijana (${list.length})`;
+  document.getElementById('acara-footer').textContent = `${list.length} acara`;
+  const tbody = document.getElementById('acara-tbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#94A3B8;">Tiada acara. Klik "Jana Acara" untuk menjana.</td></tr>`;
+    return;
   }
+  tbody.innerHTML = list.map(a => `<tr>
+    <td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;">${a.no_acara}</span></td>
+    <td style="font-weight:600;">${a.nama_acara}</td>
+    <td><span class="badge badge-blue">${a.id_kategori||a.kategori||'—'}</span></td>
+    <td><span class="badge ${a.jenis==='TRACK'?'badge-purple':'badge-green'}">${a.jenis||'TRACK'}</span></td>
+    <td><span class="badge badge-gray">${a.format||'FINAL'}</span></td>
+    <td>${a.guna_lorong?'✅':'—'}</td>
+    <td>
+      <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="padamAcara('${a.id_acara||a.no_acara}','${a.nama_acara}')">🗑️</button>
+    </td>
+  </tr>`).join('');
+}
+
+async function janaAcara() {
+  const payload = {
+    id_kategori: document.getElementById('jana-kat').value,
+    jenis: document.getElementById('jana-jenis').value,
+    format: document.getElementById('jana-format').value
+  };
+  showLoading(true,'Menjana acara...');
+  const r = await gas('janaAcara', payload);
+  showLoading(false);
+  if (r.success) {
+    showToast(r.message||'Acara berjaya dijana','success');
+    if (r.acara) { S.acaraList = r.acara; renderAcara(r.acara); }
+    else loadAcara();
+  } else {
+    showToast(r.message||'Gagal jana acara','error');
+  }
+}
+
+async function janaSemuaAcara() {
+  confirmAction('Jana semua acara dari acara master? Acara sedia ada akan digantikan.', async () => {
+    showLoading(true,'Menjana semua acara...');
+    const r = await gas('janaSemuaAcara', {});
+    showLoading(false);
+    if (r.success) { showToast(r.message||'Semua acara berjaya dijana','success'); loadAcara(); }
+    else showToast(r.message||'Gagal','error');
+  }, 'Jana Semua');
+}
+
+function padamAcara(id, nama) {
+  confirmAction(`Padam acara "${nama}"?`, async () => {
+    const r = await gas('deleteAcara', { id_acara: id });
+    if (r.success) { showToast('Acara dipadam','success'); loadAcara(); }
+    else showToast(r.message||'Gagal','error');
+  });
+}
+
+async function padamSemuaAcara() {
+  confirmAction('Padam SEMUA acara? Tindakan ini tidak boleh diundur!', async () => {
+    showLoading(true,'Memadam...');
+    const r = await gas('deleteSemuaAcara', {});
+    showLoading(false);
+    if (r.success) { showToast('Semua acara dipadam','success'); loadAcara(); }
+    else showToast(r.message||'Gagal','error');
+  }, 'Padam Semua');
+}
+
+// ═══════════════════════════════════════════
+// PENDAFTARAN
+// ═══════════════════════════════════════════
+async function loadPendaftaran() {
+  showLoading(true,'Memuatkan pendaftaran...');
+  const r = await gas('getPendaftaran');
+  showLoading(false);
+  if (!r.success) return;
+  S.regList = r.pendaftaran || [];
+  filterReg();
+}
+
+function filterReg() {
+  const rumah = document.getElementById('reg-flt-rumah').value;
+  const kat = document.getElementById('reg-flt-kat').value;
+  const cari = (document.getElementById('reg-cari').value||'').toLowerCase();
+  S.regFiltered = S.regList.filter(x => {
+    if (rumah && x.id_rumah !== rumah) return false;
+    if (kat && x.id_kategori !== kat) return false;
+    if (cari && !x.nama_murid?.toLowerCase().includes(cari) && !String(x.no_acara).includes(cari)) return false;
+    return true;
+  });
+  S.regPage = 1;
+  renderReg();
+}
+
+function clearRegFilter() {
+  document.getElementById('reg-flt-rumah').value='';
+  document.getElementById('reg-flt-kat').value='';
+  document.getElementById('reg-cari').value='';
+  filterReg();
+}
+
+function renderReg() {
+  const start = (S.regPage-1)*S.perPage;
+  const page = S.regFiltered.slice(start, start+S.perPage);
+  document.getElementById('reg-count-label').textContent = `Pendaftaran (${S.regFiltered.length})`;
+  const tbody = document.getElementById('reg-tbody');
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px;color:#94A3B8;">Tiada rekod</td></tr>`;
+    document.getElementById('reg-footer').textContent = '0 rekod';
+    document.getElementById('reg-pagination').innerHTML = '';
+    return;
+  }
+  tbody.innerHTML = page.map((x, i) => `<tr>
+    <td style="color:#94A3B8;font-size:12px;">${start+i+1}</td>
+    <td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;">${x.no_acara}</span></td>
+    <td style="font-weight:500;">${x.nama_acara}</td>
+    <td>
+      <div style="font-weight:600;font-size:13px;">${x.nama_murid||'—'}</div>
+      <div style="font-size:11px;color:#94A3B8;">${x.no_kp}</div>
+    </td>
+    <td><span class="badge rumah-${x.id_rumah}" style="font-size:11px;">${x.id_rumah}</span></td>
+    <td><span class="badge badge-blue" style="font-size:11px;">${x.id_kategori}</span></td>
+    <td><span class="badge ${x.status==='AKTIF'?'badge-green':'badge-red'}" style="font-size:11px;">${x.status||'AKTIF'}</span></td>
+    <td>
+      <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="deleteReg('${x.id_reg}','${x.nama_murid}')">🗑️</button>
+    </td>
+  </tr>`).join('');
+  const total = S.regFiltered.length;
+  document.getElementById('reg-footer').textContent = `${start+1}–${Math.min(start+S.perPage,total)} daripada ${total}`;
+  renderPagination('reg-pagination', total, S.regPage, S.perPage, p => { S.regPage=p; renderReg(); });
+}
+
+async function openDaftarModal() {
+  openModal('modal-daftar');
+}
+
+async function loadAcaraForDaftar() {
+  const kat = document.getElementById('d-kat').value;
+  const sel = document.getElementById('d-acara');
+  sel.innerHTML = '<option value="">-- Pilih Acara --</option>';
+  if (!kat) return;
+  const list = S.acaraList.filter(a => a.id_kategori === kat || a.kategori === kat);
+  list.forEach(a => sel.innerHTML += `<option value="${a.id_acara||a.no_acara}">${a.no_acara} - ${a.nama_acara}</option>`);
+}
+
+async function saveDaftar() {
+  const kat = document.getElementById('d-kat').value;
+  const acara = document.getElementById('d-acara').value;
+  const nokp = document.getElementById('d-nokp').value.trim();
+  if (!kat||!acara||!nokp) { showToast('Sila isi semua medan','error'); return; }
+
+  showLoading(true,'Mendaftar...');
+  const r = await gas('savePendaftaran', { id_kategori:kat, id_acara:acara, no_kp:nokp });
+  showLoading(false);
+  if (r.success) {
+    showToast('Pendaftaran berjaya!','success');
+    closeModal('modal-daftar');
+    loadPendaftaran();
+  } else {
+    showToast(r.message||'Gagal daftar','error');
+  }
+}
+
+function deleteReg(id, nama) {
+  confirmAction(`Padam pendaftaran "${nama}"?`, async () => {
+    const r = await gas('deletePendaftaran', { id_reg: id });
+    if (r.success) { showToast('Pendaftaran dipadam','success'); loadPendaftaran(); }
+    else showToast(r.message||'Gagal','error');
+  });
+}
+
+// ═══════════════════════════════════════════
+// UNDIAN LORONG
+// ═══════════════════════════════════════════
+async function loadAcaraLorong() {
+  const kat = document.getElementById('lorong-kat').value;
+  const sel = document.getElementById('lorong-acara');
+  sel.innerHTML = '<option value="">-- Pilih Acara Track --</option>';
+  if (!kat) return;
+  const list = S.acaraList.filter(a => (a.id_kategori===kat||a.kategori===kat) && a.guna_lorong);
+  if (!list.length) {
+    sel.innerHTML = '<option value="">Tiada acara track untuk kategori ini</option>';
+    return;
+  }
+  list.forEach(a => sel.innerHTML += `<option value="${a.id_acara||a.no_acara}">${a.no_acara} - ${a.nama_acara}</option>`);
+}
+
+async function loadPesertaLorong() {
+  const acaraId = document.getElementById('lorong-acara').value;
+  const el = document.getElementById('lorong-peserta-list');
+  const countEl = document.getElementById('lorong-peserta-count');
+  if (!acaraId) { el.innerHTML = '<div style="text-align:center;color:#94A3B8;font-size:12px;padding:16px;">Pilih acara dahulu</div>'; return; }
+  S.lorongAcaraId = acaraId;
+
+  const reg = S.regList.filter(x => (x.id_acara||x.no_acara) == acaraId || x.no_acara == acaraId);
+  countEl.textContent = reg.length;
+  if (!reg.length) {
+    el.innerHTML = '<div style="text-align:center;color:#94A3B8;font-size:12px;padding:16px;">Tiada peserta berdaftar</div>';
+    return;
+  }
+  el.innerHTML = reg.map(x => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F1F5F9;">
+      <span class="badge rumah-${x.id_rumah}" style="font-size:10px;">${x.id_rumah}</span>
+      <span style="font-size:12px;font-weight:500;flex:1;">${x.nama_murid||x.no_kp}</span>
+    </div>
+  `).join('');
+  resetLorong();
+}
+
+function undianLorong() {
+  const acaraId = document.getElementById('lorong-acara').value;
+  if (!acaraId) { showToast('Pilih acara dahulu','warning'); return; }
+
+  const reg = S.regList.filter(x => (x.id_acara||x.no_acara) == acaraId || x.no_acara == acaraId);
+  if (!reg.length) { showToast('Tiada peserta untuk acara ini','warning'); return; }
+
+  // Shuffle
+  const shuffled = [...reg].sort(() => Math.random()-0.5);
+  S.lorongDraw = shuffled;
+  renderLorongGrid(shuffled);
+}
+
+function renderLorongGrid(peserta) {
+  const trackLanes = parseInt(localStorage.getItem('track_lanes')||'8');
+  const lanes = Math.max(peserta.length, trackLanes > 0 ? Math.min(trackLanes, 8) : 8);
+  const acara = S.acaraList.find(a => (a.id_acara||a.no_acara) == S.lorongAcaraId);
+  const heat = document.getElementById('lorong-heat').value;
+
+  document.getElementById('lorong-info').textContent = `${acara?.nama_acara||'Acara'} · Heat ${heat} · ${peserta.length} peserta`;
+
+  const cols = Math.min(lanes, 8);
+  const grid = document.getElementById('lorong-grid');
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+  grid.innerHTML = Array.from({length:cols}, (_,i) => {
+    const p = peserta[i];
+    return `<div class="lane-card ${p?'filled':''}">
+      <div class="lane-num">${i+1}</div>
+      ${p ? `
+        <div class="lane-name">${p.nama_murid||p.no_kp}</div>
+        <div style="margin-top:4px;"><span class="badge rumah-${p.id_rumah}" style="font-size:10px;">${p.id_rumah}</span></div>
+      ` : `<div class="lane-name" style="color:#CBD5E1;">—</div>`}
+    </div>`;
+  }).join('');
+}
+
+function resetLorong() {
+  S.lorongDraw = [];
+  document.getElementById('lorong-info').textContent = '—';
+  const grid = document.getElementById('lorong-grid');
+  grid.style.gridTemplateColumns = 'repeat(4,1fr)';
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94A3B8;">
+    <div style="font-size:32px;margin-bottom:8px;">🎰</div>
+    <div style="font-size:13px;">Buat undian untuk lihat susunan lorong</div>
+  </div>`;
+}
+
+async function simpanLorong() {
+  if (!S.lorongDraw.length) { showToast('Buat undian dahulu','warning'); return; }
+  const payload = {
+    id_acara: S.lorongAcaraId,
+    heat: document.getElementById('lorong-heat').value,
+    susunan: S.lorongDraw.map((p,i) => ({lorong:i+1, no_kp:p.no_kp, id_rumah:p.id_rumah}))
+  };
+  showLoading(true,'Menyimpan undian...');
+  const r = await gas('simpanLorong', payload);
+  showLoading(false);
+  if (r.success) { showToast('Undian lorong disimpan!','success'); }
+  else showToast(r.message||'Gagal simpan','error');
+}
+
+// ═══════════════════════════════════════════
+// LAPORAN
+// ═══════════════════════════════════════════
+function cetakLaporan(jenis) {
+  const judul = {murid:'Senarai Murid',pendaftaran:'Senarai Pendaftaran',lorong:'Jadual Lorong'};
+  const data = jenis==='murid' ? S.murid : jenis==='pendaftaran' ? S.regList : S.lorongDraw;
+  if (!data.length) { showToast('Tiada data untuk dicetak','warning'); return; }
+
+  let html = `<h2>${judul[jenis]||jenis}</h2>
+  <p style="color:#64748B;font-size:12px;">Dijana pada: ${new Date().toLocaleString('ms-MY')}</p>`;
+
+  if (jenis==='murid') {
+    html += `<table border="1" cellpadding="6" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead style="background:#F1F5F9;"><tr><th>#</th><th>No. KP</th><th>Nama</th><th>Rumah</th><th>Kategori</th><th>Kelas</th></tr></thead>
+      <tbody>${data.map((m,i)=>`<tr><td>${i+1}</td><td>${m.no_kp}</td><td>${m.nama}</td><td>${m.id_rumah}</td><td>${m.id_kategori}</td><td>${m.kelas||'—'}</td></tr>`).join('')}</tbody>
+    </table>`;
+  } else if (jenis==='pendaftaran') {
+    html += `<table border="1" cellpadding="6" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead style="background:#F1F5F9;"><tr><th>#</th><th>No. Acara</th><th>Acara</th><th>Murid</th><th>Rumah</th></tr></thead>
+      <tbody>${data.map((x,i)=>`<tr><td>${i+1}</td><td>${x.no_acara}</td><td>${x.nama_acara}</td><td>${x.nama_murid||x.no_kp}</td><td>${x.id_rumah}</td></tr>`).join('')}</tbody>
+    </table>`;
+  }
+
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>${judul[jenis]}</title>
+  <style>body{font-family:Arial,sans-serif;padding:20px;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid #ddd;padding:6px 10px;}th{background:#f3f4f6;}</style>
+  </head><body>${html}</body></html>`);
+  w.print();
+}
+
+// ═══════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') document.querySelectorAll('.modal-bg.show').forEach(m => m.classList.remove('show'));
+});
+document.querySelectorAll('.modal-bg').forEach(m => {
+  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('show'); });
+});
+
+function confirmAction(msg, onOk, btnLabel='Padam') {
+  document.getElementById('confirm-msg').textContent = msg;
+  const btn = document.getElementById('confirm-ok-btn');
+  btn.textContent = btnLabel;
+  btn.onclick = () => { closeModal('modal-confirm'); onOk(); };
+  openModal('modal-confirm');
+}
+
+function renderPagination(containerId, total, current, perPage, onClick) {
+  const pages = Math.ceil(total/perPage);
+  const el = document.getElementById(containerId);
+  if (!el||pages<=1) { if(el) el.innerHTML=''; return; }
+  let html='';
+  for (let i=1; i<=Math.min(pages,10); i++) {
+    html+=`<button onclick="(${onClick.toString()})(${i})" style="padding:4px 8px;border-radius:6px;border:none;cursor:pointer;font-size:11px;font-family:inherit;background:${i===current?'#3B82F6':'#F1F5F9'};color:${i===current?'#fff':'#475569'};">${i}</button>`;
+  }
+  el.innerHTML = html;
 }
 
 function showToast(msg, type='success') {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  const icons = { success:'✅', error:'❌', warning:'⚠️', info:'ℹ️' };
-  toast.className = `toast ${type}`;
-  toast.innerHTML = `<span>${icons[type]||''}</span><span style="flex:1;">${msg}</span>`;
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s';
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
+  const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${icons[type]||''}</span><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity 0.3s'; setTimeout(()=>el.remove(),300); }, 3500);
 }
 
 function showLoading(show, msg='Memuatkan...') {
-  const el = document.getElementById('loading-overlay');
   document.getElementById('loading-msg').textContent = msg;
-  el.classList.toggle('show', show);
+  document.getElementById('loading-overlay').classList.toggle('show', show);
+}
+
+function confirmLogout() {
+  if (confirm('Log keluar?')) {
+    sessionStorage.clear();
+    window.top.location.href = S.SCRIPT_URL ? S.SCRIPT_URL+'?page=login' : '?page=login';
+  }
+}
+
+// Load user info from session
+const sess = JSON.parse(sessionStorage.getItem('adminSession')||'null');
+if (sess) {
+  document.getElementById('hdr-user').textContent = sess.full_name || sess.username || '—';
 }
 </script>
 </body>
