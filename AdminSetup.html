@@ -410,7 +410,8 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
   <div class="modal-body">
     <input type="hidden" id="kat-id">
     <div class="form-row"><div class="form-group"><label class="form-label">Kod Kategori</label><input class="form-input" id="kat-kod" placeholder="cth: L1" maxlength="5" style="text-transform:uppercase"></div><div class="form-group"><label class="form-label">Nama Kategori</label><input class="form-input" id="kat-nama" placeholder="cth: Lelaki Bawah 12"></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Jantina</label><select class="form-select" id="kat-jantina"><option value="L">Lelaki</option><option value="P">Perempuan</option></select></div><div class="form-group"><label class="form-label">Kuota Max / Acara</label><input class="form-input" type="number" id="kat-kuota" placeholder="cth: 3" min="1" max="10"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Jantina</label><select class="form-select" id="kat-jantina"><option value="L">Lelaki</option><option value="P">Perempuan</option></select></div></div>
+    <div style="margin-bottom:12px"><label class="form-label" style="margin-bottom:8px">Kuota Max Pendaftaran / Acara</label><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px"><div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">👤 Individu</label><input class="form-input" type="number" id="kat-kuota-ind" placeholder="3" min="0" max="20" value="3"></div><div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">👥 Kumpulan</label><input class="form-input" type="number" id="kat-kuota-kump" placeholder="1" min="0" max="20" value="1"></div><div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">🔓 Terbuka</label><input class="form-input" type="number" id="kat-kuota-terb" placeholder="0" min="0" max="20" value="0"></div></div><div style="font-size:11px;color:var(--text3);margin-top:5px">0 = tiada had / tidak dibenarkan</div></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Umur Minimum</label><input class="form-input" type="number" id="kat-umin" placeholder="7" min="5" max="19"></div><div class="form-group"><label class="form-label">Umur Maksimum</label><input class="form-input" type="number" id="kat-umax" placeholder="11" min="5" max="19"></div></div>
     <div class="form-group"><label class="form-label">Warna Identiti</label><div style="display:flex;align-items:center;gap:10px"><input type="color" id="kat-warna" value="#4F8EF7" oninput="updateKatPreview()"><div class="colour-preview" id="kat-colour-prev" style="background:#4F8EF7;color:#fff">L1</div><span style="font-size:11px;color:var(--text3)" id="kat-contrast-msg"></span></div></div>
   </div>
@@ -476,10 +477,10 @@ let _settings = {
   med_1:'Johan',med_2:'Naib Johan',med_3:'Tempat Ke-3'
 };
 let _kategori = [
-  {id:'K1',kod:'L1',nama:'Lelaki Bawah 12',jantina:'L',umin:7,umax:11,kuota:3,warna:'#4F8EF7',aktif:true},
-  {id:'K2',kod:'L2',nama:'Lelaki Bawah 15',jantina:'L',umin:12,umax:14,kuota:3,warna:'#10B981',aktif:true},
-  {id:'K3',kod:'P1',nama:'Perempuan Bawah 12',jantina:'P',umin:7,umax:11,kuota:3,warna:'#EC4899',aktif:true},
-  {id:'K4',kod:'P2',nama:'Perempuan Bawah 15',jantina:'P',umin:12,umax:14,kuota:3,warna:'#8B5CF6',aktif:true},
+  {id:'K1',kod:'L1',nama:'Lelaki Bawah 12',jantina:'L',umin:7,umax:11,kuota_individu:3,kuota_kumpulan:1,kuota_terbuka:0,warna:'#4F8EF7',aktif:true},
+  {id:'K2',kod:'L2',nama:'Lelaki Bawah 15',jantina:'L',umin:12,umax:14,kuota_individu:3,kuota_kumpulan:1,kuota_terbuka:0,warna:'#10B981',aktif:true},
+  {id:'K3',kod:'P1',nama:'Perempuan Bawah 12',jantina:'P',umin:7,umax:11,kuota_individu:3,kuota_kumpulan:1,kuota_terbuka:0,warna:'#EC4899',aktif:true},
+  {id:'K4',kod:'P2',nama:'Perempuan Bawah 15',jantina:'P',umin:12,umax:14,kuota_individu:3,kuota_kumpulan:1,kuota_terbuka:0,warna:'#8B5CF6',aktif:true},
 ];
 let _rumah = [
   {id:'R1',kod:'R1',nama:'MERAH',warna:'#EF4444',warna_teks:'#ffffff',guru:'Cikgu Ahmad',pengurus:'Ali',aktif:true},
@@ -798,7 +799,7 @@ async function loadKategori() {
       <td style="color:var(--text);font-weight:600">${k.nama}</td>
       <td><span class="badge ${k.jantina==='L'?'badge-blue':'badge-purple'}">${k.jantina==='L'?'♂ Lelaki':'♀ Perempuan'}</span></td>
       <td style="font-family:'DM Mono',monospace;font-size:11px">${k.umin}–${k.umax} tahun</td>
-      <td style="font-family:'DM Mono',monospace">${k.kuota||3}/acara</td>
+      <td style="font-size:11px;color:var(--text2)"><span title="Individu">👤${k.kuota_individu||0}</span> <span title="Kumpulan">👥${k.kuota_kumpulan||0}</span> <span title="Terbuka">🔓${k.kuota_terbuka||0}</span></td>
       <td><div style="display:flex;align-items:center;gap:8px"><div style="width:18px;height:18px;background:${k.warna};border-radius:4px"></div><span style="font-size:11px;color:var(--text3)">${k.warna}</span></div></td>
       <td><span class="badge ${k.aktif?'badge-green':'badge-gray'}">${k.aktif?'Aktif':'Tidak Aktif'}</span></td>
       <td>
@@ -818,7 +819,10 @@ function openKatModal(id=null) {
     const k = _kategori.find(x=>x.id===id);
     if(!k) return;
     setValue('kat-id',k.id);setValue('kat-kod',k.kod);setValue('kat-nama',k.nama);
-    setValue('kat-jantina',k.jantina);setValue('kat-kuota',k.kuota);
+    setValue('kat-jantina',k.jantina);
+    setValue('kat-kuota-ind',k.kuota_individu!==undefined?k.kuota_individu:(k.kuota||3));
+    setValue('kat-kuota-kump',k.kuota_kumpulan!==undefined?k.kuota_kumpulan:1);
+    setValue('kat-kuota-terb',k.kuota_terbuka!==undefined?k.kuota_terbuka:0);
     setValue('kat-umin',k.umin);setValue('kat-umax',k.umax);
     document.getElementById('kat-warna').value = k.warna||'#4F8EF7';
     updateKatPreview();
@@ -826,7 +830,7 @@ function openKatModal(id=null) {
 }
 function editKategori(id){openKatModal(id);}
 
-function clearKatForm(){['kat-id','kat-kod','kat-nama','kat-kuota','kat-umin','kat-umax'].forEach(id=>setValue(id,''));setValue('kat-jantina','L');document.getElementById('kat-warna').value='#4F8EF7';updateKatPreview();}
+function clearKatForm(){['kat-id','kat-kod','kat-nama','kat-umin','kat-umax'].forEach(id=>setValue(id,''));setValue('kat-jantina','L');setValue('kat-kuota-ind','3');setValue('kat-kuota-kump','1');setValue('kat-kuota-terb','0');document.getElementById('kat-warna').value='#4F8EF7';updateKatPreview();}
 
 function updateKatPreview(){
   const w=document.getElementById('kat-warna').value;
@@ -842,7 +846,7 @@ async function saveKategori(){
   const kod=getVal('kat-kod').toUpperCase();
   const nama=getVal('kat-nama');
   if(!kod||!nama){showToast('Kod dan nama wajib diisi','error');return;}
-  const payload={id:getVal('kat-id'),kod,nama,jantina:getVal('kat-jantina'),kuota:parseInt(getVal('kat-kuota')||'3'),umin:parseInt(getVal('kat-umin')||'7'),umax:parseInt(getVal('kat-umax')||'11'),warna:document.getElementById('kat-warna').value};
+  const payload={id:getVal('kat-id'),kod,nama,jantina:getVal('kat-jantina'),kuota_individu:parseInt(getVal('kat-kuota-ind')||'3'),kuota_kumpulan:parseInt(getVal('kat-kuota-kump')||'1'),kuota_terbuka:parseInt(getVal('kat-kuota-terb')||'0'),umin:parseInt(getVal('kat-umin')||'7'),umax:parseInt(getVal('kat-umax')||'11'),warna:document.getElementById('kat-warna').value};
   showLoading('Menyimpan kategori...');
   const r = await gasRun(payload.id?'updateKategori':'createKategori',payload);
   hideLoading();closeModal('modal-kat');
