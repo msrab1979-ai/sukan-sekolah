@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F0F4F8;--bg2:#1E3A5F;--bg3:#EBF0F7;--card:#FFFFFF;--card2:#EEF2F7;--border:rgba(30,58,95,0.10);--border2:rgba(30,58,95,0.18);--blue:#4F8EF7;--blue2:#3B7BF0;--cyan:#22D3EE;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--purple:#8B5CF6;--gold:#F6C90E;--text:#1E293B;--text2:#475569;--text3:#64748B;--sidebar-w:248px;--header-h:58px}
+:root{--bg:#F0F4F8;--bg2:#1E3A5F;--bg3:#EBF0F7;--card:#FFFFFF;--card2:#EEF2F7;--border:rgba(30,58,95,0.10);--border2:rgba(30,58,95,0.18);--blue:#4F8EF7;--blue2:#3B7BF0;--cyan:#22D3EE;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--purple:#8B5CF6;--gold:#F6C90E;--text:#1E293B;--text2:#475569;--text3:#64748B;--sidebar-w:220px;--header-h:58px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
@@ -17,12 +17,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .header-spacer{flex:1}
 .hbtn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);padding:6px 12px;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap}
 .hbtn:hover{background:var(--card);border-color:var(--blue);color:var(--blue)}
-#sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:220px;background:var(--bg2);border-right:1px solid var(--border);z-index:90;overflow-y:auto;padding:12px 8px 80px}
+#hamburger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:4px;padding:4px}
+#hamburger span{display:block;width:20px;height:2px;background:rgba(255,255,255,0.8);border-radius:2px}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:89}
+#sidebar-overlay.show{display:block}
+#sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);z-index:90;overflow-y:auto;padding:12px 8px 80px;transition:transform 0.3s ease}
 .sb-section{font-size:10px;font-family:'DM Mono',monospace;color:rgba(255,255,255,0.38);letter-spacing:1.5px;padding:12px 10px 4px;text-transform:uppercase}
 .nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,0.75);transition:all 0.2s;margin-bottom:1px}
 .nav-item:hover{background:rgba(255,255,255,0.10);color:#fff}
-.nav-item.active{background:rgba(255,255,255,0.18);color:#fff}
-#main{margin-left:220px;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));padding:28px 32px}
+.nav-item.active{background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.25)}
+#main{margin-left:var(--sidebar-w);margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));padding:28px 32px}
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.mobile-open{transform:translateX(0)}
+  #main{margin-left:0;padding:20px 16px}
+  #hamburger{display:flex}
+}
 .page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px;margin-bottom:4px}
 .page-sub{font-size:13px;color:var(--text3);margin-bottom:24px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px}
@@ -56,16 +66,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 #search-bar:focus{border-color:var(--blue)}
 .search-result{display:none}
 .search-result.show{display:block}
-@media(max-width:800px){#sidebar{display:none}#main{margin-left:0;padding:20px 16px}}
 </style>
 </head>
 <body>
 
 <header id="header">
+  <button id="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
   <div class="logo-badge">📖 <span>PANDUAN</span>&nbsp;PENGGUNA <span class="tag">MANUAL</span></div>
   <div class="header-spacer"></div>
   <button class="hbtn" onclick="goBack()">← Kembali ke Admin</button>
 </header>
+
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <nav id="sidebar">
   <div class="sb-section">Panduan</div>
@@ -85,13 +97,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 <input id="search-bar" placeholder="🔍 Cari topik dalam manual..." oninput="searchManual(this.value)">
 <div id="search-results" class="search-result"></div>
 
-<!-- ══════════════════════════════ PERMULAAN ══════════════════════════════ -->
+<!-- ══ PERMULAAN ══ -->
 <div id="sec-mula" class="section active">
   <div class="page-title">🚀 Permulaan</div>
   <div class="page-sub">Baca bahagian ini dahulu sebelum mula guna sistem</div>
-
   <div class="ok-box">Sistem ini menggunakan Google Apps Script + Google Sheets sebagai pangkalan data. Semua data disimpan dalam Google Sheets sekolah anda.</div>
-
   <div class="card">
     <div class="card-title">🔄 Aliran kerja keseluruhan</div>
     <div class="flow">
@@ -105,7 +115,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     </div>
     <p style="font-size:12px;color:var(--text3);margin-top:6px">Setiap langkah mesti diselesaikan sebelum ke langkah seterusnya.</p>
   </div>
-
   <div class="card">
     <div class="card-title">🔗 URL modul sistem</div>
     <table class="tbl">
@@ -116,10 +125,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <tr><td><span class="badge b-amber">Pengurus</span></td><td><span class="code">?page=pengurus</span></td><td>Pengurus Rumah</td></tr>
         <tr><td><span class="badge b-green">Keputusan</span></td><td><span class="code">?page=admin-results</span></td><td>Admin, Pencatat</td></tr>
         <tr><td><span class="badge b-gray">Paparan Awam</span></td><td><span class="code">?page=home</span></td><td>Semua orang</td></tr>
+        <tr><td><span class="badge b-purple">Rekod Acara</span></td><td><span class="code">?page=rekod-acara</span></td><td>Admin sahaja</td></tr>
       </tbody>
     </table>
   </div>
-
   <div class="card">
     <div class="card-title">🔑 Akaun lalai sistem</div>
     <div class="warn-box">⚠️ Tukar kata laluan lalai ini selepas log masuk pertama kali!</div>
@@ -134,13 +143,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
-<!-- ══════════════════════════════ SETUP ══════════════════════════════ -->
+<!-- ══ SETUP ══ -->
 <div id="sec-setup" class="section">
   <div class="page-title">⚙️ Setup Sistem</div>
   <div class="page-sub">Admin Setup — konfigurasi sebelum sukan bermula</div>
-
   <div class="warn-box">⚠️ Wajib ikut urutan ini. Jangan skip langkah kerana setiap bahagian bergantung pada bahagian sebelumnya.</div>
-
   <div class="card">
     <div class="card-title">📋 Urutan setup yang betul</div>
     <ol class="step-ol">
@@ -152,7 +159,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <li><div><strong>Pengguna</strong> — Tambah akaun Pengurus untuk setiap rumah. Pastikan pilih rumah yang betul semasa cipta akaun.</div></li>
     </ol>
   </div>
-
   <div class="card">
     <div class="card-title">📋 Setup Dropdown Sheet</div>
     <div class="info-box">Ini memudahkan guru isi data murid terus dalam Google Sheet dengan dropdown pilihan.</div>
@@ -164,7 +170,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <li>Jalankan semula jika ada rumah baru ditambah.</li>
     </ol>
   </div>
-
   <div class="card">
     <div class="card-title">🔄 Jana Semula Data Murid</div>
     <div class="info-box">Jalankan selepas guru selesai isi data murid dalam Google Sheet.</div>
@@ -178,11 +183,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
-<!-- ══════════════════════════════ MURID ══════════════════════════════ -->
+<!-- ══ MURID ══ -->
 <div id="sec-murid" class="section">
   <div class="page-title">👥 Data Murid</div>
   <div class="page-sub">Import dan urus data murid dalam sistem</div>
-
   <div class="card">
     <div class="card-title">📄 Format CSV untuk import murid</div>
     <div class="info-box">Admin Ops → Import Murid → pilih fail CSV. Baris pertama boleh ada header atau terus data.</div>
@@ -197,7 +201,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </tbody>
     </table>
   </div>
-
   <div class="card">
     <div class="card-title">🤖 Auto-jana dari No KP</div>
     <table class="tbl">
@@ -210,7 +213,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </tbody>
     </table>
   </div>
-
   <div class="card">
     <div class="card-title">⚠️ Nama rumah mesti sama persis</div>
     <div class="two-col">
@@ -219,11 +221,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     </div>
     <p style="font-size:12px;color:var(--text3);margin-top:10px">Jika id_rumah kosong, murid tidak akan kelihatan dalam Pendaftaran. Guna butang "🔄 Jana Semula Data Murid" untuk betulkan.</p>
   </div>
-
   <div class="card">
     <div class="card-title">📊 Semak data murid dalam sheet</div>
-    <p style="font-size:13px;color:var(--text2);line-height:1.7">Buka Google Sheets → tbl_murid. Kolum yang perlu ada data:</p>
-    <table class="tbl" style="margin-top:10px">
+    <table class="tbl">
       <thead><tr><th>Kolum</th><th>Status Wajib</th><th>Cara isi jika kosong</th></tr></thead>
       <tbody>
         <tr><td>D — id_rumah</td><td><span class="badge b-red">Wajib</span></td><td>Jana Semula Data Murid</td></tr>
@@ -238,11 +238,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
-<!-- ══════════════════════════════ ACARA ══════════════════════════════ -->
+<!-- ══ ACARA ══ -->
 <div id="sec-acara" class="section">
   <div class="page-title">🏃 Acara &amp; Jana</div>
   <div class="page-sub">Setup acara master dan jana acara pertandingan</div>
-
   <div class="card">
     <div class="card-title">📌 Perbezaan Acara Master vs Acara Jana</div>
     <div class="two-col">
@@ -256,7 +255,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
     </div>
   </div>
-
   <div class="card">
     <div class="card-title">📋 Langkah tambah &amp; jana acara</div>
     <ol class="step-ol">
@@ -269,7 +267,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     </ol>
     <div class="warn-box">⚠️ Jika ada perubahan pada Acara Master, wajib padam tbl_acara_jana dan jana semula. Admin Ops → Padam Semua Acara → Jana Semula.</div>
   </div>
-
   <div class="card">
     <div class="card-title">📊 Jenis acara dan tetapan</div>
     <table class="tbl">
@@ -283,11 +280,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
-<!-- ══════════════════════════════ PENDAFTARAN ══════════════════════════════ -->
+<!-- ══ PENDAFTARAN ══ -->
 <div id="sec-daftar" class="section">
   <div class="page-title">📋 Pendaftaran Peserta</div>
   <div class="page-sub">Pengurus Rumah mendaftar murid untuk acara</div>
-
   <div class="card">
     <div class="card-title">🔓 Syarat sebelum pendaftaran boleh dibuka</div>
     <ol class="step-ol">
@@ -297,7 +293,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <li>Admin aktifkan pendaftaran: Dashboard → Kawalan Sistem → togol "Pendaftaran Peserta" = ON.</li>
     </ol>
   </div>
-
   <div class="card">
     <div class="card-title">📝 Cara Pengurus daftar peserta</div>
     <ol class="step-ol">
@@ -307,7 +302,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <li>Untuk acara pasukan/relay: pilih murid ahli → masukkan nama pasukan (contoh: MERAH A) → klik Daftar.</li>
     </ol>
   </div>
-
   <div class="card">
     <div class="card-title">🛡️ Semakan automatik sistem</div>
     <table class="tbl">
@@ -322,10 +316,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </tbody>
     </table>
   </div>
-
   <div class="card">
     <div class="card-title">⚙️ Kuota pendaftaran</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:10px">Kuota ditetapkan dalam Acara Master dan dikira per rumah:</p>
     <table class="tbl">
       <thead><tr><th>Jenis</th><th>Tetapan dalam Acara Master</th><th>Maksud</th></tr></thead>
       <tbody>
@@ -338,11 +330,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
-<!-- ══════════════════════════════ KEPUTUSAN ══════════════════════════════ -->
+<!-- ══ KEPUTUSAN ══ -->
 <div id="sec-keputusan" class="section">
   <div class="page-title">🏅 Rekod Keputusan</div>
   <div class="page-sub">Rekod, sahkan dan terbit keputusan acara</div>
-
   <div class="card">
     <div class="card-title">🔄 Aliran rekod keputusan</div>
     <div class="flow">
@@ -354,7 +345,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     </div>
     <p style="font-size:12px;color:var(--text3);margin-top:8px">Keputusan hanya kelihatan di halaman awam selepas status PUBLISHED.</p>
   </div>
-
   <div class="card">
     <div class="card-title">📊 Status keputusan</div>
     <table class="tbl">
@@ -366,7 +356,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </tbody>
     </table>
   </div>
-
   <div class="card">
     <div class="card-title">🏆 Tally medal &amp; mata</div>
     <ol class="step-ol">
@@ -378,11 +367,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
-<!-- ══════════════════════════════ PERANAN ══════════════════════════════ -->
+<!-- ══ PERANAN ══ -->
 <div id="sec-roles" class="section">
   <div class="page-title">👤 Peranan Pengguna</div>
   <div class="page-sub">Capaian dan tanggungjawab setiap peranan</div>
-
   <div class="card">
     <div class="card-title">📋 Senarai peranan dan capaian</div>
     <table class="tbl">
@@ -395,7 +383,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </tbody>
     </table>
   </div>
-
   <div class="card">
     <div class="card-title">➕ Tambah pengguna baru</div>
     <ol class="step-ol">
@@ -407,7 +394,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     </ol>
     <div class="warn-box">⚠️ Pengurus yang tidak dipilihkan rumah tidak akan dapat daftar murid.</div>
   </div>
-
   <div class="card">
     <div class="card-title">🔑 Reset kata laluan</div>
     <ol class="step-ol">
@@ -419,11 +405,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
-<!-- ══════════════════════════════ MASALAH ══════════════════════════════ -->
+<!-- ══ MASALAH ══ -->
 <div id="sec-masalah" class="section">
   <div class="page-title">🔧 Masalah &amp; Penyelesaian</div>
   <div class="page-sub">Rujukan cepat untuk masalah biasa</div>
-
   <div class="card">
     <div class="card-title">📋 Senarai masalah biasa</div>
     <table class="tbl">
@@ -434,14 +419,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <tr><td>Pendaftaran ditolak — jantina tidak sepadan</td><td>Kolum jantina kosong dalam tbl_murid</td><td>Jana Semula Data Murid (auto-jana dari KP)</td></tr>
         <tr><td>Pendaftaran ditolak — umur tidak layak</td><td>Tarikh sukan belum diisi dalam Tetapan Asas</td><td>Isi tarikh sukan dalam Tetapan Asas, kemudian Jana Semula</td></tr>
         <tr><td>Acara tidak muncul selepas edit Master</td><td>tbl_acara_jana ada data lama</td><td>Admin Ops → Padam Semua Acara Jana → Jana Semula</td></tr>
-        <tr><td>Dashboard tunjuk jumlah murid salah</td><td>Baris kosong dalam sheet tbl_murid</td><td>Normal sekarang — sistem kira baris data sahaja</td></tr>
-        <tr><td>Delete button tidak berfungsi</td><td>CSS bug pada modal confirm</td><td>Pastikan AdminSetup.html versi terbaru sudah di-deploy</td></tr>
-        <tr><td>Error: runner[fn] is not a function</td><td>Fungsi GAS belum ada dalam code.gs</td><td>Pastikan code_final.gs sudah di-deploy</td></tr>
+        <tr><td>Delete button tidak berfungsi</td><td>mockApi nama fungsi tidak match</td><td>Pastikan AdminSetup.html versi terbaru sudah di-deploy</td></tr>
+        <tr><td>Error: runner[fn] is not a function</td><td>Fungsi GAS belum ada dalam code.gs</td><td>Pastikan code.gs versi terbaru sudah di-deploy</td></tr>
         <tr><td>Tally medal tidak kemas kini</td><td>Keputusan belum di-PUBLISH</td><td>Admin Results → Pilih acara → klik "Terbit Keputusan"</td></tr>
       </tbody>
     </table>
   </div>
-
   <div class="card">
     <div class="card-title">🔍 Debug — semak GAS Execution Log</div>
     <ol class="step-ol">
@@ -451,7 +434,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <li>Log bermula dengan ✅ = berjaya, ❌ = gagal.</li>
     </ol>
   </div>
-
   <div class="card">
     <div class="card-title">⚙️ Fungsi debug dalam GAS Editor</div>
     <table class="tbl">
@@ -467,17 +449,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 
-<!-- ══════════════════════════════ RESET ══════════════════════════════ -->
+<!-- ══ RESET ══ -->
 <div id="sec-reset" class="section">
   <div class="page-title">🔄 Reset Sistem</div>
   <div class="page-sub">Gunakan untuk sukan tahun baru atau permulaan semula</div>
-
   <div class="err-box">⚠️ BERHATI-HATI. Reset tidak boleh diundur. Buat sandaran (eksport) data dahulu jika perlu.</div>
-
   <div class="card">
     <div class="card-title">🟡 Soft Reset — Reset Data Operasi (Sukan Tahun Baru)</div>
     <div class="ok-box">Selamat digunakan. Data murid, rumah, kategori dan acara master DIKEKALKAN.</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Data yang akan dipadam:</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
       <span class="badge b-red">Acara Jana</span>
       <span class="badge b-red">Pendaftaran Individu</span>
@@ -493,7 +472,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <li>Aktifkan semula pendaftaran dalam Dashboard.</li>
     </ol>
   </div>
-
   <div class="card">
     <div class="card-title">🔴 Hard Reset — Reset Sepenuhnya</div>
     <div class="err-box">SEMUA data dipadam termasuk murid, rumah, kategori. Guna hanya jika mahu mulakan sistem dari kosong.</div>
@@ -511,7 +489,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
 <script>
 const IS_GAS = (typeof google !== 'undefined' && google.script);
-var _scriptUrl = '<?= SCRIPT_URL ?>';
+var _scriptUrl = typeof SCRIPT_URL !== 'undefined' ? SCRIPT_URL : '';
 
 function showSection(id, el) {
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
@@ -521,6 +499,7 @@ function showSection(id, el) {
   if (el) el.classList.add('active');
   document.getElementById('search-results').classList.remove('show');
   document.getElementById('search-bar').value = '';
+  closeSidebar();
 }
 
 function searchManual(q) {
@@ -547,6 +526,15 @@ function searchManual(q) {
     res.innerHTML = html;
   }
   res.classList.add('show');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+  document.getElementById('sidebar-overlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
 }
 
 function goBack() {

@@ -85,8 +85,7 @@ function doGet(e) {
       'pengurus'             : 'PendaftaranPengurus',
       'pendaftaran-pengurus' : 'PendaftaranPengurus',
       'urusetia'             : 'Urusetia',
-      'pencatat'             : 'Pencatat',
-      'rekod-acara'          : 'RekodAcara'
+      'pencatat'             : 'Pencatat'
     };
     var fileName = pageMap[page] || 'Home';
     template = HtmlService.createTemplateFromFile(fileName);
@@ -169,6 +168,26 @@ function getSetting(key) {
   return (_SETTINGS_CACHE && _SETTINGS_CACHE[key] !== undefined)
     ? _SETTINGS_CACHE[key] : null;
 }
+
+// ── AUTO TAHUN SUKAN ──────────────────────────────────────────────
+// Guna tarikh_sukan dari settings, fallback auto ke tahun semasa
+// Admin TIDAK perlu set — sistem auto detect
+function _tahunSukan() {
+  var ts = getSetting('tarikh_sukan');
+  if (ts && ts.toString().trim().length >= 4) {
+    var y = parseInt(ts.toString().trim().substring(0,4));
+    if (y > 2000) return y;
+  }
+  // Auto: tahun semasa (tidak perlu set oleh admin)
+  return new Date().getFullYear();
+}
+
+function _tarikhSukanStr() {
+  var ts = getSetting('tarikh_sukan');
+  if (ts && ts.toString().trim().length >= 4) return ts.toString().trim();
+  return new Date().getFullYear() + '-01-01';
+}
+
 
 function saveSetting(key, value) {
   var sheet = _ensureSheet('tbl_settings', ['key','value']);
@@ -510,10 +529,10 @@ function getAcara() {
       catatan             : data[i][12] || '',
       aktif               : data[i][13] !== false && data[i][13] !== 'FALSE',
       created_at          : data[i][14] ? data[i][14].toString() : '',
-      kuota_ind_rumah     : isNaN(parseInt(data[i][15])) ? 2 : parseInt(data[i][15]),
-      kuota_pasukan_rumah : isNaN(parseInt(data[i][16])) ? 1 : parseInt(data[i][16]),
-      ahli_utama          : isNaN(parseInt(data[i][17])) ? 4 : parseInt(data[i][17]),
-      ahli_simpanan       : isNaN(parseInt(data[i][18])) ? 0 : parseInt(data[i][18])
+      kuota_ind_rumah     : parseInt(data[i][15]) || 2,
+      kuota_pasukan_rumah : parseInt(data[i][16]) || 1,
+      ahli_utama          : parseInt(data[i][17]) || 4,
+      ahli_simpanan       : parseInt(data[i][18]) || 0
     });
   }
   return JSON.stringify({ success: true, data: list, total: list.length });
@@ -635,6 +654,7 @@ function getUsers() {
   for (var i = 1; i < data.length; i++) {
     if (!data[i][0]) continue;
     list.push({
+      id         : data[i][0],        // id = username (primary key tbl_users)
       username   : data[i][0],
       full_name  : data[i][2],
       email      : data[i][3],
@@ -676,12 +696,14 @@ function createUser(payload) {
 }
 
 function updateUser(payload) {
-  if (!payload || !payload.username) return { success: false, message: 'Username diperlukan' };
+  // Terima payload.username ATAU payload.id (adminsetup.html guna id=username)
+  var key = (payload.username || payload.id || '').toString().trim();
+  if (!payload || !key) return { success: false, message: 'Username diperlukan' };
   var sheet = _sheet('tbl_users');
   if (!sheet) return { success: false, message: 'tbl_users tiada' };
   var data = sheet.getDataRange().getValues();
   for (var i = 1; i < data.length; i++) {
-    if (data[i][0] && data[i][0].toString() === payload.username.toString()) {
+    if (data[i][0] && data[i][0].toString().trim() === key) {
       if (payload.full_name  !== undefined) sheet.getRange(i+1,3).setValue(payload.full_name);
       if (payload.email      !== undefined) sheet.getRange(i+1,4).setValue(payload.email);
       if (payload.phone      !== undefined) sheet.getRange(i+1,5).setValue(payload.phone);
@@ -696,13 +718,15 @@ function updateUser(payload) {
 }
 
 function deleteUser(payload) {
-  if (!payload || !payload.username) return { success: false, message: 'Username diperlukan' };
-  if (payload.username === 'admin') return { success: false, message: 'Akaun admin tidak boleh dipadam' };
+  // Terima payload.username ATAU payload.id
+  var key = (payload.username || payload.id || '').toString().trim();
+  if (!payload || !key) return { success: false, message: 'Username diperlukan' };
+  if (key === 'admin') return { success: false, message: 'Akaun admin tidak boleh dipadam' };
   var sheet = _sheet('tbl_users');
   if (!sheet) return { success: false };
   var data = sheet.getDataRange().getValues();
   for (var i = 1; i < data.length; i++) {
-    if (data[i][0] && data[i][0].toString() === payload.username.toString()) {
+    if (data[i][0] && data[i][0].toString().trim() === key) {
       sheet.deleteRow(i + 1);
       return { success: true };
     }
@@ -743,7 +767,7 @@ function importMuridCSV(payload) {
     }
 
     // Bina kategori lookup dari tarikh sukan
-    var tarikh_sukan = getSetting('tarikh_sukan') || new Date().getFullYear() + '-08-01';
+    var tarikh_sukan = _tarikhSukanStr();
     var tSukan = new Date(tarikh_sukan);
 
     // Ambil senarai KP sedia ada untuk semak duplikat
@@ -841,30 +865,64 @@ function getMurid(payload) {
   var sheet = _sheet('tbl_murid');
   if (!sheet) return JSON.stringify({ success: true, murid: [], total: 0 });
   var data  = sheet.getDataRange().getValues();
-  var list  = [];
+
+  // Preload tbl_kategori untuk auto-kira id_kategori jika kosong
+  var katList = [];
+  var katSheet = _sheet('tbl_kategori');
+  var tarikhSukan = _tarikhSukanStr();
+  if (katSheet) {
+    var kd = katSheet.getDataRange().getValues();
+    for (var k = 1; k < kd.length; k++) {
+      if (!kd[k][0]) continue;
+      katList.push({
+        id: kd[k][0], kod: kd[k][1],
+        jantina: (kd[k][3]||'').toUpperCase(),
+        umin: parseInt(kd[k][4])||0,
+        umax: parseInt(kd[k][5])||99
+      });
+    }
+  }
+
+  var list = [];
   for (var i = 1; i < data.length; i++) {
     if (!data[i][0]) continue;
-    if (data[i][9] !== '' && data[i][9] !== true && !_boolVal(data[i][9])) continue; // skip inactive (biar kosong)
-    // filter by id_rumah ATAU nama_rumah (fallback untuk data lama)
+    if (data[i][9] !== '' && data[i][9] !== true && !_boolVal(data[i][9])) continue;
+
+    // filter by id_rumah — support RMH-MERAH atau MERAH
     if (payload && payload.id_rumah) {
-      var rowIdRumah   = (data[i][3] || '').toString().trim();
-      var rowNamaRumah = (data[i][18] || '').toString().trim().toLowerCase();
-      // Dapatkan nama_rumah dari payload untuk compare
-      var payloadNama  = (payload.nama_rumah || '').toString().trim().toLowerCase();
-      var idMatch   = rowIdRumah === payload.id_rumah;
-      var namaMatch = payloadNama && rowNamaRumah === payloadNama;
-      if (!idMatch && !namaMatch) continue;
+      var rowR = (data[i][3] || '').toString().trim().toUpperCase();
+      var payR = payload.id_rumah.toString().trim().toUpperCase();
+      // normalize: buang prefix RMH-
+      var normR = function(v){ return v.startsWith('RMH-') ? v.slice(4) : v; };
+      if (normR(rowR) !== normR(payR)) continue;
     }
-    // filter by id_kategori
     if (payload && payload.id_kategori && data[i][4] !== payload.id_kategori) continue;
+
+    // Auto-kira id_kategori dari tarikh_lahir jika kosong
+    var idKat = (data[i][4] || '').toString().trim();
+    if (!idKat && katList.length && tarikhSukan && data[i][6]) {
+      var tLahir = new Date(data[i][6]);
+      var tSukan = new Date(tarikhSukan);
+      var umur   = tSukan.getFullYear() - tLahir.getFullYear();
+      var jnt    = (data[i][5] || _jantinaFromKp(data[i][1]||'')||'L').toUpperCase();
+      for (var ki = 0; ki < katList.length; ki++) {
+        if (katList[ki].jantina === jnt && umur >= katList[ki].umin && umur <= katList[ki].umax) {
+          idKat = katList[ki].kod; // guna KOD bukan id (supaya match tbl_acara_jana)
+          break;
+        }
+      }
+    }
+    // Normalize prefix KAT- jika ada
+    if (idKat.toUpperCase().startsWith('KAT-')) idKat = idKat.slice(4);
+
     list.push({
       id           : data[i][0],
       no_kp        : data[i][1],
       nama         : data[i][2],
       id_rumah     : data[i][3],
-      id_kategori  : data[i][4],
+      id_kategori  : idKat,
       jantina      : data[i][5],
-      tarikh_lahir : data[i][6],
+      tarikh_lahir : data[i][6] ? data[i][6].toString() : '',
       kelas        : data[i][7],
       no_dada      : data[i][8],
       is_active    : _boolVal(data[i][9]),
@@ -995,10 +1053,10 @@ function getAcaraJana(payload) {
       format_acara        : (data[i][10] || 'TERUS_FINAL').toUpperCase(),
       top_n_final         : parseInt(data[i][11]) || 8,
       created_at          : data[i][12] ? data[i][12].toString() : '',
-      kuota_ind_rumah     : isNaN(parseInt(data[i][13])) ? 2 : parseInt(data[i][13]),
-      kuota_pasukan_rumah : isNaN(parseInt(data[i][14])) ? 1 : parseInt(data[i][14]),
-      ahli_utama          : isNaN(parseInt(data[i][15])) ? 4 : parseInt(data[i][15]),
-      ahli_simpanan       : isNaN(parseInt(data[i][16])) ? 0 : parseInt(data[i][16])
+      kuota_ind_rumah     : parseInt(data[i][13]) || 2,
+      kuota_pasukan_rumah : parseInt(data[i][14]) || 1,
+      ahli_utama          : parseInt(data[i][15]) || 4,
+      ahli_simpanan       : parseInt(data[i][16]) || 0
     });
   }
   return JSON.stringify({ success: true, acara: list, total: list.length });
@@ -1025,10 +1083,10 @@ function janaAcara(payload) {
         max_ahli            : parseInt(mData[i][8]) || 1,
         format_acara        : (mData[i][9] || 'TERUS_FINAL').toUpperCase(),
         top_n_final         : parseInt(mData[i][10]) || 8,
-        kuota_ind_rumah     : isNaN(parseInt(mData[i][15])) ? 2 : parseInt(mData[i][15]),
-        kuota_pasukan_rumah : isNaN(parseInt(mData[i][16])) ? 1 : parseInt(mData[i][16]),
-        ahli_utama          : isNaN(parseInt(mData[i][17])) ? 4 : parseInt(mData[i][17]),
-        ahli_simpanan       : isNaN(parseInt(mData[i][18])) ? 0 : parseInt(mData[i][18])
+        kuota_ind_rumah     : parseInt(mData[i][15]) || 2,
+        kuota_pasukan_rumah : parseInt(mData[i][16]) || 1,
+        ahli_utama          : parseInt(mData[i][17]) || 4,
+        ahli_simpanan       : parseInt(mData[i][18]) || 0
       };
       break;
     }
@@ -1158,7 +1216,7 @@ function _hitungUmur(kp, tarikhSukan) {
     var yr2 = parseInt(kp.substring(0,2));
     // tahun: 00-24 = 2000+, 25-99 = 1900+
     var yr4 = yr2 <= 30 ? 2000 + yr2 : 1900 + yr2;
-    var tahunSukan = tarikhSukan ? parseInt(tarikhSukan.substring(0,4)) : new Date().getFullYear();
+    var tahunSukan = tarikhSukan ? parseInt(tarikhSukan.substring(0,4)) : _tahunSukan();
     if (!tahunSukan || isNaN(tahunSukan)) return -1;
     return tahunSukan - yr4;
   } catch(e) {
@@ -1203,7 +1261,7 @@ function savePendaftaran(payload) {
   }
 
   var _sRaw = getSettings(); var settings = (typeof _sRaw==='string'?JSON.parse(_sRaw):_sRaw).data || {};
-  var tarikhSukan = settings.tarikh_sukan || '';
+  var tarikhSukan = settings.tarikh_sukan || _tarikhSukanStr();
 
   // ── GATE 1: Pendaftaran buka? ─────────────────────────────────
   if (settings.pendaftaran_buka === false) {
@@ -1407,7 +1465,7 @@ function saveKumpulan(payload) {
   }
 
   var _sRaw = getSettings(); var settings = (typeof _sRaw==='string'?JSON.parse(_sRaw):_sRaw).data || {};
-  var tarikhSukan = settings.tarikh_sukan || '';
+  var tarikhSukan = settings.tarikh_sukan || _tarikhSukanStr();
 
   // ── GATE 1: Pendaftaran buka? ─────────────────────────────────
   if (settings.pendaftaran_buka === false) {
@@ -1446,7 +1504,7 @@ function saveKumpulan(payload) {
           min_ahli             : parseInt(aData[a][8])  || 4,
           max_ahli             : parseInt(aData[a][9])  || 4,
           kuota_pasukan_rumah  : parseInt(aData[a][14]) || 0,
-          ahli_utama           : isNaN(parseInt(aData[a][15])) ? 4 : parseInt(aData[a][15]),
+          ahli_utama           : parseInt(aData[a][15]) || 4,
           ahli_simpanan        : parseInt(aData[a][16]) || 0
         };
         break;
@@ -2297,16 +2355,18 @@ function setupInitialData() {
     ['nama_sekolah',        'SK Sultan Ismail, Kemaman'],
     ['nama_pertandingan',   'Sukan Tahunan 2025'],
     ['tahun',               2025],
-    ['tarikh_sukan',        '2025-08-20'],
+    ['tarikh_sukan',        ''],
     ['lokasi',              'Padang Utama SK Sultan Ismail'],
     ['tema',                'Cemerlang Bersama'],
     ['lorong_trek',         6],
     ['podium',              4],
     ['mata_1',              5], ['mata_2', 3], ['mata_3', 2],
     ['mata_4',              1], ['mata_5', 0], ['mata_6', 0],
-    ['pendaftaran_buka',    true],
-    ['paparan_awam',        true],
-    ['mod_penyelenggaraan', false]
+    ['pendaftaran_buka',      true],
+    ['paparan_awam',          true],
+    ['mod_penyelenggaraan',   false],
+    ['tarikh_tutup_daftar',   ''],
+    ['masa_tutup_daftar',     '23:59']
   ];
   defaults.forEach(function(d){ if (!sExist[d[0]]) sSheet.appendRow(d); });
   Logger.log('✅ tbl_settings: OK');
@@ -2345,8 +2405,7 @@ function setupInitialData() {
   _ensureSheet('tbl_acara_master',
     ['id','kod','nama','jenis','kategori_json','guna_lorong',
      'jenis_pendaftaran','min_ahli','max_ahli','format_acara',
-     'top_n_final','emoji','catatan','aktif','created_at',
-     'kuota_ind_rumah','kuota_pasukan_rumah','ahli_utama','ahli_simpanan']);
+     'top_n_final','emoji','catatan','aktif','created_at']);
   Logger.log('✅ tbl_acara_master: OK (isi acara via AdminSetup)');
 
   // 5. tbl_acara_jana
@@ -2925,14 +2984,13 @@ function deleteKeputusan(payload) {
     return JSON.stringify({success:false,message:e.toString()});
   }
 }
-
-// ═══════════════════════════════════════════════════════════════════
-// REKOD ACARA — Rekod Sekolah / Daerah / Negeri / MSSM (OPTIONAL)
+// ══════════════════════════════════════════════════════════════════
+// REKOD KEJOHANAN
 // tbl_rekod: id_rekod[0], id_acara_master[1], nama_acara[2],
-//            id_kategori[3], jantina[4], peringkat[5],
-//            prestasi[6], unit[7], nama_pemilik[8],
-//            tahun[9], catatan[10], aktif[11], created_at[12]
-// ═══════════════════════════════════════════════════════════════════
+//   id_kategori[3], jantina[4], peringkat[5], prestasi[6],
+//   unit[7], nama_pemilik[8], tahun[9], catatan[10],
+//   aktif[11], created_at[12]
+// ══════════════════════════════════════════════════════════════════
 
 function getRekod(payload) {
   var sheet = _sheet('tbl_rekod');
@@ -2941,137 +2999,328 @@ function getRekod(payload) {
   var list = [];
   for (var i = 1; i < data.length; i++) {
     if (!data[i][0]) continue;
-    if (payload && payload.id_acara_master && data[i][1] !== payload.id_acara_master) continue;
-    if (payload && payload.id_kategori    && data[i][3] !== payload.id_kategori)    continue;
-    if (payload && payload.peringkat      && data[i][5] !== payload.peringkat)      continue;
+    if (payload && payload.peringkat && data[i][5] !== payload.peringkat) continue;
+    if (payload && payload.jantina   && data[i][4] !== payload.jantina)   continue;
+    if (data[i][11] === false || data[i][11] === 'FALSE') continue;
     list.push({
-      id_rekod        : data[i][0],
-      id_acara_master : data[i][1],
-      nama_acara      : data[i][2],
-      id_kategori     : data[i][3],
-      jantina         : data[i][4],
-      peringkat       : data[i][5],
-      prestasi        : data[i][6],
-      unit            : data[i][7] || 's',
-      nama_pemilik    : data[i][8] || '',
-      tahun           : data[i][9] || '',
-      catatan         : data[i][10] || '',
-      aktif           : data[i][11] !== false && data[i][11] !== 'FALSE',
-      created_at      : data[i][12] ? data[i][12].toString() : ''
+      id_rekod     : data[i][0],
+      id_acara     : data[i][1] || '',
+      nama_acara   : data[i][2] || '',
+      id_kategori  : data[i][3] || '',
+      jantina      : data[i][4] || '',
+      peringkat    : data[i][5] || '',
+      prestasi     : data[i][6] || '',
+      unit         : data[i][7] || '',
+      nama_pemilik : data[i][8] || '',
+      tahun        : data[i][9] || '',
+      catatan      : data[i][10] || '',
+      aktif        : true,
+      created_at   : data[i][12] ? data[i][12].toString() : ''
     });
   }
   return JSON.stringify({ success: true, data: list, total: list.length });
 }
 
 function saveRekod(payload) {
-  if (!payload || !payload.id_acara_master || !payload.peringkat) {
-    return JSON.stringify({ success: false, message: 'id_acara_master dan peringkat diperlukan' });
+  if (!payload || !payload.nama_acara || !payload.prestasi) {
+    return JSON.stringify({ success: false, message: 'nama_acara dan prestasi diperlukan' });
   }
-  var sheet = _ensureSheet('tbl_rekod', [
-    'id_rekod','id_acara_master','nama_acara','id_kategori','jantina',
-    'peringkat','prestasi','unit','nama_pemilik','tahun','catatan','aktif','created_at'
-  ]);
-  var peringkat = (payload.peringkat || '').toUpperCase();
-  var validPeringkat = ['SEKOLAH','DAERAH','NEGERI','MSSM'];
-  if (validPeringkat.indexOf(peringkat) === -1) {
-    return JSON.stringify({ success: false, message: 'Peringkat tidak sah. Guna: SEKOLAH/DAERAH/NEGERI/MSSM' });
-  }
-  // UPDATE jika id_rekod ada
+  var sheet = _ensureSheet('tbl_rekod',
+    ['id_rekod','id_acara_master','nama_acara','id_kategori','jantina',
+     'peringkat','prestasi','unit','nama_pemilik','tahun','catatan','aktif','created_at']);
   if (payload.id_rekod) {
+    // update
     var data = sheet.getDataRange().getValues();
     for (var i = 1; i < data.length; i++) {
       if (data[i][0] === payload.id_rekod) {
-        sheet.getRange(i+1, 2, 1, 12).setValues([[
-          payload.id_acara_master,
-          payload.nama_acara    || data[i][2],
-          payload.id_kategori   || data[i][3],
-          payload.jantina       || data[i][4],
-          peringkat,
-          payload.prestasi      !== undefined ? payload.prestasi : data[i][6],
-          payload.unit          || data[i][7] || 's',
-          payload.nama_pemilik  || data[i][8] || '',
-          payload.tahun         || data[i][9] || '',
-          payload.catatan       !== undefined ? payload.catatan : data[i][10],
-          payload.aktif         !== undefined ? _boolVal(payload.aktif) : data[i][11],
-          data[i][12]
-        ]]);
+        sheet.getRange(i+1,3).setValue(payload.nama_acara   || data[i][2]);
+        sheet.getRange(i+1,4).setValue(payload.id_kategori  || data[i][3]);
+        sheet.getRange(i+1,5).setValue(payload.jantina      || data[i][4]);
+        sheet.getRange(i+1,6).setValue(payload.peringkat    || data[i][5]);
+        sheet.getRange(i+1,7).setValue(payload.prestasi     || data[i][6]);
+        sheet.getRange(i+1,8).setValue(payload.unit         || data[i][7]);
+        sheet.getRange(i+1,9).setValue(payload.nama_pemilik || data[i][8]);
+        sheet.getRange(i+1,10).setValue(payload.tahun       || data[i][9]);
+        sheet.getRange(i+1,11).setValue(payload.catatan     || data[i][10]);
         return JSON.stringify({ success: true, message: 'Rekod dikemaskini' });
       }
     }
+    return JSON.stringify({ success: false, message: 'Rekod tidak dijumpai' });
   }
-  // CREATE baru
   var id = _uniqueId('RKD');
   sheet.appendRow([
     id,
-    payload.id_acara_master,
-    payload.nama_acara    || '',
-    payload.id_kategori   || '',
-    payload.jantina       || '',
-    peringkat,
-    payload.prestasi      || '',
-    payload.unit          || 's',
-    payload.nama_pemilik  || '',
-    payload.tahun         || new Date().getFullYear(),
-    payload.catatan       || '',
+    payload.id_acara     || '',
+    payload.nama_acara,
+    payload.id_kategori  || '',
+    payload.jantina      || '',
+    payload.peringkat    || 'SEKOLAH',
+    payload.prestasi,
+    payload.unit         || '',
+    payload.nama_pemilik || '',
+    payload.tahun        || new Date().getFullYear(),
+    payload.catatan      || '',
     true,
     new Date()
   ]);
-  return JSON.stringify({ success: true, id: id, message: 'Rekod berjaya ditambah' });
+  return JSON.stringify({ success: true, id_rekod: id, message: 'Rekod berjaya disimpan' });
 }
 
 function deleteRekod(payload) {
   if (!payload || !payload.id_rekod) return JSON.stringify({ success: false, message: 'id_rekod diperlukan' });
   var sheet = _sheet('tbl_rekod');
-  if (!sheet) return JSON.stringify({ success: false, message: 'tbl_rekod tiada' });
+  if (!sheet) return JSON.stringify({ success: false });
   var data = sheet.getDataRange().getValues();
   for (var i = 1; i < data.length; i++) {
     if (data[i][0] === payload.id_rekod) {
       sheet.deleteRow(i + 1);
-      return JSON.stringify({ success: true, message: 'Rekod dipadam' });
+      return JSON.stringify({ success: true });
     }
   }
   return JSON.stringify({ success: false, message: 'Rekod tidak dijumpai' });
 }
 
-// checkPecahRekod — dipanggil selepas saveKeputusan
-// Bandingkan prestasi baru dengan SEMUA peringkat yang ADA dalam tbl_rekod
-// Return senarai peringkat yang dipecah (boleh kosong jika tiada rekod / tiada pecah)
-function checkPecahRekod(payload) {
-  // payload: { id_acara_master, id_kategori, prestasi, unit, jenis }
-  // jenis: TRACK (masa — lebih kecil lebih baik) / FIELD (jarak/berat — lebih besar lebih baik)
-  if (!payload || !payload.id_acara_master || payload.prestasi === undefined) {
-    return JSON.stringify({ success: true, pecah: [] });
-  }
-  var sheet = _sheet('tbl_rekod');
-  if (!sheet) return JSON.stringify({ success: true, pecah: [] }); // tiada tbl_rekod = skip
-  var data  = sheet.getDataRange().getValues();
-  var prestasiBaru = parseFloat(payload.prestasi);
-  if (isNaN(prestasiBaru)) return JSON.stringify({ success: true, pecah: [] });
-  var jenis = (payload.jenis || 'TRACK').toUpperCase();
-  var pecah = [];
-  for (var i = 1; i < data.length; i++) {
-    if (!data[i][0]) continue;
-    if (data[i][1] !== payload.id_acara_master) continue;
-    if (payload.id_kategori && data[i][3] !== payload.id_kategori) continue;
-    if (data[i][11] === false || data[i][11] === 'FALSE') continue; // rekod tidak aktif — skip
-    var prestasiSedia = parseFloat(data[i][6]);
-    if (isNaN(prestasiSedia)) continue;
-    var dipecah = false;
-    if (jenis === 'FIELD') {
-      dipecah = prestasiBaru > prestasiSedia; // lebih jauh/berat = lebih baik
+// ══════════════════════════════════════════════════════════════════
+// STATUS PENDAFTARAN — semak tarikh tutup auto
+// Return: {success, buka, tarikh_tutup, hari_tinggal, nota}
+// ══════════════════════════════════════════════════════════════════
+function getPendaftaranStatus() {
+  try {
+    var s      = getSettings();
+    var sData  = (typeof s === 'string' ? JSON.parse(s) : s).data || {};
+    var buka   = sData.pendaftaran_buka !== false;
+    var tarikhTutup = (sData.tarikh_tutup_daftar || '').toString().trim();
+    var masaTutup   = (sData.masa_tutup_daftar   || '23:59').toString().trim();
+
+    var tarikhSukan = _tarikhSukanStr();
+    var result = { success: true, buka: buka, tarikh_tutup: tarikhTutup,
+                   masa_tutup: masaTutup, hari_tinggal: null,
+                   sudah_tamat: false, tarikh_sukan: tarikhSukan, nota: '' };
+
+    if (!tarikhTutup) return JSON.stringify(result);
+
+    // Bina datetime tutup
+    var dtTutup = new Date(tarikhTutup + 'T' + masaTutup + ':00');
+    var dtNow   = new Date();
+    var diff    = dtTutup - dtNow; // ms
+
+    if (diff <= 0) {
+      // Tarikh dah lepas — auto tutup
+      if (buka) {
+        // Auto-tutup jika masih buka
+        saveSetting('pendaftaran_buka', false);
+        result.buka = false;
+      }
+      result.hari_tinggal  = 0;
+      result.sudah_tamat   = true;
+      result.nota = 'Pendaftaran telah ditutup pada ' + tarikhTutup + '.';
     } else {
-      dipecah = prestasiBaru < prestasiSedia; // lebih laju = lebih baik (masa)
+      var hariTinggal = Math.ceil(diff / (1000 * 60 * 60 * 24));
+      var jamTinggal  = Math.floor(diff / (1000 * 60 * 60));
+      var minTinggal  = Math.floor((diff % (1000*60*60)) / (1000*60));
+      result.hari_tinggal  = hariTinggal;
+      result.jam_tinggal   = jamTinggal;
+      result.minit_tinggal = minTinggal;
+      result.ms_tinggal    = diff;
+      result.sudah_tamat   = false;
+      result.nota = hariTinggal <= 1
+        ? 'Pendaftaran tutup hari ini pada ' + masaTutup + '!'
+        : 'Pendaftaran tutup dalam ' + hariTinggal + ' hari lagi (' + tarikhTutup + ').';
     }
-    if (dipecah) {
-      pecah.push({
-        id_rekod        : data[i][0],
-        peringkat       : data[i][5],
-        prestasi_lama   : prestasiSedia,
-        prestasi_baru   : prestasiBaru,
-        unit            : data[i][7] || 's',
-        nama_acara      : data[i][2]
-      });
-    }
+    return JSON.stringify(result);
+  } catch(e) {
+    return JSON.stringify({ success: false, message: e.toString() });
   }
-  return JSON.stringify({ success: true, pecah: pecah, count: pecah.length });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// REPAIR MURID DATA
+// Auto-isi kolum KOSONG dalam tbl_murid:
+//   id_kategori  — dikira dari umur pada tarikh_sukan
+//   jantina      — dari No KP digit ke-12
+//   tarikh_lahir — dari No KP 6 digit pertama
+//   id_rumah     — lookup dari nama_rumah
+// Syarat: tbl_rumah_sukan & tbl_kategori mesti ada
+// ══════════════════════════════════════════════════════════════════
+function repairMuridData() {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // 1. Load tbl_rumah_sukan → map nama→id
+    var rumahSheet = ss.getSheetByName('tbl_rumah_sukan');
+    if (!rumahSheet || rumahSheet.getLastRow() < 2) {
+      return JSON.stringify({ success: false, message: 'tbl_rumah_sukan tiada data. Setup Rumah Sukan dahulu.' });
+    }
+    var rumahData = rumahSheet.getDataRange().getValues();
+    var rumahMap = {}; // nama_rumah.upper → id_rumah
+    for (var ri = 1; ri < rumahData.length; ri++) {
+      if (!rumahData[ri][0]) continue;
+      var rId   = rumahData[ri][0].toString().trim();
+      var rNama = rumahData[ri][1].toString().trim().toUpperCase();
+      rumahMap[rNama] = rId;
+      // Tambah normRumah key (tanpa prefix RMH-)
+      var rNormNama = rNama.startsWith('RMH-') ? rNama.slice(4) : rNama;
+      rumahMap[rNormNama] = rId;
+    }
+    Logger.log('[repairMuridData] rumahMap keys: ' + Object.keys(rumahMap).join(', '));
+
+    // 2. Load tbl_kategori → list {kod, jantina, umin, umax}
+    var katSheet = ss.getSheetByName('tbl_kategori');
+    var katList = [];
+    if (katSheet && katSheet.getLastRow() > 1) {
+      var kd = katSheet.getDataRange().getValues();
+      for (var ki = 1; ki < kd.length; ki++) {
+        if (!kd[ki][0]) continue;
+        katList.push({
+          id      : kd[ki][0].toString(),
+          kod     : kd[ki][1].toString(),
+          jantina : (kd[ki][3] || 'L').toString().toUpperCase(),
+          umin    : parseInt(kd[ki][4]) || 0,
+          umax    : parseInt(kd[ki][5]) || 99
+        });
+      }
+    }
+    Logger.log('[repairMuridData] katList: ' + katList.map(function(k){ return k.kod; }).join(', '));
+
+    // 3. Baca tarikh_sukan
+    var tarikhSukan = _tarikhSukanStr();
+    var tSukan = new Date(tarikhSukan);
+    var tahunSukan = tSukan.getFullYear();
+    Logger.log('[repairMuridData] tahunSukan: ' + tahunSukan);
+
+    // 4. Load tbl_murid
+    var muridSheet = ss.getSheetByName('tbl_murid');
+    if (!muridSheet || muridSheet.getLastRow() < 2) {
+      return JSON.stringify({ success: false, message: 'tbl_murid tiada data.' });
+    }
+
+    // Baca header untuk cari kolum index
+    var allData    = muridSheet.getDataRange().getValues();
+    var headers    = allData[0];
+    var totalCols  = headers.length;
+
+    // Helper: cari kolum index dari header
+    function colIdx(name) {
+      for (var h = 0; h < headers.length; h++) {
+        if (headers[h].toString().toLowerCase().trim() === name.toLowerCase()) return h;
+      }
+      return -1;
+    }
+
+    var iNokp     = colIdx('no_kp');        if (iNokp < 0)     iNokp = 1;
+    var iIdRumah  = colIdx('id_rumah');     if (iIdRumah < 0)  iIdRumah = 3;
+    var iIdKat    = colIdx('id_kategori');  if (iIdKat < 0)    iIdKat = 4;
+    var iJantina  = colIdx('jantina');      if (iJantina < 0)  iJantina = 5;
+    var iTLahir   = colIdx('tarikh_lahir'); if (iTLahir < 0)   iTLahir = 6;
+    var iNamaRumah= colIdx('nama_rumah');   // mungkin -1
+    var iKelas    = colIdx('kelas');        if (iKelas < 0)    iKelas = 7;
+
+    Logger.log('[repairMuridData] kolum: nokp=' + iNokp + ' idRumah=' + iIdRumah +
+               ' idKat=' + iIdKat + ' jantina=' + iJantina +
+               ' tLahir=' + iTLahir + ' namaRumah=' + iNamaRumah);
+
+    var countKat = 0, countJantina = 0, countTLahir = 0, countRumah = 0;
+    var errors   = [];
+
+    for (var i = 1; i < allData.length; i++) {
+      var row = allData[i];
+      if (!row[0] && !row[iNokp]) continue; // baris kosong
+
+      var rawKp = (row[iNokp] || '').toString().trim();
+      var kp    = _normalizeKp(rawKp);
+
+      // 4a. Isi jantina dari KP jika kosong
+      var curJantina = (row[iJantina] || '').toString().trim().toUpperCase();
+      if (!curJantina && kp) {
+        var autoJnt = _jantinaFromKp(kp);
+        if (autoJnt) {
+          muridSheet.getRange(i + 1, iJantina + 1).setValue(autoJnt);
+          allData[i][iJantina] = autoJnt;
+          curJantina = autoJnt;
+          countJantina++;
+        }
+      }
+
+      // 4b. Isi tarikh_lahir dari KP jika kosong
+      var curTLahir = row[iTLahir];
+      var curTLahirStr = curTLahir ? curTLahir.toString().trim() : '';
+      if (!curTLahirStr && kp) {
+        var autoTL = _tarihLahirFromKp(kp);
+        if (autoTL) {
+          muridSheet.getRange(i + 1, iTLahir + 1).setValue(autoTL);
+          allData[i][iTLahir] = autoTL;
+          curTLahirStr = autoTL;
+          countTLahir++;
+        }
+      }
+
+      // 4c. Isi id_rumah dari nama_rumah / kelas jika kosong
+      var curIdRumah = (row[iIdRumah] || '').toString().trim();
+      if (!curIdRumah) {
+        var namaRumahRaw = iNamaRumah >= 0 ? (row[iNamaRumah] || '').toString().trim().toUpperCase() : '';
+        // Juga cuba dari kelas (kelas sering mengandungi nama rumah cth "6 MERAH")
+        if (!namaRumahRaw && iKelas >= 0) {
+          var kelasVal = (row[iKelas] || '').toString().trim().toUpperCase();
+          // Semak kalau kelas ada nama rumah
+          for (var rk in rumahMap) {
+            if (kelasVal.indexOf(rk) !== -1 || rk.indexOf(kelasVal) !== -1) {
+              namaRumahRaw = rk; break;
+            }
+          }
+        }
+        if (namaRumahRaw && rumahMap[namaRumahRaw]) {
+          muridSheet.getRange(i + 1, iIdRumah + 1).setValue(rumahMap[namaRumahRaw]);
+          allData[i][iIdRumah] = rumahMap[namaRumahRaw];
+          curIdRumah = rumahMap[namaRumahRaw];
+          countRumah++;
+        }
+      }
+
+      // 4d. Isi id_kategori jika kosong
+      var curIdKat = (row[iIdKat] || '').toString().trim();
+      // Normalize KAT- prefix
+      if (curIdKat.toUpperCase().startsWith('KAT-')) {
+        var normalizedKat = curIdKat.slice(4);
+        muridSheet.getRange(i + 1, iIdKat + 1).setValue(normalizedKat);
+        allData[i][iIdKat] = normalizedKat;
+        curIdKat = normalizedKat;
+        countKat++;
+      }
+      if (!curIdKat && curTLahirStr && curJantina && katList.length) {
+        try {
+          var dob  = new Date(curTLahirStr);
+          var umur = tahunSukan - dob.getFullYear();
+          var matched = false;
+          for (var ki2 = 0; ki2 < katList.length; ki2++) {
+            var k = katList[ki2];
+            if (k.jantina === curJantina && umur >= k.umin && umur <= k.umax) {
+              muridSheet.getRange(i + 1, iIdKat + 1).setValue(k.kod);
+              allData[i][iIdKat] = k.kod;
+              countKat++;
+              matched = true;
+              break;
+            }
+          }
+          if (!matched) {
+            errors.push('Baris ' + (i+1) + ': ' + (row[1]||'') + ' — umur ' + umur + ' tidak match mana-mana kategori');
+          }
+        } catch(e2) {
+          errors.push('Baris ' + (i+1) + ': ' + e2.message);
+        }
+      }
+    }
+
+    Logger.log('[repairMuridData] selesai: kat=' + countKat + ' jantina=' + countJantina +
+               ' tLahir=' + countTLahir + ' rumah=' + countRumah + ' errors=' + errors.length);
+
+    return JSON.stringify({
+      success : true,
+      message : 'Selesai. Semak data murid.',
+      data    : { kategori: countKat, jantina: countJantina, tarikh_lahir: countTLahir, id_rumah: countRumah },
+      errors  : errors.slice(0, 10) // max 10 errors
+    });
+  } catch(e) {
+    Logger.log('[repairMuridData] ERROR: ' + e.toString());
+    return JSON.stringify({ success: false, message: e.toString() });
+  }
 }

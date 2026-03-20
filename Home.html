@@ -94,8 +94,6 @@ tr.rank-3{background:linear-gradient(90deg,rgba(160,97,58,0.05),transparent 50%)
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .empty-state{text-align:center;padding:30px;color:var(--text3);font-size:13px;}
 .empty-icon{font-size:26px;margin-bottom:8px;}
-
-/* ── REKOD KEJOHANAN SECTION ── */
 .rekod-section{padding-top:4px;padding-bottom:40px;}
 .rekod-filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
 .rekod-fbtn{padding:5px 14px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);transition:all 0.18s;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;}
@@ -126,8 +124,6 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
 .badge-baru{display:inline-flex;align-items:center;gap:3px;background:rgba(200,150,42,0.12);border:1px solid rgba(200,150,42,0.3);color:var(--gov-gold);font-size:8px;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:0.5px;font-family:'Rajdhani',sans-serif;vertical-align:middle;margin-left:5px;animation:pulse-gld 2s infinite;}
 @keyframes pulse-gld{0%,100%{opacity:1}50%{opacity:0.65}}
 .rekod-upd{font-size:9px;color:var(--text3);font-family:'Rajdhani',sans-serif;letter-spacing:0.3px;white-space:nowrap;}
-
-/* ── MODALS ── */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,20,60,0.58);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:16px;}
 .modal-bg.show{display:flex;}
 .modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:mIn 0.2s ease;}
@@ -196,7 +192,6 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
   </div>
 </div>
 
-<!-- MENU -->
 <div class="section-wrap menu-section">
   <div class="sec-lbl">Akses Sistem</div>
   <div class="menu-grid">
@@ -205,14 +200,14 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
       <div class="t-lbl">Admin</div>
       <div class="t-dsc">Konfigurasi &amp; tetapan</div>
     </a>
-    <a class="menu-tile" href="javascript:void(0)" onclick="loginAs('Guru Rumah')">
+    <a class="menu-tile" href="javascript:void(0)" onclick="loginAs('Pengurus')">
       <div class="t-icon"><span class="ticon">🏠</span></div>
       <div class="t-lbl">Guru Rumah</div>
       <div class="t-dsc">Daftar &amp; urus peserta</div>
     </a>
-    <a class="menu-tile" href="javascript:void(0)" onclick="loginAs('Pengurus')">
+    <a class="menu-tile" href="javascript:void(0)" onclick="loginAs('Urusetia')">
       <div class="t-icon"><span class="ticon">📋</span></div>
-      <div class="t-lbl">Pengurus</div>
+      <div class="t-lbl">Urusetia</div>
       <div class="t-dsc">Pantau jadual &amp; senarai</div>
     </a>
     <a class="menu-tile" href="javascript:void(0)" onclick="loginAs('Pencatat')">
@@ -233,13 +228,12 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
     <div class="t-icon"><span class="ticon">🏆</span></div>
     <div style="flex:1;">
       <div class="t-lbl">Rekod Kejohanan</div>
-      <div class="t-dsc">Rekod rasmi peringkat Sekolah, Daerah, Negeri &amp; Kebangsaan</div>
+      <div class="t-dsc">Rekod rasmi peringkat Sekolah, Daerah, Negeri &amp; MSSM</div>
     </div>
     <span class="tile-arrow">›</span>
   </a>
 </div>
 
-<!-- KEDUDUKAN PINGAT -->
 <div class="section-wrap tally-section">
   <div class="tally-top">
     <div class="sec-lbl" style="flex:1;margin-bottom:0;">Kedudukan Pingat&nbsp;&nbsp;</div>
@@ -268,7 +262,6 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
   </div>
 </div>
 
-<!-- REKOD KEJOHANAN -->
 <div class="section-wrap rekod-section" id="section-rekod">
   <div class="tally-top">
     <div class="sec-lbl" style="flex:1;margin-bottom:0;">Rekod Kejohanan&nbsp;&nbsp;</div>
@@ -279,7 +272,7 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
     <button class="rekod-fbtn" onclick="filterRekodAwam(this,'SEKOLAH')">Sekolah</button>
     <button class="rekod-fbtn" onclick="filterRekodAwam(this,'DAERAH')">Daerah</button>
     <button class="rekod-fbtn" onclick="filterRekodAwam(this,'NEGERI')">Negeri</button>
-    <button class="rekod-fbtn" onclick="filterRekodAwam(this,'KEBANGSAAN')">Kebangsaan</button>
+    <button class="rekod-fbtn" onclick="filterRekodAwam(this,'MSSM')">MSSM</button>
     <button class="rekod-fbtn f-jantina" onclick="filterRekodJantina(this,'L')">♂ Lelaki</button>
     <button class="rekod-fbtn f-jantina" onclick="filterRekodJantina(this,'P')">♀ Perempuan</button>
   </div>
@@ -306,7 +299,6 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
   Sistem Sukan Tahunan · SK Sultan Ismail Kemaman · 2025
 </div>
 
-<!-- MODAL KEPUTUSAN -->
 <div class="modal-bg" id="modal-keputusan">
   <div class="modal">
     <div class="modal-hdr">
@@ -322,7 +314,6 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
   </div>
 </div>
 
-<!-- MODAL LOGIN -->
 <div class="login-modal" id="login-modal">
   <div class="login-box">
     <div class="lb-hd">
@@ -363,17 +354,12 @@ var _rekodFltPeringkat='';
 var _rekodFltJantina='';
 var _sysSettings={};
 
-var _mockSettings={
-  nama_sekolah:'SK SULTAN ISMAIL',
-  nama_pertandingan:'SUKAN TAHUNAN 2025',
-  tahun:2025,
-  lokasi:'SK SULTAN ISMAIL, KEMAMAN'
-};
+var _mockSettings={nama_sekolah:'SK SULTAN ISMAIL',nama_pertandingan:'SUKAN TAHUNAN 2025',tahun:2025,lokasi:'SK SULTAN ISMAIL, KEMAMAN'};
 var _mockTally=[
   {nama:'CEMERLANG',warna:'#EF4444',emas:8,perak:5,gangsa:4,keempat:3,mata:71},
-  {nama:'BESTARI',  warna:'#3B82F6',emas:6,perak:7,gangsa:5,keempat:2,mata:63},
-  {nama:'AMAL',     warna:'#10B981',emas:5,perak:4,gangsa:6,keempat:5,mata:57},
-  {nama:'GEMILANG', warna:'#F59E0B',emas:3,perak:4,gangsa:3,keempat:6,mata:42},
+  {nama:'BESTARI',warna:'#3B82F6',emas:6,perak:7,gangsa:5,keempat:2,mata:63},
+  {nama:'AMAL',warna:'#10B981',emas:5,perak:4,gangsa:6,keempat:5,mata:57},
+  {nama:'GEMILANG',warna:'#F59E0B',emas:3,perak:4,gangsa:3,keempat:6,mata:42},
 ];
 var _mockResults=[
   {acara:'Lari 100 Meter',kod:'100M-L1',kategori:'L1',jenis:'track',keputusan:[
@@ -391,22 +377,18 @@ var _mockRekod=[
   {id_rekod:'R002',nama_acara:'Lari 100m',jantina:'P',peringkat:'SEKOLAH',prestasi:'13.45',unit:'s',nama_pemilik:'Nurul Ain',tahun:2023},
   {id_rekod:'R003',nama_acara:'Lompat Jauh',jantina:'L',peringkat:'DAERAH',prestasi:'4.82',unit:'m',nama_pemilik:'Hafiz Azri',tahun:2025},
   {id_rekod:'R004',nama_acara:'Lompat Jauh',jantina:'P',peringkat:'SEKOLAH',prestasi:'3.67',unit:'m',nama_pemilik:'Siti Nor',tahun:2024},
-  {id_rekod:'R005',nama_acara:'4x100m Relay',jantina:'L',peringkat:'NEGERI',prestasi:'48.21',unit:'s',nama_pemilik:'Pasukan Cemerlang',tahun:2025},
+  {id_rekod:'R005',nama_acara:'4x100m Relay',jantina:'L',peringkat:'MSSM',prestasi:'48.21',unit:'s',nama_pemilik:'Pasukan Cemerlang',tahun:2025},
 ];
 
-/* ── GAS RUNNER ── */
 function gasRun(fn,arg){
   return new Promise(function(resolve){
     if(IS_GAS){
       google.script.run
-        .withSuccessHandler(function(r){
-          if(typeof r==='string'){try{r=JSON.parse(r);}catch(e){}}
-          resolve(r);
-        })
+        .withSuccessHandler(function(r){if(typeof r==='string'){try{r=JSON.parse(r);}catch(e){}}resolve(r);})
         .withFailureHandler(function(e){console.error('GAS ['+fn+']',e);resolve(null);})[fn](arg);
     } else {
       setTimeout(function(){
-        if(fn==='getMedalTally')           resolve({success:true,tally:_mockTally});
+        if(fn==='getMedalTally')            resolve({success:true,tally:_mockTally});
         else if(fn==='getPublishedResults') resolve({success:true,data:_mockResults});
         else if(fn==='getSettings')         resolve({success:true,data:_mockSettings});
         else if(fn==='loginUser')           resolve(mockLogin(arg));
@@ -417,55 +399,31 @@ function gasRun(fn,arg){
   });
 }
 
-/* ── INIT ── */
-async function init(){
-  await loadSettings();
-  loadTally();
-  loadRekodAwam();
-}
+async function init(){await loadSettings();loadTally();loadRekodAwam();}
 
-/* ── SETTINGS ── */
 async function loadSettings(){
   var r=await gasRun('getSettings');
   if(!r||!r.success||!r.data) return;
-  var s=r.data;
-  _sysSettings=s;
-  if(s.nama_sekolah){
-    document.getElementById('hb-nama-sekolah').textContent=s.nama_sekolah;
-    document.getElementById('hero-sekolah').textContent=s.nama_sekolah;
-  }
-  if(s.tahun){
-    document.getElementById('hb-tahun').textContent='Sukan '+s.tahun;
-    document.getElementById('hero-pill').textContent='⚡ KEPUTUSAN RASMI '+s.tahun;
-  }
-  if(s.nama_pertandingan)
-    document.getElementById('hero-nama-pertandingan').textContent=s.nama_pertandingan;
-  if(s.nama_sekolah&&s.tahun)
-    document.getElementById('footer-txt').textContent='Sistem Sukan Tahunan · '+s.nama_sekolah+' · '+s.tahun;
-  if(s.nama_pertandingan)
-    document.title=s.nama_pertandingan+' — '+(s.nama_sekolah||'SK Sultan Ismail');
+  var s=r.data;_sysSettings=s;
+  if(s.nama_sekolah){document.getElementById('hb-nama-sekolah').textContent=s.nama_sekolah;document.getElementById('hero-sekolah').textContent=s.nama_sekolah;}
+  if(s.tahun){document.getElementById('hb-tahun').textContent='Sukan '+s.tahun;document.getElementById('hero-pill').textContent='⚡ KEPUTUSAN RASMI '+s.tahun;}
+  if(s.nama_pertandingan) document.getElementById('hero-nama-pertandingan').textContent=s.nama_pertandingan;
+  if(s.nama_sekolah&&s.tahun) document.getElementById('footer-txt').textContent='Sistem Sukan Tahunan · '+s.nama_sekolah+' · '+s.tahun;
+  if(s.nama_pertandingan) document.title=s.nama_pertandingan+' — '+(s.nama_sekolah||'SK Sultan Ismail');
 }
 
-/* ── MEDAL TALLY ── */
 async function loadTally(){
   var r=await gasRun('getMedalTally');
   var tb=document.getElementById('tally-tbody');
   var td=r&&r.success?(r.tally||r.data||null):null;
-  if(!td||!td.length){
-    tb.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📊</div>Data tally belum tersedia.</div></td></tr>';
-    document.getElementById('tally-upd').textContent='TIADA DATA';
-    return;
-  }
+  if(!td||!td.length){tb.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📊</div>Data tally belum tersedia.</div></td></tr>';document.getElementById('tally-upd').textContent='TIADA DATA';return;}
   var adaMedal=td.some(function(x){return x.emas>0||x.perak>0||x.gangsa>0||x.mata>0;});
   document.getElementById('tally-alert').style.display=adaMedal?'none':'flex';
   var rc=['rank-1','rank-2','rank-3'];
   tb.innerHTML=td.map(function(row,i){
     return '<tr class="'+(rc[i]||'rank-other')+'">'
       +'<td style="text-align:center"><div class="r-badge">'+(i+1)+'</div></td>'
-      +'<td><div class="rumah-cell">'
-        +'<div class="rumah-stripe" style="background:'+row.warna+'"></div>'
-        +'<div class="rumah-name">'+row.nama+'</div>'
-      +'</div></td>'
+      +'<td><div class="rumah-cell"><div class="rumah-stripe" style="background:'+row.warna+'"></div><div class="rumah-name">'+row.nama+'</div></div></td>'
       +'<td class="mc mc-gold"><div class="mc-val">'+row.emas+'</div></td>'
       +'<td class="mc mc-silver"><div class="mc-val">'+row.perak+'</div></td>'
       +'<td class="mc mc-bronze"><div class="mc-val">'+row.gangsa+'</div></td>'
@@ -473,65 +431,44 @@ async function loadTally(){
       +'<td class="pts-c"><div class="pts-v">'+row.mata+'</div><div class="pts-l">markah</div></td>'
       +'</tr>';
   }).join('');
-  var now=new Date().toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('tally-upd').textContent='DIKEMASKINI: '+now;
+  document.getElementById('tally-upd').textContent='DIKEMASKINI: '+new Date().toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
 }
 
-/* ── REKOD KEJOHANAN (AWAM) ── */
 async function loadRekodAwam(){
   var r=await gasRun('getRekod');
   var td=r&&r.success?(r.data||null):null;
-  if(!td||!td.length){
-    document.getElementById('rekod-tbody').innerHTML='<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3);font-size:12px;">Tiada rekod tersimpan lagi.</td></tr>';
-    document.getElementById('rekod-upd').textContent='TIADA DATA';
-    return;
-  }
-  _allRekod=td;
-  renderRekodAwam(_allRekod);
-  var now=new Date().toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('rekod-upd').textContent='DIKEMASKINI: '+now;
+  if(!td||!td.length){document.getElementById('rekod-tbody').innerHTML='<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3);font-size:12px;">Tiada rekod tersimpan lagi.</td></tr>';document.getElementById('rekod-upd').textContent='TIADA DATA';return;}
+  _allRekod=td;renderRekodAwam(_allRekod);
+  document.getElementById('rekod-upd').textContent='DIKEMASKINI: '+new Date().toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
 }
 
 function filterRekodAwam(btn,peringkat){
   document.querySelectorAll('.rekod-fbtn:not(.f-jantina)').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  _rekodFltPeringkat=(peringkat==='all')?'':peringkat;
-  applyRekodFilter();
+  btn.classList.add('active');_rekodFltPeringkat=(peringkat==='all')?'':peringkat;applyRekodFilter();
 }
-
 function filterRekodJantina(btn,jantina){
   var isActive=btn.classList.contains('active');
   document.querySelectorAll('.rekod-fbtn.f-jantina').forEach(function(b){b.classList.remove('active');});
-  if(!isActive){btn.classList.add('active');_rekodFltJantina=jantina;}
-  else _rekodFltJantina='';
+  if(!isActive){btn.classList.add('active');_rekodFltJantina=jantina;}else _rekodFltJantina='';
   applyRekodFilter();
 }
-
 function applyRekodFilter(){
-  var filtered=_allRekod.filter(function(r){
+  renderRekodAwam(_allRekod.filter(function(r){
     if(_rekodFltPeringkat&&r.peringkat!==_rekodFltPeringkat) return false;
     if(_rekodFltJantina&&r.jantina!==_rekodFltJantina) return false;
     return true;
-  });
-  renderRekodAwam(filtered);
+  }));
 }
-
 function renderRekodAwam(data){
   var tbody=document.getElementById('rekod-tbody');
-  if(!data||!data.length){
-    tbody.innerHTML='<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3);font-size:12px;">Tiada rekod untuk paparan ini.</td></tr>';
-    return;
-  }
-  var PBADGE={SEKOLAH:'prd-sekolah',DAERAH:'prd-daerah',NEGERI:'prd-negeri',KEBANGSAAN:'prd-kebangsaan'};
+  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3);font-size:12px;">Tiada rekod untuk paparan ini.</td></tr>';return;}
+  var PBADGE={SEKOLAH:'prd-sekolah',DAERAH:'prd-daerah',NEGERI:'prd-negeri',MSSM:'prd-negeri',KEBANGSAAN:'prd-kebangsaan'};
   var tahunIni=new Date().getFullYear();
   tbody.innerHTML=data.map(function(r){
     var isRekodBaru=(parseInt(r.tahun)>=tahunIni);
-    var jClass=r.jantina==='L'?'j-l':'j-p';
-    var jLabel=r.jantina==='L'?'♂ Lelaki':'♀ Perempuan';
     return '<tr>'
-      +'<td><div class="rekod-nama-acara">'+( r.nama_acara||'—')+'</div>'
-      +(isRekodBaru?'<span class="badge-baru">🏆 BARU '+r.tahun+'</span>':'')+'</td>'
-      +'<td style="text-align:center"><span class="jantina-chip '+jClass+'">'+jLabel+'</span></td>'
+      +'<td><div class="rekod-nama-acara">'+(r.nama_acara||'—')+'</div>'+(isRekodBaru?'<span class="badge-baru">🏆 BARU '+r.tahun+'</span>':'')+'</td>'
+      +'<td style="text-align:center"><span class="jantina-chip '+(r.jantina==='L'?'j-l':'j-p')+'">'+(r.jantina==='L'?'♂ Lelaki':'♀ Perempuan')+'</span></td>'
       +'<td style="text-align:center"><span class="badge-prd '+(PBADGE[r.peringkat]||'')+'">'+( r.peringkat||'—')+'</span></td>'
       +'<td><span class="rekod-prestasi">'+(r.prestasi||'—')+'</span><span class="rekod-unit">'+(r.unit||'')+'</span></td>'
       +'<td class="rekod-pemilik">'+(r.nama_pemilik||'—')+'</td>'
@@ -540,29 +477,21 @@ function renderRekodAwam(data){
   }).join('');
 }
 
-function scrollToRekod(){
-  document.getElementById('section-rekod').scrollIntoView({behavior:'smooth'});
-}
+function scrollToRekod(){document.getElementById('section-rekod').scrollIntoView({behavior:'smooth'});}
 
-/* ── KEPUTUSAN ── */
 async function openKeputusan(){
   document.getElementById('modal-keputusan').classList.add('show');
   document.getElementById('result-cards').innerHTML='<div class="empty-state"><div class="skeleton" style="height:12px;width:50%;margin:auto"></div></div>';
   var r=await gasRun('getPublishedResults');
   var resData=r&&r.success?(r.data||r.results||null):null;
-  if(!resData||!resData.length){
-    document.getElementById('result-cards').innerHTML='<div class="empty-state"><div class="empty-icon">📭</div>Tiada keputusan diterbitkan.</div>';
-    return;
-  }
+  if(!resData||!resData.length){document.getElementById('result-cards').innerHTML='<div class="empty-state"><div class="empty-icon">📭</div>Tiada keputusan diterbitkan.</div>';return;}
   _allResults=(resData[0]&&resData[0].keputusan!==undefined)?resData:groupResults(resData);
-  // Bina filter button dari kategori unik
   var cats=[...new Set(_allResults.map(function(a){return a.kategori;}))].filter(Boolean).sort();
   var fb=document.getElementById('result-filter-bar');
   fb.innerHTML='<button class="fbtn active" onclick="filterResult(this,\'\')">Semua</button>';
   cats.forEach(function(c){fb.innerHTML+='<button class="fbtn" onclick="filterResult(this,\''+c+'\')">'+c+'</button>';});
   renderResults(_allResults);
 }
-
 function groupResults(rows){
   var map={};
   rows.forEach(function(r){
@@ -573,59 +502,58 @@ function groupResults(rows){
   Object.values(map).forEach(function(a){a.keputusan.sort(function(x,y){return x.rank-y.rank;});});
   return Object.values(map);
 }
-
 function closeKeputusan(){document.getElementById('modal-keputusan').classList.remove('show');}
 function filterResult(btn,kat){
-  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');
   renderResults(kat?_allResults.filter(function(x){return x.kategori===kat;}):_allResults);
 }
 function renderResults(data){
   var cont=document.getElementById('result-cards');
   if(!data||!data.length){cont.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div>Tiada keputusan untuk kategori ini.</div>';return;}
-  var pi={1:'🥇',2:'🥈',3:'🥉',4:'4️⃣'};
-  var jb={track:'b-track',field:'b-field',road:'b-road'};
+  var pi={1:'🥇',2:'🥈',3:'🥉',4:'4️⃣'};var jb={track:'b-track',field:'b-field',road:'b-road'};
   cont.innerHTML=data.map(function(a){
     var rows=(a.keputusan||[]).map(function(k){
-      return '<tr>'
-        +'<td style="width:34px;text-align:center;font-size:15px">'+(pi[k.rank]||k.rank)+'</td>'
+      return '<tr><td style="width:34px;text-align:center;font-size:15px">'+(pi[k.rank]||k.rank)+'</td>'
         +'<td style="font-weight:600;font-size:13px">'+k.nama+'</td>'
         +'<td><span class="r-chip" style="background:'+k.warna+'22;color:'+k.warna+';border:1px solid '+k.warna+'44">'+k.rumah+'</span></td>'
-        +'<td style="text-align:right;font-family:Rajdhani,sans-serif;font-size:12px;color:var(--text2);font-weight:600">'+(k.masa||'—')+'</td>'
-        +'</tr>';
+        +'<td style="text-align:right;font-family:Rajdhani,sans-serif;font-size:12px;color:var(--text2);font-weight:600">'+(k.masa||'—')+'</td></tr>';
     }).join('');
-    return '<div class="result-card">'
-      +'<div class="rc-hd"><div class="rc-ttl">'+a.acara+'</div>'
+    return '<div class="result-card"><div class="rc-hd"><div class="rc-ttl">'+a.acara+'</div>'
       +'<div class="rc-bgs"><span class="badge '+(jb[a.jenis]||'b-track')+'">'+(a.jenis||'TRACK').toUpperCase()+'</span>'
       +'<span class="badge b-kat">'+a.kategori+'</span></div></div>'
       +'<div class="rc-rows"><table>'+rows+'</table></div></div>';
   }).join('');
 }
 
-/* ── LOGIN ── */
+// FIX 1: mockLogin — return {success,user:{role,username}} sama format GAS loginUser
 function mockLogin(p){
+  // Mock users — sama dengan tbl_users dalam Google Sheets
   var users=[
-    {username:'admin',password:'admin123',role:'admin'},
-    {username:'urusetia',password:'urusetia123',role:'urusetia'},
-    {username:'cg_merah',password:'merah123',role:'guru rumah'},
-    {username:'pengurus',password:'pengurus123',role:'pengurus'},
-    {username:'pencatat1',password:'pencatat123',role:'pencatat'}
+    {username:'admin',    password:'admin123',     role:'Admin',    full_name:'Administrator'},
+    {username:'urusetia', password:'urusetiago123', role:'Urusetia', full_name:'Urusetia Sukan'},
+    {username:'merah',    password:'merah123',      role:'Pengurus', full_name:'mee',            id_rumah:'RMH-MERAH'},
+    {username:'biru',     password:'biru123',       role:'Pengurus', full_name:'biru2',          id_rumah:'RMH-BIRU'},
+    {username:'hijau',    password:'hijau123',      role:'Pengurus', full_name:'hijau12',        id_rumah:'RMH-HIJAU'},
+    {username:'kuning',   password:'kuning123',     role:'Pengurus', full_name:'kuning12',       id_rumah:'RMH-KUNING'},
+    {username:'pencatat1',password:'pencatat123',   role:'Pencatat', full_name:'Pencatat Sukan'},
   ];
   var u=users.find(function(x){return x.username===p.username&&x.password===p.password;});
-  return u?{success:true,user:{role:u.role,username:u.username}}:{success:false,message:'Kelayakan salah'};
+  if(!u) return {success:false,message:'Username atau kata laluan salah.'};
+  return {success:true,user:{role:u.role,username:u.username,full_name:u.full_name,id_rumah:u.id_rumah||''}};
 }
+
 function loginAs(role){
   _loginRole=role;
-  var lab={'Admin':'Admin Sistem','Guru Rumah':'Guru Rumah Sukan','Pengurus':'Pengurus Rumah','Pencatat':'Pencatat Sukan'};
+  var lab={'Admin':'Admin Sistem','Pengurus':'Guru Rumah / Pengurus','Urusetia':'Urusetia Sukan','Pencatat':'Pencatat Sukan'};
   document.getElementById('login-sub').textContent='Log masuk sebagai '+(lab[role]||role);
-  document.getElementById('login-user').value='';
-  document.getElementById('login-pass').value='';
+  document.getElementById('login-user').value='';document.getElementById('login-pass').value='';
   document.getElementById('login-err').style.display='none';
   document.getElementById('login-modal').classList.add('show');
   setTimeout(function(){document.getElementById('login-user').focus();},120);
 }
 function closeLogin(){document.getElementById('login-modal').classList.remove('show');}
 function togglePass(){var i=document.getElementById('login-pass'),b=document.getElementById('btn-eye');if(i.type==='password'){i.type='text';b.textContent='🚫';}else{i.type='password';b.textContent='👁';}}
+
 async function doLogin(){
   var u=document.getElementById('login-user').value.trim();
   var p=document.getElementById('login-pass').value;
@@ -636,16 +564,18 @@ async function doLogin(){
   document.getElementById('login-err').style.display='none';
   var role=(r.user&&r.user.role)?r.user.role.toLowerCase():'';
   var uname=(r.user&&r.user.username)?r.user.username:'';
-  var pageMap={'admin':'admin-setup','urusetia':'admin-ops','guru rumah':'pengurus','pengurus':'pengurus','pencatat':'pencatat'};
+  // role dari GAS: admin→AdminSetup, urusetia→AdminOps, pengurus→PendaftaranPengurus, pencatat→Pencatat
+  var pageMap={'admin':'admin-setup','urusetia':'admin-ops','pengurus':'pendaftaran-pengurus','pencatat':'pencatat'};
   var targetPage=pageMap[role]||'admin-setup';
   var targetUrl='?page='+targetPage+(uname?'&u='+encodeURIComponent(uname):'');
-  showToast('✅ Log masuk berjaya!');closeLogin();
+  showToast('Log masuk berjaya!');closeLogin();
   if(IS_GAS){
     var fullUrl=(GAS_EXEC_URL||'')+targetUrl;
     var a=document.createElement('a');a.href=fullUrl;a.target='_top';a.style.display='none';
     document.body.appendChild(a);a.click();
-  } else {showToast('Dev: → '+targetPage);}
+  } else {showToast('Dev: redirect → '+targetPage);}
 }
+
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window._tt);window._tt=setTimeout(function(){t.style.display='none';},3000);}
 
 document.getElementById('modal-keputusan').addEventListener('click',function(e){if(e.target===this)closeKeputusan();});

@@ -226,8 +226,6 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
     <div class="nav-sub" onclick="navigate('settings','rumah')" id="sub-rumah">Rumah Sukan</div>
     <div class="nav-sub" onclick="navigate('settings','acara')" id="sub-acara">Acara Master</div>
   </div>
-  <div class="sb-section">Rekod</div>
-  <div class="nav-item" onclick="bukaRekodAcara()" id="nav-rekod"><span class="icon">🏆</span> Rekod Acara</div>
   <div class="sb-section">Jadual</div>
   <div class="nav-item" onclick="navigate('jadual')" id="nav-jadual"><span class="icon">📅</span> Jadual Acara</div>
   <div class="sb-section">Pengguna</div>
@@ -323,6 +321,10 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
           <div class="form-group"><label class="form-label">Tarikh Sukan</label><input class="form-input" type="date" id="set-tarikh"></div>
           <div class="form-group"><label class="form-label">Lokasi / Padang</label><input class="form-input" id="set-lokasi" placeholder="cth: Padang Utama"></div>
         </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">📅 Tarikh Tutup Pendaftaran</label><input class="form-input" type="date" id="set-tarikh-tutup"><div class="form-hint" style="color:#E57373;">Selepas tarikh ini, Guru Rumah hanya boleh lihat & cetak sahaja.</div></div>
+          <div class="form-group"><label class="form-label">🕐 Masa Tutup Pendaftaran</label><input class="form-input" type="time" id="set-masa-tutup" value="23:59"><div class="form-hint">Masa pendaftaran tutup (default: 11:59 PM)</div></div>
+        </div>
         <div class="form-group"><label class="form-label">Tema Sukan (Slogan)</label><input class="form-input" id="set-tema" placeholder="cth: Gemilang Bersama"></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:16px">
@@ -391,7 +393,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
   <!-- RUMAH -->
   <div id="stpane-rumah" class="stpane" style="display:none">
     <div class="card">
-      <div class="section-header"><div><div class="section-title">🏠 Rumah Sukan</div><div class="section-sub">Urus rumah sukan, warna identiti & dropdown Sheet untuk guru</div></div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="doSetupSheetValidation()" title="Pasang dropdown darjah & rumah sukan dalam tbl_murid Sheet untuk kegunaan guru">📋 Setup Dropdown Sheet</button><button class="btn btn-primary btn-sm" onclick="openRumahModal()">＋ Tambah Rumah</button></div></div>
+      <div class="section-header"><div><div class="section-title">🏠 Rumah Sukan</div><div class="section-sub">Urus rumah sukan, warna identiti & dropdown Sheet untuk guru</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-ghost btn-sm" onclick="doSetupSheetValidation()" title="Pasang dropdown darjah & rumah sukan dalam tbl_murid Sheet untuk kegunaan guru">📋 Setup Dropdown Sheet</button><button class="btn btn-warning btn-sm" id="btn-repair-murid" onclick="doRepairMuridData()" title="Auto-isi id_kategori, jantina, tarikh_lahir & id_rumah dalam tbl_murid" disabled>🔄 Jana Data Murid</button><button class="btn btn-primary btn-sm" onclick="openRumahModal()">＋ Tambah Rumah</button></div></div>
       <div class="rumah-grid" id="rumah-grid"><div style="color:var(--text3);font-size:12px;text-align:center;padding:24px;grid-column:1/-1">Memuatkan...</div></div>
     </div>
   </div>
@@ -954,7 +956,7 @@ function cetakJadualAcara() {
   <div class="modal-body">
     <input type="hidden" id="acara-id">
     <div class="form-row"><div class="form-group"><label class="form-label">Kod Acara</label><input class="form-input" id="acara-kod" placeholder="cth: 100M" style="text-transform:uppercase"></div><div class="form-group"><label class="form-label">Nama Acara</label><input class="form-input" id="acara-nama" placeholder="cth: Lari 100 Meter"></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Jenis Acara</label><select class="form-select" id="acara-jenis" onchange="toggleLorongField()"><option value="TRACK">🏃 Track (Balapan)</option><option value="FIELD">🏋️ Field (Padang)</option><option value="ROAD">🚶 Road (Jalan Raya)</option></select></div><div class="form-group"><label class="form-label">Format Perlawanan</label><select class="form-select" id="acara-format"><option value="TERUS_FINAL">Terus Final</option><option value="HEAT_FINAL">Heat → Final</option><option value="CUBAAN">Cubaan (Field)</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Jenis Acara</label><select class="form-select" id="acara-jenis" onchange="toggleLorongField()"><option value="track">🏃 Track (Balapan)</option><option value="field">🏋️ Field (Padang)</option><option value="road">🚶 Road (Jalan Raya)</option></select></div><div class="form-group"><label class="form-label">Format Perlawanan</label><select class="form-select" id="acara-format"><option value="final">Terus Final</option><option value="heat_final">Heat → Final</option><option value="cubaan">Cubaan (Field)</option></select></div></div>
     <div class="form-group">
       <label class="form-label">Jenis Pendaftaran
         <span title="INDIVIDU: daftar atlet seorang-seorang. KUMPULAN: daftar pasukan/relay." style="cursor:help;color:#64748B;margin-left:4px">ⓘ</span>
@@ -1043,6 +1045,7 @@ let _settings = {
   lokasi:'Padang Utama SK Sultan Ismail',tema:'Cemerlang Bersama',
   lorong_trek:'6',podium:'4',nama_format:'penuh',
   pendaftaran_buka:true,paparan_awam:true,mod_penyelenggaraan:false,
+  tarikh_tutup_daftar:'',masa_tutup_daftar:'23:59',
   mata_1:5,mata_2:3,mata_3:2,mata_4:1,mata_5:0,mata_6:0,
   med_1:'Johan',med_2:'Naib Johan',med_3:'Tempat Ke-3'
 };
@@ -1131,7 +1134,6 @@ function mockApi(fn, ...args) {
     createAcara:    (d) => { const n={...d,id:'A'+Date.now(),aktif:true}; _acara.push(n); return {success:true,data:n}; },
     updateAcara:    (d) => { const i=_acara.findIndex(a=>a.id===d.id); if(i>=0) _acara[i]={..._acara[i],...d}; return {success:true}; },
     deleteAcara:    (d) => { _acara=_acara.filter(a=>a.id!==d.id); return {success:true}; },
-    deleteAcaraMaster:(d) => { _acara=_acara.filter(a=>a.id!==d.id); return {success:true}; },
     getUsers:       () => ({success:true, data:[..._users]}),
     createUser:     (d) => { const n={...d,id:'U'+Date.now(),is_active:true,last_login:null}; _users.push(n); return {success:true,data:n}; },
     updateUser:     (d) => { const i=_users.findIndex(u=>u.id===d.id); if(i>=0) _users[i]={..._users[i],...d}; return {success:true}; },
@@ -1300,6 +1302,7 @@ async function loadSettings() {
   setValue('set-tahun',d.tahun);setValue('set-jenis',d.jenis_sekolah);
   setValue('set-tarikh',d.tarikh_sukan);setValue('set-lokasi',d.lokasi);
   setValue('set-tema',d.tema);setValue('set-lorong', String(d.lorong_trek||'6'));
+  setValue('set-tarikh-tutup',d.tarikh_tutup_daftar||'');setValue('set-masa-tutup',d.masa_tutup_daftar||'23:59');
   setValue('set-podium', String(d.podium||'4'));setValue('set-nama-format',d.nama_format||'penuh');
   setToggle('tgl-reg',d.pendaftaran_buka);setToggle('tgl-pub',d.paparan_awam);setToggle('tgl-maint',d.mod_penyelenggaraan);
   updateLorongPreview();
@@ -1310,6 +1313,7 @@ async function saveSettings() {
     nama_sekolah:getVal('set-sekolah'),nama_pertandingan:getVal('set-nama'),
     tahun:getVal('set-tahun'),jenis_sekolah:getVal('set-jenis'),
     tarikh_sukan:getVal('set-tarikh'),lokasi:getVal('set-lokasi'),tema:getVal('set-tema'),
+    tarikh_tutup_daftar:getVal('set-tarikh-tutup'),masa_tutup_daftar:getVal('set-masa-tutup')||'23:59',
     lorong_trek:getVal('set-lorong'),podium:getVal('set-podium'),nama_format:getVal('set-nama-format')
   };
   if(!payload.nama_sekolah||!payload.nama_pertandingan){showToast('Nama sekolah & pertandingan wajib','error');return;}
@@ -1497,12 +1501,67 @@ async function doSetupSheetValidation() {
   }
 }
 
+// ── JANA SEMULA DATA MURID ──────────────────────────────────────
+// Auto-isi: id_kategori, jantina, tarikh_lahir, id_rumah
+// Syarat: Rumah Sukan & Kategori mesti ada dalam AdminSetup
+async function doRepairMuridData() {
+  if(_rumah.length === 0) {
+    showToast('❌ Setup Rumah Sukan dahulu!', 'error'); return;
+  }
+  if(!confirm(
+    '🔄 Jana Semula Data Murid\n\n' +
+    'Fungsi ini akan AUTO-ISI kolum yang KOSONG sahaja:\n\n' +
+    '  ✓ id_kategori  — dikira dari umur & jantina\n' +
+    '  ✓ jantina      — dari No KP (digit ke-12)\n' +
+    '  ✓ tarikh_lahir — dari No KP (6 digit pertama)\n' +
+    '  ✓ id_rumah     — dari nama_rumah dalam sheet\n\n' +
+    'Kolum yang SUDAH ada nilai TIDAK akan diubah.\n' +
+    'Rumah Sukan & Kategori mesti sudah disetup.'
+  )) return;
+
+  const btn = document.getElementById('btn-repair-murid');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ Sedang jana...'; }
+  showLoading('Jana semula data murid... Sila tunggu.');
+
+  try {
+    const raw = await gasRun('repairMuridData');
+    const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+    hideLoading();
+    if(btn){ btn.disabled=false; btn.textContent='🔄 Jana Data Murid'; }
+    if(r && r.success) {
+      const d = r.data || {};
+      showToast(
+        '✅ Selesai! ' +
+        'Kategori:' + (d.kategori||0) + ' ' +
+        'Jantina:' + (d.jantina||0) + ' ' +
+        'TarikhLahir:' + (d.tarikh_lahir||0) + ' ' +
+        'Rumah:' + (d.id_rumah||0) + ' rekod dikemaskini',
+        'success'
+      );
+      if(r.errors && r.errors.length > 0) {
+        console.warn('[repairMuridData] warnings:', r.errors);
+        showToast('⚠️ ' + r.errors.length + ' baris gagal — semak Console', 'warn');
+      }
+      loadMurid && loadMurid(); // refresh murid list jika ada
+    } else {
+      showToast('❌ Gagal: ' + (r&&r.message||'Ralat tidak diketahui'), 'error');
+    }
+  } catch(e) {
+    hideLoading();
+    if(btn){ btn.disabled=false; btn.textContent='🔄 Jana Data Murid'; }
+    showToast('❌ Ralat: ' + e.message, 'error');
+  }
+}
+
 async function loadRumah() {
   let raw = await gasRun('getRumah');
   const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
   console.log('[loadRumah] response:', JSON.stringify(r).substring(0,200));
   if(!r||!r.success){ console.warn('[loadRumah] gagal:', r); return; }
   _rumah = r.data || [];
+  // Enable/disable btn-repair berdasarkan rumah ada
+  const btnRepair = document.getElementById('btn-repair-murid');
+  if(btnRepair) btnRepair.disabled = (_rumah.length === 0);
   const grid = document.getElementById('rumah-grid');
   if(_rumah.length===0){grid.innerHTML='<div style="color:var(--text3);font-size:12px;text-align:center;padding:24px;grid-column:1/-1">Tiada rumah sukan. Klik "+ Tambah Rumah"</div>';return;}
   grid.innerHTML = _rumah.map(r=>`
@@ -1610,11 +1669,10 @@ function buildKatChecks(){
     </label>`).join('');
 }
 
-
 function toggleLorongField(){
-  const jenis=(getVal('acara-jenis')||'').toUpperCase();
-  document.getElementById('lorong-field').style.display=jenis==='TRACK'?'block':'none';
-  if(jenis!=='TRACK') setValue('acara-lorong','0');
+  const jenis=getVal('acara-jenis');
+  document.getElementById('lorong-field').style.display=jenis==='track'?'block':'none';
+  if(jenis!=='track') setValue('acara-lorong','0');
 }
 
 async function loadAcara(){
@@ -1728,7 +1786,7 @@ function openAcaraModal(id=null){
   }
 }
 function editAcara(id){openAcaraModal(id);}
-function clearAcaraForm(){['acara-id','acara-kod','acara-nama','acara-catatan'].forEach(id=>setValue(id,''));setValue('acara-jenis','TRACK');setValue('acara-format','HEAT_FINAL');setValue('acara-lorong','1');setValue('acara-emoji','🏃');document.getElementById('acara-emoji-preview').textContent='🏃';}
+function clearAcaraForm(){['acara-id','acara-kod','acara-nama','acara-catatan'].forEach(id=>setValue(id,''));setValue('acara-jenis','track');setValue('acara-format','heat_final');setValue('acara-lorong','1');setValue('acara-emoji','🏃');document.getElementById('acara-emoji-preview').textContent='🏃';}
 
 async function saveAcara(){
   const kod=getVal('acara-kod').toUpperCase();
@@ -1913,13 +1971,6 @@ async function deleteUser(id){
 // ═══════════════════════════════════════════════════
 // MODAL & CONFIRM HELPERS
 // ═══════════════════════════════════════════════════
-function bukaRekodAcara(){
-  if(typeof _scriptUrl!=='undefined'&&_scriptUrl){
-    const a=document.createElement('a');a.href=_scriptUrl+'?page=rekod-acara';a.target='_top';document.body.appendChild(a);a.click();
-  } else {
-    gasRun('getScriptUrl').then(function(url){if(url){const a=document.createElement('a');a.href=url+'?page=rekod-acara';a.target='_top';document.body.appendChild(a);a.click();}});
-  }
-}
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 
