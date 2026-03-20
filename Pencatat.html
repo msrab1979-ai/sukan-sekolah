@@ -1,171 +1,2645 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pencatat Keputusan Padang</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0fdf4; }
-    .card { background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 32px; max-width: 600px; margin: 40px auto; border: 1px solid #dcfce7; }
-    .input-field { width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 15px; transition: all 0.2s; outline: none; }
-    .input-field:focus { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1); }
-    .btn-green { background: #16a34a; color: white; padding: 12px 24px; border-radius: 10px; font-weight: 600; transition: all 0.2s; cursor: pointer; width: 100%; display: block; text-align: center; }
-    .btn-green:hover { background: #15803d; transform: translateY(-1px); }
-    .rank-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; }
-    .rank-medal { font-size: 24px; min-width: 40px; text-align: center; }
-    #loader { display: none; text-align: center; padding: 20px; color: #16a34a; font-weight: bold; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pencatat Keputusan</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   PROFESSIONAL SLATE-NAVY ENTERPRISE THEME
+   Clean, trustworthy, government/education grade UI
+   ═══════════════════════════════════════════════════════════ */
+:root{
+  /* Background layers — warm white to cool slate */
+  --bg:       #F4F6FA;       /* page background — cool off-white */
+  --bg2:      #FFFFFF;       /* surface white */
+  --bg3:      #EEF1F7;       /* subtle tinted surface */
+
+  /* Card surfaces */
+  --card:     #FFFFFF;
+  --card2:    #F8FAFD;
+
+  /* Borders */
+  --border:   #DDE2EE;
+  --border2:  #C8D0E0;
+
+  /* Brand — deep royal blue */
+  --blue:     #1A56DB;
+  --blue2:    #1648C0;
+  --blue-lt:  #EBF0FD;
+
+  /* Semantic colours */
+  --cyan:     #0891B2;
+  --green:    #0F9E6A;
+  --green-lt: #E6F7F1;
+  --amber:    #D97706;
+  --amber-lt: #FEF3C7;
+  --red:      #DC2626;
+  --red-lt:   #FEE2E2;
+  --purple:   #6D28D9;
+  --gold:     #B45309;
+  --gold-lt:  #FEF3C7;
+
+  /* Text hierarchy */
+  --text:     #111827;       /* primary — near black */
+  --text2:    #4B5563;       /* secondary */
+  --text3:    #9CA3AF;       /* tertiary / placeholder */
+  --text-inv: #FFFFFF;
+
+  /* Accent for highlight strip */
+  --accent-strip: #1A56DB;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:  0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
+  --shadow-lg:  0 10px 30px rgba(0,0,0,.10), 0 4px 8px rgba(0,0,0,.05);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',system-ui,sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── PAGE BACKGROUND texture ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 10%, rgba(26,86,219,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 10% 80%, rgba(9,145,178,.03) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+.main{position:relative;z-index:1;}
+
+/* ══════════════════════════════
+   HEADER
+══════════════════════════════ */
+.hdr{
+  background:#FFFFFF;
+  border-bottom:1px solid var(--border);
+  padding:0 24px;
+  height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  box-shadow:var(--shadow-sm);
+}
+/* Left accent stripe on header */
+.hdr::before{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(to bottom,var(--blue),var(--cyan));
+}
+.hdr-title{
+  font-size:15px;font-weight:700;color:var(--text);
+  display:flex;align-items:center;gap:10px;
+  padding-left:8px;
+}
+.hdr-title .app-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;box-shadow:0 2px 6px rgba(26,86,219,.3);
+}
+.badge{
+  background:var(--blue-lt);color:var(--blue);
+  font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;
+  border:1px solid rgba(26,86,219,.2);letter-spacing:.3px;
+}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.user-chip{
+  background:var(--bg3);border:1px solid var(--border);
+  padding:5px 14px;border-radius:20px;
+  font-size:12px;font-weight:600;color:var(--text2);
+  display:flex;align-items:center;gap:6px;
+}
+
+/* ══════════════════════════════
+   MAIN CONTENT
+══════════════════════════════ */
+.main{max-width:980px;margin:0 auto;padding:24px 20px;}
+
+/* ══════════════════════════════
+   STEPPER
+══════════════════════════════ */
+.stepper{
+  display:flex;gap:0;margin-bottom:24px;
+  background:#FFFFFF;
+  border:1px solid var(--border);border-radius:14px;
+  overflow:hidden;box-shadow:var(--shadow-sm);
+}
+.step{
+  flex:1;padding:14px 16px;
+  display:flex;align-items:center;gap:10px;
+  cursor:pointer;transition:all .2s;
+  border-right:1px solid var(--border);
+}
+.step:last-child{border-right:none;}
+.step:hover:not(.locked):not(.active){background:var(--bg3);}
+.step.active{
+  background:linear-gradient(135deg,var(--blue),#2563EB);
+  color:var(--text-inv);
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.15);
+}
+.step.done{background:var(--green-lt);color:var(--green);}
+.step.locked{opacity:.4;cursor:not-allowed;}
+.step-num{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;flex-shrink:0;
+}
+.step.done .step-num{background:var(--green);color:#fff;}
+.step.locked .step-num{background:var(--border);color:var(--text3);}
+.step-label{font-size:12px;font-weight:700;line-height:1.3;letter-spacing:.1px;}
+.step-sub{font-size:10px;opacity:.75;margin-top:2px;font-weight:500;}
+
+/* ══════════════════════════════
+   CARDS
+══════════════════════════════ */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;padding:22px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s;
+}
+.card:hover{box-shadow:var(--shadow-md);}
+.card-title{
+  font-size:14px;font-weight:700;color:var(--text);
+  margin-bottom:18px;display:flex;align-items:center;gap:8px;
+  padding-bottom:14px;border-bottom:1px solid var(--border);
+}
+.card-title span{color:var(--text2);font-weight:400;font-size:12px;margin-left:4px;}
+
+/* ══════════════════════════════
+   FORM CONTROLS
+══════════════════════════════ */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-label{
+  font-size:11px;font-weight:700;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.form-select,.form-input{
+  background:#FFFFFF;
+  border:1.5px solid var(--border2);
+  border-radius:8px;padding:10px 13px;
+  color:var(--text);font-size:13px;font-weight:500;
+  width:100%;outline:none;transition:all .2s;
+  font-family:'DM Sans',system-ui;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+.form-select:hover,.form-input:hover{border-color:var(--blue);}
+.form-select:focus,.form-input:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(26,86,219,.12);
+}
+
+/* ══════════════════════════════
+   HEAT CARDS
+══════════════════════════════ */
+.heat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.heat-card{
+  background:#FFFFFF;border:2px solid var(--border);
+  border-radius:12px;padding:18px 14px;
+  cursor:pointer;transition:all .2s;text-align:center;
+  box-shadow:var(--shadow-sm);
+}
+.heat-card:hover{
+  border-color:var(--blue);
+  box-shadow:0 4px 16px rgba(26,86,219,.15);
+  transform:translateY(-2px);
+}
+.heat-card.selected{
+  border-color:var(--blue);background:var(--blue-lt);
+  box-shadow:0 4px 16px rgba(26,86,219,.2);
+}
+.heat-card.selesai{border-color:var(--green);background:var(--green-lt);}
+.heat-num{
+  font-size:28px;font-weight:800;
+  color:var(--blue);line-height:1;
+  font-family:'DM Mono',monospace;
+}
+.heat-card.selesai .heat-num{color:var(--green);}
+.heat-lbl{font-size:11px;color:var(--text2);margin-top:5px;font-weight:600;}
+.heat-status{
+  font-size:10px;padding:3px 10px;border-radius:20px;
+  margin-top:8px;display:inline-block;font-weight:700;letter-spacing:.3px;
+}
+.sts-belum{background:#F3F4F6;color:var(--text3);}
+.sts-sedang{background:var(--amber-lt);color:var(--amber);}
+.sts-selesai{background:var(--green-lt);color:var(--green);}
+
+/* ══════════════════════════════
+   KEPUTUSAN TABLE
+══════════════════════════════ */
+.ktbl{width:100%;border-collapse:collapse;}
+/* Sticky header: berfungsi DALAM scroll container, bukan relative to page */
+.ktbl thead{position:sticky;top:0;z-index:5;}
+.ktbl th{
+  background:linear-gradient(to bottom,#EEF1F7,#E2E8F4);
+  padding:11px 14px;text-align:left;
+  font-size:10.5px;font-weight:700;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.6px;
+  border-bottom:2px solid #C8D0E0;
+  box-shadow:0 2px 4px rgba(0,0,0,.05);
+}
+.ktbl td{
+  padding:11px 14px;border-bottom:1px solid #EEF1F7;
+  font-size:13px;vertical-align:middle;
+}
+.ktbl tr:last-child td{border-bottom:none;}
+.ktbl tbody tr:hover td{background:#F8FAFD;}
+.ktbl tbody tr:nth-child(even) td{background:#FAFBFE;}
+.ktbl tbody tr:nth-child(even):hover td{background:#F0F4FB;}
+/* Scroll wrapper — sticky thead berfungsi dalam overflow-y:auto */
+.ktbl-wrap{overflow-x:auto;overflow-y:auto;max-height:58vh;}
+
+.lorong-badge{
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  color:#fff;width:30px;height:30px;border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;box-shadow:0 2px 6px rgba(26,86,219,.3);
+  font-family:'DM Mono',monospace;
+}
+.rumah-dot{
+  width:10px;height:10px;border-radius:50%;
+  display:inline-block;margin-right:7px;flex-shrink:0;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+
+/* Prestasi input */
+.prestasi-input{
+  background:#F8FAFD;border:1.5px solid var(--border2);
+  border-radius:8px;padding:7px 11px;
+  color:var(--text);font-size:14px;font-weight:700;
+  width:115px;text-align:center;outline:none;
+  font-family:'DM Mono',monospace;transition:all .2s;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.04);
+}
+.prestasi-input:focus{
+  border-color:var(--blue);background:#fff;
+  box-shadow:0 0 0 3px rgba(26,86,219,.1);
+}
+.prestasi-input.saved{border-color:var(--green);background:var(--green-lt);}
+.prestasi-input.disahkan{background:var(--bg3);cursor:not-allowed;opacity:.6;}
+
+/* ── KEDUDUKAN DROPDOWN ── */
+.ked-select{
+  background:#F8FAFD;
+  border:2px solid var(--border2);
+  border-radius:8px;
+  padding:5px 6px;
+  color:var(--text);
+  font-size:13px;font-weight:700;
+  width:64px;outline:none;cursor:pointer;
+  transition:all .2s;
+  text-align:center;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%239CA3AF'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 6px center;
+  padding-right:20px;
+  font-family:'DM Mono','DM Sans',system-ui;
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+  letter-spacing:.5px;
+}
+.ked-select:hover{border-color:var(--blue);}
+.ked-select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(26,86,219,.12);
+  background-color:#fff;
+}
+.ked-select.empty{
+  border-color:var(--red);background:var(--red-lt);color:var(--red);
+  animation:shake .3s ease;
+}
+.ked-select.filled{border-color:var(--green);background:var(--green-lt);}
+.ked-select:disabled{opacity:.5;cursor:not-allowed;background:var(--bg3);}
+.ked-select.rank-1{border-color:#B45309;background:#FEF3C7;color:#92400E;font-weight:800;}
+.ked-select.rank-2{border-color:#6B7280;background:#F3F4F6;color:#374151;}
+.ked-select.rank-3{border-color:#92400E;background:#FEF3C7;color:#78350F;}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  25%{transform:translateX(-4px);}
+  75%{transform:translateX(4px);}
+}
+
+/* Required label */
+.th-required{
+  color:var(--red);margin-left:4px;
+  font-size:9.5px;font-weight:800;letter-spacing:.3px;
+}
+
+/* Medal badge — shown after rank selected */
+.ked-medal-badge:hover{
+  transform:scale(1.12);
+  box-shadow:0 4px 12px rgba(0,0,0,.18)!important;
+}
+.ked-medal-badge:active{transform:scale(.95);}
+
+.ked-badge{
+  width:30px;height:30px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;flex-shrink:0;
+  box-shadow:var(--shadow-sm);
+}
+.ked-1{background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;}
+.ked-2{background:linear-gradient(135deg,#9CA3AF,#6B7280);color:#fff;}
+.ked-3{background:linear-gradient(135deg,#CD7C3A,#92400E);color:#fff;}
+.ked-x{background:var(--bg3);color:var(--text3);}
+
+/* CUBAAN (field events) */
+.cubaan-wrap{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;}
+.cubaan-input{
+  background:#F8FAFD;border:1.5px solid var(--border2);border-radius:8px;
+  padding:6px 8px;color:var(--text);font-size:12px;font-weight:700;
+  width:75px;text-align:center;outline:none;font-family:'DM Mono',monospace;
+  transition:border-color .2s;
+}
+.cubaan-input:hover{border-color:var(--blue);}
+.cubaan-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.1);background:#fff;}
+.cubaan-best{font-size:11px;font-weight:800;color:var(--green);min-width:54px;padding:4px 8px;background:var(--green-lt);border-radius:6px;text-align:center;}
+.cubaan-opt-label{font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.3px;text-transform:uppercase;}
+
+/* ══════════════════════════════
+   STATUS BAR
+══════════════════════════════ */
+.status-bar{
+  background:#FFFFFF;border:1px solid var(--border);
+  border-left:4px solid var(--blue);
+  border-radius:12px;padding:14px 18px;margin-bottom:16px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  box-shadow:var(--shadow-sm);
+}
+.status-info{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.info-chip{font-size:12px;color:var(--text2);font-weight:500;}
+.info-chip strong{color:var(--text);font-weight:700;}
+
+/* ══════════════════════════════
+   BUTTONS
+══════════════════════════════ */
+.btn{
+  padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;border:none;transition:all .2s;
+  display:inline-flex;align-items:center;gap:7px;
+  letter-spacing:.1px;font-family:'DM Sans',system-ui;
+}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;}
+.btn:not(:disabled):active{transform:scale(.97);}
+
+.btn-primary{
+  background:linear-gradient(135deg,var(--blue),#2563EB);color:#fff;
+  box-shadow:0 2px 8px rgba(26,86,219,.35);
+}
+.btn-primary:hover:not(:disabled){background:linear-gradient(135deg,var(--blue2),#1D4ED8);box-shadow:0 4px 14px rgba(26,86,219,.45);}
+
+.btn-success{
+  background:linear-gradient(135deg,var(--green),#059669);color:#fff;
+  box-shadow:0 2px 8px rgba(15,158,106,.3);
+}
+.btn-success:hover:not(:disabled){background:linear-gradient(135deg,#059669,#047857);box-shadow:0 4px 14px rgba(15,158,106,.4);}
+
+.btn-amber{
+  background:linear-gradient(135deg,var(--amber),#B45309);color:#fff;
+  box-shadow:0 2px 8px rgba(217,119,6,.3);
+}
+.btn-amber:hover:not(:disabled){box-shadow:0 4px 14px rgba(217,119,6,.4);}
+
+.btn-ghost{
+  background:#fff;border:1.5px solid var(--border2);color:var(--text2);
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+.btn-ghost:hover:not(:disabled){
+  border-color:var(--blue);color:var(--blue);background:var(--blue-lt);
+  box-shadow:0 2px 8px rgba(26,86,219,.1);
+}
+
+.btn-danger{background:var(--red);color:#fff;box-shadow:0 2px 8px rgba(220,38,38,.3);}
+.btn-sm{padding:6px 13px;font-size:12px;}
+
+/* ACTION BAR */
+.action-bar{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;
+  margin-top:18px;padding-top:18px;border-top:1px solid var(--border);
+}
+
+/* ══════════════════════════════
+   ACARA INFO STRIP
+══════════════════════════════ */
+.acara-info{
+  background:linear-gradient(135deg,var(--blue-lt),rgba(8,145,178,.05));
+  border:1px solid rgba(26,86,219,.2);
+  border-left:4px solid var(--blue);
+  border-radius:12px;padding:16px 20px;margin-bottom:16px;
+  display:flex;flex-wrap:wrap;gap:20px;
+  box-shadow:var(--shadow-sm);
+}
+.ai-item{display:flex;flex-direction:column;gap:3px;}
+.ai-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;font-weight:700;}
+.ai-val{font-size:13px;font-weight:700;color:var(--text);}
+
+.tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block;}
+.tag-track{background:var(--blue-lt);color:var(--blue);border:1px solid rgba(26,86,219,.2);}
+.tag-field{background:var(--green-lt);color:var(--green);border:1px solid rgba(15,158,106,.2);}
+.tag-final{background:#EDE9FE;color:var(--purple);border:1px solid rgba(109,40,217,.2);}
+.tag-saring{background:var(--amber-lt);color:var(--amber);border:1px solid rgba(217,119,6,.2);}
+
+/* ══════════════════════════════
+   TOAST
+══════════════════════════════ */
+.toast-wrap{position:fixed;top:72px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{
+  background:#FFFFFF;border:1px solid var(--border);
+  border-radius:12px;padding:13px 16px;font-size:13px;font-weight:500;
+  min-width:280px;display:flex;align-items:center;gap:10px;
+  box-shadow:var(--shadow-lg);animation:slideIn .25s ease;
+  color:var(--text);
+}
+.toast.success{border-left:4px solid var(--green);}
+.toast.error{border-left:4px solid var(--red);}
+.toast.warn{border-left:4px solid var(--amber);}
+.toast.info{border-left:4px solid var(--blue);}
+@keyframes slideIn{from{transform:translateX(110%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+/* ══════════════════════════════
+   EMPTY STATE
+══════════════════════════════ */
+.empty{text-align:center;padding:40px;color:var(--text3);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+
+/* ══════════════════════════════
+   PUBLISH PANEL
+══════════════════════════════ */
+.publish-panel{
+  background:linear-gradient(135deg,var(--green-lt),rgba(8,145,178,.06));
+  border:1px solid rgba(15,158,106,.25);border-radius:14px;padding:24px;text-align:center;
+  box-shadow:var(--shadow-sm);
+}
+.publish-icon{font-size:40px;margin-bottom:12px;}
+.publish-title{font-size:17px;font-weight:800;margin-bottom:6px;color:var(--text);}
+.publish-sub{font-size:13px;color:var(--text2);margin-bottom:18px;}
+
+/* ══════════════════════════════
+   RANKING TABLE
+══════════════════════════════ */
+.rank-table{width:100%;border-collapse:collapse;}
+.rank-table th{
+  background:linear-gradient(to bottom,#F8FAFD,#EEF1F7);
+  padding:10px 14px;text-align:left;
+  font-size:10.5px;color:var(--text2);font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;
+  border-bottom:2px solid var(--border);
+}
+.rank-table td{padding:11px 14px;border-bottom:1px solid #EEF1F7;font-size:13px;}
+.rank-table .rank-1{background:linear-gradient(to right,#FFFBEB,#FFFFFF);}
+.rank-table .rank-2{background:linear-gradient(to right,#F9FAFB,#FFFFFF);}
+.rank-table .rank-3{background:linear-gradient(to right,#FEF3C7,#FFFFFF);}
+
+/* PDF hidden */
+.pdf-only{display:none;}
+
+/* ══════════════════════════════
+   FLEXIBLE NAV TABS (bawah stepper)
+══════════════════════════════ */
+.flex-nav{
+  display:flex;gap:6px;margin-bottom:20px;
+  background:#fff;border:1px solid var(--border);
+  border-radius:12px;padding:6px;
+  box-shadow:var(--shadow-sm);
+}
+.flex-nav-btn{
+  flex:1;padding:9px 12px;border:none;border-radius:8px;
+  font-size:12px;font-weight:700;cursor:pointer;
+  font-family:'DM Sans',system-ui;
+  color:var(--text2);background:transparent;
+  transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;
+  letter-spacing:.1px;
+}
+.flex-nav-btn:hover{background:var(--bg3);color:var(--text);}
+.flex-nav-btn.active{
+  background:linear-gradient(135deg,var(--blue),#2563EB);
+  color:#fff;box-shadow:0 2px 8px rgba(26,86,219,.3);
+}
+.flex-nav-btn .nav-count{
+  background:rgba(255,255,255,.25);
+  font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700;
+}
+.flex-nav-btn:not(.active) .nav-count{
+  background:var(--border);color:var(--text2);
+}
+
+/* ══════════════════════════════
+   SEMAK KEPUTUSAN PANEL
+══════════════════════════════ */
+.semak-filter-bar{
+  display:flex;gap:10px;align-items:flex-end;
+  background:#fff;border:1px solid var(--border);border-radius:12px;
+  padding:14px 16px;margin-bottom:16px;
+  box-shadow:var(--shadow-sm);flex-wrap:wrap;
+}
+.semak-acara-grid{display:flex;flex-direction:column;gap:12px;}
+
+/* Acara result card */
+.semak-card{
+  background:#fff;border:1px solid var(--border);border-radius:12px;
+  box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s;
+}
+.semak-card:hover{box-shadow:var(--shadow-md);}
+.semak-card-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;cursor:pointer;
+  border-bottom:1px solid transparent;transition:all .2s;
+  user-select:none;
+}
+.semak-card-header:hover{background:var(--bg3);}
+.semak-card.expanded .semak-card-header{
+  border-bottom-color:var(--border);background:var(--blue-lt);
+}
+.semak-card-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;box-shadow:var(--shadow-sm);
+}
+.semak-card-meta{flex:1;min-width:0;}
+.semak-card-title{font-size:14px;font-weight:700;color:var(--text);}
+.semak-card-sub{font-size:11px;color:var(--text2);margin-top:2px;display:flex;gap:12px;flex-wrap:wrap;}
+.semak-card-chips{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.semak-count-chip{
+  font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;
+  display:flex;align-items:center;gap:4px;
+}
+.chip-blue{background:var(--blue-lt);color:var(--blue);}
+.chip-green{background:var(--green-lt);color:var(--green);}
+.chip-amber{background:var(--amber-lt);color:var(--amber);}
+.chip-gray{background:var(--bg3);color:var(--text2);}
+.expand-arrow{color:var(--text3);font-size:12px;transition:transform .25s;flex-shrink:0;}
+.semak-card.expanded .expand-arrow{transform:rotate(180deg);}
+
+/* CRUD table inside semak card */
+.semak-body{display:none;padding:0;}
+.semak-card.expanded .semak-body{display:block;}
+.crud-tbl{width:100%;border-collapse:collapse;}
+.crud-tbl th{
+  background:linear-gradient(to bottom,#F8FAFD,#EEF1F7);
+  padding:9px 14px;font-size:10px;font-weight:700;
+  color:var(--text2);text-transform:uppercase;letter-spacing:.6px;
+  border-bottom:1.5px solid var(--border);text-align:left;
+}
+.crud-tbl td{
+  padding:10px 14px;border-bottom:1px solid #F1F4FB;
+  font-size:13px;vertical-align:middle;
+}
+.crud-tbl tr:last-child td{border-bottom:none;}
+.crud-tbl tbody tr:hover td{background:#F8FAFD;}
+.crud-tbl tbody tr.editing td{background:#EBF0FD;}
+
+/* Inline edit input */
+.crud-edit-inp{
+  background:#fff;border:1.5px solid var(--blue);
+  border-radius:7px;padding:5px 9px;
+  color:var(--text);font-size:13px;font-weight:600;
+  width:100px;text-align:center;outline:none;
+  font-family:'DM Mono',monospace;
+  box-shadow:0 0 0 3px rgba(26,86,219,.1);
+}
+.crud-ked-sel{
+  background:#fff;border:1.5px solid var(--blue);
+  border-radius:7px;padding:5px 8px;
+  color:var(--text);font-size:13px;font-weight:700;
+  width:72px;outline:none;cursor:pointer;
+  appearance:none;-webkit-appearance:none;
+  font-family:'DM Sans',system-ui;
+  box-shadow:0 0 0 3px rgba(26,86,219,.1);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%231A56DB'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 7px center;
+  padding-right:20px;
+}
+
+/* Action buttons in crud table */
+.crud-act{display:flex;gap:5px;align-items:center;}
+.btn-icon{
+  width:30px;height:30px;border-radius:7px;border:none;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:14px;transition:all .15s;
+  font-family:system-ui;
+}
+.btn-icon:hover{transform:scale(1.1);}
+.btn-icon-edit{background:var(--blue-lt);color:var(--blue);}
+.btn-icon-save{background:var(--green-lt);color:var(--green);}
+.btn-icon-cancel{background:var(--bg3);color:var(--text2);}
+.btn-icon-del{background:var(--red-lt);color:var(--red);}
+
+/* Status badge */
+.status-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;
+}
+.sp-draft{background:#F3F4F6;color:var(--text2);}
+.sp-disahkan{background:var(--green-lt);color:var(--green);}
+.sp-published{background:var(--blue-lt);color:var(--blue);}
+
+/* Empty semak */
+.semak-empty{
+  text-align:center;padding:48px 20px;color:var(--text3);
+  background:#fff;border:1px solid var(--border);border-radius:12px;
+}
+
+/* ══════════════════════════════
+   CONFIRM DELETE OVERLAY
+══════════════════════════════ */
+.del-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(17,24,39,.5);backdrop-filter:blur(2px);
+  z-index:500;align-items:center;justify-content:center;
+}
+.del-overlay.show{display:flex;}
+.del-box{
+  background:#fff;border-radius:16px;padding:28px 28px 22px;
+  max-width:380px;width:90%;box-shadow:var(--shadow-lg);
+  animation:popIn .2s ease;
+}
+@keyframes popIn{from{transform:scale(.92);opacity:0;}to{transform:scale(1);opacity:1;}}
+.del-icon{font-size:36px;margin-bottom:10px;text-align:center;}
+.del-title{font-size:16px;font-weight:800;text-align:center;color:var(--text);margin-bottom:6px;}
+.del-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px;line-height:1.5;}
+.del-actions{display:flex;gap:10px;justify-content:center;}
+
+/* ══════════════════════════════
+   RESPONSIVE
+══════════════════════════════ */
+@media(max-width:600px){
+  .form-row{grid-template-columns:1fr;}
+  .stepper{flex-wrap:wrap;}
+  .step{min-width:50%;}
+  .heat-grid{grid-template-columns:repeat(3,1fr);}
+  .flex-nav{flex-wrap:wrap;}
+  .flex-nav-btn{flex:none;min-width:calc(50% - 4px);}
+}
+</style>
 </head>
 <body>
 
-  <!-- Butang Kembali ke Utama (Bypass Sandbox) -->
-  <div class="max-w-3xl mx-auto p-4">
-    <button onclick="goHome()" class="text-sm font-semibold text-green-700 bg-green-100 px-4 py-2 rounded-lg hover:bg-green-200 transition">
-      ← Kembali ke Utama
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-title">
+    <div class="app-icon">🏁</div>
+    <span style="font-size:15px;font-weight:800;letter-spacing:-.2px;">Pencatat Keputusan</span>
+    <span class="badge" id="hdr-badge">SK Sultan Ismail</span>
+  </div>
+  <div class="hdr-right">
+    <span class="user-chip" id="user-chip">👤 —</span>
+    <button class="btn btn-ghost btn-sm" onclick="confirmLogout()">Keluar</button>
+  </div>
+</header>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- STEPPER -->
+  <div class="stepper">
+    <div class="step active" id="stp1" onclick="gotoStep(1)">
+      <div class="step-num">1</div>
+      <div><div class="step-label">Pilih Acara</div><div class="step-sub" id="stp1-sub">Kategori & acara</div></div>
+    </div>
+    <div class="step locked" id="stp2" onclick="gotoStep(2)">
+      <div class="step-num">2</div>
+      <div><div class="step-label">Pilih Heat</div><div class="step-sub" id="stp2-sub">Pilih sesi larian</div></div>
+    </div>
+    <div class="step locked" id="stp3" onclick="gotoStep(3)">
+      <div class="step-num">3</div>
+      <div><div class="step-label">Catat Keputusan</div><div class="step-sub" id="stp3-sub">Input prestasi</div></div>
+    </div>
+    <div class="step locked" id="stp4" onclick="gotoStep(4)">
+      <div class="step-num">4</div>
+      <div><div class="step-label">Sahkan & Publish</div><div class="step-sub" id="stp4-sub">Finalkan keputusan</div></div>
+    </div>
+  </div>
+
+  <!-- FLEXIBLE NAV TABS -->
+  <div class="flex-nav" id="flex-nav">
+    <button class="flex-nav-btn active" id="fnav-catat" onclick="showFlexPanel('catat')">
+      ✏️ Catat Keputusan
+    </button>
+    <button class="flex-nav-btn" id="fnav-semak" onclick="showFlexPanel('semak')">
+      📋 Semak Keputusan
+      <span class="nav-count" id="semak-count">0</span>
     </button>
   </div>
 
-  <div class="card">
-    <div class="text-center mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">⏱️ Pencatat Keputusan</h1>
-      <p class="text-gray-500 mt-2">Sila masukkan kod acara untuk memulakan sesi</p>
-    </div>
+  <!-- CATAT PANEL (original stepper flow) -->
+  <div id="flex-catat">
 
-    <!-- Bahagian 1: Cari Acara -->
-    <div id="section-search">
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Kod Acara (Contoh: T100, MLJ)</label>
-      <div class="flex gap-3">
-        <input type="text" id="kod_acara" class="input-field" placeholder="Masukkan kod...">
-        <button onclick="cariAcara()" class="bg-green-600 hover:bg-green-700 text-white font-bold px-6 rounded-lg transition">Cari</button>
-      </div>
-    </div>
-
-    <div id="loader">⏳ Sedang memproses...</div>
-
-    <!-- Bahagian 2: Input Keputusan -->
-    <div id="section-result" style="display: none;" class="mt-8 pt-8 border-t border-gray-100">
-      <div class="bg-green-50 rounded-xl p-4 mb-6 border border-green-200 text-center">
-        <h2 id="display_nama_acara" class="text-xl font-bold text-green-800">Nama Acara</h2>
-        <p id="display_format" class="text-sm text-green-600 mt-1">Jenis Format</p>
-      </div>
-
-      <h3 class="font-bold text-gray-700 mb-4">Masukkan Pemenang:</h3>
-      
-      <div class="rank-box">
-        <div class="rank-medal">🥇</div>
-        <div class="flex-1">
-          <label class="text-xs font-bold text-gray-500 uppercase">Johan (5 Mata)</label>
-          <select id="rank_1" class="input-field mt-1"></select>
+  <!-- STEP 1: PILIH ACARA -->
+  <div id="panel1">
+    <div class="card">
+      <div class="card-title">🎯 Pilih Acara <span>Pilih kategori dan acara untuk dicatat</span></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Kategori</label>
+          <select class="form-select" id="sel-kat" onchange="onKatChange()">
+            <option value="">— Pilih Kategori —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Acara</label>
+          <select class="form-select" id="sel-acara" onchange="onAcaraChange()">
+            <option value="">— Pilih Acara —</option>
+          </select>
         </div>
       </div>
-
-      <div class="rank-box">
-        <div class="rank-medal">🥈</div>
-        <div class="flex-1">
-          <label class="text-xs font-bold text-gray-500 uppercase">Naib Johan (3 Mata)</label>
-          <select id="rank_2" class="input-field mt-1"></select>
-        </div>
+      <div id="acara-info-wrap" style="display:none"></div>
+      <div class="action-bar" style="border:none;padding:0;margin-top:12px;justify-content:flex-start">
+        <button class="btn btn-primary" id="btn-next1" disabled onclick="gotoStep(2)">Seterusnya →</button>
       </div>
-
-      <div class="rank-box">
-        <div class="rank-medal">🥉</div>
-        <div class="flex-1">
-          <label class="text-xs font-bold text-gray-500 uppercase">Ketiga (2 Mata)</label>
-          <select id="rank_3" class="input-field mt-1"></select>
-        </div>
-      </div>
-
-      <div class="rank-box">
-        <div class="rank-medal">4️⃣</div>
-        <div class="flex-1">
-          <label class="text-xs font-bold text-gray-500 uppercase">Keempat (1 Mata)</label>
-          <select id="rank_4" class="input-field mt-1"></select>
-        </div>
-      </div>
-
-      <button onclick="simpanDanKira()" class="btn-green mt-6">💾 Simpan Keputusan & Kira Mata</button>
     </div>
   </div>
 
-  <script>
-    // FUNGSI NAVIGASI BYPASS SANDBOX
-    function goHome() {
-      if(typeof google !== 'undefined') {
-        google.script.run.withSuccessHandler(url => {
-          const a = document.createElement('a'); a.href = url + '?page=home'; a.target = '_top';
-          document.body.appendChild(a); a.click();
-        }).getScriptUrl();
+  <!-- STEP 2: PILIH HEAT -->
+  <div id="panel2" style="display:none">
+    <div id="acara-info-s2"></div>
+    <div class="card">
+      <div class="card-title">🔥 Senarai Heat <span id="heat-count-lbl"></span></div>
+      <div class="heat-grid" id="heat-grid">
+        <div class="empty"><div class="empty-icon">⏳</div>Memuatkan heat...</div>
+      </div>
+      <div class="action-bar">
+        <button class="btn btn-ghost" onclick="gotoStep(1)">← Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: CATAT KEPUTUSAN -->
+  <div id="panel3" style="display:none">
+    <div id="acara-info-s3"></div>
+    <div class="status-bar">
+      <div class="status-info">
+        <div class="info-chip">Heat: <strong id="s3-heat-lbl">—</strong></div>
+        <div class="info-chip">Jenis: <strong id="s3-jenis">—</strong></div>
+        <div class="info-chip">Peserta: <strong id="s3-peserta-count">—</strong></div>
+        <div class="info-chip">Kategori: <strong id="s3-kat-info">—</strong></div>
+        <div class="info-chip">Status: <strong id="s3-status">—</strong></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="gotoStep(2)">← Heat Lain</button>
+        <button class="btn btn-amber btn-sm" id="btn-auto-rank" onclick="autoRank()">⚡ Auto Rank</button>
+        <button class="btn btn-ghost btn-sm" onclick="cetakHeatPdf()">🖨️ PDF</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="ktbl-wrap">
+        <table class="ktbl" id="ktbl-main">
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th>Peserta</th>
+              <th style="width:110px">Rumah</th>
+              <th id="th-prestasi">Prestasi</th>
+              <th style="width:80px">Ked. <span class="th-required">★</span></th>
+              <th style="width:150px">Catatan</th>
+            </tr>
+          </thead>
+          <tbody id="ktbl-body">
+            <tr><td colspan="6" class="empty">Memuatkan peserta...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-ghost" onclick="gotoStep(2)">← Kembali</button>
+      <button class="btn btn-primary" id="btn-simpan-semua" onclick="simpanSemua()">💾 Simpan Semua</button>
+      <button class="btn btn-success" id="btn-sahkan" onclick="sahkanHeat()">✅ Sahkan Heat</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: SAHKAN & PUBLISH -->
+  <div id="panel4" style="display:none">
+    <div id="acara-info-s4"></div>
+    <div class="card">
+      <div class="card-title">📊 Keputusan Akhir Acara <span id="s4-acara-lbl"></span></div>
+      <div style="overflow-x:auto">
+        <table class="rank-table" id="rank-table">
+          <thead>
+            <tr>
+              <th>Ked.</th><th>Nama</th><th>Rumah</th><th>Prestasi</th><th>Heat</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="rank-body">
+            <tr><td colspan="6" class="empty">Memuatkan...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="publish-panel" id="publish-panel">
+      <div class="publish-icon">🏆</div>
+      <div class="publish-title">Semua Heat Selesai</div>
+      <div class="publish-sub" id="pub-sub">Sahkan dan publish keputusan rasmi</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="cetakAcaraPdf()">🖨️ Cetak PDF</button>
+        <button class="btn btn-success" id="btn-publish" onclick="publishAcara()">🏆 Publish Keputusan Rasmi</button>
+      </div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-ghost" onclick="gotoStep(2)">← Kembali</button>
+    </div>
+  </div>
+
+  </div><!-- /flex-catat -->
+
+  <!-- ═══════════════════════════════════════
+       SEMAK KEPUTUSAN PANEL (CRUD)
+  ═══════════════════════════════════════ -->
+  <div id="flex-semak" style="display:none;">
+
+    <!-- Filter bar -->
+    <div class="semak-filter-bar">
+      <div class="form-group" style="flex:1;min-width:160px;">
+        <label class="form-label">Cari Acara / Peserta</label>
+        <input class="form-input" id="semak-cari" placeholder="Taip nama acara atau peserta..." oninput="filterSemak()">
+      </div>
+      <div class="form-group" style="min-width:130px;">
+        <label class="form-label">Kategori</label>
+        <select class="form-select" id="semak-flt-kat" onchange="filterSemak()">
+          <option value="">Semua</option>
+        </select>
+      </div>
+      <div class="form-group" style="min-width:130px;">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="semak-flt-status" onchange="filterSemak()">
+          <option value="">Semua Status</option>
+          <option value="DRAFT">Draft</option>
+          <option value="DISAHKAN">Disahkan</option>
+          <option value="PUBLISHED">Published</option>
+        </select>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:18px;" onclick="loadSemak()">🔄 Refresh</button>
+    </div>
+
+    <!-- Result count bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 4px;flex-wrap:wrap;gap:8px;">
+      <span id="semak-result-lbl" style="font-size:12px;font-weight:600;color:var(--text2);">Memuatkan...</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-ghost btn-sm" onclick="semakExpandAll()">⊞ Buka Semua</button>
+        <button class="btn btn-primary btn-sm" id="btn-pdf-semua" onclick="cetakSemuaSemakPdf()" style="gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Cetak Semua PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Acara cards -->
+    <div class="semak-acara-grid" id="semak-acara-grid">
+      <div class="semak-empty">
+        <div style="font-size:36px;margin-bottom:10px;">📋</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Tiada Keputusan Direkod</div>
+        <div style="font-size:12px;">Catat keputusan dalam tab "Catat Keputusan" dahulu</div>
+      </div>
+    </div>
+  </div><!-- /flex-semak -->
+
+</div><!-- /main -->
+
+<!-- DELETE CONFIRM OVERLAY -->
+<div class="del-overlay" id="del-overlay">
+  <div class="del-box">
+    <div class="del-icon">🗑️</div>
+    <div class="del-title">Padam Keputusan?</div>
+    <div class="del-sub" id="del-msg">Rekod ini akan dipadamkan. Tindakan tidak boleh diundur.</div>
+    <div class="del-actions">
+      <button class="btn btn-ghost" onclick="closeDelOverlay()">Batal</button>
+      <button class="btn btn-danger" id="del-confirm-btn">Padam</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAS Template Injection — USERNAME di-inject oleh doGet() -->
+<script>
+  // Nilai ini di-set oleh GAS template engine (doGet → template.USERNAME)
+  // Jika tidak ada (preview/dev), akan jadi string kosong
+  try { var USERNAME = '<?= USERNAME ?>'; } catch(e) { var USERNAME = ''; }
+</script>
+
+<script>
+const IS_GAS = typeof google !== 'undefined' && google.script;
+var _scriptUrl = '';
+// USERNAME di-inject oleh doGet() dalam Code.gs via template.USERNAME
+// Ini membolehkan getSession() lookup session yang betul
+var _GAS_USERNAME = (function(){
+  try {
+    // Cuba dari template injection (GAS inject sebagai global var)
+    if (typeof USERNAME !== 'undefined' && USERNAME) return USERNAME;
+  } catch(e){}
+  try {
+    // Fallback: baca dari URL parameter ?u=username
+    var u = new URLSearchParams(window.location.search).get('u');
+    if(u) return u;
+  } catch(e){}
+  return '';
+})();
+var _session = {};
+var _acara = [];
+var _pend  = [];
+var _kat = [];
+var _rumah = [];
+var _heat = [];
+var _peserta = [];
+var _keputusan = [];
+var _curAcara = null;
+var _curHeat = null;
+var _curStep = 1;
+var _rumahMap = {};
+var _settings = {}; // ← simpan dari getSettings
+
+// ═══════════════════════════════════════════
+// gasRun — dengan try/catch untuk tangkap
+// "runner[fn] is not a function" secara graceful
+// ═══════════════════════════════════════════
+function gasRun(fn){
+  var args=Array.prototype.slice.call(arguments,1);
+  return new Promise(function(resolve){
+    if(IS_GAS){
+      try {
+        var runner=google.script.run
+          .withSuccessHandler(function(r){resolve(r);})
+          .withFailureHandler(function(e){
+            console.error('[gasRun FAIL]',fn,e);
+            toast('Ralat GAS ['+fn+']: '+(e.message||'Tidak diketahui'),'error');
+            resolve(null);
+          });
+        // Semak dulu sama ada fungsi wujud dalam GAS
+        if(typeof runner[fn] !== 'function'){
+          console.warn('[gasRun] Fungsi tidak dijumpai dalam Code.gs:',fn);
+          toast('Fungsi "'+fn+'" belum ada dalam Code.gs','warn');
+          resolve(null);
+          return;
+        }
+        if(args.length===0) runner[fn]();
+        else if(args.length===1) runner[fn](args[0]);
+        else runner[fn](args[0],args[1]);
+      } catch(e) {
+        console.error('[gasRun CATCH]',fn,e);
+        toast('Ralat panggil ['+fn+']: '+(e.message||e),'error');
+        resolve(null);
       }
+    } else {
+      setTimeout(function(){resolve(mockApi(fn,args[0]));},300);
     }
+  });
+}
+function gasResult(r){
+  if(r===null||r===undefined) return {success:false,message:'Tiada respons'};
+  if(typeof r==='string'){try{return JSON.parse(r);}catch(e){return {success:false,message:r};}}
+  return r;
+}
 
-    // FUNGSI 1: CARI ACARA
-    function cariAcara() {
-      const kod = document.getElementById('kod_acara').value.trim();
-      if(!kod) return alert('Sila masukkan Kod Acara!');
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',function(){
+  if(IS_GAS){
+    // Dapatkan script URL dulu (synchronous-like, simpan untuk guna kemudian)
+    google.script.run
+      .withSuccessHandler(function(u){ if(u) _scriptUrl=u; })
+      .withFailureHandler(function(){})
+      .getScriptUrl();
 
-      document.getElementById('section-search').style.display = 'none';
-      document.getElementById('loader').style.display = 'block';
-
-      google.script.run.withSuccessHandler(res => {
-        if(res.success) {
-          document.getElementById('display_nama_acara').textContent = res.data.nama_acara;
-          document.getElementById('display_format').textContent = res.data.format + ' | ' + res.data.event_type;
-          
-          // Muat turun senarai peserta untuk dropdown
-          google.script.run.withSuccessHandler(binaDropdown).getPesertaAcara();
+    // Dapatkan session — hantar username supaya Code.gs boleh lookup CacheService
+    google.script.run
+      .withSuccessHandler(function(r){
+        var s = gasResult(r);
+        if(s && s.success && s.user){
+          _session = s.user;
+          if(s.user.username) _GAS_USERNAME = s.user.username;
+          var chip = document.getElementById('user-chip');
+          if(chip) chip.innerHTML='👤 <span>'+(s.user.full_name||s.user.username||_GAS_USERNAME||'Pencatat')+'</span>';
         } else {
-          document.getElementById('loader').style.display = 'none';
-          document.getElementById('section-search').style.display = 'block';
-          alert(res.message);
+          // Cache mungkin expired — papar nama dari URL sahaja (doGet() dah verify akses)
+          var chip = document.getElementById('user-chip');
+          if(chip) chip.innerHTML='👤 <span>'+(_GAS_USERNAME||'Pencatat')+'</span>';
+          console.warn('[getSession]', s&&s.message);
         }
-      }).getAcaraDetails(kod);
+      })
+      .withFailureHandler(function(e){
+        console.warn('[getSession fail]', e);
+        var chip = document.getElementById('user-chip');
+        if(chip && _GAS_USERNAME) chip.innerHTML='👤 <span>'+_GAS_USERNAME+'</span>';
+      })
+      .getSession(_GAS_USERNAME ? {username: _GAS_USERNAME} : {username:''});
+
+    // Dapatkan settings
+    google.script.run
+      .withSuccessHandler(function(r){
+        var s = gasResult(r);
+        if(s && (s.data||s.settings)){
+          var d = s.data || s.settings || {};
+          _settings = d;
+          var badge = document.getElementById('hdr-badge');
+          if(badge && d.nama_sekolah) badge.textContent = d.nama_sekolah;
+        }
+      })
+      .withFailureHandler(function(){})
+      .getSettings();
+
+  } else {
+    _session={username:'pencatat1',full_name:'Pencatat 1',role:'Pencatat'};
+    _settings={nama_sekolah:'SK SULTAN ISMAIL, KEMAMAN',nama_pertandingan:'SUKAN TAHUNAN',tahun:'2025',lokasi:'Padang SK Sultan Ismail, Kemaman, Terengganu'};
+    var chip = document.getElementById('user-chip');
+    if(chip) chip.innerHTML='👤 <span>Pencatat 1</span>';
+  }
+  loadMasterData();
+});
+
+async function loadMasterData(){
+  var [rK,rR,rA,rP,rS]=await Promise.all([
+    gasRun('getKategori'),
+    gasRun('getRumah'),
+    gasRun('getAcaraJana'),
+    gasRun('getPendaftaran'),
+    gasRun('getSettings')
+  ]);
+  var k=gasResult(rK); var r2=gasResult(rR); var a=gasResult(rA); var p=gasResult(rP); var s=gasResult(rS);
+  _kat  = (k&&k.data)||[];
+  _rumah= (r2&&r2.data)||[];
+  _acara= (a&&(a.acara||a.data))||[];
+  _pend = (p&&(p.pendaftaran||p.data))||[];
+  _settings = (s&&(s.data||s.settings))||{};
+  _rumah.forEach(function(r){_rumahMap[r.id]={nama:r.nama,warna:r.warna||'#64748b'};});
+  buildKatDropdown();
+  // Populate semak filter kat
+  var semakKatSel=document.getElementById('semak-flt-kat');
+  if(semakKatSel){
+    semakKatSel.innerHTML='<option value="">Semua</option>';
+    _kat.forEach(function(k){semakKatSel.innerHTML+='<option value="'+(k.kod||k.id)+'">'+( k.kod||k.id )+'</option>';});
+  }
+}
+
+// ═══════════════════════════════════════════
+// STEP 1 — PILIH ACARA
+// ═══════════════════════════════════════════
+function buildKatDropdown(){
+  var s=document.getElementById('sel-kat');
+  s.innerHTML='<option value="">— Pilih Kategori —</option>';
+  var seen={};
+  _acara.forEach(function(a){
+    if(!seen[a.id_kategori]){
+      seen[a.id_kategori]=1;
+      var k=_kat.find(function(k2){return k2.kod===a.id_kategori||k2.id===a.id_kategori;});
+      var lbl=k?(k.kod+' — '+k.nama):a.id_kategori;
+      var bilPend=_pend.filter(function(p){return p.id_kategori===a.id_kategori&&p.status==='AKTIF';}).length;
+      var suffix=bilPend>0?' ('+bilPend+' daftar)':'';
+      s.innerHTML+='<option value="'+a.id_kategori+'">'+lbl+suffix+'</option>';
+    }
+  });
+}
+
+function onKatChange(){
+  var katId=document.getElementById('sel-kat').value;
+  var s=document.getElementById('sel-acara');
+  s.innerHTML='<option value="">— Pilih Acara —</option>';
+  document.getElementById('acara-info-wrap').style.display='none';
+  document.getElementById('btn-next1').disabled=true;
+  _curAcara=null;
+  if(!katId) return;
+  _acara.filter(function(a){return a.id_kategori===katId;}).forEach(function(a){
+    var jp=(a.jenis_pendaftaran||'INDIVIDU').toUpperCase()==='KUMPULAN'?'👥':'👤';
+    var bilInd=_pend.filter(function(p){return p.id_acara===a.id_acara&&p.status==='AKTIF';}).length;
+    var suffix=bilInd>0?' — '+bilInd+' daftar':'';
+    s.innerHTML+='<option value="'+a.id_acara+'">'+jp+' ['+a.no_acara+'] '+a.nama_acara+suffix+'</option>';
+  });
+}
+
+function onAcaraChange(){
+  var id=document.getElementById('sel-acara').value;
+  document.getElementById('btn-next1').disabled=!id;
+  if(!id){document.getElementById('acara-info-wrap').style.display='none';return;}
+  _curAcara=_acara.find(function(a){return a.id_acara===id;});
+  if(!_curAcara) return;
+  var jenis=_curAcara.jenis||'TRACK';
+  var unit=jenis==='TRACK'?'saat':jenis==='FIELD'?'meter':'mata';
+  var fmt=(_curAcara.format_acara||'TERUS_FINAL').replace(/_/g,' ');
+  var katObj=_kat.find(function(k){return k.id===_curAcara.id_kategori||k.kod===_curAcara.id_kategori;});
+  var katLbl=katObj?(katObj.kod+' — '+katObj.nama):_curAcara.id_kategori;
+  var katDetail=katObj?('Jantina: '+(katObj.jantina==='L'?'Lelaki':'Perempuan')+' | Umur: '+katObj.umin+'–'+katObj.umax+' thn'):'—';
+  document.getElementById('acara-info-wrap').style.display='flex';
+  document.getElementById('acara-info-wrap').className='acara-info';
+  document.getElementById('acara-info-wrap').innerHTML=
+    ai('Acara','['+_curAcara.no_acara+'] '+_curAcara.nama_acara)+
+    ai('Kategori',katLbl)+
+    ai('Kelayakan',katDetail)+
+    ai('Jenis','<span class="tag tag-'+(jenis==='TRACK'?'track':'field')+'">'+jenis+'</span>')+
+    ai('Unit',unit)+
+    ai('Format','<span class="tag tag-'+(fmt.includes('FINAL')?'final':'saring')+'">'+fmt+'</span>')+
+    ai('Pendaftaran',_curAcara.jenis_pendaftaran||'INDIVIDU');
+}
+
+function ai(l,v){return '<div class="ai-item"><div class="ai-lbl">'+l+'</div><div class="ai-val">'+v+'</div></div>';}
+
+// ═══════════════════════════════════════════
+// STEP 2 — PILIH HEAT
+// ═══════════════════════════════════════════
+async function loadHeat(){
+  document.getElementById('heat-grid').innerHTML='<div class="empty"><div class="empty-icon">⏳</div>Memuatkan...</div>';
+  var r=await gasRun('getHeat',{id_acara:_curAcara.id_acara});
+  var s=gasResult(r);
+  _heat=(s&&s.heat)||[];
+  document.getElementById('heat-count-lbl').textContent=_heat.length+' heat';
+  renderHeatGrid();
+}
+
+function renderHeatGrid(){
+  var g=document.getElementById('heat-grid');
+  if(!_heat.length){g.innerHTML='<div class="empty"><div class="empty-icon">📭</div>Tiada heat dijana.<br><small>Jana heat dalam AdminOps dahulu.</small></div>';return;}
+  g.innerHTML=_heat.map(function(h){
+    var sc='heat-card'+(h.status==='SELESAI'?' selesai':'');
+    var stsCls='sts-'+(h.status||'belum').toLowerCase();
+    var stsLbl=h.status||'BELUM';
+    return '<div class="'+sc+'" onclick="pilihHeat(\''+h.id_heat+'\')">'+
+      '<div class="heat-num">'+h.no_heat+'</div>'+
+      '<div class="heat-lbl">Heat '+h.no_heat+' — '+h.jenis+'</div>'+
+      '<div class="heat-status '+stsCls+'">'+stsLbl+'</div>'+
+      '</div>';
+  }).join('');
+}
+
+async function pilihHeat(idHeat){
+  _curHeat=_heat.find(function(h){return h.id_heat===idHeat;});
+  if(!_curHeat) return;
+  gotoStep(3);
+  await loadPesertaKeputusan();
+}
+
+// ═══════════════════════════════════════════
+// STEP 3 — CATAT KEPUTUSAN
+// ═══════════════════════════════════════════
+async function loadPesertaKeputusan(){
+  var [rP,rK]=await Promise.all([
+    gasRun('getPesertaHeat',{id_heat:_curHeat.id_heat}),
+    gasRun('getKeputusan',{id_heat:_curHeat.id_heat})
+  ]);
+  var sp=gasResult(rP); var sk=gasResult(rK);
+  _peserta=(sp&&sp.peserta)||[];
+  _keputusan=(sk&&sk.keputusan)||[];
+  updateS3Info();
+  renderKtbl();
+}
+
+function updateS3Info(){
+  var katS3=_kat.find(function(k){return k.id===_curAcara.id_kategori||k.kod===_curAcara.id_kategori;});
+  document.getElementById('s3-heat-lbl').textContent='Heat '+_curHeat.no_heat;
+  document.getElementById('s3-jenis').textContent=(_curHeat.jenis||'—')+' | '+_curAcara.jenis;
+  document.getElementById('s3-peserta-count').textContent=_peserta.length+' '+((_curAcara.jenis_pendaftaran||'').toUpperCase()==='KUMPULAN'?'pasukan':'peserta');
+  var sts=_curHeat.status||'BELUM';
+  document.getElementById('s3-status').textContent=sts;
+  if(katS3){
+    var katInfoEl=document.getElementById('s3-kat-info');
+    if(katInfoEl) katInfoEl.textContent=(katS3.jantina==='L'?'Lelaki':'Perempuan')+' | Umur '+katS3.umin+'–'+katS3.umax+' thn';
+  }
+  var isDisahkan=_keputusan.length>0&&_keputusan.every(function(k){return k.status==='DISAHKAN'||k.status==='PUBLISHED';});
+  document.getElementById('btn-sahkan').disabled=isDisahkan;
+  document.getElementById('btn-simpan-semua').disabled=isDisahkan;
+  document.getElementById('btn-auto-rank').disabled=isDisahkan;
+  var jenis=_curAcara.jenis||'TRACK';
+  document.getElementById('th-prestasi').innerHTML=jenis==='TRACK'?'Masa (saat) <span style="color:var(--text3);font-size:10px">— Pilihan</span>':
+    jenis==='FIELD'?'Jarak (m) — Cubaan <span style="color:var(--text3);font-size:10px">— Pilihan</span>':
+    'Mata <span style="color:var(--text3);font-size:10px">— Pilihan</span>';
+}
+
+// ══════════════════════════════════════════════════════
+// HELPER — sanitize noKp jadi DOM ID yang selamat
+// contoh: "000101-11-0001" → "000101_11_0001"
+// ══════════════════════════════════════════════════════
+function safeId(noKp){
+  return (noKp||'').replace(/[^a-zA-Z0-9]/g,'_');
+}
+
+// ══════════════════════════════════════════════════════
+// renderKtbl — FINAL FIX
+// Kedudukan: dropdown 1–N, bila pilih → tunjuk badge,
+// bila klik badge → tunjuk dropdown semula.
+// Hidden input kekal SELALU ada untuk simpanSemua() baca.
+// ══════════════════════════════════════════════════════
+function renderKtbl(){
+  var jenis=_curAcara.jenis||'TRACK';
+  var isField=jenis==='FIELD';
+  var isDisahkan=_keputusan.length>0&&_keputusan.every(function(k){return k.status==='DISAHKAN'||k.status==='PUBLISHED';});
+  var isKump=(_curAcara.jenis_pendaftaran||'').toUpperCase()==='KUMPULAN';
+  var N=_peserta.length;
+
+  var html=_peserta.map(function(p,idx){
+    var kpt=_keputusan.find(function(k){return k.no_kp===p.no_kp;});
+    var rm=_rumahMap[p.id_rumah]||{nama:p.id_rumah,warna:'#64748b'};
+    var lor=p.lorong||p.giliran||idx+1;
+    var sid=safeId(p.no_kp); // ID selamat untuk DOM
+
+    // Nilai kedudukan sedia ada
+    var existingKed=kpt&&kpt.kedudukan&&kpt.kedudukan>0?parseInt(kpt.kedudukan):0;
+    var lockedAttr=isDisahkan?' disabled':'';
+
+    // ── HIDDEN INPUT — sentiasa ada, ini yang dibaca simpanSemua() ──
+    var hiddenInput='<input type="hidden" id="ked_'+sid+'" value="'+(existingKed||'')+'"/>';
+
+    // ── BUILD SELECT OPTIONS ──
+    var opts='<option value="">— Pilih —</option>';
+    for(var n=1;n<=N;n++){
+      var lbl=n===1?'🥇 #1':n===2?'🥈 #2':n===3?'🥉 #3':'#'+n;
+      opts+='<option value="'+n+'" '+(existingKed===n?'selected':'')+'>'+lbl+'</option>';
     }
 
-    // FUNGSI 2: BINA DROPDOWN
-    function binaDropdown(peserta) {
-      const selects = ['rank_1', 'rank_2', 'rank_3', 'rank_4'];
-      let options = '<option value="">-- Pilih Pemenang --</option>';
-      
-      peserta.forEach(p => {
-        // Value di sini menggunakan id rumah untuk mudahkan auto-tally mata backend
-        options += `<option value="${p.id}">${p.nama}</option>`;
-      });
+    // ── BADGE STYLE berdasarkan kedudukan ──
+    function badgeStyleFor(v){
+      if(v===1) return 'background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;';
+      if(v===2) return 'background:linear-gradient(135deg,#9CA3AF,#6B7280);color:#fff;';
+      if(v===3) return 'background:linear-gradient(135deg,#CD7C3A,#92400E);color:#fff;';
+      return 'background:var(--blue-lt);color:var(--blue);border:1.5px solid rgba(26,86,219,.3);';
+    }
+    var medalFor=function(v){ return v===1?'🥇':v===2?'🥈':v===3?'🥉':v>0?'#'+v:''; };
 
-      selects.forEach(id => document.getElementById(id).innerHTML = options);
+    // Badge awal (visible jika existingKed > 0 dan belum locked)
+    var badgeDisplay=(existingKed>0&&!isDisahkan)?'inline-flex':'none';
+    var badgeMedal=medalFor(existingKed);
+    var badgeFontSize=existingKed>0&&existingKed<=3?'18px':'13px';
+    var badgeCss=badgeStyleFor(existingKed);
+    var badge='<div id="kbadge_'+sid+'" '+
+      'style="width:36px;height:36px;border-radius:10px;display:'+badgeDisplay+';align-items:center;'+
+      'justify-content:center;font-size:'+badgeFontSize+';font-weight:800;cursor:pointer;'+
+      'transition:all .15s;box-shadow:0 2px 6px rgba(0,0,0,.12);flex-shrink:0;'+badgeCss+'" '+
+      'title="Klik untuk tukar" onclick="showKedSel(\''+sid+'\')"'+
+      '>'+badgeMedal+'</div>';
 
-      document.getElementById('loader').style.display = 'none';
-      document.getElementById('section-result').style.display = 'block';
+    // Select — visible jika existingKed === 0 atau belum ada nilai
+    var selDisplay=(existingKed>0&&!isDisahkan)?'none':'';
+    // Jika disahkan — tunjuk badge lock sahaja, tiada select
+    var selectHtml='';
+    if(!isDisahkan){
+      selectHtml='<select class="ked-select" id="ksel_'+sid+'" '+
+        'style="display:'+selDisplay+';" '+
+        'onchange="onKedChange(\''+sid+'\')" '+
+        (isDisahkan?'disabled':'')+
+        '>'+opts+'</select>';
     }
 
-    // FUNGSI 3: SIMPAN DAN AUTO TALLY
-    function simpanDanKira() {
-      const payload = {
-        acara: document.getElementById('kod_acara').value,
-        johan: document.getElementById('rank_1').value,
-        naib_johan: document.getElementById('rank_2').value,
-        ketiga: document.getElementById('rank_3').value,
-        keempat: document.getElementById('rank_4').value
+    // Jika disahkan dan ada nilai — badge lock sahaja
+    var lockedBadge='';
+    if(isDisahkan&&existingKed>0){
+      lockedBadge='<div style="width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;'+
+        'justify-content:center;font-size:'+(existingKed<=3?'18':'13')+'px;font-weight:800;opacity:.75;'+badgeStyleFor(existingKed)+'">'+
+        medalFor(existingKed)+'</div>';
+    }
+
+    var kedCell='<div id="kwrap_'+sid+'" style="display:flex;align-items:center;gap:4px;">'+
+      hiddenInput+badge+selectHtml+lockedBadge+
+      '</div>';
+
+    // ── PRESTASI / CUBAAN ──
+    var prestasiCell='';
+    if(isField){
+      var c1=(kpt&&kpt.catatan)?tryParse(kpt.catatan,0):'';
+      var c2=(kpt&&kpt.catatan)?tryParse(kpt.catatan,1):'';
+      var c3=(kpt&&kpt.catatan)?tryParse(kpt.catatan,2):'';
+      var best=kpt&&kpt.prestasi?kpt.prestasi:'';
+      prestasiCell='<div class="cubaan-wrap">'+
+        '<div style="display:flex;flex-direction:column;gap:2px"><span class="cubaan-opt-label">C1</span>'+
+        '<input class="cubaan-input" type="number" step="0.01" min="0" placeholder="0.00" id="c1_'+sid+'" value="'+c1+'" oninput="calcBest(\''+sid+'\')"'+lockedAttr+'></div>'+
+        '<div style="display:flex;flex-direction:column;gap:2px"><span class="cubaan-opt-label">C2</span>'+
+        '<input class="cubaan-input" type="number" step="0.01" min="0" placeholder="0.00" id="c2_'+sid+'" value="'+c2+'" oninput="calcBest(\''+sid+'\')"'+lockedAttr+'></div>'+
+        '<div style="display:flex;flex-direction:column;gap:2px"><span class="cubaan-opt-label">C3</span>'+
+        '<input class="cubaan-input" type="number" step="0.01" min="0" placeholder="0.00" id="c3_'+sid+'" value="'+c3+'" oninput="calcBest(\''+sid+'\')"'+lockedAttr+'></div>'+
+        '<span class="cubaan-best" id="best_'+sid+'">'+( best?'✅ '+best+'m':'—')+'</span>'+
+        '</div>';
+    } else {
+      var val=kpt&&kpt.prestasi!==undefined&&kpt.prestasi!==''?kpt.prestasi:'';
+      var savedCls=val?' saved':'';
+      prestasiCell='<input class="prestasi-input'+savedCls+(isDisahkan?' disahkan':'')+'" type="number" step="0.01" min="0" '+
+        'placeholder="0.00" id="inp_'+sid+'" value="'+val+'"'+(isDisahkan?' readonly':'')+
+        ' oninput="onPrestasiInput(\''+sid+'\')">';
+    }
+
+    var catVal=kpt&&kpt.catatan&&!isField?kpt.catatan:'';
+    var catatanCell='<input class="form-input" style="padding:5px 8px;font-size:12px;width:130px" '+
+      'placeholder="Pilihan..." id="cat_'+sid+'" value="'+catVal+'"'+(isDisahkan?' readonly':'')+' title="Tidak wajib">';
+
+    return '<tr id="row_'+sid+'">'+
+      '<td><div class="lorong-badge">'+lor+'</div></td>'+
+      '<td>'+
+        '<div style="font-weight:700;font-size:13px;">'+p.nama+'</div>'+
+        '<div style="font-size:10px;color:var(--text2);font-family:monospace;">'+p.no_kp+(isKump?' | '+(p.source||''):'')+'</div>'+
+        '<!-- noKp raw untuk JS: data-nokp --><span style="display:none" data-nokp="'+p.no_kp+'" data-sid="'+sid+'"></span>'+
+      '</td>'+
+      '<td><div style="display:flex;align-items:center;gap:6px;">'+
+        '<div class="rumah-dot" style="background:'+rm.warna+';"></div>'+
+        '<span style="font-size:12px;font-weight:600;">'+rm.nama+'</span>'+
+      '</div></td>'+
+      '<td>'+prestasiCell+'</td>'+
+      '<td style="width:80px;">'+kedCell+'</td>'+
+      '<td>'+catatanCell+'</td>'+
+      '</tr>';
+  }).join('');
+
+  document.getElementById('ktbl-body').innerHTML=
+    html||'<tr><td colspan="6" class="empty">Tiada peserta dalam heat ini.</td></tr>';
+
+  // Kemaskini dropdown options — hide nombor yang sudah dipakai
+  setTimeout(_refreshAllKedOptions, 50);
+}
+
+// ── Bila select berubah → sync ke hidden input → tunjuk badge
+// → JUGA kemaskini semua dropdown lain: hide/show options yang sudah dipakai ──
+function onKedChange(sid){
+  var selEl=document.getElementById('ksel_'+sid);
+  var hidEl=document.getElementById('ked_'+sid);
+  var badgeEl=document.getElementById('kbadge_'+sid);
+  if(!selEl||!hidEl) return;
+
+  var val=parseInt(selEl.value)||0;
+  hidEl.value=val||''; // sync ke hidden
+
+  if(!val){
+    selEl.style.display='';
+    if(badgeEl) badgeEl.style.display='none';
+    selEl.className='ked-select empty';
+    // Kemaskini dropdown lain
+    _refreshAllKedOptions();
+    return;
+  }
+
+  // Ada nilai — update badge
+  var medal=val===1?'🥇':val===2?'🥈':val===3?'🥉':'#'+val;
+  var badgeCss='';
+  if(val===1) badgeCss='background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;';
+  else if(val===2) badgeCss='background:linear-gradient(135deg,#9CA3AF,#6B7280);color:#fff;';
+  else if(val===3) badgeCss='background:linear-gradient(135deg,#CD7C3A,#92400E);color:#fff;';
+  else badgeCss='background:var(--blue-lt);color:var(--blue);border:1.5px solid rgba(26,86,219,.3);';
+
+  if(badgeEl){
+    badgeEl.textContent=medal;
+    badgeEl.style.cssText='width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;'+
+      'justify-content:center;font-size:'+(val<=3?'18':'13')+'px;font-weight:800;cursor:pointer;'+
+      'transition:all .15s;box-shadow:0 2px 6px rgba(0,0,0,.12);flex-shrink:0;'+badgeCss;
+  }
+
+  // Sembunyi select, tunjuk badge
+  selEl.style.display='none';
+  if(badgeEl) badgeEl.style.display='inline-flex';
+
+  // Kemaskini semua dropdown lain — hide nombor yang sudah dipakai
+  _refreshAllKedOptions();
+}
+
+// ── Kemaskini semua ksel_ dropdown: disable/hide nombor yang sudah dipakai peserta lain ──
+function _refreshAllKedOptions(){
+  // Kumpul set nombor yang sudah dipakai (dari hidden inputs)
+  var usedNums = {};
+  _peserta.forEach(function(p){
+    var hid = document.getElementById('ked_'+safeId(p.no_kp));
+    if(hid && hid.value) usedNums[parseInt(hid.value)] = safeId(p.no_kp);
+  });
+
+  // Update setiap dropdown yang masih visible
+  _peserta.forEach(function(p){
+    var sid = safeId(p.no_kp);
+    var sel = document.getElementById('ksel_'+sid);
+    if(!sel || sel.style.display==='none') return; // skip hidden dropdowns
+
+    // Nilai yang dipilih oleh dropdown ini sendiri
+    var ownVal = parseInt(sel.value)||0;
+
+    // Update setiap option
+    Array.from(sel.options).forEach(function(opt){
+      var optVal = parseInt(opt.value)||0;
+      if(optVal===0) return; // skip placeholder
+      // Hide/disable jika sudah dipakai oleh orang LAIN
+      var usedBySid = usedNums[optVal];
+      var usedByOther = usedBySid && usedBySid !== sid;
+      opt.disabled = usedByOther;
+      opt.style.display = usedByOther ? 'none' : '';
+      // Style untuk show yang available
+      opt.style.color = usedByOther ? '#ccc' : '';
+    });
+  });
+}
+
+// ── Klik badge → tunjuk semula dropdown, refresh options ──
+function showKedSel(sid){
+  var selEl=document.getElementById('ksel_'+sid);
+  var badgeEl=document.getElementById('kbadge_'+sid);
+  if(badgeEl) badgeEl.style.display='none';
+  if(selEl){ selEl.style.display=''; selEl.focus(); }
+  // Refresh supaya options yang sudah dipakai orang lain di-hide
+  _refreshAllKedOptions();
+}
+
+function tryParse(catatan,idx){
+  try{var a=JSON.parse(catatan);return Array.isArray(a)?a[idx]||'':'';}catch(e){return '';}
+}
+
+function onPrestasiInput(noKp){
+  var inp=document.getElementById('inp_'+noKp);
+  if(inp&&inp.value) inp.classList.add('saved'); else if(inp) inp.classList.remove('saved');
+}
+
+function calcBest(noKp){
+  var c1=parseFloat(document.getElementById('c1_'+noKp).value)||0;
+  var c2=parseFloat(document.getElementById('c2_'+noKp).value)||0;
+  var c3=parseFloat(document.getElementById('c3_'+noKp).value)||0;
+  var vals=[c1,c2,c3].filter(function(v){return v>0;});
+  var best=vals.length?Math.max.apply(null,vals):0;
+  var el=document.getElementById('best_'+noKp);
+  if(el) el.textContent=best>0?'✅ '+best.toFixed(2)+'m':'—';
+}
+
+// ══════════════════════════════════════════════════════
+// autoRank — PATCH: set dropdown value, bukan innerText
+// ══════════════════════════════════════════════════════
+function autoRank(){
+  var jenis=_curAcara.jenis||'TRACK';
+  var isAsc=jenis==='TRACK'; // saat kecil = lebih baik
+  var isField=jenis==='FIELD';
+
+  var data=_peserta.map(function(p){
+    var sid=safeId(p.no_kp);
+    var val=0;
+    if(isField){
+      var c1=parseFloat((document.getElementById('c1_'+sid)||{}).value)||0;
+      var c2=parseFloat((document.getElementById('c2_'+sid)||{}).value)||0;
+      var c3=parseFloat((document.getElementById('c3_'+sid)||{}).value)||0;
+      val=Math.max(c1,c2,c3);
+    } else {
+      val=parseFloat((document.getElementById('inp_'+sid)||{}).value)||0;
+    }
+    return {no_kp:p.no_kp,sid:sid,val:val};
+  }).filter(function(d){return d.val>0;});
+
+  if(!data.length){ toast('Tiada prestasi dimasukkan untuk auto rank','warn'); return; }
+
+  data.sort(function(a,b){return isAsc?a.val-b.val:b.val-a.val;});
+  data.forEach(function(d,i){
+    var selEl=document.getElementById('ksel_'+d.sid);
+    var hidEl=document.getElementById('ked_'+d.sid);
+    if(selEl){ selEl.value=i+1; onKedChange(d.sid); }
+    else if(hidEl){ hidEl.value=i+1; } // fallback
+  });
+  toast('Kedudukan auto dikira ✅','success');
+}
+
+// ══════════════════════════════════════════════════════
+// simpanSemua — PATCH: gate validasi kedudukan WAJIB
+// ══════════════════════════════════════════════════════
+async function simpanSemua(){
+  // ── GATE: Semak semua peserta ada kedudukan (baca dari hidden input) ──
+  var missingKed = [];
+  _peserta.forEach(function(p){
+    var sid=safeId(p.no_kp);
+    var el=document.getElementById('ked_'+sid);
+    var hasVal = el && el.value && el.value!=='';
+    if(!hasVal){
+      missingKed.push(p.nama);
+      // Highlight select merah jika ada
+      var selEl=document.getElementById('ksel_'+sid);
+      if(selEl){ selEl.style.display=''; selEl.className='ked-select empty'; }
+    }
+  });
+  if(missingKed.length>0){
+    toast('⚠️ Kedudukan WAJIB diisi untuk: '+missingKed.slice(0,3).join(', ')+(missingKed.length>3?' dan '+(missingKed.length-3)+' lagi':''),'error');
+    return;
+  }
+
+  document.getElementById('btn-simpan-semua').disabled=true;
+  var jenis=_curAcara.jenis||'TRACK';
+  var isField=jenis==='FIELD';
+  var unit=isField?'meter':jenis==='TRACK'?'saat':'mata';
+  var ok=0,fail=0;
+
+  for(var i=0;i<_peserta.length;i++){
+    var p=_peserta[i];
+    var sid=safeId(p.no_kp);
+    var prestasi='',catatan='';
+    if(isField){
+      var c1=parseFloat((document.getElementById('c1_'+sid)||{}).value)||0;
+      var c2=parseFloat((document.getElementById('c2_'+sid)||{}).value)||0;
+      var c3=parseFloat((document.getElementById('c3_'+sid)||{}).value)||0;
+      var best=Math.max(c1,c2,c3);
+      prestasi=best>0?best.toFixed(2):'';
+      catatan=JSON.stringify([c1||'',c2||'',c3||'']);
+    } else {
+      var inpEl=document.getElementById('inp_'+sid);
+      prestasi=inpEl?inpEl.value:'';
+      var catEl=document.getElementById('cat_'+sid);
+      catatan=catEl?catEl.value:'';
+    }
+
+    // Baca kedudukan dari HIDDEN INPUT (safeId) — sentiasa ada
+    var kedEl=document.getElementById('ked_'+sid);
+    var ked=kedEl&&kedEl.value?parseInt(kedEl.value)||0:0;
+
+    // Cari id rekod sedia ada (supaya saveKeputusan boleh UPDATE, bukan INSERT baru)
+    var kpt=_keputusan.find(function(k){return k.no_kp===p.no_kp;});
+    var existingId = kpt && kpt.id ? kpt.id : '';
+
+    var payload={
+      id:existingId,                                    // ← hantar id untuk UPDATE
+      id_heat:_curHeat.id_heat, id_acara:_curAcara.id_acara,
+      no_kp:p.no_kp, nama:p.nama, id_rumah:p.id_rumah, id_kategori:p.id_kategori,
+      jenis:_curHeat.jenis||'SARINGAN', prestasi:prestasi, unit:unit,
+      kedudukan:ked, catatan:catatan, status:'DRAFT'
+    };
+    var r=await gasRun('saveKeputusan',payload);
+    var s=gasResult(r);
+    if(s&&s.success) ok++; else fail++;
+  }
+
+  document.getElementById('btn-simpan-semua').disabled=false;
+  await loadPesertaKeputusan();
+  toast(ok+' rekod disimpan'+(fail?' | '+fail+' gagal':''),'success');
+}
+
+async function sahkanHeat(){
+  // Semak kedudukan wajib sebelum sahkan
+  var missingKed=[];
+  _peserta.forEach(function(p){
+    var el=document.getElementById('ked_'+safeId(p.no_kp));
+    if(!el||!el.value||el.value==='') missingKed.push(p.nama);
+  });
+  if(missingKed.length>0){
+    toast('⚠️ Isi kedudukan semua peserta dahulu sebelum sahkan!','error');
+    return;
+  }
+
+  if(!confirm('Sahkan semua keputusan heat ini? Keputusan tidak boleh diedit selepas disahkan.')) return;
+  document.getElementById('btn-sahkan').disabled=true;
+
+  await simpanSemua();
+
+  var ok=0;
+  for(var i=0;i<_peserta.length;i++){
+    var p=_peserta[i];
+    // Cari id rekod sedia ada
+    var kptSah=_keputusan.find(function(k){return k.no_kp===p.no_kp;});
+    var r=await gasRun('saveKeputusan',{
+      id: kptSah&&kptSah.id ? kptSah.id : '',  // ← hantar id untuk UPDATE
+      id_heat:_curHeat.id_heat, id_acara:_curAcara.id_acara,
+      no_kp:p.no_kp, jenis:_curHeat.jenis||'SARINGAN', status:'DISAHKAN'
+    });
+    var s=gasResult(r);
+    if(s&&s.success) ok++;
+  }
+
+  await gasRun('updateHeatStatus',{id_heat:_curHeat.id_heat,status:'SELESAI'});
+  _curHeat.status='SELESAI';
+
+  await loadPesertaKeputusan();
+  toast(ok+' keputusan disahkan. Heat selesai! ✅','success');
+
+  await loadHeat();
+
+  setTimeout(function(){
+    var allSelesai=_heat.every(function(h){return h.status==='SELESAI';});
+    if(allSelesai){
+      toast('Semua heat selesai! Proceed ke Publish 🏆','warn');
+      setTimeout(function(){gotoStep(4);},1500);
+    }
+  },500);
+}
+
+// ═══════════════════════════════════════════
+// STEP 4 — PUBLISH
+// ═══════════════════════════════════════════
+async function loadRankingAkhir(){
+  var r=await gasRun('getKeputusan',{id_acara:_curAcara.id_acara});
+  var s=gasResult(r);
+  var all=(s&&s.keputusan)||[];
+  var disahkan=all.filter(function(k){return k.status==='DISAHKAN'||k.status==='PUBLISHED';});
+  var jenis=_curAcara.jenis||'TRACK';
+  var isAsc=jenis==='TRACK';
+  disahkan.sort(function(a,b){
+    var va=parseFloat(a.prestasi)||0, vb=parseFloat(b.prestasi)||0;
+    if(!va&&!vb) return 0;
+    if(!va) return 1; if(!vb) return -1;
+    return isAsc?va-vb:vb-va;
+  });
+
+  var unit=jenis==='TRACK'?'s':jenis==='FIELD'?'m':'mata';
+  var html=disahkan.map(function(k,i){
+    var rm=_rumahMap[k.id_rumah]||{nama:k.id_rumah,warna:'#64748b'};
+    var kedCls=i<3?'rank-'+(i+1):'';
+    var ked=k.kedudukan>0?k.kedudukan:i+1;
+    var medal=ked===1?'🥇':ked===2?'🥈':ked===3?'🥉':'';
+    var kedBadge='<div class="ked-badge ked-'+(ked<=3?ked:'x')+'">'+medal+(ked>3?ked:'')+'</div>';
+    return '<tr class="'+kedCls+'">'+
+      '<td>'+kedBadge+'</td>'+
+      '<td><div style="font-weight:600">'+k.nama+'</div></td>'+
+      '<td><div style="display:flex;align-items:center"><div class="rumah-dot" style="background:'+rm.warna+'"></div>'+rm.nama+'</div></td>'+
+      '<td><strong style="color:var(--cyan)">'+k.prestasi+' '+unit+'</strong></td>'+
+      '<td><span style="font-size:11px;color:var(--text2)">'+k.jenis+'</span></td>'+
+      '<td><span class="tag" style="background:rgba(34,197,94,.2);color:var(--green)">'+k.status+'</span></td>'+
+      '</tr>';
+  }).join('');
+
+  document.getElementById('rank-body').innerHTML=html||'<tr><td colspan="6" class="empty">Tiada keputusan disahkan.</td></tr>';
+  document.getElementById('s4-acara-lbl').textContent='['+_curAcara.no_acara+'] '+_curAcara.nama_acara;
+
+  var allSelesai=_heat.every(function(h){return h.status==='SELESAI';});
+  var pp=document.getElementById('publish-panel');
+  if(allSelesai){
+    pp.style.display='block';
+    document.getElementById('pub-sub').textContent=disahkan.length+' keputusan sedia untuk dipublish';
+    document.getElementById('btn-publish').disabled=disahkan.filter(function(k){return k.status==='PUBLISHED';}).length===disahkan.length;
+  } else {
+    pp.innerHTML='<div class="empty"><div class="empty-icon">⏳</div>'+
+      (_heat.filter(function(h){return h.status!=='SELESAI';}).length)+' heat belum selesai. Sahkan semua heat dahulu.</div>';
+  }
+}
+
+async function publishAcara(){
+  if(!confirm('Publish keputusan rasmi acara ini? Medal tally akan dikemaskini.')) return;
+  document.getElementById('btn-publish').disabled=true;
+  var r=await gasRun('publishKeputusan',{id_acara:_curAcara.id_acara});
+  var s=gasResult(r);
+  if(s&&s.success){
+    toast(s.message||'Keputusan berjaya dipublish! 🏆','success');
+    await loadRankingAkhir();
+  } else {
+    document.getElementById('btn-publish').disabled=false;
+    toast((s&&s.message)||'Gagal publish','error');
+  }
+}
+
+// ═══════════════════════════════════════════
+// STEP NAVIGATION
+// ═══════════════════════════════════════════
+function gotoStep(n){
+  if(n===2&&!_curAcara){toast('Pilih acara dahulu','warn');return;}
+  if(n===3&&!_curHeat){toast('Pilih heat dahulu','warn');return;}
+  // Pastikan panel catat visible
+  showFlexPanel('catat');
+  _curStep=n;
+  [1,2,3,4].forEach(function(i){
+    document.getElementById('panel'+i).style.display=i===n?'block':'none';
+    var el=document.getElementById('stp'+i);
+    el.classList.remove('active','done','locked');
+    if(i===n) el.classList.add('active');
+    else if(i<n) el.classList.add('done');
+    else el.classList.add('locked');
+  });
+  if(_curAcara) document.getElementById('stp1-sub').textContent=_curAcara.nama_acara;
+  if(_curHeat) document.getElementById('stp2-sub').textContent='Heat '+_curHeat.no_heat;
+
+  if(n>=2) setAcaraInfoStrip();
+  if(n===2) loadHeat();
+  if(n===4) loadRankingAkhir();
+}
+
+function setAcaraInfoStrip(){
+  if(!_curAcara) return;
+  var jenis=_curAcara.jenis||'TRACK';
+  var katO=_kat.find(function(k){return k.id===_curAcara.id_kategori||k.kod===_curAcara.id_kategori;});
+  var katN=katO?(katO.kod+' — '+katO.nama):_curAcara.id_kategori;
+  var kelayakan=katO?('Jantina: '+(katO.jantina==='L'?'Lelaki':'Perempuan')+' | Umur: '+katO.umin+'–'+katO.umax+' thn'):'—';
+  var html='<div class="acara-info" style="margin-bottom:16px">'+
+    ai('Acara','['+_curAcara.no_acara+'] '+_curAcara.nama_acara)+
+    ai('Kategori',katN)+
+    ai('Kelayakan',kelayakan)+
+    ai('Unit',jenis==='TRACK'?'saat':jenis==='FIELD'?'meter':'mata')+
+    ai('Jenis','<span class="tag tag-'+(jenis==='TRACK'?'track':'field')+'">'+jenis+'</span>')+
+    ai('Format',(_curAcara.format_acara||'—').replace(/_/g,' '))+
+    '</div>';
+  ['s2','s3','s4'].forEach(function(id){
+    var el=document.getElementById('acara-info-'+id);
+    if(el) el.innerHTML=html;
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// PDF — PATCH: baca kedudukan dari dropdown select
+// ══════════════════════════════════════════════════════
+function cetakHeatPdf(){
+  var {jsPDF}=window.jspdf;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var pw=doc.internal.pageSize.getWidth();
+  var y=15;
+
+  // Header
+  doc.setFont('helvetica','bold');doc.setFontSize(13);
+  doc.setTextColor(PDF_NAVY[0],PDF_NAVY[1],PDF_NAVY[2]);
+  doc.text('KEPUTUSAN HEAT', pw/2, y, {align:'center'}); y+=7;
+  doc.setFontSize(10);
+  doc.text(_curAcara.nama_acara+' — Heat '+_curHeat.no_heat, pw/2, y, {align:'center'}); y+=5;
+  doc.setFont('helvetica','normal');doc.setFontSize(8);
+  doc.setTextColor(PDF_SUBTEXT[0],PDF_SUBTEXT[1],PDF_SUBTEXT[2]);
+  doc.text('Kategori: '+_curAcara.id_kategori+' | Jenis: '+(_curHeat.jenis||'—')+' | Tarikh: '+new Date().toLocaleDateString('ms-MY'), pw/2, y, {align:'center'}); y+=8;
+
+  var jenis=_curAcara.jenis||'TRACK';
+  var isField=jenis==='FIELD';
+  var unit=isField?'meter':jenis==='TRACK'?'saat':'mata';
+
+  var rows=_peserta.map(function(p,i){
+    var rm=_rumahMap[p.id_rumah]||{nama:p.id_rumah};
+    var kpt=_keputusan.find(function(k){return k.no_kp===p.no_kp;});
+    var prestasi=kpt&&kpt.prestasi?kpt.prestasi+' '+unit:'—';
+    var kedEl=document.getElementById('ked_'+safeId(p.no_kp));
+    var ked=kedEl&&kedEl.value?kedEl.value:'—';
+    return [p.lorong||i+1, p.nama, p.no_kp||'—', rm.nama, prestasi, ked, kpt?kpt.status:'DRAFT'];
+  });
+
+  doc.autoTable({
+    startY:y, margin:{left:15,right:15},
+    head:[['Lor.','Nama Peserta','No. K/P','Rumah','Prestasi','Ked.','Status']],
+    body:rows,
+    styles:{fontSize:8.5, overflow:'linebreak', cellPadding:{top:3,right:4,bottom:3,left:4}, valign:'middle'},
+    headStyles:{fillColor:PDF_NAVY, textColor:PDF_WHITE, fontStyle:'bold', fontSize:7.5, halign:'center'},
+    columnStyles:{
+      0:{cellWidth:12, halign:'center'},
+      1:{cellWidth:'auto', halign:'left'},
+      2:{cellWidth:30, halign:'center', fontSize:7.5, font:'courier'},
+      3:{cellWidth:22, halign:'center'},
+      4:{cellWidth:22, halign:'center', fontStyle:'bold'},
+      5:{cellWidth:14, halign:'center', fontStyle:'bold'},
+      6:{cellWidth:20, halign:'center', fontSize:7.5}
+    },
+    alternateRowStyles:{fillColor:PDF_LIGHT},
+  });
+
+  doc.save('Heat_'+_curAcara.nama_acara.replace(/\s+/g,'_')+'_Heat'+_curHeat.no_heat+'.pdf');
+}
+
+function cetakAcaraPdf(){
+  var {jsPDF}=window.jspdf;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var y=15;
+
+  doc.setFontSize(16);doc.setFont('helvetica','bold');
+  doc.text('KEPUTUSAN RASMI',14,y); y+=7;
+  doc.setFontSize(12);
+  doc.text(_curAcara.nama_acara+' — Kategori: '+_curAcara.id_kategori,14,y); y+=6;
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text('Tarikh Cetak: '+(new Date().toLocaleDateString('ms-MY')),14,y); y+=8;
+
+  var jenis=_curAcara.jenis||'TRACK';
+  var unit=jenis==='FIELD'?'meter':jenis==='TRACK'?'saat':'mata';
+
+  _heat.forEach(function(h){
+    var kpts=_keputusan.filter(function(k){return k.id_heat===h.id_heat;});
+    if(!kpts.length) return;
+    doc.setFont('helvetica','bold');doc.setFontSize(10);
+    doc.text('Heat '+h.no_heat+' ('+h.jenis+') — Status: '+(h.status||'—'),14,y); y+=5;
+    var rows=kpts.sort(function(a,b){
+      var va=parseFloat(a.prestasi)||0,vb=parseFloat(b.prestasi)||0;
+      return jenis==='TRACK'?va-vb:vb-va;
+    }).map(function(k,i){
+      var rm=_rumahMap[k.id_rumah]||{nama:k.id_rumah};
+      return [k.kedudukan||i+1,k.nama,rm.nama,k.prestasi?k.prestasi+' '+unit:'—',k.status];
+    });
+    doc.autoTable({startY:y,head:[['Ked.','Nama','Rumah','Prestasi','Status']],body:rows,
+      theme:'striped',headStyles:{fillColor:[30,50,80],textColor:255,fontSize:8},bodyStyles:{fontSize:8},margin:{left:14}});
+    y=doc.lastAutoTable.finalY+8;
+  });
+
+  doc.save('Keputusan_'+_curAcara.nama_acara+'.pdf');
+}
+
+// ═══════════════════════════════════════════
+// LOGOUT
+// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════
+// LOGOUT — mesti dalam user gesture (onclick)
+// Guna google.script.run terus, bukan async/await
+// ═══════════════════════════════════════════
+function confirmLogout(){
+  if(!confirm('Log keluar dari Pencatat Keputusan?')) return;
+  if(IS_GAS){
+    // Cara betul: panggil GAS function yang redirect di server-side
+    // ATAU guna _scriptUrl yang sudah ada dari init
+    try {
+      if(_scriptUrl){
+        // Redirect terus semasa user gesture masih aktif
+        window.top.location.href = _scriptUrl + '?page=home';
+      } else {
+        // Fallback: guna google.script.run dalam user gesture
+        google.script.run
+          .withSuccessHandler(function(url){
+            if(url) window.top.location.href = url + '?page=home';
+          })
+          .withFailureHandler(function(){
+            toast('Gagal log keluar. Cuba refresh halaman.','error');
+          })
+          .getScriptUrl();
+      }
+    } catch(e) {
+      // Fallback terakhir
+      toast('Sesi tamat. Sila tutup tab ini.','info');
+      console.warn('Logout navigation blocked:', e);
+    }
+  } else {
+    toast('Log keluar (dev mode)','info');
+  }
+}
+
+// ═══════════════════════════════════════════
+// FLEXIBLE NAV — toggle antara Catat & Semak
+// ═══════════════════════════════════════════
+var _semakData = []; // { acara, keputusan[] }
+var _semakFiltered = [];
+var _mockKptStore = []; // mock storage untuk saveKeputusan/getKeputusan dalam dev mode
+
+function showFlexPanel(panel){
+  document.getElementById('flex-catat').style.display = panel==='catat' ? '' : 'none';
+  document.getElementById('flex-semak').style.display  = panel==='semak'  ? '' : 'none';
+  document.querySelectorAll('.flex-nav-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('fnav-'+panel).classList.add('active');
+  if(panel==='semak') loadSemak();
+}
+
+// ═══════════════════════════════════════════
+// SEMAK — Load semua keputusan
+// ═══════════════════════════════════════════
+async function loadSemak(){
+  document.getElementById('semak-result-lbl').textContent='Memuatkan...';
+  document.getElementById('semak-acara-grid').innerHTML=
+    '<div class="semak-empty"><div style="font-size:32px;margin-bottom:8px;">⏳</div><div>Memuatkan data...</div></div>';
+
+  var r = await gasRun('getAllKeputusan');
+  var s = gasResult(r);
+  var allKpt = (s&&s.keputusan)||[];
+
+  // Jika GAS return null (fungsi belum ada) — tunjuk mesej berguna
+  if(r===null && IS_GAS){
+    document.getElementById('semak-acara-grid').innerHTML=
+      '<div class="semak-empty">'+
+        '<div style="font-size:36px;margin-bottom:12px;">⚠️</div>'+
+        '<div style="font-weight:700;font-size:14px;color:var(--amber);margin-bottom:6px;">Fungsi GAS Belum Ada</div>'+
+        '<div style="font-size:12px;color:var(--text2);line-height:1.6;">'+
+          'Tambah fungsi <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-family:monospace;">getAllKeputusan()</code> '+
+          'dan <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-family:monospace;">deleteKeputusan(payload)</code> '+
+          'dalam <strong>Code.gs</strong> anda.<br><br>'+
+          'Salin kod dari bahagian bawah penerangan ini.'+
+        '</div>'+
+        '<details style="margin-top:16px;text-align:left;background:var(--bg3);border-radius:8px;padding:12px;">'+
+          '<summary style="cursor:pointer;font-weight:700;font-size:12px;color:var(--blue);">📋 Salin kod untuk Code.gs</summary>'+
+          '<pre style="font-size:10px;margin-top:10px;overflow-x:auto;color:var(--text);line-height:1.6;">'+
+'function getAllKeputusan() {\n'+
+'  try {\n'+
+'    var ss = SpreadsheetApp.getActiveSpreadsheet();\n'+
+'    var sh = ss.getSheetByName("tbl_keputusan");\n'+
+'    if (!sh) return JSON.stringify({success:false,message:"tbl_keputusan tidak dijumpai"});\n'+
+'    var data = sh.getDataRange().getValues();\n'+
+'    if (data.length <= 1) return JSON.stringify({success:true,keputusan:[]});\n'+
+'    var headers = data[0];\n'+
+'    var keputusan = data.slice(1).filter(function(r){return r[0];}).map(function(r){\n'+
+'      var obj = {};\n'+
+'      headers.forEach(function(h,i){ obj[h] = r[i]; });\n'+
+'      return obj;\n'+
+'    });\n'+
+'    return JSON.stringify({success:true,keputusan:keputusan});\n'+
+'  } catch(e) {\n'+
+'    return JSON.stringify({success:false,message:e.toString()});\n'+
+'  }\n'+
+'}\n\n'+
+'function deleteKeputusan(payload) {\n'+
+'  try {\n'+
+'    var p = typeof payload==="string" ? JSON.parse(payload) : payload;\n'+
+'    var ss = SpreadsheetApp.getActiveSpreadsheet();\n'+
+'    var sh = ss.getSheetByName("tbl_keputusan");\n'+
+'    if (!sh) return JSON.stringify({success:false,message:"tbl_keputusan tidak dijumpai"});\n'+
+'    var data = sh.getDataRange().getValues();\n'+
+'    var headers = data[0];\n'+
+'    var idHeatIdx = headers.indexOf("id_heat");\n'+
+'    var noKpIdx = headers.indexOf("no_kp");\n'+
+'    for (var i = data.length-1; i >= 1; i--) {\n'+
+'      if (data[i][idHeatIdx]===p.id_heat && data[i][noKpIdx]===p.no_kp) {\n'+
+'        sh.deleteRow(i+1); break;\n'+
+'      }\n'+
+'    }\n'+
+'    return JSON.stringify({success:true,message:"Rekod dipadam"});\n'+
+'  } catch(e) {\n'+
+'    return JSON.stringify({success:false,message:e.toString()});\n'+
+'  }\n'+
+'}'+
+          '</pre>'+
+        '</details>'+
+      '</div>';
+    document.getElementById('semak-result-lbl').textContent='Fungsi GAS belum ditambah';
+    document.getElementById('semak-count').textContent='!';
+    return;
+  }
+
+  // Kumpul per acara
+  var acaraMap={};
+  allKpt.forEach(function(k){
+    if(!acaraMap[k.id_acara]){
+      var ac=_acara.find(function(a){return a.id_acara===k.id_acara;})||
+        {id_acara:k.id_acara,no_acara:k.no_acara||'—',nama_acara:k.nama_acara||'Acara #'+k.id_acara,id_kategori:k.id_kategori||'—',jenis:k.jenis||'TRACK'};
+      acaraMap[k.id_acara]={acara:ac, keputusan:[]};
+    }
+    acaraMap[k.id_acara].keputusan.push(k);
+  });
+  _semakData = Object.values(acaraMap);
+
+  var totalRekod = allKpt.length;
+  document.getElementById('semak-count').textContent = totalRekod;
+
+  var katSel = document.getElementById('semak-flt-kat');
+  var curKat = katSel.value;
+  katSel.innerHTML='<option value="">Semua</option>';
+  var seenKat={};
+  _semakData.forEach(function(d){
+    var k=d.acara.id_kategori;
+    if(k&&!seenKat[k]){ seenKat[k]=1; katSel.innerHTML+='<option value="'+k+'">'+k+'</option>'; }
+  });
+  if(curKat) katSel.value=curKat;
+
+  filterSemak();
+}
+
+function filterSemak(){
+  var cari=(document.getElementById('semak-cari').value||'').toLowerCase();
+  var kat=document.getElementById('semak-flt-kat').value;
+  var sts=document.getElementById('semak-flt-status').value;
+
+  _semakFiltered = _semakData.filter(function(d){
+    if(kat && d.acara.id_kategori!==kat) return false;
+    // Filter by status in keputusan
+    var kpts=d.keputusan;
+    if(sts) kpts=kpts.filter(function(k){return k.status===sts;});
+    if(!kpts.length && sts) return false;
+    // Filter by cari
+    if(cari){
+      var matchAcara=(d.acara.nama_acara||'').toLowerCase().includes(cari);
+      var matchPeserta=kpts.some(function(k){return (k.nama||'').toLowerCase().includes(cari)||(k.no_kp||'').includes(cari);});
+      if(!matchAcara&&!matchPeserta) return false;
+    }
+    return true;
+  });
+
+  var total=_semakFiltered.reduce(function(s,d){return s+d.keputusan.length;},0);
+  document.getElementById('semak-result-lbl').textContent=
+    _semakFiltered.length+' acara, '+total+' rekod keputusan';
+
+  renderSemakGrid(cari, sts);
+}
+
+function renderSemakGrid(cari, sts){
+  var grid=document.getElementById('semak-acara-grid');
+  if(!_semakFiltered.length){
+    grid.innerHTML='<div class="semak-empty"><div style="font-size:36px;margin-bottom:10px;">🔍</div>'+
+      '<div style="font-weight:700;font-size:14px;margin-bottom:4px;">Tiada Rekod Dijumpai</div>'+
+      '<div style="font-size:12px;">Cuba ubah carian atau filter</div></div>';
+    return;
+  }
+
+  grid.innerHTML='';
+  _semakFiltered.forEach(function(d, dIdx){
+    var acara=d.acara;
+    var kpts=d.keputusan;
+    if(sts) kpts=kpts.filter(function(k){return k.status===sts;});
+
+    var jenis=acara.jenis||'TRACK';
+    var icon=jenis==='TRACK'?'🏃':jenis==='FIELD'?'🏅':'⚽';
+    var iconBg=jenis==='TRACK'?'linear-gradient(135deg,#1A56DB,#0891B2)':'linear-gradient(135deg,#0F9E6A,#059669)';
+
+    // Count by status
+    var cntDraft=d.keputusan.filter(function(k){return k.status==='DRAFT';}).length;
+    var cntSah=d.keputusan.filter(function(k){return k.status==='DISAHKAN';}).length;
+    var cntPub=d.keputusan.filter(function(k){return k.status==='PUBLISHED';}).length;
+
+    // Build CRUD rows
+    var unit=jenis==='TRACK'?'s':jenis==='FIELD'?'m':'mata';
+    var N=kpts.length;
+
+    var tableRows=kpts.map(function(k, rIdx){
+      var rm=_rumahMap[k.id_rumah]||{nama:k.id_rumah||'—',warna:'#94a3b8'};
+      var medal=k.kedudukan===1?'🥇':k.kedudukan===2?'🥈':k.kedudukan===3?'🥉':k.kedudukan>0?'#'+k.kedudukan:'—';
+      var spClass='sp-'+(k.status||'draft').toLowerCase();
+      var rowId='row-'+k.id_heat+'-'+k.no_kp.replace(/[^a-z0-9]/gi,'');
+
+      return '<tr id="'+rowId+'">'+
+        '<td style="width:40px;text-align:center;font-family:monospace;color:var(--text2);font-size:11px;">'+(rIdx+1)+'</td>'+
+        '<td>'+
+          '<div style="font-weight:700;font-size:13px;">'+k.nama+'</div>'+
+          '<div style="font-size:10px;color:var(--text2);font-family:monospace;">'+k.no_kp+'</div>'+
+        '</td>'+
+        '<td style="width:100px;"><div style="display:flex;align-items:center;gap:6px;">'+
+          '<div style="width:9px;height:9px;border-radius:50%;background:'+rm.warna+';flex-shrink:0;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div>'+
+          '<span style="font-size:12px;font-weight:600;">'+rm.nama+'</span>'+
+        '</div></td>'+
+        '<td style="width:120px;font-family:monospace;font-weight:700;color:var(--cyan);">'+(k.prestasi?k.prestasi+' '+unit:'—')+'</td>'+
+        '<td style="width:70px;text-align:center;font-size:16px;">'+medal+'</td>'+
+        '<td style="width:90px;"><span class="status-pill '+spClass+'">'+
+          (k.status==='DISAHKAN'?'✅ Sah':k.status==='PUBLISHED'?'🏆 Pub':'📝 Draft')+
+        '</span></td>'+
+        '<td style="width:90px;">'+
+          '<div class="crud-act" id="act-'+rowId+'">'+
+            (k.status!=='PUBLISHED'?
+              '<button class="btn-icon btn-icon-edit" title="Edit" onclick="crudEdit(\''+acara.id_acara+'\',\''+k.id_heat+'\',\''+k.no_kp+'\',\''+rowId+'\','+N+',\''+jenis+'\')">✏️</button>':
+              '<button class="btn-icon btn-icon-edit" style="opacity:.3;cursor:not-allowed;" title="Published — tidak boleh edit" disabled>✏️</button>')+
+            (k.status!=='PUBLISHED'?
+              '<button class="btn-icon btn-icon-del" title="Padam" onclick="crudDelete(\''+k.id_heat+'\',\''+k.no_kp+'\',\''+k.nama+'\',\''+rowId+'\')">🗑️</button>':
+              '<button class="btn-icon btn-icon-del" style="opacity:.3;cursor:not-allowed;" title="Published — tidak boleh padam" disabled>🗑️</button>')+
+          '</div>'+
+        '</td>'+
+      '</tr>';
+    }).join('');
+
+    var cardEl=document.createElement('div');
+    cardEl.className='semak-card';
+    cardEl.id='semak-card-'+dIdx;
+    cardEl.innerHTML=
+      '<div class="semak-card-header" onclick="toggleSemakCard('+dIdx+')">'+
+        '<div class="semak-card-icon" style="background:'+iconBg+';">'+icon+'</div>'+
+        '<div class="semak-card-meta">'+
+          '<div class="semak-card-title">['+acara.no_acara+'] '+acara.nama_acara+'</div>'+
+          '<div class="semak-card-sub">'+
+            '<span>📌 '+acara.id_kategori+'</span>'+
+            '<span>'+jenis+'</span>'+
+            '<span>'+kpts.length+' rekod'+( kpts.length!==d.keputusan.length?' ('+d.keputusan.length+' total)':'' )+'</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="semak-card-chips">'+
+          (cntDraft>0?'<span class="semak-count-chip chip-amber">📝 '+cntDraft+'</span>':'')+
+          (cntSah>0?'<span class="semak-count-chip chip-green">✅ '+cntSah+'</span>':'')+
+          (cntPub>0?'<span class="semak-count-chip chip-blue">🏆 '+cntPub+'</span>':'')+
+          '<button class="btn btn-ghost btn-sm" style="font-size:11px;padding:4px 10px;gap:4px;" '+
+            'onclick="event.stopPropagation();cetakSemakPdf(\''+acara.id_acara+'\')" title="Cetak PDF acara ini">'+
+            '🖨️ PDF'+
+          '</button>'+
+        '</div>'+
+        '<span class="expand-arrow">▼</span>'+
+      '</div>'+
+      '<div class="semak-body">'+
+        '<div style="overflow-x:auto;">'+
+        '<table class="crud-tbl">'+
+          '<thead><tr>'+
+            '<th style="width:40px">#</th>'+
+            '<th>Peserta</th>'+
+            '<th style="width:100px">Rumah</th>'+
+            '<th style="width:120px">Prestasi</th>'+
+            '<th style="width:70px;text-align:center">Ked.</th>'+
+            '<th style="width:90px">Status</th>'+
+            '<th style="width:90px">Tindakan</th>'+
+          '</tr></thead>'+
+          '<tbody>'+tableRows+'</tbody>'+
+        '</table>'+
+        '</div>'+
+      '</div>';
+    grid.appendChild(cardEl);
+  });
+}
+
+function toggleSemakCard(idx){
+  var card=document.getElementById('semak-card-'+idx);
+  if(card) card.classList.toggle('expanded');
+}
+
+function semakExpandAll(){
+  document.querySelectorAll('.semak-card').forEach(function(c){c.classList.add('expanded');});
+}
+
+// ═══════════════════════════════════════════
+// CRUD — EDIT INLINE
+// ═══════════════════════════════════════════
+function crudEdit(idAcara, idHeat, noKp, rowId, N, jenis){
+  var row=document.getElementById(rowId);
+  if(!row) return;
+  row.classList.add('editing');
+
+  // Cari data existing dari _semakData
+  var d=_semakData.find(function(x){return x.acara.id_acara===idAcara;});
+  var k=d?d.keputusan.find(function(x){return x.no_kp===noKp&&x.id_heat===idHeat;}):null;
+  var prestasi=k&&k.prestasi?k.prestasi:'';
+  var ked=k&&k.kedudukan?k.kedudukan:0;
+  var unit=jenis==='TRACK'?'s':jenis==='FIELD'?'m':'mata';
+
+  // Build dropdown options
+  var kedOpts='<option value="">—</option>';
+  for(var n=1;n<=N;n++){
+    var m=n===1?'🥇':n===2?'🥈':n===3?'🥉':'#'+n;
+    kedOpts+='<option value="'+n+'" '+(ked===n?'selected':'')+'>'+m+'</option>';
+  }
+
+  // Replace cells 3 (prestasi) and 4 (ked) with inputs
+  var cells=row.querySelectorAll('td');
+  // cell[3] = prestasi
+  cells[3].innerHTML='<input class="crud-edit-inp" id="cedit-pre-'+rowId+'" type="number" step="0.01" min="0" value="'+prestasi+'" placeholder="'+unit+'" style="width:90px;">';
+  // cell[4] = kedudukan
+  cells[4].innerHTML='<select class="crud-ked-sel" id="cedit-ked-'+rowId+'">'+kedOpts+'</select>';
+  // cell[6] = actions → save/cancel
+  cells[6].innerHTML='<div class="crud-act">'+
+    '<button class="btn-icon btn-icon-save" title="Simpan" onclick="crudSave(\''+idAcara+'\',\''+idHeat+'\',\''+noKp+'\',\''+rowId+'\',\''+jenis+'\')">💾</button>'+
+    '<button class="btn-icon btn-icon-cancel" title="Batal" onclick="loadSemak()">✕</button>'+
+  '</div>';
+
+  // Focus
+  var inp=document.getElementById('cedit-pre-'+rowId);
+  if(inp) setTimeout(function(){inp.focus();inp.select();},50);
+}
+
+async function crudSave(idAcara, idHeat, noKp, rowId, jenis){
+  var preEl=document.getElementById('cedit-pre-'+rowId);
+  var kedEl=document.getElementById('cedit-ked-'+rowId);
+  if(!kedEl||!kedEl.value){ toast('Kedudukan wajib dipilih','error'); return; }
+
+  var prestasi=preEl?preEl.value:'';
+  var ked=parseInt(kedEl.value)||0;
+  var unit=jenis==='TRACK'?'saat':jenis==='FIELD'?'meter':'mata';
+
+  var payload={
+    id_heat:idHeat, id_acara:idAcara, no_kp:noKp,
+    prestasi:prestasi, kedudukan:ked, unit:unit, status:'DRAFT'
+  };
+  var r=await gasRun('saveKeputusan',payload);
+  var s=gasResult(r);
+  if(s&&s.success){
+    toast('✅ Rekod berjaya dikemaskini','success');
+    loadSemak();
+  } else {
+    toast((s&&s.message)||'Gagal simpan','error');
+  }
+}
+
+// ═══════════════════════════════════════════
+// CRUD — DELETE
+// ═══════════════════════════════════════════
+var _pendingDel={};
+function crudDelete(idHeat, noKp, nama, rowId){
+  _pendingDel={idHeat:idHeat,noKp:noKp,rowId:rowId};
+  document.getElementById('del-msg').textContent='Padam keputusan untuk "'+nama+'"? Tindakan ini tidak boleh diundur.';
+  document.getElementById('del-confirm-btn').onclick=doCrudDelete;
+  document.getElementById('del-overlay').classList.add('show');
+}
+function closeDelOverlay(){ document.getElementById('del-overlay').classList.remove('show'); }
+async function doCrudDelete(){
+  closeDelOverlay();
+  var p=_pendingDel;
+  if(!p.idHeat) return;
+  var r=await gasRun('deleteKeputusan',{id_heat:p.idHeat, no_kp:p.noKp});
+  if(r===null){
+    toast('Fungsi deleteKeputusan belum ada dalam Code.gs','warn');
+    return;
+  }
+  var s=gasResult(r);
+  if(s&&s.success){
+    toast('🗑️ Rekod dipadam','success');
+    // Remove row immediately for UX
+    var row=document.getElementById(p.rowId);
+    if(row){ row.style.opacity='0'; row.style.transition='opacity .3s'; setTimeout(function(){loadSemak();},300); }
+    else loadSemak();
+  } else {
+    toast((s&&s.message)||'Gagal padam','error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PDF SEMAK — PROFESSIONAL GOVERNMENT STYLE
+// Rekabentuk: A4, margin 15mm, header sekolah rasmi,
+// jadual berjalur, tandatangan 3 blok, watermark RASMI
+// ═══════════════════════════════════════════════════════════════
+
+// Warna rasmi (biru kerajaan)
+var PDF_NAVY = [30, 58, 95];      // #1E3A5F
+var PDF_BLUE = [26, 86, 219];     // #1A56DB accent
+var PDF_GOLD = [180, 83, 9];      // untuk rank 1
+var PDF_SILVER = [107, 114, 128]; // untuk rank 2
+var PDF_BRONZE = [146, 64, 14];   // untuk rank 3
+var PDF_WHITE = [255, 255, 255];
+var PDF_LIGHT = [248, 250, 253];  // baris genap
+var PDF_BORDER = [221, 226, 238];
+var PDF_TEXT = [17, 24, 39];
+var PDF_SUBTEXT = [75, 85, 99];
+
+// ── Helper: lukis header sekolah ──
+function _pdfHeader(doc, ss, noAcara, namaAcara, idKat, jenis){
+  var pw = doc.internal.pageSize.getWidth();
+  var y = 15;
+
+  // Watermark diagonal "RASMI"
+  doc.saveGraphicsState();
+  doc.setGState(new doc.GState({opacity:0.04}));
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(72);
+  doc.setTextColor(PDF_NAVY[0],PDF_NAVY[1],PDF_NAVY[2]);
+  doc.text('RASMI', pw/2, 148, {align:'center', angle:45});
+  doc.restoreGraphicsState();
+
+  // ── Logo placeholder + nama sekolah ──
+  doc.setDrawColor(PDF_NAVY[0],PDF_NAVY[1],PDF_NAVY[2]);
+  doc.setLineWidth(0.5);
+
+  // Nama sekolah besar
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(13);
+  doc.setTextColor(PDF_NAVY[0],PDF_NAVY[1],PDF_NAVY[2]);
+  doc.text((ss.nama_sekolah||'SK SULTAN ISMAIL, KEMAMAN').toUpperCase(), pw/2, y, {align:'center'});
+  y += 6;
+
+  // Nama pertandingan
+  doc.setFontSize(10);
+  doc.setFont('helvetica','bold');
+  doc.text((ss.nama_pertandingan||'SUKAN TAHUNAN').toUpperCase()+(ss.tahun?' '+ss.tahun:''), pw/2, y, {align:'center'});
+  y += 5;
+
+  // Alamat / lokasi jika ada
+  if(ss.lokasi){
+    doc.setFontSize(8);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(PDF_SUBTEXT[0],PDF_SUBTEXT[1],PDF_SUBTEXT[2]);
+    doc.text(ss.lokasi, pw/2, y, {align:'center'});
+    y += 4;
+  }
+
+  // Garisan tebal biru kerajaan
+  doc.setDrawColor(PDF_NAVY[0],PDF_NAVY[1],PDF_NAVY[2]);
+  doc.setLineWidth(1.5);
+  doc.line(15, y, pw-15, y);
+  y += 2;
+  doc.setLineWidth(0.3);
+  doc.line(15, y, pw-15, y);
+  y += 6;
+
+  // ── Title band (biru solid) ──
+  var bandH = 11;
+  doc.setFillColor(PDF_NAVY[0],PDF_NAVY[1],PDF_NAVY[2]);
+  doc.rect(15, y, pw-30, bandH, 'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(11);
+  doc.setTextColor(PDF_WHITE[0],PDF_WHITE[1],PDF_WHITE[2]);
+  doc.text('KEPUTUSAN RASMI ACARA', pw/2, y+7.5, {align:'center'});
+  y += bandH + 6;
+
+  // ── Info box 2-column ──
+  var colW = (pw-30)/2 - 2;
+  var boxH = 26;
+  // Kiri
+  doc.setFillColor(PDF_LIGHT[0],PDF_LIGHT[1],PDF_LIGHT[2]);
+  doc.rect(15, y, colW, boxH, 'F');
+  doc.setDrawColor(PDF_BORDER[0],PDF_BORDER[1],PDF_BORDER[2]);
+  doc.setLineWidth(0.4);
+  doc.rect(15, y, colW, boxH, 'S');
+  // Kanan
+  doc.setFillColor(PDF_LIGHT[0],PDF_LIGHT[1],PDF_LIGHT[2]);
+  doc.rect(15+colW+4, y, colW, boxH, 'F');
+  doc.rect(15+colW+4, y, colW, boxH, 'S');
+
+  var infoY = y + 5;
+  doc.setFont('helvetica','bold'); doc.setFontSize(7.5);
+  doc.setTextColor(PDF_SUBTEXT[0],PDF_SUBTEXT[1],PDF_SUBTEXT[2]);
+  doc.text('NO. ACARA', 18, infoY);
+  doc.text('KATEGORI', 15+colW+7, infoY);
+  infoY += 4;
+  doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.setTextColor(PDF_TEXT[0],PDF_TEXT[1],PDF_TEXT[2]);
+  doc.text('['+noAcara+'] '+namaAcara, 18, infoY);
+  doc.text(idKat, 15+colW+7, infoY);
+  infoY += 6;
+  doc.setFont('helvetica','bold'); doc.setFontSize(7.5);
+  doc.setTextColor(PDF_SUBTEXT[0],PDF_SUBTEXT[1],PDF_SUBTEXT[2]);
+  doc.text('JENIS ACARA', 18, infoY);
+  doc.text('TARIKH CETAK', 15+colW+7, infoY);
+  infoY += 4;
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+  doc.setTextColor(PDF_TEXT[0],PDF_TEXT[1],PDF_TEXT[2]);
+  doc.text(jenis, 18, infoY);
+  doc.text(new Date().toLocaleDateString('ms-MY',{day:'2-digit',month:'long',year:'numeric'}), 15+colW+7, infoY);
+
+  y += boxH + 6;
+  return y;
+}
+
+// ── Helper: lukis footer tandatangan ──
+function _pdfFooter(doc, y, ss){
+  var pw = doc.internal.pageSize.getWidth();
+  var ph = doc.internal.pageSize.getHeight();
+  var footY = ph - 38;
+
+  // Garisan atas footer
+  doc.setDrawColor(PDF_BORDER[0],PDF_BORDER[1],PDF_BORDER[2]);
+  doc.setLineWidth(0.4);
+  doc.line(15, footY, pw-15, footY);
+  footY += 6;
+
+  // 3 blok tandatangan
+  var cols = [15, pw/2-25, pw-colW2-15];
+  var colW2 = (pw-30)/3;
+  var signs = [
+    {title:'Pengurus Acara', sub:'Tarikh:____________'},
+    {title:'Pengadil Utama', sub:'Tarikh:____________'},
+    {title:'Pengetua / Guru Besar', sub:'Cop Rasmi'}
+  ];
+  signs.forEach(function(sg, i){
+    var cx = 15 + i*colW2;
+    doc.setLineWidth(0.8);
+    doc.setDrawColor(PDF_TEXT[0],PDF_TEXT[1],PDF_TEXT[2]);
+    doc.line(cx+5, footY+14, cx+colW2-5, footY+14);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8);
+    doc.setTextColor(PDF_TEXT[0],PDF_TEXT[1],PDF_TEXT[2]);
+    doc.text(sg.title, cx+colW2/2, footY+19, {align:'center'});
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+    doc.setTextColor(PDF_SUBTEXT[0],PDF_SUBTEXT[1],PDF_SUBTEXT[2]);
+    doc.text(sg.sub, cx+colW2/2, footY+24, {align:'center'});
+  });
+
+  // Print info
+  doc.setFontSize(7);
+  doc.setTextColor(180,180,180);
+  doc.text(
+    'Dicetak: '+new Date().toLocaleString('ms-MY')+
+    '  ·  Sistem Pengurusan Sukan  ·  '+(ss.nama_sekolah||'SK Sultan Ismail'),
+    pw/2, ph-8, {align:'center'}
+  );
+}
+
+// ── Lukis jadual keputusan satu acara — autoTable version ──
+// Fix: auto column width + proper word wrap via jspdf-autotable
+function _pdfAcaraTable(doc, startY, kpts, jenis, unit, acara){
+  var pw = doc.internal.pageSize.getWidth();
+
+  // Sort by kedudukan
+  var sorted = kpts.slice().sort(function(a,b){
+    var ka = a.kedudukan||999, kb = b.kedudukan||999;
+    return ka - kb;
+  });
+
+  // Build rows array for autoTable
+  var tableRows = sorted.map(function(k, i){
+    var rm  = _rumahMap[k.id_rumah]||{nama:k.id_rumah||'—'};
+    var ked = k.kedudukan||0;
+    var kedStr = ked===1?'#1 🥇':ked===2?'#2 🥈':ked===3?'#3 🥉':ked>0?'#'+ked:'—';
+    var prestasi = k.prestasi ? k.prestasi+' '+unit : '—';
+    var statusStr = k.status==='PUBLISHED'?'PUBLISHED':k.status==='DISAHKAN'?'DISAHKAN':'DRAFT';
+    return {
+      ked: kedStr,
+      nama: k.nama||'—',
+      nokp: k.no_kp||'—',
+      rumah: rm.nama||'—',
+      prestasi: prestasi,
+      status: statusStr,
+      _ked: ked,      // untuk styling
+      _status: k.status
+    };
+  });
+
+  // autoTable — handles wrap + auto row height automatically
+  doc.autoTable({
+    startY: startY,
+    margin: { left: 15, right: 15 },
+    tableWidth: pw - 30,
+
+    // Column definitions
+    columns: [
+      { header: 'KED.',         dataKey: 'ked'      },
+      { header: 'NAMA PESERTA', dataKey: 'nama'     },
+      { header: 'NO. K/P',      dataKey: 'nokp'     },
+      { header: 'RUMAH SUKAN',  dataKey: 'rumah'    },
+      { header: 'PRESTASI',     dataKey: 'prestasi' },
+      { header: 'STATUS',       dataKey: 'status'   },
+    ],
+    body: tableRows,
+
+    // Global styles
+    styles: {
+      font:        'helvetica',
+      fontSize:    8.5,
+      cellPadding: { top: 3, right: 4, bottom: 3, left: 4 },
+      overflow:    'linebreak',   // ← FIX: wrap text instead of clip
+      valign:      'middle',
+      lineColor:   PDF_BORDER,
+      lineWidth:   0.2,
+      textColor:   PDF_TEXT,
+    },
+
+    // Header row style
+    headStyles: {
+      fillColor:   PDF_NAVY,
+      textColor:   PDF_WHITE,
+      fontStyle:   'bold',
+      fontSize:    7.5,
+      halign:      'center',
+      cellPadding: { top: 4, right: 4, bottom: 4, left: 4 },
+    },
+
+    // Column-specific widths — let 'nama' and 'nokp' flex
+    columnStyles: {
+      0: { cellWidth: 18,  halign: 'center', fontStyle: 'bold' },  // KED
+      1: { cellWidth: 'auto',  halign: 'left'   },                  // NAMA — auto flex
+      2: { cellWidth: 32,  halign: 'center', fontSize: 7.5, font: 'courier' }, // NO KP
+      3: { cellWidth: 24,  halign: 'center' },                      // RUMAH
+      4: { cellWidth: 24,  halign: 'center', fontStyle: 'bold' },   // PRESTASI
+      5: { cellWidth: 22,  halign: 'center', fontSize: 7.5 },       // STATUS
+    },
+
+    // Alternate row stripe
+    alternateRowStyles: {
+      fillColor: PDF_LIGHT,
+    },
+
+    // Per-cell styling callback — gold/silver/bronze + status colours
+    didParseCell: function(data){
+      var row = data.row.raw;
+      if(data.section !== 'body') return;
+
+      var ked = row._ked || 0;
+      var sts = row._status || '';
+
+      // Top 3 row background
+      if(ked === 1){
+        data.cell.styles.fillColor = [255, 251, 235]; // gold tint
+        if(data.column.dataKey === 'ked') data.cell.styles.textColor = PDF_GOLD;
+      } else if(ked === 2){
+        data.cell.styles.fillColor = [245, 248, 250]; // silver tint
+        if(data.column.dataKey === 'ked') data.cell.styles.textColor = PDF_SILVER;
+      } else if(ked === 3){
+        data.cell.styles.fillColor = [254, 246, 230]; // bronze tint
+        if(data.column.dataKey === 'ked') data.cell.styles.textColor = PDF_BRONZE;
+      }
+
+      // Nama bold for top 3
+      if(data.column.dataKey === 'nama' && ked > 0 && ked <= 3){
+        data.cell.styles.fontStyle = 'bold';
+        data.cell.styles.textColor = PDF_NAVY;
+      }
+
+      // Prestasi colour
+      if(data.column.dataKey === 'prestasi' && ked > 0 && ked <= 3){
+        data.cell.styles.textColor = PDF_NAVY;
+      }
+
+      // Status colour
+      if(data.column.dataKey === 'status'){
+        if(sts === 'PUBLISHED') data.cell.styles.textColor = PDF_BLUE;
+        else if(sts === 'DISAHKAN') data.cell.styles.textColor = [15,158,106];
+        else data.cell.styles.textColor = [107,114,128];
+      }
+    },
+
+    // Left accent stripe untuk top 3 (drawn after cell)
+    didDrawCell: function(data){
+      if(data.section !== 'body') return;
+      var row = data.row.raw;
+      var ked = row._ked || 0;
+      if(ked >= 1 && ked <= 3 && data.column.index === 0){
+        var accentCol = ked===1?PDF_GOLD:ked===2?PDF_SILVER:PDF_BRONZE;
+        doc.setFillColor(accentCol[0],accentCol[1],accentCol[2]);
+        doc.rect(data.cell.x, data.cell.y, 2, data.cell.height, 'F');
+      }
+    },
+  });
+
+  // Return Y after table
+  return doc.lastAutoTable.finalY;
+}
+
+// ── CETAK PDF satu acara ──
+function cetakSemakPdf(idAcara){
+  var d = _semakData.find(function(x){return x.acara.id_acara===idAcara;});
+  if(!d||!d.keputusan.length){ toast('Tiada data keputusan untuk acara ini','warn'); return; }
+
+  var {jsPDF} = window.jspdf;
+  var doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var ss = _settings;
+  var acara = d.acara;
+  var jenis = acara.jenis||'TRACK';
+  var unit = jenis==='TRACK'?'saat':jenis==='FIELD'?'meter':'mata';
+
+  var y = _pdfHeader(doc, ss, acara.no_acara||'—', acara.nama_acara, acara.id_kategori||'—', jenis);
+  y = _pdfAcaraTable(doc, y, d.keputusan, jenis, unit, acara);
+  _pdfFooter(doc, y, ss);
+
+  var fname = 'Keputusan_'+( acara.nama_acara||'Acara' ).replace(/\s+/g,'_')+'_'+( acara.id_kategori||'' )+'.pdf';
+  doc.save(fname);
+  toast('PDF berjaya dijana: '+fname,'success');
+}
+
+// ── CETAK PDF SEMUA acara (satu dokumen, setiap acara satu muka surat) ──
+function cetakSemuaSemakPdf(){
+  if(!_semakFiltered.length){ toast('Tiada data untuk dicetak','warn'); return; }
+
+  var {jsPDF} = window.jspdf;
+  var doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var ss = _settings;
+
+  _semakFiltered.forEach(function(d, idx){
+    if(idx>0) doc.addPage();
+    var acara = d.acara;
+    var jenis = acara.jenis||'TRACK';
+    var unit = jenis==='TRACK'?'saat':jenis==='FIELD'?'meter':'mata';
+    var y = _pdfHeader(doc, ss, acara.no_acara||'—', acara.nama_acara, acara.id_kategori||'—', jenis);
+    y = _pdfAcaraTable(doc, y, d.keputusan, jenis, unit, acara);
+    _pdfFooter(doc, y, ss);
+  });
+
+  var tarikh = new Date().toLocaleDateString('ms-MY').replace(/\//g,'-');
+  doc.save('Keputusan_Semua_Acara_'+tarikh+'.pdf');
+  toast('PDF lengkap berjaya dijana ('+_semakFiltered.length+' acara)','success');
+}
+function _mockAllKeputusan(){
+  return [
+    {id:'KPT-1',id_heat:'HT-001',id_acara:'ACR-001',no_kp:'000101-11-0001',nama:'Siti Aminah',id_rumah:'RMH-MERAH',id_kategori:'P4',nama_acara:'100m',jenis:'TRACK',prestasi:'13.45',unit:'saat',kedudukan:1,status:'DISAHKAN'},
+    {id:'KPT-2',id_heat:'HT-001',id_acara:'ACR-001',no_kp:'000202-11-0002',nama:'Nurul Hana',id_rumah:'RMH-BIRU',id_kategori:'P4',nama_acara:'100m',jenis:'TRACK',prestasi:'13.87',unit:'saat',kedudukan:2,status:'DISAHKAN'},
+    {id:'KPT-3',id_heat:'HT-001',id_acara:'ACR-001',no_kp:'000303-11-0003',nama:'Aisha Rania',id_rumah:'RMH-HIJAU',id_kategori:'P4',nama_acara:'100m',jenis:'TRACK',prestasi:'14.20',unit:'saat',kedudukan:3,status:'DRAFT'},
+    {id:'KPT-4',id_heat:'HT-001',id_acara:'ACR-001',no_kp:'000404-11-0004',nama:'Fatin Husna',id_rumah:'RMH-KUNING',id_kategori:'P4',nama_acara:'100m',jenis:'TRACK',prestasi:'14.55',unit:'saat',kedudukan:4,status:'DRAFT'},
+    {id:'KPT-5',id_heat:'HT-002',id_acara:'ACR-002',no_kp:'000101-11-0001',nama:'Siti Aminah',id_rumah:'RMH-MERAH',id_kategori:'P4',nama_acara:'Lompat Jauh',jenis:'FIELD',prestasi:'3.45',unit:'meter',kedudukan:1,status:'PUBLISHED'},
+    {id:'KPT-6',id_heat:'HT-002',id_acara:'ACR-002',no_kp:'000202-11-0002',nama:'Nurul Hana',id_rumah:'RMH-BIRU',id_kategori:'P4',nama_acara:'Lompat Jauh',jenis:'FIELD',prestasi:'3.20',unit:'meter',kedudukan:2,status:'PUBLISHED'},
+    {id:'KPT-7',id_heat:'HT-003',id_acara:'ACR-004',no_kp:'000505-11-0005',nama:'Ahmad Faris',id_rumah:'RMH-MERAH',id_kategori:'L4',nama_acara:'100m',jenis:'TRACK',prestasi:'',unit:'saat',kedudukan:0,status:'DRAFT'},
+  ];
+}
+
+// Tambah getAllKeputusan & deleteKeputusan ke mockApi
+var _origMockApi = mockApi;
+mockApi = function(fn, args){
+  if(fn==='getAllKeputusan') return {success:true,keputusan:_mockAllKeputusan()};
+  if(fn==='deleteKeputusan') return {success:true,message:'Rekod dipadam'};
+  return _origMockApi(fn,args);
+};
+function toast(msg,type){
+  type=type||'info';
+  var icons={success:'✅',error:'❌',warn:'⚠️',info:'ℹ️'};
+  var t=document.createElement('div');
+  t.className='toast '+(type==='warn'?'warn':type);
+  t.innerHTML='<span>'+icons[type]+'</span><span>'+msg+'</span>';
+  var w=document.getElementById('toast-wrap');
+  w.appendChild(t);
+  setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},3500);
+}
+
+// ═══════════════════════════════════════════
+// MOCK (dev mode)
+// ═══════════════════════════════════════════
+function mockApi(fn,args){
+  var mocks={
+    getScriptUrl:function(){return 'https://script.google.com/test';},
+    getSession:function(p){
+      var uname = (p&&p.username) ? p.username : (_GAS_USERNAME||'pencatat1');
+      return {success:true,user:{username:uname,full_name:'Pencatat '+uname,role:'Pencatat',id_rumah:''}};
+    },
+    getSettings:function(){return {success:true,data:{nama_sekolah:'SK SULTAN ISMAIL, KEMAMAN',nama_pertandingan:'SUKAN TAHUNAN',tahun:'2025',lokasi:'Padang SK Sultan Ismail, Kemaman, Terengganu',tema:'GENERASI SIHAT, NEGARA MAJU'}};},
+    getKategori:function(){return {success:true,data:[{id:'KAT-P4',kod:'P4',nama:'Perempuan Bawah 10',jantina:'P',umin:7,umax:9},{id:'KAT-L4',kod:'L4',nama:'Lelaki Bawah 10',jantina:'L',umin:7,umax:9}]};},
+    getRumah:function(){return {success:true,data:[{id:'RMH-MERAH',nama:'MERAH',warna:'#ef4444'},{id:'RMH-BIRU',nama:'BIRU',warna:'#3b82f6'},{id:'RMH-HIJAU',nama:'HIJAU',warna:'#22c55e'},{id:'RMH-KUNING',nama:'KUNING',warna:'#eab308'}]};},
+    getAcaraJana:function(){return {success:true,acara:[
+      {id_acara:'ACR-001',no_acara:'01',nama_acara:'100m',id_kategori:'P4',jenis:'TRACK',format_acara:'TERUS_FINAL',jenis_pendaftaran:'INDIVIDU',min_ahli:1,max_ahli:1,guna_lorong:true,kuota_ind_rumah:2,kuota_pasukan_rumah:0,ahli_utama:1,ahli_simpanan:0},
+      {id_acara:'ACR-002',no_acara:'02',nama_acara:'Lompat Jauh',id_kategori:'P4',jenis:'FIELD',format_acara:'TERUS_FINAL',jenis_pendaftaran:'INDIVIDU',min_ahli:1,max_ahli:1,guna_lorong:false,kuota_ind_rumah:2,kuota_pasukan_rumah:0,ahli_utama:1,ahli_simpanan:0},
+      {id_acara:'ACR-003',no_acara:'03',nama_acara:'Relay 4x100m',id_kategori:'P4',jenis:'TRACK',format_acara:'TERUS_FINAL',jenis_pendaftaran:'KUMPULAN',min_ahli:4,max_ahli:4,guna_lorong:true,kuota_ind_rumah:0,kuota_pasukan_rumah:2,ahli_utama:4,ahli_simpanan:1},
+      {id_acara:'ACR-004',no_acara:'04',nama_acara:'100m',id_kategori:'L4',jenis:'TRACK',format_acara:'TERUS_FINAL',jenis_pendaftaran:'INDIVIDU',min_ahli:1,max_ahli:1,guna_lorong:true,kuota_ind_rumah:2,kuota_pasukan_rumah:0,ahli_utama:1,ahli_simpanan:0},
+    ]};},
+    getHeat:function(){return {success:true,heat:[
+      {id_heat:'HT-001',id_acara:args&&args.id_acara,jenis:'FINAL',no_heat:1,status:'BELUM'},
+      {id_heat:'HT-002',id_acara:args&&args.id_acara,jenis:'FINAL',no_heat:2,status:'SELESAI'},
+    ],total:2};},
+    getPesertaHeat:function(a){
+      var all={
+        'HT-001':[
+          {id:'PH-1',id_heat:'HT-001',no_kp:'000101-11-0001',nama:'Siti Aminah',id_rumah:'RMH-MERAH',lorong:1,giliran:1,status:'AKTIF',source:'INDIVIDU'},
+          {id:'PH-2',id_heat:'HT-001',no_kp:'000202-11-0002',nama:'Nurul Hana',id_rumah:'RMH-BIRU',lorong:2,giliran:2,status:'AKTIF',source:'INDIVIDU'},
+          {id:'PH-3',id_heat:'HT-001',no_kp:'000303-11-0003',nama:'Aisha Rania',id_rumah:'RMH-HIJAU',lorong:3,giliran:3,status:'AKTIF',source:'INDIVIDU'},
+          {id:'PH-4',id_heat:'HT-001',no_kp:'000404-11-0004',nama:'Fatin Husna',id_rumah:'RMH-KUNING',lorong:4,giliran:4,status:'AKTIF',source:'INDIVIDU'},
+        ],
+        'HT-002':[
+          {id:'PH-5',id_heat:'HT-002',no_kp:'KMP-MERAH-A',nama:'MERAH A',id_rumah:'RMH-MERAH',lorong:1,giliran:1,status:'AKTIF',source:'KUMPULAN'},
+          {id:'PH-6',id_heat:'HT-002',no_kp:'KMP-BIRU-A',nama:'BIRU A',id_rumah:'RMH-BIRU',lorong:2,giliran:2,status:'AKTIF',source:'KUMPULAN'},
+        ],
       };
-
-      if(!payload.johan) return alert('Pemenang Johan wajib dipilih!');
-
-      document.getElementById('section-result').style.display = 'none';
-      document.getElementById('loader').textContent = '💾 Menyimpan data & mengira markah...';
-      document.getElementById('loader').style.display = 'block';
-
-      google.script.run.withSuccessHandler(res => {
-        document.getElementById('loader').style.display = 'none';
-        if(res.success) {
-          alert('Berjaya! ' + res.message);
-          window.location.reload(); // Refresh halaman untuk acara seterusnya
-        } else {
-          alert('Ralat: ' + res.message);
-          document.getElementById('section-result').style.display = 'block';
-        }
-      }).saveResultAndTally(payload);
-    }
-  </script>
+      var peserta=(a&&a.id_heat&&all[a.id_heat])||[];
+      return {success:true,peserta:peserta,total:peserta.length};
+    },
+    getPendaftaran:function(){return {success:true,pendaftaran:[
+      {id_reg:'REG-001',id_acara:'ACR-001',no_kp:'000101-11-0001',id_rumah:'RMH-MERAH',id_kategori:'P4',nama_murid:'Siti Aminah',status:'AKTIF'},
+      {id_reg:'REG-002',id_acara:'ACR-001',no_kp:'000202-11-0002',id_rumah:'RMH-BIRU',id_kategori:'P4',nama_murid:'Nurul Hana',status:'AKTIF'},
+      {id_reg:'REG-003',id_acara:'ACR-001',no_kp:'000303-11-0003',id_rumah:'RMH-HIJAU',id_kategori:'P4',nama_murid:'Aisha Rania',status:'AKTIF'},
+      {id_reg:'REG-004',id_acara:'ACR-001',no_kp:'000404-11-0004',id_rumah:'RMH-KUNING',id_kategori:'P4',nama_murid:'Fatin Husna',status:'AKTIF'},
+      {id_reg:'REG-005',id_acara:'ACR-004',no_kp:'000505-11-0005',id_rumah:'RMH-MERAH',id_kategori:'L4',nama_murid:'Ahmad Faris',status:'AKTIF'},
+    ]};},
+    getKeputusan:function(p){
+      if(!p) return {success:true,keputusan:[]};
+      var results = _mockKptStore.filter(function(k){
+        if(p.id_heat) return k.id_heat===p.id_heat;
+        if(p.id_acara) return k.id_acara===p.id_acara;
+        return false;
+      });
+      return {success:true,keputusan:results};
+    },
+    saveKeputusan:function(p){
+      // Mock: simulate save
+      if(!p) return {success:false,message:'Tiada payload'};
+      // Update atau tambah dalam mock _keputusan array
+      var idx = _mockKptStore.findIndex(function(k){ return k.id_heat===p.id_heat && k.no_kp===p.no_kp; });
+      if(idx>=0){ Object.assign(_mockKptStore[idx], p); }
+      else { _mockKptStore.push(Object.assign({id:'KPT-'+Date.now()+Math.random()},p)); }
+      return {success:true,message:'Disimpan'};
+    },
+    updateHeatStatus:function(){return {success:true};},
+    publishKeputusan:function(){return {success:true,published:4,message:'4 keputusan dipublish'};},
+  };
+  return (mocks[fn]&&mocks[fn](args))||{success:false,message:'mock tiada: '+fn};
+}
+</script>
 </body>
 </html>

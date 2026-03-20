@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rekod Acara — Sistem Sukan Tahunan</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F0F4F8;--bg2:#1E3A5F;--card:#FFFFFF;--card2:#EEF2F7;--border:rgba(30,58,95,0.10);--border2:rgba(30,58,95,0.18);--blue:#4F8EF7;--blue2:#3B7BF0;--cyan:#22D3EE;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--gold:#F6C90E;--text:#1E293B;--text2:#475569;--text3:#64748B;--header-h:58px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+#header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:100;background:rgba(30,58,95,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;padding:0 20px;gap:12px}
+.logo-badge{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff}
+.logo-badge .tag{font-size:10px;font-family:'DM Mono',monospace;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;padding:2px 8px;border-radius:20px;letter-spacing:1px}
+.hbtn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;transition:all 0.2s}
+.hbtn:hover{background:var(--card);border-color:var(--blue);color:var(--blue)}
+#main-content{margin-top:var(--header-h);padding:24px;max-width:1200px;margin-left:auto;margin-right:auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13px;font-weight:700;color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff}
+.btn-primary:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-danger{background:linear-gradient(135deg,#DC2626,var(--red));color:#fff}
+.btn-ghost{background:var(--card2);border:1px solid var(--border);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.btn-amber{background:linear-gradient(135deg,#D97706,var(--amber));color:#fff}
+.btn-sm{padding:5px 11px;font-size:11px}
+.btn-xs{padding:3px 8px;font-size:10px;border-radius:6px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;letter-spacing:0.3px;text-transform:uppercase}
+.form-input,.form-select,.form-textarea{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--card);color:var(--text);transition:border-color 0.2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--blue)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table th{padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid var(--border)}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2)}
+.data-table tr:hover td{background:#F8FAFC}
+.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.3px}
+.badge-sekolah{background:#EEF2FF;color:#3730A3}
+.badge-daerah{background:#FEF3C7;color:#92400E}
+.badge-negeri{background:#ECFDF5;color:#065F46}
+.badge-mssm{background:#FDF2F8;color:#701A75}
+.badge-green{background:#DCFCE7;color:#166534}
+.badge-gray{background:#F1F5F9;color:#475569}
+.badge-gold{background:#FEF9C3;color:#854D0E}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:14px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:14px;font-weight:700}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3);padding:4px}
+.modal-body{padding:20px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border)}
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,0.8);z-index:300;align-items:center;justify-content:center}
+.loading-overlay.show{display:flex}
+.spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:400;display:flex;flex-direction:column;gap:8px}
+.toast{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;font-size:12px;background:var(--text);color:#fff;animation:slideIn 0.3s ease}
+.toast.success{background:#059669}.toast.error{background:#DC2626}.toast.warning{background:#D97706}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center}
+.stat-card .stat-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:2px}
+.stat-card .stat-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px}
+.filter-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:16px}
+.pecah-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:#FEF9C3;color:#854D0E;border:1px solid #FCD34D}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="logo-badge">🏆 <span>REKOD ACARA</span><span class="tag">OPTIONAL</span></div>
+  <div style="flex:1"></div>
+  <div style="font-size:11px;color:rgba(255,255,255,0.5);font-family:'DM Mono',monospace" id="hdr-sekolah">—</div>
+  <button class="hbtn" onclick="balikSetup()">← Admin Setup</button>
+</div>
+
+<div id="main-content">
+
+  <!-- Stat cards -->
+  <div class="stat-grid">
+    <div class="stat-card" style="border-top:3px solid #3730A3">
+      <div class="stat-val" id="stat-sekolah">—</div>
+      <div class="stat-lbl">Rekod Sekolah</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #92400E">
+      <div class="stat-val" id="stat-daerah">—</div>
+      <div class="stat-lbl">Rekod Daerah</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #065F46">
+      <div class="stat-val" id="stat-negeri">—</div>
+      <div class="stat-lbl">Rekod Negeri</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #701A75">
+      <div class="stat-val" id="stat-mssm">—</div>
+      <div class="stat-lbl">MSSM</div>
+    </div>
+  </div>
+
+  <!-- Senarai Rekod -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🏅 Senarai Rekod Acara</span>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-rekod');resetForm()">＋ Tambah Rekod</button>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-row">
+      <div>
+        <div class="form-label">Peringkat</div>
+        <select class="form-select" id="flt-peringkat" onchange="renderTable()">
+          <option value="">Semua Peringkat</option>
+          <option value="SEKOLAH">Sekolah</option>
+          <option value="DAERAH">Daerah</option>
+          <option value="NEGERI">Negeri</option>
+          <option value="MSSM">MSSM</option>
+        </select>
+      </div>
+      <div>
+        <div class="form-label">Kategori</div>
+        <select class="form-select" id="flt-kategori" onchange="renderTable()">
+          <option value="">Semua Kategori</option>
+        </select>
+      </div>
+      <div>
+        <div class="form-label">Jenis Acara</div>
+        <select class="form-select" id="flt-jenis" onchange="renderTable()">
+          <option value="">Semua Jenis</option>
+          <option value="TRACK">Track</option>
+          <option value="FIELD">Field</option>
+        </select>
+      </div>
+      <div>
+        <div class="form-label">Cari</div>
+        <input class="form-input" id="flt-cari" placeholder="Nama acara / atlet..." oninput="renderTable()">
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="clearFilter()">Reset</button>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Peringkat</th>
+            <th>Acara</th>
+            <th>Kategori</th>
+            <th>Prestasi</th>
+            <th>Pemegang Rekod</th>
+            <th>Tahun</th>
+            <th>Status</th>
+            <th>Tindakan</th>
+          </tr>
+        </thead>
+        <tbody id="rekod-tbody">
+          <tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text3)">Memuatkan...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:10px 0;font-size:11px;color:var(--text3)" id="rekod-footer">—</div>
+  </div>
+
+  <!-- Info panel -->
+  <div class="card" style="border-left:4px solid var(--amber);background:#FFFBEB">
+    <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:6px">ℹ️ Cara Rekod Berfungsi</div>
+    <div style="font-size:12px;color:#78350F;line-height:1.7">
+      Rekod ini <strong>optional</strong> — boleh kosong. Apabila keputusan acara disimpan dalam sistem, 
+      ia akan semak rekod yang ADA sahaja. Jika prestasi baru lebih baik dari rekod semasa (mana-mana peringkat), 
+      notifikasi akan dipaparkan dan catatan akan dicatat dalam keputusan. 
+      <strong>Peringkat yang tiada rekod akan diabaikan automatik.</strong>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL: Tambah/Edit Rekod -->
+<div class="modal-overlay" id="modal-rekod">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-rekod-title">Tambah Rekod Acara</span>
+      <button class="modal-close" onclick="closeModal('modal-rekod')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="r-id">
+      <div class="form-group">
+        <label class="form-label">Peringkat Rekod</label>
+        <select class="form-select" id="r-peringkat">
+          <option value="">-- Pilih Peringkat --</option>
+          <option value="SEKOLAH">🏫 Sekolah</option>
+          <option value="DAERAH">🏙️ Daerah</option>
+          <option value="NEGERI">🗺️ Negeri</option>
+          <option value="MSSM">🏆 MSSM</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Acara (dari Acara Master)</label>
+          <select class="form-select" id="r-acara" onchange="onAcaraChange()">
+            <option value="">-- Pilih Acara --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kategori</label>
+          <select class="form-select" id="r-kategori">
+            <option value="">-- Pilih Kategori --</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Prestasi</label>
+          <input class="form-input" id="r-prestasi" type="number" step="0.01" placeholder="cth: 11.23">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Unit</label>
+          <select class="form-select" id="r-unit">
+            <option value="s">s — saat (track)</option>
+            <option value="m">m — meter (lompat/lempar)</option>
+            <option value="cm">cm — sentimeter</option>
+            <option value="kg">kg — kilogram (lontar)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nama Pemegang Rekod</label>
+          <input class="form-input" id="r-pemilik" placeholder="Nama atlet">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tahun</label>
+          <input class="form-input" id="r-tahun" type="number" placeholder="2024">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Catatan</label>
+        <input class="form-input" id="r-catatan" placeholder="Catatan tambahan (optional)">
+      </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="r-aktif" checked style="width:16px;height:16px;accent-color:var(--blue)">
+          Rekod Aktif (digunakan untuk semakan)
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-rekod')">Batal</button>
+      <button class="btn btn-primary" onclick="saveRekod()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Confirm Padam -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <span class="modal-title">⚠️ Padam Rekod?</span>
+      <button class="modal-close" onclick="closeModal('modal-confirm')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text2)" id="confirm-msg">Padam rekod ini?</p>
+      <p style="font-size:11px;color:var(--text3);margin-top:8px">Tindakan ini tidak boleh diundur.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-confirm')">Batal</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">🗑️ Ya, Padam</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading + Toast -->
+<div class="loading-overlay" id="loading-overlay">
+  <div style="text-align:center"><div class="spinner"></div><div style="margin-top:10px;font-size:12px;color:var(--text3)" id="loading-msg">Memuatkan...</div></div>
+</div>
+<div id="toast-container"></div>
+
+<script>
+const IS_GAS = (typeof google !== 'undefined' && google.script);
+let _rekodList = [];
+let _acaraMaster = [];
+let _kategori = [];
+let _scriptUrl = '';
+
+// ── GAS wrapper ──
+function gasRun(fn) {
+  var args = Array.prototype.slice.call(arguments, 1);
+  return new Promise(function(resolve) {
+    if (IS_GAS) {
+      var runner = google.script.run
+        .withSuccessHandler(function(r) {
+          resolve(typeof r === 'string' ? JSON.parse(r) : r);
+        })
+        .withFailureHandler(function(e) {
+          showToast('Ralat: ' + (e.message || e), 'error');
+          resolve(null);
+        });
+      if (args.length === 0)      runner[fn]();
+      else if (args.length === 1) runner[fn](args[0]);
+      else                        runner[fn](args[0], args[1]);
+    } else {
+      setTimeout(function() { resolve({ success: false, message: 'Mock: ' + fn }); }, 200);
+    }
+  });
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', async function() {
+  if (IS_GAS) {
+    google.script.run.withSuccessHandler(function(u) { _scriptUrl = u; }).getScriptUrl();
+  }
+  showLoading(true, 'Memuatkan data...');
+  await Promise.all([loadRekod(), loadAcaraMaster(), loadKategori(), loadSettings()]);
+  showLoading(false);
+});
+
+async function loadSettings() {
+  var r = await gasRun('getSettings');
+  if (r && r.success && r.data) {
+    document.getElementById('hdr-sekolah').textContent = r.data.nama_sekolah || 'Sistem Sukan';
+  }
+}
+
+async function loadRekod() {
+  var r = await gasRun('getRekod');
+  if (r && r.success) {
+    _rekodList = r.data || [];
+    renderTable();
+    updateStats();
+  }
+}
+
+async function loadAcaraMaster() {
+  var r = await gasRun('getAcara');
+  if (r && r.success) {
+    _acaraMaster = (r.data || []).filter(function(a) { return a.aktif !== false; });
+    var sel = document.getElementById('r-acara');
+    sel.innerHTML = '<option value="">-- Pilih Acara --</option>';
+    _acaraMaster.forEach(function(a) {
+      sel.innerHTML += '<option value="' + a.id + '" data-jenis="' + (a.jenis || 'TRACK') + '" data-nama="' + a.nama + '">' + (a.emoji || '') + ' ' + a.nama + '</option>';
+    });
+  }
+}
+
+async function loadKategori() {
+  var r = await gasRun('getKategori');
+  if (r && r.success) {
+    _kategori = r.data || [];
+    var selFlt = document.getElementById('flt-kategori');
+    selFlt.innerHTML = '<option value="">Semua Kategori</option>';
+    _kategori.forEach(function(k) {
+      selFlt.innerHTML += '<option value="' + k.id + '">' + k.kod + ' — ' + (k.nama || '') + '</option>';
+    });
+  }
+}
+
+function onAcaraChange() {
+  var sel = document.getElementById('r-acara');
+  var opt = sel.options[sel.selectedIndex];
+  var jenis = opt ? (opt.dataset.jenis || 'TRACK') : 'TRACK';
+  // Auto-set unit ikut jenis
+  var unitSel = document.getElementById('r-unit');
+  unitSel.value = jenis === 'FIELD' ? 'm' : 's';
+  // Populate kategori dari acara yang dipilih
+  var acaraId = sel.value;
+  var acara = _acaraMaster.find(function(a) { return a.id === acaraId; });
+  var katSel = document.getElementById('r-kategori');
+  katSel.innerHTML = '<option value="">-- Pilih Kategori --</option>';
+  if (acara && acara.kategori) {
+    var katArr = Array.isArray(acara.kategori) ? acara.kategori : [acara.kategori];
+    katArr.forEach(function(kod) {
+      var kat = _kategori.find(function(k) { return k.kod === kod || k.id === kod; });
+      if (kat) katSel.innerHTML += '<option value="' + kat.id + '">' + kat.kod + ' — ' + (kat.nama || '') + '</option>';
+    });
+  }
+}
+
+// ── RENDER TABLE ──
+function renderTable() {
+  var fltP = document.getElementById('flt-peringkat').value;
+  var fltK = document.getElementById('flt-kategori').value;
+  var fltJ = document.getElementById('flt-jenis').value;
+  var fltC = (document.getElementById('flt-cari').value || '').toLowerCase();
+
+  var list = _rekodList.filter(function(r) {
+    if (fltP && r.peringkat !== fltP) return false;
+    if (fltK && r.id_kategori !== fltK) return false;
+    if (fltJ) {
+      var acara = _acaraMaster.find(function(a) { return a.id === r.id_acara_master; });
+      if (!acara || acara.jenis !== fltJ) return false;
+    }
+    if (fltC && !(r.nama_acara || '').toLowerCase().includes(fltC) && !(r.nama_pemilik || '').toLowerCase().includes(fltC)) return false;
+    return true;
+  });
+
+  var peringkatBadge = {
+    SEKOLAH: 'badge-sekolah', DAERAH: 'badge-daerah',
+    NEGERI: 'badge-negeri', MSSM: 'badge-mssm'
+  };
+  var peringkatLabel = {
+    SEKOLAH: '🏫 Sekolah', DAERAH: '🏙️ Daerah',
+    NEGERI: '🗺️ Negeri', MSSM: '🏆 MSSM'
+  };
+
+  var tbody = document.getElementById('rekod-tbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text3)">Tiada rekod. Klik "+ Tambah Rekod" untuk menambah.</td></tr>';
+    document.getElementById('rekod-footer').textContent = '0 rekod';
+    return;
+  }
+
+  tbody.innerHTML = list.map(function(r) {
+    var kat = _kategori.find(function(k) { return k.id === r.id_kategori; });
+    var katLabel = kat ? (kat.kod + ' — ' + (kat.nama || '')) : (r.id_kategori || '—');
+    var aktifBadge = r.aktif
+      ? '<span class="badge badge-green">Aktif</span>'
+      : '<span class="badge badge-gray">Tidak Aktif</span>';
+    return '<tr>' +
+      '<td><span class="badge ' + (peringkatBadge[r.peringkat] || 'badge-gray') + '">' + (peringkatLabel[r.peringkat] || r.peringkat) + '</span></td>' +
+      '<td style="font-weight:600">' + (r.nama_acara || '—') + '</td>' +
+      '<td><span style="font-size:11px;color:var(--text3)">' + katLabel + '</span></td>' +
+      '<td><span style="font-family:DM Mono,monospace;font-weight:700;font-size:13px">' + (r.prestasi || '—') + '</span> <span style="font-size:10px;color:var(--text3)">' + (r.unit || '') + '</span></td>' +
+      '<td>' + (r.nama_pemilik || '—') + '</td>' +
+      '<td style="font-family:DM Mono,monospace">' + (r.tahun || '—') + '</td>' +
+      '<td>' + aktifBadge + '</td>' +
+      '<td><div style="display:flex;gap:4px">' +
+        '<button class="btn btn-ghost btn-xs" onclick="editRekod(\'' + r.id_rekod + '\')">✏️</button>' +
+        '<button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B" onclick="confirmPadam(\'' + r.id_rekod + '\',\'' + (r.nama_acara || '') + ' ' + (r.peringkat || '') + '\')">🗑️</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+
+  document.getElementById('rekod-footer').textContent = list.length + ' rekod';
+}
+
+function updateStats() {
+  ['SEKOLAH','DAERAH','NEGERI','MSSM'].forEach(function(p) {
+    var count = _rekodList.filter(function(r) { return r.peringkat === p; }).length;
+    document.getElementById('stat-' + p.toLowerCase()).textContent = count;
+  });
+}
+
+// ── MODAL REKOD ──
+function resetForm() {
+  document.getElementById('r-id').value = '';
+  document.getElementById('r-peringkat').value = '';
+  document.getElementById('r-acara').value = '';
+  document.getElementById('r-kategori').innerHTML = '<option value="">-- Pilih Kategori --</option>';
+  document.getElementById('r-prestasi').value = '';
+  document.getElementById('r-unit').value = 's';
+  document.getElementById('r-pemilik').value = '';
+  document.getElementById('r-tahun').value = new Date().getFullYear();
+  document.getElementById('r-catatan').value = '';
+  document.getElementById('r-aktif').checked = true;
+  document.getElementById('modal-rekod-title').textContent = 'Tambah Rekod Acara';
+}
+
+function editRekod(id) {
+  var r = _rekodList.find(function(x) { return x.id_rekod === id; });
+  if (!r) return;
+  resetForm();
+  document.getElementById('modal-rekod-title').textContent = 'Edit Rekod';
+  document.getElementById('r-id').value = r.id_rekod;
+  document.getElementById('r-peringkat').value = r.peringkat || '';
+  document.getElementById('r-acara').value = r.id_acara_master || '';
+  onAcaraChange();
+  setTimeout(function() {
+    document.getElementById('r-kategori').value = r.id_kategori || '';
+  }, 100);
+  document.getElementById('r-prestasi').value = r.prestasi || '';
+  document.getElementById('r-unit').value = r.unit || 's';
+  document.getElementById('r-pemilik').value = r.nama_pemilik || '';
+  document.getElementById('r-tahun').value = r.tahun || '';
+  document.getElementById('r-catatan').value = r.catatan || '';
+  document.getElementById('r-aktif').checked = r.aktif !== false;
+  openModal('modal-rekod');
+}
+
+async function saveRekod() {
+  var peringkat = document.getElementById('r-peringkat').value;
+  var acaraSel  = document.getElementById('r-acara');
+  var idAcara   = acaraSel.value;
+  var opt       = acaraSel.options[acaraSel.selectedIndex];
+  var namaAcara = opt ? opt.dataset.nama || opt.textContent.trim() : '';
+  var prestasi  = document.getElementById('r-prestasi').value;
+  var idKat     = document.getElementById('r-kategori').value;
+
+  if (!peringkat || !idAcara || !prestasi) {
+    showToast('Sila isi Peringkat, Acara dan Prestasi', 'error');
+    return;
+  }
+
+  var payload = {
+    id_rekod        : document.getElementById('r-id').value || '',
+    id_acara_master : idAcara,
+    nama_acara      : namaAcara,
+    id_kategori     : idKat,
+    peringkat       : peringkat,
+    prestasi        : parseFloat(prestasi),
+    unit            : document.getElementById('r-unit').value,
+    nama_pemilik    : document.getElementById('r-pemilik').value,
+    tahun           : document.getElementById('r-tahun').value,
+    catatan         : document.getElementById('r-catatan').value,
+    aktif           : document.getElementById('r-aktif').checked
+  };
+
+  showLoading(true, 'Menyimpan...');
+  var r = await gasRun('saveRekod', payload);
+  showLoading(false);
+  if (r && r.success) {
+    showToast(payload.id_rekod ? 'Rekod dikemaskini ✅' : 'Rekod ditambah ✅', 'success');
+    closeModal('modal-rekod');
+    await loadRekod();
+  } else {
+    showToast((r && r.message) || 'Gagal simpan rekod', 'error');
+  }
+}
+
+function confirmPadam(id, label) {
+  document.getElementById('confirm-msg').textContent = 'Padam rekod: ' + label + '?';
+  var btn = document.getElementById('confirm-ok-btn');
+  btn.onclick = function() { closeModal('modal-confirm'); padamRekod(id); };
+  openModal('modal-confirm');
+}
+
+async function padamRekod(id) {
+  showLoading(true, 'Mempadam...');
+  var r = await gasRun('deleteRekod', { id_rekod: id });
+  showLoading(false);
+  if (r && r.success) {
+    showToast('Rekod dipadam', 'success');
+    await loadRekod();
+  } else {
+    showToast((r && r.message) || 'Gagal padam', 'error');
+  }
+}
+
+function clearFilter() {
+  document.getElementById('flt-peringkat').value = '';
+  document.getElementById('flt-kategori').value = '';
+  document.getElementById('flt-jenis').value = '';
+  document.getElementById('flt-cari').value = '';
+  renderTable();
+}
+
+// ── NAVIGATE ──
+function balikSetup() {
+  if (_scriptUrl) {
+    var a = document.createElement('a'); a.href = _scriptUrl + '?page=admin-setup'; a.target = '_top'; document.body.appendChild(a); a.click();
+  } else {
+    gasRun('getScriptUrl').then(function(url) {
+      if (url) { var a = document.createElement('a'); a.href = url + '?page=admin-setup'; a.target = '_top'; document.body.appendChild(a); a.click(); }
+    });
+  }
+}
+
+// ── UTILS ──
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function showLoading(show, msg) {
+  document.getElementById('loading-msg').textContent = msg || 'Memuatkan...';
+  document.getElementById('loading-overlay').classList.toggle('show', show);
+}
+function showToast(msg, type) {
+  type = type || 'success';
+  var icons = { success: '✅', error: '❌', warning: '⚠️' };
+  var el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = '<span>' + (icons[type] || '') + '</span><span>' + msg + '</span>';
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(function() { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(function() { el.remove(); }, 300); }, 3500);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(function(o) {
+  o.addEventListener('click', function(e) { if (e.target === o) o.classList.remove('show'); });
+});
+</script>
+</body>
+</html>

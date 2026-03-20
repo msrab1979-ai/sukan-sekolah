@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panduan Pengguna — Sistem Sukan Tahunan</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F0F4F8;--bg2:#1E3A5F;--bg3:#EBF0F7;--card:#FFFFFF;--card2:#EEF2F7;--border:rgba(30,58,95,0.10);--border2:rgba(30,58,95,0.18);--blue:#4F8EF7;--blue2:#3B7BF0;--cyan:#22D3EE;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--purple:#8B5CF6;--gold:#F6C90E;--text:#1E293B;--text2:#475569;--text3:#64748B;--sidebar-w:248px;--header-h:58px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+#header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:100;background:rgba(30,58,95,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;padding:0 20px;gap:12px}
+.logo-badge{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff;letter-spacing:-0.3px}
+.logo-badge .tag{font-size:10px;font-family:'DM Mono',monospace;font-weight:500;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;padding:2px 8px;border-radius:20px;letter-spacing:1px}
+.header-spacer{flex:1}
+.hbtn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);padding:6px 12px;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.hbtn:hover{background:var(--card);border-color:var(--blue);color:var(--blue)}
+#sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:220px;background:var(--bg2);border-right:1px solid var(--border);z-index:90;overflow-y:auto;padding:12px 8px 80px}
+.sb-section{font-size:10px;font-family:'DM Mono',monospace;color:rgba(255,255,255,0.38);letter-spacing:1.5px;padding:12px 10px 4px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,0.75);transition:all 0.2s;margin-bottom:1px}
+.nav-item:hover{background:rgba(255,255,255,0.10);color:#fff}
+.nav-item.active{background:rgba(255,255,255,0.18);color:#fff}
+#main{margin-left:220px;margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));padding:28px 32px}
+.page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.section{display:none}.section.active{display:block}
+.step-ol{list-style:none;counter-reset:steps}
+.step-ol li{counter-increment:steps;display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);line-height:1.7}
+.step-ol li:last-child{border-bottom:none}
+.step-ol li::before{content:counter(steps);min-width:24px;height:24px;border-radius:50%;background:rgba(79,142,247,0.12);color:var(--blue);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;font-family:'DM Mono',monospace}
+.b-blue{background:rgba(79,142,247,0.12);color:var(--blue)}
+.b-green{background:rgba(16,185,129,0.12);color:var(--green)}
+.b-amber{background:rgba(245,158,11,0.12);color:var(--amber)}
+.b-red{background:rgba(239,68,68,0.12);color:var(--red)}
+.b-gray{background:var(--card2);color:var(--text3);border:1px solid var(--border)}
+.b-purple{background:rgba(139,92,246,0.12);color:var(--purple)}
+.warn-box{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:10px 14px;font-size:12px;color:#92400E;margin-bottom:12px;line-height:1.6}
+.info-box{background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.2);border-radius:8px;padding:10px 14px;font-size:12px;color:#1e40af;margin-bottom:12px;line-height:1.6}
+.ok-box{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:10px 14px;font-size:12px;color:#065f46;margin-bottom:12px;line-height:1.6}
+.err-box{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 14px;font-size:12px;color:#991b1b;margin-bottom:12px;line-height:1.6}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{padding:9px 12px;background:var(--card2);color:var(--text3);font-size:10px;font-family:'DM Mono',monospace;letter-spacing:1px;text-align:left;border-bottom:1px solid var(--border);text-transform:uppercase}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;font-size:12px;line-height:1.6}
+.tbl tr:last-child td{border-bottom:none}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0;padding:12px;background:var(--bg3);border-radius:8px}
+.flow-node{background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:6px 14px;font-size:12px;color:var(--text);font-weight:500}
+.flow-arrow{color:var(--text3);font-size:16px;font-weight:300}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.code{font-family:'DM Mono',monospace;font-size:11px;background:var(--bg3);padding:2px 7px;border-radius:4px;color:var(--text)}
+#search-bar{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 14px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:20px}
+#search-bar:focus{border-color:var(--blue)}
+.search-result{display:none}
+.search-result.show{display:block}
+@media(max-width:800px){#sidebar{display:none}#main{margin-left:0;padding:20px 16px}}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <div class="logo-badge">📖 <span>PANDUAN</span>&nbsp;PENGGUNA <span class="tag">MANUAL</span></div>
+  <div class="header-spacer"></div>
+  <button class="hbtn" onclick="goBack()">← Kembali ke Admin</button>
+</header>
+
+<nav id="sidebar">
+  <div class="sb-section">Panduan</div>
+  <div class="nav-item active" onclick="showSection('mula', this)"><span>🚀</span> Permulaan</div>
+  <div class="nav-item" onclick="showSection('setup', this)"><span>⚙️</span> Setup Sistem</div>
+  <div class="nav-item" onclick="showSection('murid', this)"><span>👥</span> Data Murid</div>
+  <div class="nav-item" onclick="showSection('acara', this)"><span>🏃</span> Acara &amp; Jana</div>
+  <div class="nav-item" onclick="showSection('daftar', this)"><span>📋</span> Pendaftaran</div>
+  <div class="nav-item" onclick="showSection('keputusan', this)"><span>🏅</span> Keputusan</div>
+  <div class="nav-item" onclick="showSection('roles', this)"><span>👤</span> Peranan Pengguna</div>
+  <div class="nav-item" onclick="showSection('masalah', this)"><span>🔧</span> Masalah &amp; Fix</div>
+  <div class="nav-item" onclick="showSection('reset', this)"><span>🔄</span> Reset Sistem</div>
+</nav>
+
+<main id="main">
+
+<input id="search-bar" placeholder="🔍 Cari topik dalam manual..." oninput="searchManual(this.value)">
+<div id="search-results" class="search-result"></div>
+
+<!-- ══════════════════════════════ PERMULAAN ══════════════════════════════ -->
+<div id="sec-mula" class="section active">
+  <div class="page-title">🚀 Permulaan</div>
+  <div class="page-sub">Baca bahagian ini dahulu sebelum mula guna sistem</div>
+
+  <div class="ok-box">Sistem ini menggunakan Google Apps Script + Google Sheets sebagai pangkalan data. Semua data disimpan dalam Google Sheets sekolah anda.</div>
+
+  <div class="card">
+    <div class="card-title">🔄 Aliran kerja keseluruhan</div>
+    <div class="flow">
+      <div class="flow-node">1. Setup Admin</div><div class="flow-arrow">→</div>
+      <div class="flow-node">2. Import Murid</div><div class="flow-arrow">→</div>
+      <div class="flow-node">3. Jana Acara</div><div class="flow-arrow">→</div>
+      <div class="flow-node">4. Pendaftaran</div><div class="flow-arrow">→</div>
+      <div class="flow-node">5. Undian Lorong</div><div class="flow-arrow">→</div>
+      <div class="flow-node">6. Rekod Keputusan</div><div class="flow-arrow">→</div>
+      <div class="flow-node">7. Terbit Keputusan</div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:6px">Setiap langkah mesti diselesaikan sebelum ke langkah seterusnya.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔗 URL modul sistem</div>
+    <table class="tbl">
+      <thead><tr><th>Modul</th><th>URL Parameter</th><th>Siapa guna</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge b-red">Admin Setup</span></td><td><span class="code">?page=admin-setup&amp;u=admin</span></td><td>Admin sahaja</td></tr>
+        <tr><td><span class="badge b-blue">Admin Ops</span></td><td><span class="code">?page=admin-ops</span></td><td>Admin, Urusetia</td></tr>
+        <tr><td><span class="badge b-amber">Pengurus</span></td><td><span class="code">?page=pengurus</span></td><td>Pengurus Rumah</td></tr>
+        <tr><td><span class="badge b-green">Keputusan</span></td><td><span class="code">?page=admin-results</span></td><td>Admin, Pencatat</td></tr>
+        <tr><td><span class="badge b-gray">Paparan Awam</span></td><td><span class="code">?page=home</span></td><td>Semua orang</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔑 Akaun lalai sistem</div>
+    <div class="warn-box">⚠️ Tukar kata laluan lalai ini selepas log masuk pertama kali!</div>
+    <table class="tbl">
+      <thead><tr><th>Username</th><th>Kata Laluan Lalai</th><th>Peranan</th></tr></thead>
+      <tbody>
+        <tr><td><span class="code">admin</span></td><td><span class="code">admin123</span></td><td><span class="badge b-red">Admin</span></td></tr>
+        <tr><td><span class="code">urusetia</span></td><td><span class="code">urusetiago123</span></td><td><span class="badge b-blue">Urusetia</span></td></tr>
+        <tr><td><span class="code">pencatat1</span></td><td><span class="code">pencatat123</span></td><td><span class="badge b-gray">Pencatat</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ SETUP ══════════════════════════════ -->
+<div id="sec-setup" class="section">
+  <div class="page-title">⚙️ Setup Sistem</div>
+  <div class="page-sub">Admin Setup — konfigurasi sebelum sukan bermula</div>
+
+  <div class="warn-box">⚠️ Wajib ikut urutan ini. Jangan skip langkah kerana setiap bahagian bergantung pada bahagian sebelumnya.</div>
+
+  <div class="card">
+    <div class="card-title">📋 Urutan setup yang betul</div>
+    <ol class="step-ol">
+      <li><div><strong>Tetapan Asas</strong> — Isi nama sekolah, nama pertandingan, tarikh sukan, bilangan lorong trek (4/6/8). Ini digunakan oleh semua modul lain.</div></li>
+      <li><div><strong>Sistem Mata</strong> — Tetapkan mata Johan=5, Naib=3, Ke-3=2, Ke-4=1. Boleh guna preset MSSD, MSSM atau SUKMA.</div></li>
+      <li><div><strong>Kategori Peserta</strong> — Tambah kategori L1, L2, P1, P2 dengan had umur dan kuota. Contoh: L1 = Lelaki, umur 7–11 tahun, kuota 3 wakil.</div></li>
+      <li><div><strong>Rumah Sukan</strong> — Tambah semua rumah dengan warna identiti. ID dijana automatik contohnya <span class="code">RMH-MERAH</span>.</div></li>
+      <li><div><strong>Acara Master</strong> — Tambah semua acara (100m, 200m, Lompat Jauh dll). Pilih jenis (Track/Field/Road), format, dan kategori terlibat.</div></li>
+      <li><div><strong>Pengguna</strong> — Tambah akaun Pengurus untuk setiap rumah. Pastikan pilih rumah yang betul semasa cipta akaun.</div></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Setup Dropdown Sheet</div>
+    <div class="info-box">Ini memudahkan guru isi data murid terus dalam Google Sheet dengan dropdown pilihan.</div>
+    <ol class="step-ol">
+      <li>Pastikan Rumah Sukan sudah diisi terlebih dahulu.</li>
+      <li>Pergi ke Admin Setup → Rumah Sukan.</li>
+      <li>Klik butang <span class="badge b-gray">📋 Setup Dropdown Sheet</span>.</li>
+      <li>Sistem akan pasang dropdown <em>darjah</em> (1–6) dan <em>nama_rumah</em> dalam Google Sheet tbl_murid.</li>
+      <li>Jalankan semula jika ada rumah baru ditambah.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔄 Jana Semula Data Murid</div>
+    <div class="info-box">Jalankan selepas guru selesai isi data murid dalam Google Sheet.</div>
+    <ol class="step-ol">
+      <li>Pergi ke Admin Setup → Rumah Sukan.</li>
+      <li>Klik butang <span class="badge b-amber">🔄 Jana Semula Data Murid</span>.</li>
+      <li>Sistem akan isi secara automatik: <span class="code">id_rumah</span>, <span class="code">jantina</span>, <span class="code">tarikh_lahir</span>, <span class="code">id_kategori</span>.</li>
+      <li>Boleh jalankan berkali-kali — hanya kolum yang kosong akan dikemas kini.</li>
+      <li>Semak log hasil — berapa rekod setiap kolum dikemas kini.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MURID ══════════════════════════════ -->
+<div id="sec-murid" class="section">
+  <div class="page-title">👥 Data Murid</div>
+  <div class="page-sub">Import dan urus data murid dalam sistem</div>
+
+  <div class="card">
+    <div class="card-title">📄 Format CSV untuk import murid</div>
+    <div class="info-box">Admin Ops → Import Murid → pilih fail CSV. Baris pertama boleh ada header atau terus data.</div>
+    <table class="tbl">
+      <thead><tr><th>Kolum (kedudukan)</th><th>Format</th><th>Contoh</th><th>Wajib?</th></tr></thead>
+      <tbody>
+        <tr><td>1. no_kp</td><td>12 digit tanpa tanda -</td><td><span class="code">160818110891</span></td><td><span class="badge b-red">Wajib</span></td></tr>
+        <tr><td>2. nama</td><td>Nama penuh HURUF BESAR</td><td><span class="code">AHMAD FARIS BIN ALI</span></td><td><span class="badge b-red">Wajib</span></td></tr>
+        <tr><td>3. darjah</td><td>Nombor 1 hingga 6</td><td><span class="code">4</span></td><td><span class="badge b-amber">Disyorkan</span></td></tr>
+        <tr><td>4. kelas</td><td>Nama kelas</td><td><span class="code">HIGEN</span></td><td><span class="badge b-amber">Disyorkan</span></td></tr>
+        <tr><td>5. nama_rumah</td><td>HURUF BESAR, sama persis dengan tbl_rumah_sukan</td><td><span class="code">MERAH</span></td><td><span class="badge b-red">Wajib</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🤖 Auto-jana dari No KP</div>
+    <table class="tbl">
+      <thead><tr><th>Maklumat</th><th>Cara sistem kira</th><th>Contoh KP: 160818-11-0891</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Tarikh Lahir</strong></td><td>6 digit pertama KP</td><td>160818 → 18 Ogos 2016</td></tr>
+        <tr><td><strong>Jantina</strong></td><td>Digit terakhir KP. Ganjil=Lelaki, Genap=Perempuan</td><td>1 (ganjil) → Lelaki</td></tr>
+        <tr><td><strong>Kategori</strong></td><td>Umur pada tarikh sukan + jantina → cari dalam tbl_kategori</td><td>Umur 9, Lelaki → KAT-L1</td></tr>
+        <tr><td><strong>id_rumah</strong></td><td>nama_rumah dalam CSV → lookup tbl_rumah_sukan</td><td>MERAH → RMH-MERAH</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚠️ Nama rumah mesti sama persis</div>
+    <div class="two-col">
+      <div class="ok-box" style="margin:0">✅ <strong>BETUL</strong><br>tbl_rumah_sukan: MERAH<br>CSV nama_rumah: MERAH</div>
+      <div class="err-box" style="margin:0">❌ <strong>SALAH — id_rumah akan kosong</strong><br>tbl_rumah_sukan: MERAH<br>CSV nama_rumah: Merah</div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px">Jika id_rumah kosong, murid tidak akan kelihatan dalam Pendaftaran. Guna butang "🔄 Jana Semula Data Murid" untuk betulkan.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Semak data murid dalam sheet</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.7">Buka Google Sheets → tbl_murid. Kolum yang perlu ada data:</p>
+    <table class="tbl" style="margin-top:10px">
+      <thead><tr><th>Kolum</th><th>Status Wajib</th><th>Cara isi jika kosong</th></tr></thead>
+      <tbody>
+        <tr><td>D — id_rumah</td><td><span class="badge b-red">Wajib</span></td><td>Jana Semula Data Murid</td></tr>
+        <tr><td>E — id_kategori</td><td><span class="badge b-red">Wajib</span></td><td>Jana Semula Data Murid</td></tr>
+        <tr><td>F — jantina</td><td><span class="badge b-red">Wajib</span></td><td>Jana Semula Data Murid (dari KP)</td></tr>
+        <tr><td>G — tarikh_lahir</td><td><span class="badge b-amber">Disyorkan</span></td><td>Jana Semula Data Murid (dari KP)</td></tr>
+        <tr><td>H — kelas</td><td><span class="badge b-amber">Disyorkan</span></td><td>Isi manual atau dalam CSV</td></tr>
+        <tr><td>R — darjah</td><td><span class="badge b-amber">Disyorkan</span></td><td>Isi manual atau dalam CSV</td></tr>
+        <tr><td>S — nama_rumah</td><td><span class="badge b-blue">Rujukan</span></td><td>Isi semasa import CSV</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ ACARA ══════════════════════════════ -->
+<div id="sec-acara" class="section">
+  <div class="page-title">🏃 Acara &amp; Jana</div>
+  <div class="page-sub">Setup acara master dan jana acara pertandingan</div>
+
+  <div class="card">
+    <div class="card-title">📌 Perbezaan Acara Master vs Acara Jana</div>
+    <div class="two-col">
+      <div style="background:var(--bg3);border-radius:8px;padding:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px">Acara Master</div>
+        <p style="font-size:12px;color:var(--text2);line-height:1.7">Template acara. Contoh: "Lari 100m". Tidak ada kategori spesifik. Dicipta sekali oleh Admin dalam Admin Setup.</p>
+      </div>
+      <div style="background:var(--bg3);border-radius:8px;padding:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px">Acara Jana</div>
+        <p style="font-size:12px;color:var(--text2);line-height:1.7">Acara sebenar dengan kategori. Contoh: "Lari 100m (L1)". Dijana automatik dari Master dalam Admin Ops.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Langkah tambah &amp; jana acara</div>
+    <ol class="step-ol">
+      <li>Admin Setup → Acara Master → klik "+ Tambah Acara".</li>
+      <li>Isi: Kod (100M), Nama (Lari 100 Meter), Jenis (Track/Field/Road), Format (Heat→Final atau Terus Final).</li>
+      <li>Pilih kategori terlibat: L1, L2, P1, P2 (boleh pilih lebih dari satu).</li>
+      <li>Tetapkan kuota: Wakil Individu/Rumah = bilangan murid per rumah. Untuk relay, isi Pasukan/Rumah dan bilangan ahli.</li>
+      <li>Admin Ops → Jana Acara → klik "Jana Semua Acara".</li>
+      <li>Sistem cipta satu rekod per acara per kategori. Contoh: 100m × 4 kategori = 4 acara jana.</li>
+    </ol>
+    <div class="warn-box">⚠️ Jika ada perubahan pada Acara Master, wajib padam tbl_acara_jana dan jana semula. Admin Ops → Padam Semua Acara → Jana Semula.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Jenis acara dan tetapan</div>
+    <table class="tbl">
+      <thead><tr><th>Jenis</th><th>Contoh</th><th>Guna Lorong?</th><th>Format lazim</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge b-blue">Track</span></td><td>100m, 200m, 400m, 4x100m</td><td>Ya</td><td>Heat → Final</td></tr>
+        <tr><td><span class="badge b-green">Field</span></td><td>Lompat Jauh, Lompat Tinggi, Peluru, Cakera</td><td>Tidak</td><td>Cubaan</td></tr>
+        <tr><td><span class="badge b-amber">Road</span></td><td>Jalan Raya 3km, 5km</td><td>Tidak</td><td>Terus Final</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ PENDAFTARAN ══════════════════════════════ -->
+<div id="sec-daftar" class="section">
+  <div class="page-title">📋 Pendaftaran Peserta</div>
+  <div class="page-sub">Pengurus Rumah mendaftar murid untuk acara</div>
+
+  <div class="card">
+    <div class="card-title">🔓 Syarat sebelum pendaftaran boleh dibuka</div>
+    <ol class="step-ol">
+      <li>Tetapan, Kategori, Rumah Sukan dan Acara Master sudah diisi.</li>
+      <li>Acara Jana sudah dibuat (Admin Ops → Jana Acara).</li>
+      <li>Data murid sudah diimport dan id_rumah sudah ada (Jana Semula Data Murid).</li>
+      <li>Admin aktifkan pendaftaran: Dashboard → Kawalan Sistem → togol "Pendaftaran Peserta" = ON.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 Cara Pengurus daftar peserta</div>
+    <ol class="step-ol">
+      <li>Log masuk dengan akaun Pengurus Rumah di <span class="code">?page=pengurus</span>.</li>
+      <li>Pilih acara dari senarai. Klik "Daftar Peserta".</li>
+      <li>Untuk acara individu: pilih murid dari senarai → klik Daftar.</li>
+      <li>Untuk acara pasukan/relay: pilih murid ahli → masukkan nama pasukan (contoh: MERAH A) → klik Daftar.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🛡️ Semakan automatik sistem</div>
+    <table class="tbl">
+      <thead><tr><th>Semakan</th><th>Keterangan</th></tr></thead>
+      <tbody>
+        <tr><td>Pendaftaran buka</td><td>Admin mesti ON togol pendaftaran dalam Dashboard</td></tr>
+        <tr><td>Jenis acara</td><td>Acara individu → tab Individu. Acara pasukan → tab Pasukan/Relay</td></tr>
+        <tr><td>Rumah murid</td><td>Murid mesti dari rumah pengurus yang log masuk</td></tr>
+        <tr><td>Jantina &amp; umur</td><td>Mesti sepadan dengan kategori acara (contoh: L1 = Lelaki umur 7–11)</td></tr>
+        <tr><td>Kuota</td><td>Tidak boleh melebihi had wakil/pasukan per rumah</td></tr>
+        <tr><td>Duplikasi</td><td>Murid yang sama tidak boleh didaftar dua kali untuk acara yang sama</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚙️ Kuota pendaftaran</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:10px">Kuota ditetapkan dalam Acara Master dan dikira per rumah:</p>
+    <table class="tbl">
+      <thead><tr><th>Jenis</th><th>Tetapan dalam Acara Master</th><th>Maksud</th></tr></thead>
+      <tbody>
+        <tr><td>Wakil Individu / Rumah</td><td>Nilai dalam "Wakil Individu/Rumah"</td><td>Berapa orang murid dari satu rumah boleh masuk</td></tr>
+        <tr><td>Pasukan / Rumah</td><td>Nilai dalam "Pasukan/Rumah"</td><td>Berapa pasukan dari satu rumah boleh masuk</td></tr>
+        <tr><td>Ahli Utama</td><td>Nilai dalam "Ahli Utama/Pasukan"</td><td>Bilangan pemain yang bertanding dalam satu pasukan</td></tr>
+        <tr><td>Ahli Simpanan</td><td>Nilai dalam "Ahli Simpanan/Pasukan"</td><td>Pemain sandaran (boleh 0)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ KEPUTUSAN ══════════════════════════════ -->
+<div id="sec-keputusan" class="section">
+  <div class="page-title">🏅 Rekod Keputusan</div>
+  <div class="page-sub">Rekod, sahkan dan terbit keputusan acara</div>
+
+  <div class="card">
+    <div class="card-title">🔄 Aliran rekod keputusan</div>
+    <div class="flow">
+      <div class="flow-node">Jana Heat</div><div class="flow-arrow">→</div>
+      <div class="flow-node">Undian Lorong</div><div class="flow-arrow">→</div>
+      <div class="flow-node">Rekod Prestasi</div><div class="flow-arrow">→</div>
+      <div class="flow-node">Sahkan (DISAHKAN)</div><div class="flow-arrow">→</div>
+      <div class="flow-node">Terbit (PUBLISHED)</div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:8px">Keputusan hanya kelihatan di halaman awam selepas status PUBLISHED.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Status keputusan</div>
+    <table class="tbl">
+      <thead><tr><th>Status</th><th>Maksud</th><th>Tally medal dikira?</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge b-gray">DRAFT</span></td><td>Baru direkod, belum disemak</td><td>Tidak</td></tr>
+        <tr><td><span class="badge b-blue">DISAHKAN</span></td><td>Disemak dan disahkan oleh pencatat/admin</td><td>Tidak</td></tr>
+        <tr><td><span class="badge b-green">PUBLISHED</span></td><td>Diterbitkan — kelihatan di laman awam</td><td>Ya ✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏆 Tally medal &amp; mata</div>
+    <ol class="step-ol">
+      <li>Tally medal (emas, perak, gangsa) dikira <strong>automatik</strong> apabila keputusan di-PUBLISH.</li>
+      <li>Mata dikira berdasarkan Tetapan Sistem Mata (lalai: Johan=5, Naib Johan=3, Ke-3=2, Ke-4=1).</li>
+      <li>Jika keputusan dipadam atau diubah, PUBLISH semula untuk kemas kini tally.</li>
+      <li>Paparan tally dalam: Halaman Awam → Tally Medal, dan Dashboard Admin.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ PERANAN ══════════════════════════════ -->
+<div id="sec-roles" class="section">
+  <div class="page-title">👤 Peranan Pengguna</div>
+  <div class="page-sub">Capaian dan tanggungjawab setiap peranan</div>
+
+  <div class="card">
+    <div class="card-title">📋 Senarai peranan dan capaian</div>
+    <table class="tbl">
+      <thead><tr><th>Peranan</th><th>Capaian</th><th>Nota</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge b-red">Admin</span></td><td>Capaian penuh. Setup sistem, import murid, jana acara, urus semua data, terbit keputusan, reset sistem.</td><td>Hanya 1 akaun admin disyorkan</td></tr>
+        <tr><td><span class="badge b-amber">Pengurus</span></td><td>Daftar peserta untuk rumah sendiri sahaja. Lihat jadual dan keputusan.</td><td>1 akaun per rumah sukan</td></tr>
+        <tr><td><span class="badge b-blue">Urusetia</span></td><td>Urus jadual acara, lihat semua pendaftaran. Tidak boleh padam data.</td><td>Boleh lebih dari 1</td></tr>
+        <tr><td><span class="badge b-gray">Pencatat</span></td><td>Rekod dan sahkan keputusan acara sahaja.</td><td>Boleh lebih dari 1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">➕ Tambah pengguna baru</div>
+    <ol class="step-ol">
+      <li>Admin Setup → Pengguna → klik "+ Tambah Pengguna".</li>
+      <li>Isi username (unik, tidak boleh sama), kata laluan (min 6 aksara), nama penuh.</li>
+      <li>Pilih peranan: Admin / Pengurus / Urusetia / Pencatat.</li>
+      <li>Untuk peranan <span class="badge b-amber">Pengurus</span> — pilih rumah sukan yang berkenaan. Ini penting!</li>
+      <li>Klik Simpan. Beritahu pengguna username dan kata laluan mereka.</li>
+    </ol>
+    <div class="warn-box">⚠️ Pengurus yang tidak dipilihkan rumah tidak akan dapat daftar murid.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔑 Reset kata laluan</div>
+    <ol class="step-ol">
+      <li>Admin Setup → Pengguna → cari pengguna berkenaan.</li>
+      <li>Klik butang 🔑 (reset kata laluan).</li>
+      <li>Kata laluan baru: <span class="code">username + 123</span> (contoh: cg_merah → <span class="code">cg_merah123</span>).</li>
+      <li>Salin kata laluan baru dan beritahu pengguna untuk tukar segera.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MASALAH ══════════════════════════════ -->
+<div id="sec-masalah" class="section">
+  <div class="page-title">🔧 Masalah &amp; Penyelesaian</div>
+  <div class="page-sub">Rujukan cepat untuk masalah biasa</div>
+
+  <div class="card">
+    <div class="card-title">📋 Senarai masalah biasa</div>
+    <table class="tbl">
+      <thead><tr><th>Masalah</th><th>Punca Biasa</th><th>Penyelesaian</th></tr></thead>
+      <tbody>
+        <tr><td>Murid tidak kelihatan dalam Pendaftaran</td><td>id_rumah kosong dalam tbl_murid</td><td>Admin Setup → Rumah Sukan → klik "🔄 Jana Semula Data Murid"</td></tr>
+        <tr><td>Kategori murid kosong</td><td>tbl_kategori belum diisi, atau tarikh sukan belum ditetapkan</td><td>Setup Kategori dahulu → Jana Semula Data Murid</td></tr>
+        <tr><td>Pendaftaran ditolak — jantina tidak sepadan</td><td>Kolum jantina kosong dalam tbl_murid</td><td>Jana Semula Data Murid (auto-jana dari KP)</td></tr>
+        <tr><td>Pendaftaran ditolak — umur tidak layak</td><td>Tarikh sukan belum diisi dalam Tetapan Asas</td><td>Isi tarikh sukan dalam Tetapan Asas, kemudian Jana Semula</td></tr>
+        <tr><td>Acara tidak muncul selepas edit Master</td><td>tbl_acara_jana ada data lama</td><td>Admin Ops → Padam Semua Acara Jana → Jana Semula</td></tr>
+        <tr><td>Dashboard tunjuk jumlah murid salah</td><td>Baris kosong dalam sheet tbl_murid</td><td>Normal sekarang — sistem kira baris data sahaja</td></tr>
+        <tr><td>Delete button tidak berfungsi</td><td>CSS bug pada modal confirm</td><td>Pastikan AdminSetup.html versi terbaru sudah di-deploy</td></tr>
+        <tr><td>Error: runner[fn] is not a function</td><td>Fungsi GAS belum ada dalam code.gs</td><td>Pastikan code_final.gs sudah di-deploy</td></tr>
+        <tr><td>Tally medal tidak kemas kini</td><td>Keputusan belum di-PUBLISH</td><td>Admin Results → Pilih acara → klik "Terbit Keputusan"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔍 Debug — semak GAS Execution Log</div>
+    <ol class="step-ol">
+      <li>Buka Google Apps Script Editor → klik menu "Executions" (ikon jam).</li>
+      <li>Cari eksekusi yang ada status merah (gagal).</li>
+      <li>Klik untuk lihat log terperinci dan mesej ralat.</li>
+      <li>Log bermula dengan ✅ = berjaya, ❌ = gagal.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚙️ Fungsi debug dalam GAS Editor</div>
+    <table class="tbl">
+      <thead><tr><th>Fungsi</th><th>Tujuan</th></tr></thead>
+      <tbody>
+        <tr><td><span class="code">debugMuridSchema()</span></td><td>Tunjuk semua header dan data baris pertama tbl_murid</td></tr>
+        <tr><td><span class="code">debugKategori()</span></td><td>Semak data tbl_kategori</td></tr>
+        <tr><td><span class="code">debugRumah()</span></td><td>Semak data tbl_rumah_sukan</td></tr>
+        <tr><td><span class="code">testSchema()</span></td><td>Semak semua sheet wujud dan ada data</td></tr>
+        <tr><td><span class="code">runAllTests()</span></td><td>Jalankan semua ujian sekaligus</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ RESET ══════════════════════════════ -->
+<div id="sec-reset" class="section">
+  <div class="page-title">🔄 Reset Sistem</div>
+  <div class="page-sub">Gunakan untuk sukan tahun baru atau permulaan semula</div>
+
+  <div class="err-box">⚠️ BERHATI-HATI. Reset tidak boleh diundur. Buat sandaran (eksport) data dahulu jika perlu.</div>
+
+  <div class="card">
+    <div class="card-title">🟡 Soft Reset — Reset Data Operasi (Sukan Tahun Baru)</div>
+    <div class="ok-box">Selamat digunakan. Data murid, rumah, kategori dan acara master DIKEKALKAN.</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Data yang akan dipadam:</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <span class="badge b-red">Acara Jana</span>
+      <span class="badge b-red">Pendaftaran Individu</span>
+      <span class="badge b-red">Pendaftaran Pasukan</span>
+      <span class="badge b-red">Heat &amp; Peserta Heat</span>
+      <span class="badge b-red">Keputusan</span>
+      <span class="badge b-red">Keputusan Akhir</span>
+    </div>
+    <ol class="step-ol">
+      <li>Admin Setup → Reset Sistem → klik "Reset Data Operasi Sahaja".</li>
+      <li>Taip kata kunci <span class="code">RESET OPERASI</span> untuk sahkan.</li>
+      <li>Selepas reset: Admin Ops → Jana Semula Acara.</li>
+      <li>Aktifkan semula pendaftaran dalam Dashboard.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔴 Hard Reset — Reset Sepenuhnya</div>
+    <div class="err-box">SEMUA data dipadam termasuk murid, rumah, kategori. Guna hanya jika mahu mulakan sistem dari kosong.</div>
+    <ol class="step-ol">
+      <li>Admin Setup → Reset Sistem → klik "Reset Sepenuhnya".</li>
+      <li>Taip kata kunci <span class="code">RESET SEMUA</span> untuk sahkan.</li>
+      <li>Sistem akan muat semula secara automatik.</li>
+      <li>Ikut semula semua langkah Setup dari awal.</li>
+    </ol>
+    <div class="warn-box">⚠️ Akaun <span class="code">admin</span> dan tetapan asas dikekalkan. Semua pengguna lain dipadam.</div>
+  </div>
+</div>
+
+</main>
+
+<script>
+const IS_GAS = (typeof google !== 'undefined' && google.script);
+var _scriptUrl = '<?= SCRIPT_URL ?>';
+
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var sec = document.getElementById('sec-' + id);
+  if (sec) sec.classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('search-results').classList.remove('show');
+  document.getElementById('search-bar').value = '';
+}
+
+function searchManual(q) {
+  var res = document.getElementById('search-results');
+  if (!q || q.length < 2) { res.classList.remove('show'); return; }
+  q = q.toLowerCase();
+  var cards = document.querySelectorAll('.card');
+  var found = [];
+  cards.forEach(function(c) {
+    if (c.textContent.toLowerCase().indexOf(q) !== -1) {
+      var title = c.querySelector('.card-title');
+      var sec = c.closest('.section');
+      var secId = sec ? sec.id.replace('sec-','') : '';
+      found.push({ title: title ? title.textContent.trim() : 'Tanpa tajuk', secId: secId });
+    }
+  });
+  if (found.length === 0) {
+    res.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:10px 0">Tiada hasil ditemui untuk "' + q + '"</div>';
+  } else {
+    var html = '<div style="font-size:12px;color:var(--text3);margin-bottom:8px">' + found.length + ' hasil ditemui:</div>';
+    found.forEach(function(f) {
+      html += '<div onclick="showSection(\'' + f.secId + '\', null)" style="padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:13px;color:var(--text)">' + f.title + '</div>';
+    });
+    res.innerHTML = html;
+  }
+  res.classList.add('show');
+}
+
+function goBack() {
+  if (IS_GAS && _scriptUrl) {
+    window.top.location.href = _scriptUrl + '?page=admin-setup&u=admin';
+  } else {
+    history.back();
+  }
+}
+</script>
+</body>
+</html>

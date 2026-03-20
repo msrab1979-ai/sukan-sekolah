@@ -82,6 +82,42 @@ select.form-control{cursor:pointer;}
 .tab-nav{display:flex;gap:2px;background:#F1F5F9;padding:4px;border-radius:10px;flex-wrap:wrap;margin-bottom:20px;}
 .tab-btn{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;font-family:inherit;color:#64748B;transition:all 0.2s;white-space:nowrap;}
 .tab-btn.active{background:#fff;color:#3B82F6;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.heat-subpane{display:none;}.heat-subpane.active{display:block;}
+/* ── Heat info box ── */
+.heat-info-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F1F5F9;font-size:12px;}
+.heat-info-row:last-child{border-bottom:none;}
+.heat-info-key{color:#64748B;}
+.heat-info-val{font-weight:700;color:#1E293B;}
+.format-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.fmt-terus{background:#DCFCE7;color:#166534;}
+.fmt-saringan{background:#FEF3C7;color:#92400E;}
+.fmt-auto{background:#EFF6FF;color:#1D4ED8;}
+/* ── Starting List table ── */
+.sl-table{width:100%;border-collapse:collapse;font-size:13px;}
+.sl-table th{padding:10px 14px;font-size:10px;font-weight:700;color:#64748B;text-align:left;text-transform:uppercase;background:#F8FAFC;border-bottom:2px solid #E2E8F0;}
+.sl-table td{padding:10px 14px;border-bottom:1px solid #F1F5F9;vertical-align:middle;}
+.sl-table tbody tr:hover{background:#F8FAFC;}
+.lorong-bubble{width:32px;height:32px;border-radius:50%;background:#3B82F6;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.status-sel{border:1px solid #E2E8F0;border-radius:6px;padding:4px 8px;font-size:11px;background:#fff;cursor:pointer;}
+/* ── Layak final ── */
+.layak-row{background:#F0FDF4;border-left:3px solid #22C55E;}
+.layak-row td:first-child{font-weight:700;color:#166534;}
+/* ── Print ── */
+@media print{
+  .sidebar,.header,.tab-nav,.heat-subnav,.no-print,.btn,.form-group select,button{display:none!important;}
+  .main-content{margin:0!important;padding:0!important;}
+  #sl-print-area{display:block!important;}
+  .print-header{display:block!important;}
+  body{font-size:12pt;color:#000;}
+  .sl-table th,.sl-table td{border:1px solid #000!important;padding:6px!important;}
+  .lorong-bubble{border:1px solid #000;color:#000;background:#fff!important;}
+  .status-sel{border:none;font-weight:700;}
+}
+.print-header{display:none;text-align:center;margin-bottom:16px;}
+.print-header h2{font-size:16pt;margin:0;}
+.print-header p{font-size:11pt;margin:4px 0;}
+.print-footer{display:none;}
+@media print{.print-header,.print-footer{display:block!important;}}
 
 /* BADGES */
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
@@ -173,7 +209,7 @@ select.form-control{cursor:pointer;}
   <div class="nav-item" onclick="goTab('pendaftaran')" id="nav-pendaftaran"><span class="icon">📋</span>Pendaftaran</div>
 
   <div class="sidebar-section">Undian Lorong</div>
-  <div class="nav-item" onclick="goTab('lorong')" id="nav-lorong"><span class="icon">🎰</span>Undian Lorong</div>
+  <div class="nav-item" onclick="goTab('heat')" id="nav-heat"><span class="icon">🔥</span>Heat & List</div>
 
   <div class="sidebar-section">Laporan</div>
   <div class="nav-item" onclick="goTab('laporan')" id="nav-laporan"><span class="icon">📄</span>Laporan Ops</div>
@@ -211,10 +247,10 @@ select.form-control{cursor:pointer;}
           <span style="font-size:26px;">🏃</span>
         </div>
       </div>
-      <div class="stat-card" style="cursor:pointer;" onclick="goTab('lorong')">
+      <div class="stat-card" style="cursor:pointer;" onclick="goTab('heat')">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-          <div><div class="stat-num" id="d-lorong" style="color:#F59E0B;">—</div><div class="stat-label">Undian Selesai</div></div>
-          <span style="font-size:26px;">🎰</span>
+          <div><div class="stat-num" id="d-lorong" style="color:#F59E0B;">—</div><div class="stat-label">Heat Dijana</div></div>
+          <span style="font-size:26px;">🔥</span>
         </div>
       </div>
     </div>
@@ -233,7 +269,7 @@ select.form-control{cursor:pointer;}
           <button class="btn btn-primary" style="justify-content:center;" onclick="goTab('murid')">👤 Tambah Murid</button>
           <button class="btn btn-success" style="justify-content:center;" onclick="goTab('pendaftaran')">📋 Daftar Acara</button>
           <button class="btn btn-warning" style="justify-content:center;" onclick="goTab('acara')">🏃 Jana Acara</button>
-          <button class="btn btn-ghost" style="justify-content:center;" onclick="goTab('lorong')">🎰 Undian Lorong</button>
+          <button class="btn btn-ghost" style="justify-content:center;" onclick="goTab('heat')">🔥 Heat & List</button>
         </div>
       </div>
     </div>
@@ -252,21 +288,31 @@ select.form-control{cursor:pointer;}
     <!-- Filter -->
     <div class="card" style="margin-bottom:16px;">
       <div class="card-body" style="padding:12px 16px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:10px;align-items:end;">
           <div>
             <label class="form-label">Cari</label>
             <input class="form-control" id="murid-cari" placeholder="Nama / No. KP..." oninput="filterMurid()">
           </div>
           <div>
-            <label class="form-label">Rumah Sukan</label>
-            <select class="form-control" id="murid-flt-rumah" onchange="filterMurid()">
-              <option value="">Semua Rumah</option>
+            <label class="form-label">Darjah</label>
+            <select class="form-control" id="murid-flt-darjah" onchange="filterMurid()">
+              <option value="">Semua Darjah</option>
+              <option value="1">Darjah 1</option>
+              <option value="2">Darjah 2</option>
+              <option value="3">Darjah 3</option>
+              <option value="4">Darjah 4</option>
+              <option value="5">Darjah 5</option>
+              <option value="6">Darjah 6</option>
             </select>
           </div>
           <div>
-            <label class="form-label">Kategori</label>
-            <select class="form-control" id="murid-flt-kat" onchange="filterMurid()">
-              <option value="">Semua Kategori</option>
+            <label class="form-label">Kelas</label>
+            <input class="form-control" id="murid-flt-kelas" placeholder="Cth: 5 Bestari..." oninput="filterMurid()">
+          </div>
+          <div>
+            <label class="form-label">Rumah Sukan</label>
+            <select class="form-control" id="murid-flt-rumah" onchange="filterMurid()">
+              <option value="">Semua Rumah</option>
             </select>
           </div>
           <button class="btn btn-ghost btn-sm" onclick="clearMuridFilter()">Reset</button>
@@ -284,11 +330,10 @@ select.form-control{cursor:pointer;}
           <thead>
             <tr>
               <th>#</th>
-              <th>No. KP</th>
               <th>Nama Murid</th>
-              <th>Rumah</th>
-              <th>Kategori</th>
-              <th>Jantina</th>
+              <th>Darjah</th>
+              <th>Kelas</th>
+              <th>Rumah Sukan</th>
               <th>Tindakan</th>
             </tr>
           </thead>
@@ -314,31 +359,31 @@ select.form-control{cursor:pointer;}
     <div style="display:grid;grid-template-columns:300px 1fr;gap:16px;">
       <!-- Panel Jana -->
       <div class="card" style="height:fit-content;">
-        <div class="card-header"><span class="card-title">⚙️ Tetapan Jana</span></div>
+        <div class="card-header"><span class="card-title">⚙️ Pilih Acara Untuk Jana</span></div>
         <div class="card-body">
           <div class="form-group">
-            <label class="form-label">Kategori</label>
+            <label class="form-label">Filter Kategori</label>
             <select class="form-control" id="jana-kat" onchange="loadAcaraMasterForJana()">
               <option value="">-- Semua Kategori --</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Jenis Acara</label>
-            <select class="form-control" id="jana-jenis">
-              <option value="">Semua</option>
-              <option value="TRACK">Track (Lari)</option>
-              <option value="FIELD">Field (Padang)</option>
-              <option value="ROAD">Road</option>
+            <label class="form-label">Override Format Heat</label>
+            <select class="form-control" id="jana-format">
+              <option value="">Ikut Tetapan Acara Master</option>
+              <option value="AUTO">AUTO (sistem decide)</option>
+              <option value="TERUS_FINAL">Terus Final</option>
+              <option value="SARINGAN_FINAL">Saringan + Final</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Format</label>
-            <select class="form-control" id="jana-format">
-              <option value="FINAL">Final Terus</option>
-              <option value="HEAT_FINAL">Heat → Final</option>
-            </select>
+            <label class="form-label">Acara Master (Pilih untuk Jana)</label>
+            <div id="acara-master-list" style="max-height:280px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;padding:8px;">
+              <div style="color:#94A3B8;font-size:12px;text-align:center;padding:16px;">Memuatkan...</div>
+            </div>
           </div>
-          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="janaAcara()">🚀 Jana Acara</button>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="janaAcara()">🚀 Jana Acara Dipilih</button>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:6px;" onclick="janaSemuaAcara()">⚡ Jana Semua Acara</button>
         </div>
       </div>
 
@@ -440,69 +485,127 @@ select.form-control{cursor:pointer;}
   </div>
 
   <!-- ═══ UNDIAN LORONG ═══ -->
-  <div id="pane-lorong" class="tab-pane">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-      <h1 style="font-size:20px;font-weight:800;margin:0;">🎰 Undian Lorong</h1>
+  <!-- ═══ HEAT & STARTING LIST ═══ -->
+  <div id="pane-heat" class="tab-pane">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+      <h1 style="font-size:20px;font-weight:800;margin:0;">🔥 Heat &amp; Starting List</h1>
+      <button class="btn btn-primary btn-sm" onclick="janaSemuaHeatUI()">⚡ Jana Semua Heat</button>
     </div>
 
-    <div style="display:grid;grid-template-columns:300px 1fr;gap:16px;">
-      <!-- Panel Undian -->
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <div class="card">
-          <div class="card-header"><span class="card-title">🎯 Pilih Acara</span></div>
-          <div class="card-body">
-            <div class="form-group">
-              <label class="form-label">Kategori</label>
-              <select class="form-control" id="lorong-kat" onchange="loadAcaraLorong()">
-                <option value="">-- Pilih Kategori --</option>
-              </select>
+    <!-- Sub-tab nav -->
+    <div class="tab-nav" id="heat-subnav">
+      <button class="tab-btn active" onclick="showHeatSub('jana',this)">⚡ Jana Heat</button>
+      <button class="tab-btn" onclick="showHeatSub('startlist',this)">📋 Starting List</button>
+      <button class="tab-btn" id="btn-sub-layak" onclick="showHeatSub('layak',this)" style="display:none;">🏆 Proses Layak Final</button>
+    </div>
+
+    <!-- SUB 1: JANA HEAT -->
+    <div id="heat-sub-jana" class="heat-subpane active">
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="card">
+            <div class="card-header"><span class="card-title">🎯 Pilih Acara</span></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">Kategori</label>
+                <select class="form-control" id="heat-kat" onchange="filterHeatAcara()">
+                  <option value="">-- Semua --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Acara</label>
+                <select class="form-control" id="heat-acara" onchange="loadHeatInfo()">
+                  <option value="">-- Pilih Acara --</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;" onclick="janaHeatUI()">⚡ Jana Heat Sekarang</button>
             </div>
-            <div class="form-group">
-              <label class="form-label">Acara</label>
-              <select class="form-control" id="lorong-acara" onchange="loadPesertaLorong()">
-                <option value="">-- Pilih Acara --</option>
-              </select>
+          </div>
+
+          <!-- STATUS HEAT PANEL -->
+          <div class="card">
+            <div class="card-header" style="justify-content:space-between;">
+              <span class="card-title">📊 Status Heat</span>
+              <button class="btn btn-ghost btn-xs" onclick="loadHeatStatus()">🔄</button>
             </div>
-            <div class="form-group">
-              <label class="form-label">Heat / Pusingan</label>
-              <select class="form-control" id="lorong-heat">
-                <option value="1">Heat 1 (Final)</option>
-                <option value="2">Heat 2</option>
-                <option value="3">Heat 3</option>
-              </select>
+            <div class="card-body" style="padding:8px 0;" id="heat-status-list">
+              <div style="text-align:center;padding:16px;color:#94A3B8;font-size:12px;">Memuatkan...</div>
             </div>
-            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
-              <button class="btn btn-primary" style="justify-content:center;" onclick="undianLorong()">🎰 Buat Undian</button>
-              <button class="btn btn-ghost" style="justify-content:center;" onclick="resetLorong()">🔄 Reset</button>
-              <button class="btn btn-success" style="justify-content:center;" onclick="simpanLorong()">💾 Simpan</button>
+            <div style="padding:8px 14px;border-top:1px solid #F1F5F9;display:flex;gap:10px;flex-wrap:wrap;">
+              <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:#64748B;"><span style="width:7px;height:7px;border-radius:50%;background:#EF4444;display:inline-block;"></span>Belum dijana</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:#64748B;"><span style="width:7px;height:7px;border-radius:50%;background:#F59E0B;display:inline-block;"></span>Perlu jana semula</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:#64748B;"><span style="width:7px;height:7px;border-radius:50%;background:#10B981;display:inline-block;"></span>Heat OK</span>
             </div>
           </div>
         </div>
 
-        <!-- Peserta -->
+        <!-- Info panel -->
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="card" id="heat-info-card">
+            <div class="card-header"><span class="card-title">ℹ️ Maklumat Acara</span></div>
+            <div class="card-body">
+              <div id="heat-info-content" style="color:#94A3B8;font-size:13px;text-align:center;padding:24px;">
+                Pilih acara untuk lihat maklumat
+              </div>
+            </div>
+          </div>
+          <div class="card" id="heat-result-card" style="display:none;">
+            <div class="card-header"><span class="card-title">✅ Hasil Jana Heat</span></div>
+            <div class="card-body"><div id="heat-result-content"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB 2: STARTING LIST -->
+    <div id="heat-sub-startlist" class="heat-subpane" style="display:none;">
+      <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-end;">
+        <div class="form-group" style="margin:0;min-width:180px;">
+          <label class="form-label">Acara</label>
+          <select class="form-control" id="sl-acara" onchange="loadStartingList()">
+            <option value="">-- Pilih Acara --</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;min-width:160px;">
+          <label class="form-label">Heat</label>
+          <select class="form-control" id="sl-heat" onchange="renderStartingList()">
+            <option value="">-- Pilih Heat --</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost" onclick="cetakStartingList()">🖨️ Cetak PDF</button>
+      </div>
+
+      <!-- Printable area -->
+      <div id="sl-print-area">
         <div class="card">
-          <div class="card-header"><span class="card-title">👥 Peserta (<span id="lorong-peserta-count">0</span>)</span></div>
-          <div class="card-body" style="padding:12px;">
-            <div id="lorong-peserta-list" style="max-height:200px;overflow-y:auto;">
-              <div style="text-align:center;color:#94A3B8;font-size:12px;padding:16px;">Pilih acara dahulu</div>
+          <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+            <span class="card-title">🏁 Starting List</span>
+            <span id="sl-heat-label" style="font-size:12px;color:#64748B;">—</span>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <div id="sl-table-wrap">
+              <div style="text-align:center;padding:40px;color:#94A3B8;font-size:13px;">
+                <div style="font-size:32px;margin-bottom:8px;">📋</div>Pilih acara dan heat
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Hasil Undian -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">🏁 Susunan Lorong</span>
-          <span style="font-size:12px;color:#64748B;" id="lorong-info">—</span>
+    <!-- SUB 3: PROSES LAYAK FINAL -->
+    <div id="heat-sub-layak" class="heat-subpane" style="display:none;">
+      <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-end;flex-wrap:wrap;">
+        <div class="form-group" style="margin:0;min-width:200px;">
+          <label class="form-label">Acara</label>
+          <select class="form-control" id="layak-acara" onchange="loadLayakFinal()">
+            <option value="">-- Pilih Acara --</option>
+          </select>
         </div>
-        <div class="card-body">
-          <div id="lorong-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
-            <div style="grid-column:1/-1;text-align:center;padding:40px;color:#94A3B8;">
-              <div style="font-size:32px;margin-bottom:8px;">🎰</div>
-              <div style="font-size:13px;">Buat undian untuk lihat susunan lorong</div>
-            </div>
-          </div>
+      </div>
+      <div id="layak-content">
+        <div style="text-align:center;padding:40px;color:#94A3B8;font-size:13px;">
+          <div style="font-size:32px;margin-bottom:8px;">🏆</div>Pilih acara yang telah selesai saringan
         </div>
       </div>
     </div>
@@ -624,8 +727,15 @@ select.form-control{cursor:pointer;}
         <input type="file" id="import-file" accept=".csv" style="display:none;" onchange="previewImport()">
         <button class="btn btn-ghost btn-sm" onclick="document.getElementById('import-file').click()">Pilih Fail</button>
       </div>
-      <div style="background:#EFF6FF;border-radius:8px;padding:12px;font-size:12px;color:#1D4ED8;">
-        <strong>Format CSV:</strong> no_kp, nama, id_rumah, id_kategori, jantina, tarikh_lahir, kelas, no_dada
+      <div style="background:#EFF6FF;border-radius:8px;padding:12px;font-size:12px;color:#1D4ED8;margin-bottom:8px;">
+        <strong>Format CSV (5 kolum sahaja):</strong><br>
+        <code style="font-size:11px;">no_kp, nama, darjah, kelas, nama_rumah</code><br><br>
+        <strong>Contoh:</strong><br>
+        <code style="font-size:11px;">901201-05-1234, Ahmad bin Ali, 5, 5 Bestari, BESTARI</code><br>
+        <span style="color:#6B7280;margin-top:4px;display:block;">✅ Jantina, kategori & tarikh lahir akan auto-jana dari No. KP</span>
+      </div>
+      <div style="background:#F0FDF4;border-radius:8px;padding:10px;font-size:11px;color:#166534;">
+        💡 Nama rumah mesti sama dengan yang ditetapkan dalam AdminSetup (contoh: BESTARI, GEMILANG)
       </div>
       <div id="import-preview" style="margin-top:12px;display:none;">
         <div style="font-size:12px;font-weight:600;color:#475569;margin-bottom:8px;" id="import-count">—</div>
@@ -708,7 +818,7 @@ function gasRun(fn, ...args) {
       return;
     }
     google.script.run
-      .withSuccessHandler(resolve)
+      .withSuccessHandler(r => resolve(typeof r === 'string' ? JSON.parse(r) : r))
       .withFailureHandler(e => { console.error(fn, e); reject(e); })
       [fn](...args);
   });
@@ -717,6 +827,13 @@ function gasRun(fn, ...args) {
 async function gas(fn, payload) {
   try { return await gasRun(fn, payload || {}); }
   catch(e) { showToast('Ralat: ' + e.message, 'error'); return { success: false }; }
+}
+
+// Auto-parse: handle sama ada GAS return string atau object
+function gasResult(raw) {
+  if (!raw) return { success: false };
+  if (typeof raw === 'string') { try { return JSON.parse(raw); } catch(e) { return { success: false }; } }
+  return raw;
 }
 
 // ═══════════════════════════════════════════
@@ -783,11 +900,13 @@ function getMockData(fn, args) {
 // STATE
 // ═══════════════════════════════════════════
 const S = {
-  rumah: [], kategori: [], murid: [], acaraList: [], regList: [],
+  rumah: [], kategori: [], murid: [], acaraList: [], acaraMaster: [], regList: [],
   muridFiltered: [], regFiltered: [],
   muridPage: 1, regPage: 1, perPage: 20,
   editMuridId: null,
   lorongDraw: [], lorongAcaraId: null,
+  heatList: [], pesertaHeat: [], heatAcaraId: null,
+  settings: {}, // ← settings dari tbl_settings
   SCRIPT_URL: ''
 };
 
@@ -803,23 +922,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function loadMasterData() {
-  const [rRes, kRes, sRes] = await Promise.all([
+  const [rRaw, kRaw, sRes] = await Promise.all([
     gas('getRumah'), gas('getKategori'), gas('getSettings')
   ]);
-  if (rRes.success) { S.rumah = rRes.rumah || []; populateRumahDropdowns(); }
-  if (kRes.success) { S.kategori = rRes.kategori || kRes.kategori || []; populateKatDropdowns(); }
-  if (sRes.success) {
-    const s = sRes.settings || {};
-    document.getElementById('sidebar-sekolah').textContent = s.tournament_name || 'Sistem Sukan';
-    document.getElementById('dash-subtitle').textContent = s.tournament_name || '';
+  // Parse JSON string (GAS sandbox fix)
+  const rRes = (typeof rRaw === 'string') ? JSON.parse(rRaw) : rRaw;
+  const kRes = (typeof kRaw === 'string') ? JSON.parse(kRaw) : kRaw;
+
+  if (rRes && rRes.success) { S.rumah = rRes.data || []; populateRumahDropdowns(); }
+  if (kRes && kRes.success) { S.kategori = kRes.data || []; populateKatDropdowns(); }
+  const sParsed = (typeof sRes === 'string') ? JSON.parse(sRes) : sRes;
+  if (sParsed && sParsed.success) {
+    S.settings = sParsed.data || sParsed.settings || {};
+    const el1 = document.getElementById('sidebar-sekolah');
+    const el2 = document.getElementById('dash-subtitle');
+    if (el1) el1.textContent = S.settings.nama_sekolah || 'Sistem Sukan';
+    if (el2) el2.textContent = S.settings.nama_pertandingan || S.settings.tournament_name || '';
   }
-  // Populate lorong kat dropdown
-  const lkat = document.getElementById('lorong-kat');
-  const lkatSrc = S.kategori.length ? S.kategori : kRes.kategori || [];
-  lkatSrc.forEach(k => lkat.innerHTML += `<option value="${k.id_kategori}">${k.id_kategori} - ${k.nama_kategori||k.id_kategori}</option>`);
-  // Populate jana kat
   const jkat = document.getElementById('jana-kat');
-  lkatSrc.forEach(k => jkat.innerHTML += `<option value="${k.id_kategori}">${k.id_kategori} - ${k.nama_kategori||k.id_kategori}</option>`);
+  if (jkat) {
+    jkat.innerHTML = '<option value="">-- Semua Kategori --</option>';
+    S.kategori.forEach(k => jkat.innerHTML += `<option value="${k.kod||k.id}">${k.kod} — ${k.nama||''}</option>`);
+  }
 }
 
 function populateRumahDropdowns() {
@@ -827,10 +951,9 @@ function populateRumahDropdowns() {
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    const isFilter = id.startsWith('murid-flt') || id.startsWith('reg-flt');
     const orig = el.options[0].outerHTML;
     el.innerHTML = orig;
-    S.rumah.forEach(r => el.innerHTML += `<option value="${r.id_rumah}">${r.nama_rumah||r.id_rumah}</option>`);
+    S.rumah.forEach(r => el.innerHTML += `<option value="${r.id||r.id_rumah}">${r.nama||r.nama_rumah||r.id_rumah}</option>`);
   });
 }
 
@@ -842,7 +965,7 @@ function populateKatDropdowns() {
     if (!el) return;
     const orig = el.options[0].outerHTML;
     el.innerHTML = orig;
-    katSrc.forEach(k => el.innerHTML += `<option value="${k.id_kategori}">${k.id_kategori} - ${k.nama_kategori||k.id_kategori}</option>`);
+    katSrc.forEach(k => el.innerHTML += `<option value="${k.id||k.id_kategori}">${k.kod||k.id_kategori} — ${k.nama||k.nama_kategori||''}</option>`);
   });
 }
 
@@ -860,7 +983,8 @@ function goTab(tab) {
     dashboard: loadDashboard,
     murid: loadMurid,
     acara: loadAcara,
-    pendaftaran: loadPendaftaran
+    pendaftaran: loadPendaftaran,
+    heat: loadHeat
   };
   if (loaders[tab]) loaders[tab]();
 }
@@ -869,7 +993,7 @@ function refreshTab() {
   const active = document.querySelector('.tab-pane.active');
   if (!active) return;
   const id = active.id.replace('pane-','');
-  const loaders = { dashboard:loadDashboard, murid:loadMurid, acara:loadAcara, pendaftaran:loadPendaftaran };
+  const loaders = { dashboard:loadDashboard, murid:loadMurid, acara:loadAcara, pendaftaran:loadPendaftaran, heat:loadHeat };
   if (loaders[id]) loaders[id]();
 }
 
@@ -913,21 +1037,30 @@ async function loadDashboard() {
 // ═══════════════════════════════════════════
 async function loadMurid() {
   showLoading(true,'Memuatkan murid...');
-  const r = await gas('getMurid');
+  const raw = await gas('getMurid');
+  const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
   showLoading(false);
-  if (!r.success) { showToast('Gagal muatkan murid','error'); return; }
+  if (!r || !r.success) { showToast('Gagal muatkan murid','error'); return; }
   S.murid = r.murid || [];
+  // Populate rumah dropdown dari data murid (nama_rumah unik)
+  const rumahSel = document.getElementById('murid-flt-rumah');
+  const rumahCurrent = rumahSel.value;
+  const uniqueRumah = [...new Set(S.murid.map(m=>m.nama_rumah).filter(Boolean))].sort();
+  rumahSel.innerHTML = '<option value="">Semua Rumah</option>' +
+    uniqueRumah.map(r=>`<option value="${r}" ${r===rumahCurrent?'selected':''}>${r}</option>`).join('');
   filterMurid();
 }
 
 function filterMurid() {
-  const cari = (document.getElementById('murid-cari').value||'').toLowerCase();
-  const rumah = document.getElementById('murid-flt-rumah').value;
-  const kat = document.getElementById('murid-flt-kat').value;
+  const cari   = (document.getElementById('murid-cari').value||'').toLowerCase();
+  const rumah  = document.getElementById('murid-flt-rumah').value;
+  const darjah = document.getElementById('murid-flt-darjah').value;
+  const kelas  = (document.getElementById('murid-flt-kelas').value||'').toLowerCase();
   S.muridFiltered = S.murid.filter(m => {
-    if (rumah && m.id_rumah !== rumah) return false;
-    if (kat && m.id_kategori !== kat) return false;
-    if (cari && !m.nama.toLowerCase().includes(cari) && !m.no_kp.includes(cari)) return false;
+    if (rumah  && (m.nama_rumah||'').toUpperCase() !== rumah.toUpperCase()) return false;
+    if (darjah && (m.darjah||'').toString() !== darjah) return false;
+    if (kelas  && !(m.kelas||'').toLowerCase().includes(kelas)) return false;
+    if (cari   && !m.nama.toLowerCase().includes(cari) && !(m.no_kp||'').includes(cari)) return false;
     return true;
   });
   S.muridPage = 1;
@@ -937,7 +1070,8 @@ function filterMurid() {
 function clearMuridFilter() {
   document.getElementById('murid-cari').value='';
   document.getElementById('murid-flt-rumah').value='';
-  document.getElementById('murid-flt-kat').value='';
+  document.getElementById('murid-flt-darjah').value='';
+  document.getElementById('murid-flt-kelas').value='';
   filterMurid();
 }
 
@@ -954,21 +1088,25 @@ function renderMurid() {
     return;
   }
 
-  const rumahMap = Object.fromEntries(S.rumah.map(r => [r.id_rumah, r]));
   tbody.innerHTML = page.map((m, i) => {
-    const r = rumahMap[m.id_rumah] || {};
-    const colorClass = m.id_rumah ? `rumah-${m.id_rumah}` : '';
+    const rumahBadge = m.nama_rumah
+      ? `<span style="background:#EFF6FF;color:#1D4ED8;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;">${m.nama_rumah}</span>`
+      : `<span style="color:#94A3B8;font-size:11px;">—</span>`;
     return `<tr>
       <td style="color:#94A3B8;font-size:12px;">${start+i+1}</td>
-      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;">${m.no_kp}</span></td>
-      <td style="font-weight:600;">${m.nama}</td>
-      <td><span class="badge ${colorClass}" style="font-size:11px;">${m.id_rumah}</span></td>
-      <td><span class="badge badge-blue" style="font-size:11px;">${m.id_kategori}</span></td>
-      <td>${m.jantina==='L'?'👦 Lelaki':'👧 Perempuan'}</td>
+      <td>
+        <div style="font-weight:600;font-size:13px;">${m.nama}</div>
+        <div style="font-size:11px;color:#94A3B8;font-family:monospace;">${m.no_kp||'—'}</div>
+      </td>
+      <td style="text-align:center;">
+        <span style="background:#F1F5F9;color:#475569;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;">${m.darjah||'—'}</span>
+      </td>
+      <td style="font-size:12px;color:#475569;">${m.kelas||'—'}</td>
+      <td>${rumahBadge}</td>
       <td>
         <div style="display:flex;gap:4px;">
-          <button class="btn btn-ghost btn-xs" onclick="editMurid('${m.id_murid||m.no_kp}')">✏️</button>
-          <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="deleteMurid('${m.id_murid||m.no_kp}','${m.nama}')">🗑️</button>
+          <button class="btn btn-ghost btn-xs" onclick="editMurid('${m.id||m.no_kp}')">✏️ Edit</button>
+          <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="deleteMurid('${m.id||m.no_kp}','${m.nama}')">🗑️</button>
         </div>
       </td>
     </tr>`;
@@ -980,7 +1118,7 @@ function renderMurid() {
 }
 
 function openMuridModal(data=null) {
-  S.editMuridId = data ? (data.id_murid||data.no_kp) : null;
+  S.editMuridId = data ? (data.id||data.id_murid||data.no_kp) : null;
   document.getElementById('modal-murid-title').textContent = data ? 'Edit Murid' : 'Tambah Murid';
   document.getElementById('m-nokp').value = data?.no_kp||'';
   document.getElementById('m-nokp').disabled = !!data;
@@ -1002,7 +1140,7 @@ async function saveMurid() {
   if (!nokp||!nama||!rumah||!kat) { showToast('Sila isi semua medan wajib','error'); return; }
 
   const payload = {
-    id_murid: S.editMuridId,
+    id: S.editMuridId,
     no_kp: nokp, nama, id_rumah: rumah, id_kategori: kat,
     jantina: document.getElementById('m-jantina').value,
     tarikh_lahir: document.getElementById('m-dob').value,
@@ -1011,10 +1149,11 @@ async function saveMurid() {
   };
 
   showLoading(true, 'Menyimpan...');
-  const r = await gas(S.editMuridId ? 'updateMurid' : 'saveMurid', payload);
+  const rawR = await gas(S.editMuridId ? 'updateMurid' : 'saveMurid', payload);
+  const r = (typeof rawR === 'string') ? JSON.parse(rawR) : rawR;
   showLoading(false);
 
-  if (r.success) {
+  if (r && r.success) {
     showToast(r.message||'Berjaya!','success');
     closeModal('modal-murid');
     loadMurid();
@@ -1024,13 +1163,13 @@ async function saveMurid() {
 }
 
 function editMurid(id) {
-  const m = S.murid.find(x => (x.id_murid||x.no_kp) == id);
+  const m = S.murid.find(x => (x.id||x.id_murid||x.no_kp) == id);
   if (m) openMuridModal(m);
 }
 
 function deleteMurid(id, nama) {
   confirmAction(`Padam murid "${nama}"? Semua pendaftaran akan turut dipadam.`, async () => {
-    const r = await gas('deleteMurid', { id_murid: id });
+    const r = await gas('deleteMurid', { id: id });
     if (r.success) { showToast('Murid dipadam','success'); loadMurid(); }
     else showToast(r.message||'Gagal','error');
   });
@@ -1066,14 +1205,21 @@ async function uploadImport() {
   const reader = new FileReader();
   reader.onload = async e => {
     showLoading(true,'Mengimport...');
-    const r = await gas('importMuridCSV', { csv: e.target.result });
+    const raw = await gas('importMuridCSV', { csv: e.target.result });
+    const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
     showLoading(false);
-    if (r.success) {
-      showToast(`${r.count||'?'} murid berjaya diimport`,'success');
+    if (r && r.success) {
+      let msg = `✅ ${r.count||0} murid berjaya diimport`;
+      if (r.skipped > 0) msg += `, ${r.skipped} diskip`;
+      showToast(msg, 'success');
+      if (r.errors && r.errors.length > 0) {
+        console.warn('Import warnings:', r.errors);
+        showToast('⚠️ ' + r.errors[0], 'warn');
+      }
       closeModal('modal-import');
       loadMurid();
     } else {
-      showToast(r.message||'Gagal import','error');
+      showToast((r&&r.message)||'Gagal import','error');
     }
   };
   reader.readAsText(file);
@@ -1083,10 +1229,41 @@ async function uploadImport() {
 // JANA ACARA
 // ═══════════════════════════════════════════
 async function loadAcara() {
-  const r = await gas('getAcaraJana');
-  if (!r.success) return;
-  S.acaraList = r.acara || [];
-  renderAcara(S.acaraList);
+  const [jRaw, mRaw] = await Promise.all([
+    gas('getAcaraJana'),
+    gas('getAcara')
+  ]);
+  const rJana   = (typeof jRaw === 'string') ? JSON.parse(jRaw) : jRaw;
+  const rMaster = (typeof mRaw === 'string') ? JSON.parse(mRaw) : mRaw;
+  if (rJana   && rJana.success)   { S.acaraList   = rJana.acara || rJana.data || []; }
+  if (rMaster && rMaster.success) { S.acaraMaster = rMaster.data || []; }
+  renderAcara(S.acaraList || []);
+  renderAcaraMaster(S.acaraMaster || []);
+}
+
+// Render acara master preview (untuk pilih acara sebelum jana)
+function renderAcaraMaster(list) {
+  const el = document.getElementById('acara-master-list');
+  if (!el) return;
+  if (!list || !list.length) { el.innerHTML = '<div style="color:#94A3B8;font-size:12px;padding:12px;text-align:center;">Tiada acara master. Tambah dalam AdminSetup.</div>'; return; }
+  el.innerHTML = list.filter(a => a.aktif !== false).map(a => {
+    const katArr = Array.isArray(a.kategori) ? a.kategori : [a.kategori];
+    return `<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;border:1px solid #E2E8F0;margin-bottom:6px;font-size:12px;transition:all 0.15s;" onmouseover="this.style.background='#F0F9FF'" onmouseout="this.style.background=''">
+      <input type="checkbox" value="${a.id}" data-nama="${a.nama}" data-jenis="${a.jenis}" data-format="${a.format||'AUTO'}" data-lorong="${a.lorong||false}" style="accent-color:#3B82F6;">
+      <span style="flex:1;">${a.emoji||'🏃'} ${a.nama}</span>
+      <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:#EFF6FF;color:#1D4ED8;">${katArr.join(',')}</span>
+      <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:#F5F3FF;color:#6D28D9;">${a.jenis||'TRACK'}</span>
+    </label>`;
+  }).join('');
+}
+
+function loadAcaraMasterForJana() {
+  // Filter acara master by kategori for jana
+  const katId = document.getElementById('jana-kat').value;
+  const filtered = katId
+    ? (S.acaraMaster||[]).filter(a => { const k = Array.isArray(a.kategori)?a.kategori:[a.kategori]; return k.includes(katId); })
+    : (S.acaraMaster||[]);
+  renderAcaraMaster(filtered);
 }
 
 function renderAcara(list) {
@@ -1111,27 +1288,35 @@ function renderAcara(list) {
 }
 
 async function janaAcara() {
-  const payload = {
-    id_kategori: document.getElementById('jana-kat').value,
-    jenis: document.getElementById('jana-jenis').value,
-    format: document.getElementById('jana-format').value
-  };
+  // Kumpul acara yang ditanda dari checkbox
+  const checked = document.querySelectorAll('#acara-master-list input[type=checkbox]:checked');
+  if (!checked.length) { showToast('Pilih sekurang-kurangnya 1 acara dahulu','warning'); return; }
+  const katFilter = document.getElementById('jana-kat').value;
+  const formatOverride = document.getElementById('jana-format').value;
   showLoading(true,'Menjana acara...');
-  const r = await gas('janaAcara', payload);
-  showLoading(false);
-  if (r.success) {
-    showToast(r.message||'Acara berjaya dijana','success');
-    if (r.acara) { S.acaraList = r.acara; renderAcara(r.acara); }
-    else loadAcara();
-  } else {
-    showToast(r.message||'Gagal jana acara','error');
+  let success = 0, fail = 0;
+  for (const cb of checked) {
+    const rawJ = await gas('janaAcara', {
+      id_master: cb.value,
+      nama: cb.dataset.nama,
+      jenis: cb.dataset.jenis,
+      format: formatOverride || cb.dataset.format || 'AUTO',
+      guna_lorong: cb.dataset.lorong === 'true',
+      id_kategori: katFilter || null
+    });
+    const r = (typeof rawJ === 'string') ? JSON.parse(rawJ) : rawJ;
+    if (r && r.success) success++; else fail++;
   }
+  showLoading(false);
+  if (success) showToast(`✅ ${success} acara berjaya dijana${fail?' ('+fail+' gagal)':''}`, 'success');
+  else showToast('Gagal jana acara','error');
+  loadAcara();
 }
 
 async function janaSemuaAcara() {
   confirmAction('Jana semua acara dari acara master? Acara sedia ada akan digantikan.', async () => {
     showLoading(true,'Menjana semua acara...');
-    const r = await gas('janaSemuaAcara', {});
+    const r = gasResult(await gas('janaSemuaAcara', {}));
     showLoading(false);
     if (r.success) { showToast(r.message||'Semua acara berjaya dijana','success'); loadAcara(); }
     else showToast(r.message||'Gagal','error');
@@ -1161,7 +1346,7 @@ async function padamSemuaAcara() {
 // ═══════════════════════════════════════════
 async function loadPendaftaran() {
   showLoading(true,'Memuatkan pendaftaran...');
-  const r = await gas('getPendaftaran');
+  const r = gasResult(await gas('getPendaftaran'));
   showLoading(false);
   if (!r.success) return;
   S.regList = r.pendaftaran || [];
@@ -1240,7 +1425,7 @@ async function saveDaftar() {
   if (!kat||!acara||!nokp) { showToast('Sila isi semua medan','error'); return; }
 
   showLoading(true,'Mendaftar...');
-  const r = await gas('savePendaftaran', { id_kategori:kat, id_acara:acara, no_kp:nokp });
+  const r = gasResult(await gas('savePendaftaran', { id_kategori:kat, id_acara:acara, no_kp:nokp }));
   showLoading(false);
   if (r.success) {
     showToast('Pendaftaran berjaya!','success');
@@ -1260,133 +1445,94 @@ function deleteReg(id, nama) {
 }
 
 // ═══════════════════════════════════════════
-// UNDIAN LORONG
+// UNDIAN LORONG (LAMA — diganti oleh Heat Module)
+// Fungsi ini dikekalkan untuk backward compat sahaja
 // ═══════════════════════════════════════════
-async function loadAcaraLorong() {
-  const kat = document.getElementById('lorong-kat').value;
-  const sel = document.getElementById('lorong-acara');
-  sel.innerHTML = '<option value="">-- Pilih Acara Track --</option>';
-  if (!kat) return;
-  const list = S.acaraList.filter(a => (a.id_kategori===kat||a.kategori===kat) && a.guna_lorong);
-  if (!list.length) {
-    sel.innerHTML = '<option value="">Tiada acara track untuk kategori ini</option>';
-    return;
-  }
-  list.forEach(a => sel.innerHTML += `<option value="${a.id_acara||a.no_acara}">${a.no_acara} - ${a.nama_acara}</option>`);
-}
+async function loadAcaraLorong() { console.warn('deprecated'); }
+async function loadPesertaLorong() { console.warn('deprecated'); }
+function undianLorong() { console.warn('deprecated'); }
+function renderLorongGrid() { console.warn('deprecated'); }
+function resetLorong() { S.lorongDraw = []; }
+async function simpanLorong() { showToast('Sila guna tab Heat & List','info'); }
 
-async function loadPesertaLorong() {
-  const acaraId = document.getElementById('lorong-acara').value;
-  const el = document.getElementById('lorong-peserta-list');
-  const countEl = document.getElementById('lorong-peserta-count');
-  if (!acaraId) { el.innerHTML = '<div style="text-align:center;color:#94A3B8;font-size:12px;padding:16px;">Pilih acara dahulu</div>'; return; }
-  S.lorongAcaraId = acaraId;
-
-  const reg = S.regList.filter(x => (x.id_acara||x.no_acara) == acaraId || x.no_acara == acaraId);
-  countEl.textContent = reg.length;
-  if (!reg.length) {
-    el.innerHTML = '<div style="text-align:center;color:#94A3B8;font-size:12px;padding:16px;">Tiada peserta berdaftar</div>';
-    return;
-  }
-  el.innerHTML = reg.map(x => `
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F1F5F9;">
-      <span class="badge rumah-${x.id_rumah}" style="font-size:10px;">${x.id_rumah}</span>
-      <span style="font-size:12px;font-weight:500;flex:1;">${x.nama_murid||x.no_kp}</span>
-    </div>
-  `).join('');
-  resetLorong();
-}
-
-function undianLorong() {
-  const acaraId = document.getElementById('lorong-acara').value;
-  if (!acaraId) { showToast('Pilih acara dahulu','warning'); return; }
-
-  const reg = S.regList.filter(x => (x.id_acara||x.no_acara) == acaraId || x.no_acara == acaraId);
-  if (!reg.length) { showToast('Tiada peserta untuk acara ini','warning'); return; }
-
-  // Shuffle
-  const shuffled = [...reg].sort(() => Math.random()-0.5);
-  S.lorongDraw = shuffled;
-  renderLorongGrid(shuffled);
-}
-
-function renderLorongGrid(peserta) {
-  const trackLanes = parseInt(localStorage.getItem('track_lanes')||'8');
-  const lanes = Math.max(peserta.length, trackLanes > 0 ? Math.min(trackLanes, 8) : 8);
-  const acara = S.acaraList.find(a => (a.id_acara||a.no_acara) == S.lorongAcaraId);
-  const heat = document.getElementById('lorong-heat').value;
-
-  document.getElementById('lorong-info').textContent = `${acara?.nama_acara||'Acara'} · Heat ${heat} · ${peserta.length} peserta`;
-
-  const cols = Math.min(lanes, 8);
-  const grid = document.getElementById('lorong-grid');
-  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-
-  grid.innerHTML = Array.from({length:cols}, (_,i) => {
-    const p = peserta[i];
-    return `<div class="lane-card ${p?'filled':''}">
-      <div class="lane-num">${i+1}</div>
-      ${p ? `
-        <div class="lane-name">${p.nama_murid||p.no_kp}</div>
-        <div style="margin-top:4px;"><span class="badge rumah-${p.id_rumah}" style="font-size:10px;">${p.id_rumah}</span></div>
-      ` : `<div class="lane-name" style="color:#CBD5E1;">—</div>`}
-    </div>`;
-  }).join('');
-}
-
-function resetLorong() {
-  S.lorongDraw = [];
-  document.getElementById('lorong-info').textContent = '—';
-  const grid = document.getElementById('lorong-grid');
-  grid.style.gridTemplateColumns = 'repeat(4,1fr)';
-  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94A3B8;">
-    <div style="font-size:32px;margin-bottom:8px;">🎰</div>
-    <div style="font-size:13px;">Buat undian untuk lihat susunan lorong</div>
-  </div>`;
-}
-
-async function simpanLorong() {
-  if (!S.lorongDraw.length) { showToast('Buat undian dahulu','warning'); return; }
-  const payload = {
-    id_acara: S.lorongAcaraId,
-    heat: document.getElementById('lorong-heat').value,
-    susunan: S.lorongDraw.map((p,i) => ({lorong:i+1, no_kp:p.no_kp, id_rumah:p.id_rumah}))
-  };
-  showLoading(true,'Menyimpan undian...');
-  const r = await gas('simpanLorong', payload);
-  showLoading(false);
-  if (r.success) { showToast('Undian lorong disimpan!','success'); }
-  else showToast(r.message||'Gagal simpan','error');
-}
 
 // ═══════════════════════════════════════════
 // LAPORAN
 // ═══════════════════════════════════════════
 function cetakLaporan(jenis) {
-  const judul = {murid:'Senarai Murid',pendaftaran:'Senarai Pendaftaran',lorong:'Jadual Lorong'};
-  const data = jenis==='murid' ? S.murid : jenis==='pendaftaran' ? S.regList : S.lorongDraw;
-  if (!data.length) { showToast('Tiada data untuk dicetak','warning'); return; }
+  const judul = {murid:'Senarai Murid',pendaftaran:'Senarai Pendaftaran',heat:'Jadual Starting List'};
+  const data  = jenis==='murid' ? S.murid : jenis==='pendaftaran' ? S.regList : [];
+  if (jenis !== 'heat' && !data.length) { showToast('Tiada data untuk dicetak','warning'); return; }
+  if (jenis === 'heat') { showToast('Guna tab Starting List untuk cetak heat','info'); return; }
 
-  let html = `<h2>${judul[jenis]||jenis}</h2>
-  <p style="color:#64748B;font-size:12px;">Dijana pada: ${new Date().toLocaleString('ms-MY')}</p>`;
+  const ss = S.settings || {};
+  const cetakMasa = new Date().toLocaleString('ms-MY');
+  const headerHtml = `
+    <div style="border-bottom:3px solid #1E3A5F;padding-bottom:10px;margin-bottom:14px;">
+      <div style="font-size:16pt;font-weight:900;text-transform:uppercase;color:#1E3A5F;">${ss.nama_sekolah||'SK SULTAN ISMAIL, KEMAMAN'}</div>
+      <div style="font-size:12pt;font-weight:700;color:#1E3A5F;margin-top:2px;">${ss.nama_pertandingan||'SUKAN TAHUNAN'} ${ss.tahun||''}</div>
+      ${ss.lokasi ? `<div style="font-size:10pt;color:#555;margin-top:4px;">📍 ${ss.lokasi}</div>` : ''}
+    </div>
+    <div style="background:#1E3A5F;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:14px;">
+      <span style="font-size:12pt;font-weight:800;">${judul[jenis]||jenis}</span>
+      <span style="float:right;font-size:9pt;opacity:0.8;">Dijana: ${cetakMasa}</span>
+    </div>`;
 
+  let tableHtml = '';
   if (jenis==='murid') {
-    html += `<table border="1" cellpadding="6" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
-      <thead style="background:#F1F5F9;"><tr><th>#</th><th>No. KP</th><th>Nama</th><th>Rumah</th><th>Kategori</th><th>Kelas</th></tr></thead>
-      <tbody>${data.map((m,i)=>`<tr><td>${i+1}</td><td>${m.no_kp}</td><td>${m.nama}</td><td>${m.id_rumah}</td><td>${m.id_kategori}</td><td>${m.kelas||'—'}</td></tr>`).join('')}</tbody>
+    tableHtml = `<table border="1" cellpadding="7" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10.5pt;">
+      <thead style="background:#1E3A5F;color:#fff;">
+        <tr><th>#</th><th>No. KP</th><th>Nama Murid</th><th>Rumah Sukan</th><th>Kategori</th><th>Kelas</th></tr>
+      </thead>
+      <tbody>
+        ${data.map((m,i)=>`<tr style="background:${i%2?'#F8FAFC':'#fff'}">
+          <td style="text-align:center;">${i+1}</td>
+          <td style="font-family:monospace;font-size:9.5pt;">${m.no_kp||'—'}</td>
+          <td>${m.nama||'—'}</td>
+          <td style="text-align:center;">${m.id_rumah||'—'}</td>
+          <td style="text-align:center;">${m.id_kategori||'—'}</td>
+          <td>${m.kelas||'—'}</td>
+        </tr>`).join('')}
+      </tbody>
     </table>`;
   } else if (jenis==='pendaftaran') {
-    html += `<table border="1" cellpadding="6" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:12px;">
-      <thead style="background:#F1F5F9;"><tr><th>#</th><th>No. Acara</th><th>Acara</th><th>Murid</th><th>Rumah</th></tr></thead>
-      <tbody>${data.map((x,i)=>`<tr><td>${i+1}</td><td>${x.no_acara}</td><td>${x.nama_acara}</td><td>${x.nama_murid||x.no_kp}</td><td>${x.id_rumah}</td></tr>`).join('')}</tbody>
+    tableHtml = `<table border="1" cellpadding="7" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10.5pt;">
+      <thead style="background:#1E3A5F;color:#fff;">
+        <tr><th>#</th><th>No. Acara</th><th>Nama Acara</th><th>Peserta</th><th>Rumah</th><th>Kategori</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        ${data.map((x,i)=>`<tr style="background:${i%2?'#F8FAFC':'#fff'}">
+          <td style="text-align:center;">${i+1}</td>
+          <td style="text-align:center;font-weight:700;">${x.no_acara||'—'}</td>
+          <td>${x.nama_acara||'—'}</td>
+          <td>${x.nama_murid||x.no_kp||'—'}</td>
+          <td style="text-align:center;">${x.id_rumah||'—'}</td>
+          <td style="text-align:center;">${x.id_kategori||'—'}</td>
+          <td style="text-align:center;">${x.status||'AKTIF'}</td>
+        </tr>`).join('')}
+      </tbody>
     </table>`;
   }
 
-  const w = window.open('','_blank');
-  w.document.write(`<!DOCTYPE html><html><head><title>${judul[jenis]}</title>
-  <style>body{font-family:Arial,sans-serif;padding:20px;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid #ddd;padding:6px 10px;}th{background:#f3f4f6;}</style>
-  </head><body>${html}</body></html>`);
-  w.print();
+  const popup = window.open('','_blank','width=900,height=800,scrollbars=yes');
+  if (!popup) { showToast('Popup disekat browser. Benarkan popup.','warning'); return; }
+  popup.document.write(`<!DOCTYPE html><html lang="ms"><head>
+    <meta charset="UTF-8"><title>${judul[jenis]||jenis}</title>
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{font-family:Arial,sans-serif;padding:20px;}
+      table{width:100%;border-collapse:collapse;}
+      td,th{border:1px solid #CBD5E1;padding:7px 10px;}
+      @media print{button{display:none!important;}body{padding:10mm 12mm;}@page{size:A4 portrait;margin:10mm;}}
+    </style>
+  </head><body>
+    <button onclick="window.print()" style="position:fixed;top:12px;right:12px;padding:8px 20px;background:#1E3A5F;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11pt;font-weight:700;">🖨️ Cetak PDF</button>
+    ${headerHtml}
+    ${tableHtml}
+    <div style="text-align:right;font-size:8.5pt;color:#94A3B8;margin-top:16px;">Dicetak: ${cetakMasa} &nbsp;·&nbsp; ${ss.nama_sekolah||'Sistem Sukan'}</div>
+  </body></html>`);
+  popup.document.close();
+  popup.focus();
 }
 
 // ═══════════════════════════════════════════
@@ -1433,6 +1579,672 @@ function showToast(msg, type='success') {
 function showLoading(show, msg='Memuatkan...') {
   document.getElementById('loading-msg').textContent = msg;
   document.getElementById('loading-overlay').classList.toggle('show', show);
+}
+
+
+// ═══════════════════════════════════════════
+// HEAT & STARTING LIST — MODULE
+// ═══════════════════════════════════════════
+
+// Load heat tab — populate acara dropdowns
+async function loadHeat() {
+  showLoading(true, 'Memuatkan acara...');
+  const raw = await gas('getAcaraJana');
+  const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+  if (r && r.success) S.acaraList = r.acara || r.data || [];
+  showLoading(false);
+  _populateHeatDropdowns();
+  loadHeatStatus();
+}
+
+async function loadHeatStatus() {
+  const el = document.getElementById('heat-status-list');
+  if (!el || !S.acaraList.length) { if(el) el.innerHTML='<div style="text-align:center;padding:16px;color:#94A3B8;font-size:12px;">Tiada acara</div>'; return; }
+
+  el.innerHTML = '<div style="text-align:center;padding:16px;color:#94A3B8;font-size:12px;">Memuatkan...</div>';
+
+  const [rH, rP, rK] = await Promise.all([
+    gas('getHeat', {}),
+    gas('getPendaftaran', {}),
+    gas('getKumpulan', {})
+  ]);
+  const rHP = (typeof rH==='string')?JSON.parse(rH):rH;
+  const rPP = (typeof rP==='string')?JSON.parse(rP):rP;
+  const rKK = (typeof rK==='string')?JSON.parse(rK):rK;
+
+  const heatAll    = (rHP&&rHP.heat)        ? rHP.heat        : [];
+  const pesertaAll = (rHP&&rHP.peserta)     ? rHP.peserta     : [];
+  const pendAll    = (rPP&&rPP.pendaftaran) ? rPP.pendaftaran : [];
+  const kumpAll    = (rKK&&rKK.kumpulan)   ? rKK.kumpulan    : [];
+
+  el.innerHTML = S.acaraList.map(a => {
+    const isKump = (a.jenis_pendaftaran||'INDIVIDU').toUpperCase() === 'KUMPULAN';
+    const heatAcara   = heatAll.filter(h => h.id_acara===a.id_acara && h.status!=='VOID');
+    const pesertaHeat = pesertaAll.filter(p => p.id_acara===a.id_acara && p.status!=='VOID');
+
+    // Kira pendaftar — INDIVIDU dari tbl_pendaftaran, KUMPULAN dari tbl_pendaftaran_kumpulan
+    const daftarCount = isKump
+      ? kumpAll.filter(k => k.id_acara===a.id_acara && k.status==='AKTIF').length
+      : pendAll.filter(p => p.id_acara===a.id_acara && p.status==='AKTIF').length;
+
+    const heatCount    = heatAcara.length;
+    const pesertaCount = pesertaHeat.length;
+
+    let dot, badge, bs, act='';
+    if (!heatCount) {
+      dot='#EF4444'; badge='Belum dijana'; bs='background:#FEF2F2;color:#991B1B;';
+      act=`<button class="btn btn-xs" style="background:#EFF6FF;color:#1D4ED8;" onclick="selectAndJana('${a.id_acara}')">Jana</button>`;
+    } else if (daftarCount !== pesertaCount) {
+      dot='#F59E0B';
+      badge=`⚠ ${daftarCount} daftar / ${pesertaCount} heat`;
+      bs='background:#FFFBEB;color:#92400E;';
+      act=`<button class="btn btn-xs" style="background:#FFFBEB;color:#92400E;" onclick="selectAndJana('${a.id_acara}')">Jana Semula</button>`;
+    } else {
+      dot='#10B981';
+      badge=`✓ ${isKump ? daftarCount+' pasukan' : pesertaCount+' peserta'}`;
+      bs='background:#ECFDF5;color:#065F46;';
+    }
+
+    return `<div style="display:flex;align-items:center;gap:7px;padding:7px 14px;border-bottom:1px solid #F1F5F9;flex-wrap:wrap;">
+      <span style="width:8px;height:8px;border-radius:50%;background:${dot};flex-shrink:0;"></span>
+      <span style="flex:1;font-size:12px;font-weight:600;min-width:100px;">${a.nama_acara}</span>
+      <span style="font-size:10px;padding:2px 7px;border-radius:20px;${bs}">${badge}</span>
+      ${act}
+    </div>`;
+  }).join('');
+}
+
+function selectAndJana(acaraId) {
+  const sel = document.getElementById('heat-acara');
+  if (sel) { sel.value = acaraId; loadHeatInfo(); }
+  setTimeout(() => janaHeatUI(), 300);
+}
+
+function _populateHeatDropdowns() {
+  const ids = ['heat-acara','sl-acara','layak-acara'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '<option value="">-- Pilih Acara --</option>';
+    S.acaraList.forEach(a => {
+      el.innerHTML += `<option value="${a.id_acara}">[${a.no_acara}] ${a.nama_acara} (${a.id_kategori||a.kategori||''})</option>`;
+    });
+  });
+  // Populate heat-kat filter
+  const katEl = document.getElementById('heat-kat');
+  if (katEl && S.kategori.length) {
+    katEl.innerHTML = '<option value="">-- Semua --</option>';
+    S.kategori.forEach(k => katEl.innerHTML += `<option value="${k.kod||k.id_kategori}">${k.kod||k.id_kategori} — ${k.nama||k.nama_kategori||''}</option>`);
+  }
+}
+
+function filterHeatAcara() {
+  const katId = document.getElementById('heat-kat').value;
+  const sel = document.getElementById('heat-acara');
+  sel.innerHTML = '<option value="">-- Pilih Acara --</option>';
+  const katClean = katId ? katId.replace('KAT-','') : '';
+  const list = katClean
+    ? S.acaraList.filter(a => (a.id_kategori||a.kategori||'').replace('KAT-','') === katClean)
+    : S.acaraList;
+  if (!list.length && katClean) { sel.innerHTML += '<option disabled>Tiada acara untuk kategori ini</option>'; return; }
+  list.forEach(a => sel.innerHTML += `<option value="${a.id_acara}">[${a.no_acara}] ${a.nama_acara}</option>`);
+}
+
+// Load info when acara selected (Sub 1)
+async function loadHeatInfo() {
+  const acaraId = document.getElementById('heat-acara').value;
+  const cont = document.getElementById('heat-info-content');
+  if (!acaraId) { cont.innerHTML = '<div style="color:#94A3B8;text-align:center;padding:24px;">Pilih acara</div>'; return; }
+
+  S.heatAcaraId = acaraId;
+  const acara = S.acaraList.find(a => a.id_acara === acaraId);
+  if (!acara) return;
+
+  // Count pendaftaran untuk acara ini
+  showLoading(true);
+  const [rPend, rHeat] = await Promise.all([
+    gas('getPendaftaran', { id_acara: acaraId }),
+    gas('getHeat', { id_acara: acaraId })
+  ]);
+  showLoading(false);
+
+  const isKump = (acara.jenis_pendaftaran||'INDIVIDU').toUpperCase() === 'KUMPULAN';
+  const rPendP = gasResult(rPend);
+  let pesertaCount = 0;
+  if (isKump) {
+    // Kumpulan — ambil dari getKumpulan
+    const rK = await gas('getKumpulan', { id_acara: acaraId });
+    const rKP = (typeof rK==='string')?JSON.parse(rK):rK;
+    pesertaCount = (rKP&&rKP.kumpulan) ? rKP.kumpulan.filter(k=>k.id_acara===acaraId&&k.status==='AKTIF').length : 0;
+  } else {
+    pesertaCount = rPendP && rPendP.pendaftaran ? rPendP.pendaftaran.filter(p => p.id_acara === acaraId && p.status === 'AKTIF').length : 0;
+  }
+  const maxLorong = parseInt(S.settings.lorong_trek) || 6;
+  const heatSedia = rHeat && (rHeat.heat || rHeat.heats) ? (rHeat.heat || rHeat.heats).filter(h => h.status !== 'VOID') : [];
+  const formatAcara = acara.format_acara || acara.format || 'AUTO';
+  let formatDetect = formatAcara;
+  if (formatAcara === 'AUTO') formatDetect = pesertaCount <= maxLorong ? 'TERUS_FINAL' : 'SARINGAN';
+
+  const fmtClass = formatDetect === 'TERUS_FINAL' ? 'fmt-terus' : formatDetect === 'SARINGAN' ? 'fmt-saringan' : 'fmt-auto';
+  const fmtLabel = formatDetect === 'TERUS_FINAL' ? '✅ Terus Final' : '⚡ Saringan + Final';
+
+  cont.innerHTML = `
+    <div class="heat-info-row"><span class="heat-info-key">Acara</span><span class="heat-info-val">${acara.nama_acara}</span></div>
+    <div class="heat-info-row"><span class="heat-info-key">Kategori</span><span class="heat-info-val">${acara.id_kategori||acara.kategori||'—'}</span></div>
+    <div class="heat-info-row"><span class="heat-info-key">Jenis</span><span class="heat-info-val">${acara.jenis||'TRACK'}</span></div>
+    <div class="heat-info-row"><span class="heat-info-key">Guna Lorong</span><span class="heat-info-val">${acara.guna_lorong ? '✅ Ya' : '❌ Tidak (Acara Padang)'}</span></div>
+    <div class="heat-info-row"><span class="heat-info-key">Peserta Daftar</span><span class="heat-info-val" style="color:#3B82F6;">${pesertaCount} orang</span></div>
+    <div class="heat-info-row"><span class="heat-info-key">Format Dikesan</span><span class="heat-info-val"><span class="format-badge ${fmtClass}">${fmtLabel}</span></span></div>
+    <div class="heat-info-row"><span class="heat-info-key">Heat Sedia Ada</span><span class="heat-info-val">${heatSedia.length > 0 ? heatSedia.length + ' heat' : 'Belum dijana'}</span></div>
+    ${heatSedia.length > 0 ? `<div style="margin-top:10px;padding:10px;background:#FEF3C7;border-radius:8px;font-size:12px;color:#92400E;">⚠️ Jana semula akan void heat lama yang belum SELESAI.</div>` : ''}
+  `;
+}
+
+// Jana Heat (Sub 1)
+async function janaHeatUI() {
+  const acaraId = document.getElementById('heat-acara').value;
+  if (!acaraId) { showToast('Pilih acara dahulu','warning'); return; }
+  if (!confirm('Jana heat untuk acara ini? Heat lama (belum SELESAI) akan di-void.')) return;
+
+  showLoading(true);
+  const r = await gas('janaHeat', { id_acara: acaraId });
+  showLoading(false);
+
+  const resultCard = document.getElementById('heat-result-card');
+  const resultCont = document.getElementById('heat-result-content');
+  resultCard.style.display = 'block';
+
+  if (r && r.success) {
+    showToast(`✅ ${r.message}`, 'success');
+    resultCont.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;">
+        <div style="background:#F0FDF4;border-radius:8px;padding:14px;"><div style="font-size:24px;font-weight:800;color:#166534;">${r.heat_created}</div><div style="font-size:11px;color:#166534;">Heat Dijana</div></div>
+        <div style="background:#EFF6FF;border-radius:8px;padding:14px;"><div style="font-size:24px;font-weight:800;color:#1D4ED8;">${r.peserta}</div><div style="font-size:11px;color:#1D4ED8;">Peserta Dimasukkan</div></div>
+        <div style="background:#F5F3FF;border-radius:8px;padding:14px;"><div style="font-size:14px;font-weight:800;color:#6D28D9;">${r.format_used||'AUTO'}</div><div style="font-size:11px;color:#6D28D9;">Format</div></div>
+      </div>
+      <div style="margin-top:12px;text-align:center;">
+        <button class="btn btn-ghost" onclick="showHeatSub('startlist',document.querySelector('#heat-subnav .tab-btn:nth-child(2)'));document.getElementById('sl-acara').value='${acaraId}';loadStartingList()">📋 Lihat Starting List →</button>
+      </div>`;
+    // Refresh heat data
+    const rHeat = await gas('getHeat', { id_acara: acaraId });
+    if (rHeat) { S.heatList = rHeat.heat||[]; S.pesertaHeat = rHeat.peserta||[]; }
+    // Update dashboard count
+    document.getElementById('d-lorong').textContent = S.heatList.length;
+    // Show layak tab if saringan
+    if (r.format_used === 'SARINGAN') document.getElementById('btn-sub-layak').style.display = '';
+  } else {
+    showToast(r ? r.message : 'Ralat jana heat','error');
+    resultCont.innerHTML = `<div style="color:#EF4444;font-size:13px;">${r ? r.message : 'Ralat tidak diketahui'}</div>`;
+  }
+}
+
+// ── SUB 2: STARTING LIST ─────────────────────────────────────────
+
+async function loadStartingList() {
+  const acaraId = document.getElementById('sl-acara').value;
+  const heatSel = document.getElementById('sl-heat');
+  heatSel.innerHTML = '<option value="">-- Pilih Heat --</option>';
+  document.getElementById('sl-table-wrap').innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;">Pilih heat</div>';
+  if (!acaraId) { console.log('[SL] acaraId kosong — return'); return; }
+
+  console.log('[SL] loadStartingList() acaraId=', acaraId);
+  showLoading(true);
+  const r = await gas('getHeat', { id_acara: acaraId });
+  showLoading(false);
+
+  console.log('[SL] getHeat raw r=', r);
+  console.log('[SL] r.heat=', r ? r.heat : 'NULL');
+  console.log('[SL] r.peserta=', r ? r.peserta : 'NULL');
+
+  if (!r || !r.heat) {
+    console.log('[SL] ❌ r.heat tiada → tunjuk mesej tiada heat');
+    document.getElementById('sl-table-wrap').innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px;">Tiada heat dijana untuk acara ini. Sila jana heat dahulu.</div>';
+    return;
+  }
+  S.heatList = r.heat.filter(h => h.status !== 'VOID');
+  S.pesertaHeat = r.peserta || [];
+
+  console.log('[SL] heatList (bukan VOID)=', S.heatList.length, S.heatList.map(h=>h.id_heat+'/'+h.status));
+  console.log('[SL] pesertaHeat dari r.peserta=', S.pesertaHeat.length);
+
+  // Fallback: getHeat sudah return peserta, tapi jika kosong ambil per heat
+  if (!S.pesertaHeat.length && S.heatList.length) {
+    console.log('[SL] peserta kosong — cuba fallback getPesertaHeat per heat');
+    for (const h of S.heatList) {
+      const rH2 = await gas('getPesertaHeat', { id_heat: h.id_heat });
+      const rH2P = (typeof rH2==='string')?JSON.parse(rH2):rH2;
+      console.log('[SL] fallback heat='+h.id_heat+' peserta=', rH2P?.peserta?.length);
+      if (rH2P && rH2P.peserta && rH2P.peserta.length) {
+        S.pesertaHeat.push(...rH2P.peserta);
+      }
+    }
+    console.log('[SL] pesertaHeat selepas fallback=', S.pesertaHeat.length);
+  }
+
+  if (!S.heatList.length) {
+    console.log('[SL] heatList kosong selepas filter VOID');
+    document.getElementById('sl-table-wrap').innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px;">Tiada heat aktif. Sila jana heat dahulu.</div>';
+    return;
+  }
+
+  S.heatList.forEach(h => {
+    const label = `Heat ${h.no_heat} — ${h.jenis} ${h.status === 'SELESAI' ? '✅' : ''}`;
+    heatSel.innerHTML += `<option value="${h.id_heat}">${label}</option>`;
+  });
+  console.log('[SL] dropdown heat diisi:', S.heatList.length, 'options');
+  // Auto-select: 1 heat (TERUS_FINAL) → terus render
+  if (S.heatList.length === 1) {
+    console.log('[SL] auto-select heat:', S.heatList[0].id_heat);
+    heatSel.value = S.heatList[0].id_heat;
+    renderStartingList();
+  }
+}
+
+function renderStartingList() {
+  const heatId = document.getElementById('sl-heat').value;
+  const wrap = document.getElementById('sl-table-wrap');
+  const label = document.getElementById('sl-heat-label');
+
+  console.log('[RS] renderStartingList() heatId=', heatId);
+  console.log('[RS] S.heatList=', S.heatList.length, S.heatList.map(h=>h.id_heat));
+  console.log('[RS] S.pesertaHeat total=', S.pesertaHeat.length);
+
+  if (!heatId) { wrap.innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;">Pilih heat</div>'; label.textContent='—'; return; }
+
+  const heat = S.heatList.find(h => h.id_heat === heatId);
+  const peserta = S.pesertaHeat.filter(p => p.id_heat === heatId && p.status !== 'VOID');
+
+  console.log('[RS] heat found=', heat ? heat.id_heat : 'TIDAK JUMPA');
+  console.log('[RS] peserta untuk heat ini=', peserta.length);
+  if (S.pesertaHeat.length > 0) {
+    console.log('[RS] sample id_heat dalam pesertaHeat=', S.pesertaHeat.slice(0,3).map(p=>p.id_heat));
+    console.log('[RS] heatId yang dicari=', heatId);
+    console.log('[RS] match?=', S.pesertaHeat[0].id_heat === heatId);
+  }
+  const acaraId = document.getElementById('sl-acara').value;
+  const acara = S.acaraList.find(a => a.id_acara === acaraId);
+  const gunaLorong = acara && (acara.guna_lorong === true || acara.guna_lorong === 'TRUE');
+
+  label.textContent = heat ? `Heat ${heat.no_heat} · ${heat.jenis} · ${peserta.length} peserta` : '—';
+
+  // Sort by lorong/giliran
+  const sorted = [...peserta].sort((a,b) => (parseInt(a.lorong||a.giliran)||99) - (parseInt(b.lorong||b.giliran)||99));
+
+  const rumahWarna = {};
+  S.rumah.forEach(r => rumahWarna[r.id||r.id_rumah] = r.warna||'#94A3B8');
+
+  const rows = sorted.map(p => {
+    const warna = rumahWarna[p.id_rumah] || '#94A3B8';
+    const pos = gunaLorong ? (p.lorong||'—') : (p.giliran||'—');
+    const posLabel = gunaLorong ? 'Lorong' : 'Giliran';
+    return `<tr>
+      <td><div class="lorong-bubble" style="background:${warna};">${pos}</div></td>
+      <td style="font-size:11px;font-family:monospace;color:#64748B;">${p.no_kp||'—'}</td>
+      <td style="font-weight:600;">${p.nama||'—'}</td>
+      <td><span style="padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${warna}22;color:${warna};">${p.id_rumah||'—'}</span></td>
+      <td>
+        <select class="status-sel" onchange="updateStatusUI('${p.id}',this.value)">
+          <option value="AKTIF" ${p.status==='AKTIF'?'selected':''}>Aktif</option>
+          <option value="DNS" ${p.status==='DNS'?'selected':''}>DNS</option>
+          <option value="DNF" ${p.status==='DNF'?'selected':''}>DNF</option>
+          <option value="DQ" ${p.status==='DQ'?'selected':''}>DQ</option>
+        </select>
+      </td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <div class="print-header">
+      <h2>SENARAI PESERTA ACARA</h2>
+      <p>${acara ? acara.nama_acara : ''} · ${heat ? heat.jenis : ''} ${heat ? 'Heat '+heat.no_heat : ''}</p>
+      <p>Tarikh: _____________ &nbsp;&nbsp; Masa: _____________</p>
+    </div>
+    <table class="sl-table">
+      <thead><tr>
+        <th>${gunaLorong ? 'Lorong' : 'Giliran'}</th>
+        <th>No. KP</th>
+        <th>Nama Peserta</th>
+        <th>Rumah Sukan</th>
+        <th class="no-print">Status</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="print-footer" style="margin-top:40px;display:flex;justify-content:space-around;font-size:11pt;">
+      <div style="text-align:center;">__________________________<br>Pengurus Acara</div>
+      <div style="text-align:center;">__________________________<br>Pengadil Utama</div>
+    </div>`;
+}
+
+async function updateStatusUI(id, status) {
+  const r = await gas('updatePesertaHeat', { id, status });
+  if (r && r.success) {
+    showToast(`Status dikemaskini: ${status}`, 'success');
+    const p = S.pesertaHeat.find(x => x.id === id);
+    if (p) p.status = status;
+  } else {
+    showToast('Gagal kemaskini status','error');
+  }
+}
+
+function cetakStartingList() {
+  const heatId = document.getElementById('sl-heat').value;
+  const acaraId = document.getElementById('sl-acara').value;
+  if (!heatId || !acaraId) { showToast('Pilih acara dan heat dahulu','warning'); return; }
+
+  const heat   = S.heatList.find(h => h.id_heat === heatId);
+  const acara  = S.acaraList.find(a => a.id_acara === acaraId);
+  const peserta = S.pesertaHeat.filter(p => p.id_heat === heatId && p.status !== 'VOID');
+  const ss     = S.settings || {};
+
+  // Format helpers
+  const fmtKP = kp => kp ? kp.replace(/(\d{6})(\d{2})(\d{4})/, '$1-$2-$3') : '—';
+  const fmtTarikh = d => {
+    if (!d) return '—';
+    try { return new Date(d).toLocaleDateString('ms-MY',{day:'2-digit',month:'long',year:'numeric'}); }
+    catch(e){ return d; }
+  };
+  const gunaLorong = acara && (acara.guna_lorong === true || acara.guna_lorong === 'TRUE');
+  const sorted = [...peserta].sort((a,b)=>(parseInt(a.lorong||a.giliran)||99)-(parseInt(b.lorong||b.giliran)||99));
+
+  // Warna rumah map
+  const wMap = {};
+  S.rumah.forEach(r => wMap[r.id||r.id_rumah] = {warna:r.warna||'#4F8EF7', nama:r.nama||r.nama_rumah||r.id_rumah});
+
+  const rows = sorted.map((p, i) => {
+    const rm  = wMap[p.id_rumah] || {warna:'#94A3B8', nama: p.id_rumah||'—'};
+    const pos = gunaLorong ? (p.lorong||'—') : (p.giliran||'—');
+    return `<tr>
+      <td style="text-align:center;font-weight:700;">${i+1}</td>
+      <td style="text-align:center;">
+        <div style="width:30px;height:30px;border-radius:50%;background:${rm.warna};color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto;">${pos}</div>
+      </td>
+      <td style="font-family:monospace;font-size:11px;color:#444;">${fmtKP(p.no_kp)}</td>
+      <td style="font-weight:600;">${p.nama||'—'}</td>
+      <td style="text-align:center;">
+        <span style="padding:2px 10px;border-radius:12px;font-size:10px;font-weight:700;background:${rm.warna}22;color:${rm.warna};border:1px solid ${rm.warna}44;">${rm.nama}</span>
+      </td>
+      <td style="text-align:center;color:#475569;font-size:12px;">${p.id_kategori||'—'}</td>
+      <td style="text-align:center;min-width:90px;border:1px dashed #CBD5E1;"></td>
+    </tr>`;
+  }).join('');
+
+  const tarikhSukan = fmtTarikh(ss.tarikh_sukan);
+  const heatLabel   = heat ? `Heat ${heat.no_heat} — ${heat.jenis}` : '—';
+  const noAcara     = acara ? `[${acara.no_acara}]` : '';
+  const namaAcara   = acara ? acara.nama_acara : '—';
+  const idKat       = acara ? (acara.id_kategori||acara.kategori||'') : '';
+  const formatHeat  = acara ? (acara.format_acara||acara.format||'AUTO') : '—';
+  const maxLorong   = parseInt(ss.lorong_trek||'6');
+  const cetakMasa   = new Date().toLocaleString('ms-MY');
+
+  const popup = window.open('','_blank','width=800,height=900,scrollbars=yes');
+  if (!popup) { showToast('Popup disekat browser. Benarkan popup.','warning'); return; }
+
+  popup.document.write(`<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<title>Starting List — ${namaAcara}</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: Arial, 'Segoe UI', sans-serif; font-size:12pt; color:#000; padding:20px; }
+  
+  /* ── HEADER ── */
+  .header-wrap { border-bottom:3px solid #1E3A5F; padding-bottom:12px; margin-bottom:16px; }
+  .sekolah-name { font-size:17pt; font-weight:900; text-transform:uppercase; color:#1E3A5F; letter-spacing:0.5px; }
+  .pertandingan-name { font-size:13pt; font-weight:700; color:#1E3A5F; margin-top:2px; }
+  .header-meta { font-size:10pt; color:#555; margin-top:6px; display:flex; gap:20px; flex-wrap:wrap; }
+  .header-meta span::before { content:'📍 '; }
+  .header-meta span.tarikh::before { content:'📅 '; }
+  .header-meta span.tema::before { content:'✨ '; }
+  
+  /* ── TITLE BAND ── */
+  .title-band { background:#1E3A5F; color:#fff; padding:10px 16px; border-radius:6px; margin:14px 0; display:flex; justify-content:space-between; align-items:center; }
+  .title-band h2 { font-size:13pt; font-weight:800; letter-spacing:0.5px; }
+  .title-band .badge-jenis { background:rgba(255,255,255,0.2); padding:3px 12px; border-radius:20px; font-size:10pt; font-weight:700; }
+  
+  /* ── ACARA INFO BOX ── */
+  .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:0; border:1.5px solid #CBD5E1; border-radius:6px; overflow:hidden; margin-bottom:14px; }
+  .info-cell { padding:8px 14px; border-right:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0; }
+  .info-cell:nth-child(2n) { border-right:none; }
+  .info-cell:nth-last-child(-n+2) { border-bottom:none; }
+  .info-label { font-size:8.5pt; text-transform:uppercase; color:#64748B; font-weight:700; letter-spacing:0.5px; margin-bottom:2px; }
+  .info-value { font-size:11pt; font-weight:700; color:#1E293B; }
+  
+  /* ── TABLE ── */
+  table { width:100%; border-collapse:collapse; margin-top:6px; }
+  thead tr { background:#1E3A5F; color:#fff; }
+  th { padding:9px 10px; font-size:9.5pt; font-weight:700; text-align:center; text-transform:uppercase; letter-spacing:0.3px; }
+  th.left { text-align:left; }
+  td { padding:9px 10px; border-bottom:1px solid #E2E8F0; vertical-align:middle; font-size:11pt; }
+  tbody tr:nth-child(even) { background:#F8FAFC; }
+  tbody tr:last-child td { border-bottom:none; }
+  
+  /* ── FOOTER ── */
+  .footer { margin-top:36px; border-top:1px solid #CBD5E1; padding-top:20px; }
+  .sign-row { display:flex; justify-content:space-between; gap:30px; }
+  .sign-box { flex:1; text-align:center; }
+  .sign-line { border-top:1.5px solid #000; margin:40px 10px 6px; }
+  .sign-label { font-size:10pt; font-weight:700; }
+  .sign-sub { font-size:9pt; color:#555; margin-top:2px; }
+  .print-info { text-align:right; font-size:8.5pt; color:#94A3B8; margin-top:12px; }
+
+  @media print {
+    body { padding:10mm 12mm; }
+    button { display:none !important; }
+    .no-print { display:none !important; }
+    .title-band, thead tr { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    tbody tr:nth-child(even) { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    @page { size:A4 portrait; margin:10mm; }
+  }
+</style>
+</head>
+<body>
+
+<button onclick="window.print()" class="no-print" style="position:fixed;top:12px;right:12px;padding:8px 20px;background:#1E3A5F;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11pt;font-weight:700;z-index:999;">🖨️ Cetak PDF</button>
+
+<!-- HEADER SEKOLAH -->
+<div class="header-wrap">
+  <div class="sekolah-name">${ss.nama_sekolah||'SK SULTAN ISMAIL, KEMAMAN'}</div>
+  <div class="pertandingan-name">${ss.nama_pertandingan||'SUKAN TAHUNAN'} ${ss.tahun||''}</div>
+  <div class="header-meta">
+    ${ss.lokasi ? `<span>${ss.lokasi}</span>` : ''}
+    ${tarikhSukan !== '—' ? `<span class="tarikh">${tarikhSukan}</span>` : ''}
+    ${ss.tema ? `<span class="tema">${ss.tema}</span>` : ''}
+  </div>
+</div>
+
+<!-- TITLE BAND -->
+<div class="title-band">
+  <h2>SENARAI PESERTA ACARA (STARTING LIST)</h2>
+  <span class="badge-jenis">${formatHeat === 'TERUS_FINAL' ? '✅ FINAL' : formatHeat === 'SARINGAN_FINAL' ? '⚡ SARINGAN' : heat ? heat.jenis : '—'}</span>
+</div>
+
+<!-- ACARA INFO -->
+<div class="info-grid">
+  <div class="info-cell"><div class="info-label">No. Acara</div><div class="info-value">${noAcara} ${namaAcara}</div></div>
+  <div class="info-cell"><div class="info-label">Kategori</div><div class="info-value">${idKat}</div></div>
+  <div class="info-cell"><div class="info-label">${gunaLorong ? 'Heat / Lorong' : 'Pusingan'}</div><div class="info-value">${heatLabel} &nbsp;·&nbsp; ${sorted.length} Peserta</div></div>
+  <div class="info-cell"><div class="info-label">${gunaLorong ? 'Bilangan Lorong' : 'Jenis Acara'}</div><div class="info-value">${gunaLorong ? maxLorong+' Lorong Trek' : (acara?.jenis||'PADANG')}</div></div>
+  <div class="info-cell"><div class="info-label">Tarikh Acara</div><div class="info-value">${tarikhSukan} &nbsp;&nbsp; Masa: _________________</div></div>
+  <div class="info-cell"><div class="info-label">Lokasi</div><div class="info-value">${ss.lokasi||'________________'}</div></div>
+</div>
+
+<!-- TABLE -->
+<table>
+  <thead>
+    <tr>
+      <th style="width:40px;">#</th>
+      <th style="width:60px;">${gunaLorong ? 'Lorong' : 'Giliran'}</th>
+      <th style="width:130px;" class="left">No. KP</th>
+      <th class="left">Nama Peserta</th>
+      <th style="width:120px;">Rumah Sukan</th>
+      <th style="width:60px;">Kat.</th>
+      <th style="width:90px;">Masa / Jarak</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${rows}
+  </tbody>
+</table>
+
+<!-- FOOTER TANDATANGAN -->
+<div class="footer">
+  <div class="sign-row">
+    <div class="sign-box">
+      <div class="sign-line"></div>
+      <div class="sign-label">Pengurus Acara</div>
+      <div class="sign-sub">Tarikh: ___________________</div>
+    </div>
+    <div class="sign-box">
+      <div class="sign-line"></div>
+      <div class="sign-label">Pengadil Utama</div>
+      <div class="sign-sub">Tarikh: ___________________</div>
+    </div>
+    <div class="sign-box">
+      <div class="sign-line"></div>
+      <div class="sign-label">Pengetua / Guru Besar</div>
+      <div class="sign-sub">Cop Rasmi</div>
+    </div>
+  </div>
+  <div class="print-info">Dicetak: ${cetakMasa} &nbsp;·&nbsp; Sistem Pengurusan Sukan — ${ss.nama_sekolah||'SK Sultan Ismail'}</div>
+</div>
+
+</body>
+</html>`);
+  popup.document.close();
+  popup.focus();
+}
+
+// ── SUB 3: PROSES LAYAK FINAL ────────────────────────────────────
+
+async function loadLayakFinal() {
+  const acaraId = document.getElementById('layak-acara').value;
+  const cont = document.getElementById('layak-content');
+  if (!acaraId) { cont.innerHTML = '<div style="text-align:center;padding:40px;color:#94A3B8;">Pilih acara</div>'; return; }
+
+  showLoading(true);
+  const r = await gas('prosesLayakFinal', { id_acara: acaraId });
+  showLoading(false);
+
+  if (!r || !r.success) {
+    cont.innerHTML = `<div style="padding:20px;background:#FEF2F2;border-radius:8px;color:#991B1B;font-size:13px;">⚠️ ${r ? r.message : 'Ralat'}</div>`;
+    return;
+  }
+
+  renderLayakFinal(r.layak, r.top_n, acaraId);
+}
+
+function renderLayakFinal(layak, topN, acaraId) {
+  const cont = document.getElementById('layak-content');
+  const acara = S.acaraList.find(a => a.id_acara === acaraId);
+
+  const rows = layak.map((p, i) => `
+    <tr class="${i < topN ? 'layak-row' : ''}">
+      <td>${i + 1}</td>
+      <td>${p.nama||'—'}</td>
+      <td><span style="font-size:11px;font-family:monospace;">${p.no_kp||'—'}</span></td>
+      <td>${p.id_rumah||'—'}</td>
+      <td style="font-family:monospace;font-weight:700;">${p.prestasi||'—'} ${p.unit||''}</td>
+      <td><span style="font-size:11px;padding:2px 8px;border-radius:10px;background:${p.sumber_layak==='WINNER_HEAT'?'#DCFCE7':'#EFF6FF'};color:${p.sumber_layak==='WINNER_HEAT'?'#166534':'#1D4ED8'};">${p.sumber_layak==='WINNER_HEAT'?'🏆 Winner Heat':'⏱ Masa Terbaik'}</span></td>
+    </tr>`).join('');
+
+  cont.innerHTML = `
+    <div style="margin-bottom:14px;padding:12px 16px;background:#F0FDF4;border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:13px;"><strong>${layak.length} peserta layak</strong> ke final &nbsp;·&nbsp; Top ${topN} diambil</div>
+      <button class="btn btn-primary" onclick="confirmJanaFinal('${acaraId}')">⚡ Jana Heat Final</button>
+    </div>
+    <div class="card" style="margin:0;">
+      <div class="card-body" style="padding:0;">
+        <table class="sl-table">
+          <thead><tr><th>#</th><th>Nama</th><th>No. KP</th><th>Rumah</th><th>Prestasi</th><th>Layak Sebab</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+async function confirmJanaFinal(acaraId) {
+  const cont = document.getElementById('layak-content');
+  // Collect all layak no_kp from table rows (top rows with layak-row class)
+  const r = await gas('prosesLayakFinal', { id_acara: acaraId });
+  if (!r || !r.success) { showToast('Ralat dapatkan senarai layak','error'); return; }
+
+  const confirmedKp = r.layak.map(p => p.no_kp);
+  if (!confirm(`Jana heat final untuk ${confirmedKp.length} peserta layak?`)) return;
+
+  showLoading(true);
+  const rf = await gas('janaFinal', { id_acara: acaraId, confirmed_layak: confirmedKp });
+  showLoading(false);
+
+  if (rf && rf.success) {
+    showToast(`✅ ${rf.message}`, 'success');
+    cont.innerHTML += `<div style="margin-top:12px;padding:12px;background:#EFF6FF;border-radius:8px;font-size:13px;">✅ Heat Final dijana — <button class="btn btn-ghost" style="padding:4px 12px;" onclick="showHeatSub('startlist',document.querySelector('#heat-subnav .tab-btn:nth-child(2)'));document.getElementById('sl-acara').value='${acaraId}';loadStartingList()">Lihat Starting List Final →</button></div>`;
+  } else {
+    showToast(rf ? rf.message : 'Ralat jana final','error');
+  }
+}
+
+// Sub-tab switcher
+function showHeatSub(sub, btn) {
+  document.querySelectorAll('.heat-subpane').forEach(p => { p.classList.remove('active'); p.style.display='none'; });
+  document.querySelectorAll('#heat-subnav .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('heat-sub-'+sub).style.display = 'block';
+  document.getElementById('heat-sub-'+sub).classList.add('active');
+  if (btn) btn.classList.add('active');
+  // Auto-populate on switch
+  if (sub === 'startlist' && !document.getElementById('sl-acara').options.length > 1) _populateHeatDropdowns();
+  if (sub === 'layak' && !document.getElementById('layak-acara').options.length > 1) _populateHeatDropdowns();
+}
+
+// ═══ EXPRESS JANA SEMUA HEAT ═══
+async function janaSemuaHeatUI() {
+  if (!S.acaraList.length) { showToast('Tiada acara. Jana acara dahulu.','warning'); return; }
+  const total = S.acaraList.length;
+  if (!confirm(`Jana heat untuk SEMUA ${total} acara?\nHeat lama (belum SELESAI) akan di-void.`)) return;
+
+  showLoading(true, 'Menjana semua heat...');
+  let ok = 0, fail = 0, failList = [];
+
+  for (const a of S.acaraList) {
+    const raw = await gas('janaHeat', { id_acara: a.id_acara });
+    const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+    if (r && r.success) { ok++; }
+    else { fail++; failList.push(a.nama_acara); }
+  }
+
+  showLoading(false);
+
+  const resultCard = document.getElementById('heat-result-card');
+  const resultCont = document.getElementById('heat-result-content');
+  resultCard.style.display = 'block';
+
+  if (ok > 0) {
+    showToast(`✅ ${ok} acara berjaya dijana heat${fail?' ('+fail+' gagal)':''}`, 'success');
+    resultCont.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center;">
+        <div style="background:#F0FDF4;border-radius:8px;padding:14px;">
+          <div style="font-size:28px;font-weight:800;color:#166534;">${ok}</div>
+          <div style="font-size:11px;color:#166534;">Acara Berjaya</div>
+        </div>
+        <div style="background:${fail?'#FEF2F2':'#EFF6FF'};border-radius:8px;padding:14px;">
+          <div style="font-size:28px;font-weight:800;color:${fail?'#991B1B':'#1D4ED8'};">${fail}</div>
+          <div style="font-size:11px;color:${fail?'#991B1B':'#1D4ED8'};">Gagal</div>
+        </div>
+      </div>
+      ${failList.length ? `<div style="margin-top:10px;padding:10px;background:#FEF2F2;border-radius:8px;font-size:12px;color:#991B1B;">❌ Gagal: ${failList.join(', ')}</div>` : ''}
+      <div style="margin-top:12px;text-align:center;">
+        <button class="btn btn-ghost" onclick="showHeatSub('startlist',document.querySelector('#heat-subnav .tab-btn:nth-child(2)'));document.getElementById('sl-acara').value='';loadStartingList()">📋 Lihat Starting List →</button>
+      </div>`;
+    // Reload data heat
+    const rH = await gas('getHeat', {});
+    const rHP = (typeof rH === 'string') ? JSON.parse(rH) : rH;
+    if (rHP && rHP.heat) document.getElementById('d-lorong').textContent = rHP.heat.length;
+    loadHeatStatus();
+  } else {
+    showToast('Semua acara gagal dijana heat','error');
+    resultCont.innerHTML = `<div style="color:#EF4444;font-size:13px;">Gagal: ${failList.join(', ')}</div>`;
+  }
 }
 
 function confirmLogout() {

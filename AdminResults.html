@@ -28,8 +28,7 @@
   .modal-bg { position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center; }
   .modal-box { background:white;border-radius:16px;padding:24px;width:90%;max-width:600px;max-height:90vh;overflow-y:auto; }
   .table-row:hover { background:#f8fafc; }
-  .sidebar { width:240px; flex-shrink:0; }
-  @media(max-width:768px) { .sidebar { width:100%; } .hide-mobile { display:none; } }
+  @media(max-width:768px) { .hide-mobile { display:none; } }
   .toast { position:fixed;top:20px;right:20px;z-index:9999;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:500;animation:slideIn 0.3s ease; }
   @keyframes slideIn { from { transform:translateX(100px);opacity:0; } to { transform:translateX(0);opacity:1; } }
   .progress-bar { height:6px;border-radius:3px;background:#e2e8f0;overflow:hidden; }
@@ -55,120 +54,59 @@
       <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded-lg transition">Log Keluar</button>
     </div>
   </div>
-  <!-- Tab Navigation -->
   <div class="px-4 pb-0 flex gap-1 overflow-x-auto">
     <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn tab-active text-xs px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition">📊 Dashboard</button>
     <button onclick="switchTab('keputusan')" id="tab-keputusan" class="tab-btn tab-inactive text-xs px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition">📋 Urus Keputusan</button>
     <button onclick="switchTab('percubaan')" id="tab-percubaan" class="tab-btn tab-inactive text-xs px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition">🎯 Cubaan Padang</button>
     <button onclick="switchTab('terbaik')" id="tab-terbaik" class="tab-btn tab-inactive text-xs px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition">⭐ Murid Terbaik</button>
-    <button onclick="switchTab('rekod')" id="tab-rekod" class="tab-btn tab-inactive text-xs px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition">🏅 Rekod Sekolah</button>
+    <button onclick="switchTab('rekod')" id="tab-rekod" class="tab-btn tab-inactive text-xs px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition">🏅 Rekod Kejohanan</button>
     <button onclick="switchTab('laporan')" id="tab-laporan" class="tab-btn tab-inactive text-xs px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition">📄 Laporan</button>
     <button onclick="switchTab('audit')" id="tab-audit" class="tab-btn tab-inactive text-xs px-4 py-2 rounded-t-lg font-medium whitespace-nowrap transition">🔍 Log Audit</button>
   </div>
 </header>
 
-<!-- Main Content -->
 <div id="app-content" class="p-4 max-w-7xl mx-auto">
 
-  <!-- =================== DASHBOARD TAB =================== -->
+  <!-- DASHBOARD TAB -->
   <div id="pane-dashboard" class="tab-pane">
-    <!-- Stats Row -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-      <div class="card p-4 stat-card">
-        <div class="text-2xl font-bold text-blue-700" id="stat-total-acara">-</div>
-        <div class="text-xs text-gray-500 mt-1">Jumlah Acara</div>
-        <div class="text-xs text-green-600 font-medium mt-1" id="stat-selesai">0 selesai</div>
-      </div>
-      <div class="card p-4 stat-card">
-        <div class="text-2xl font-bold text-green-700" id="stat-published">-</div>
-        <div class="text-xs text-gray-500 mt-1">Diterbitkan</div>
-        <div class="text-xs text-yellow-600 font-medium mt-1" id="stat-draft">0 draf</div>
-      </div>
-      <div class="card p-4 stat-card">
-        <div class="text-2xl font-bold text-purple-700" id="stat-rekod-baru">-</div>
-        <div class="text-xs text-gray-500 mt-1">Rekod Baru</div>
-        <div class="text-xs text-purple-500 text-xs mt-1">kejohanan ini</div>
-      </div>
-      <div class="card p-4 stat-card">
-        <div class="text-2xl font-bold text-orange-700" id="stat-peserta">-</div>
-        <div class="text-xs text-gray-500 mt-1">Peserta Aktif</div>
-        <div class="text-xs text-gray-500 text-xs mt-1">telah bersaing</div>
-      </div>
+      <div class="card p-4 stat-card"><div class="text-2xl font-bold text-blue-700" id="stat-total-acara">-</div><div class="text-xs text-gray-500 mt-1">Jumlah Acara</div><div class="text-xs text-green-600 font-medium mt-1" id="stat-selesai">0 selesai</div></div>
+      <div class="card p-4 stat-card"><div class="text-2xl font-bold text-green-700" id="stat-published">-</div><div class="text-xs text-gray-500 mt-1">Diterbitkan</div><div class="text-xs text-yellow-600 font-medium mt-1" id="stat-draft">0 draf</div></div>
+      <div class="card p-4 stat-card"><div class="text-2xl font-bold text-purple-700" id="stat-rekod-baru">-</div><div class="text-xs text-gray-500 mt-1">Rekod Baru</div><div class="text-xs text-purple-500 text-xs mt-1">kejohanan ini</div></div>
+      <div class="card p-4 stat-card"><div class="text-2xl font-bold text-orange-700" id="stat-peserta">-</div><div class="text-xs text-gray-500 mt-1">Peserta Aktif</div><div class="text-xs text-gray-500 text-xs mt-1">telah bersaing</div></div>
     </div>
-
-    <!-- Johan Keseluruhan & Chart Row -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-      <!-- Johan Keseluruhan -->
       <div class="card p-4">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-semibold text-gray-800 text-sm">🏆 Johan Keseluruhan Rumah Sukan</h3>
-          <button onclick="loadDashboard()" class="text-xs text-blue-600 hover:underline">Muat Semula</button>
-        </div>
-        <div id="johan-list" class="space-y-2">
-          <div class="flex justify-center py-4"><div class="loader"></div></div>
-        </div>
+        <div class="flex items-center justify-between mb-3"><h3 class="font-semibold text-gray-800 text-sm">🏆 Johan Keseluruhan Rumah Sukan</h3><button onclick="loadDashboard()" class="text-xs text-blue-600 hover:underline">Muat Semula</button></div>
+        <div id="johan-list" class="space-y-2"><div class="flex justify-center py-4"><div class="loader"></div></div></div>
       </div>
-
-      <!-- Chart Markah Rumah -->
-      <div class="card p-4">
-        <h3 class="font-semibold text-gray-800 text-sm mb-3">📊 Taburan Markah Rumah Sukan</h3>
-        <canvas id="chartRumah" height="180"></canvas>
-      </div>
+      <div class="card p-4"><h3 class="font-semibold text-gray-800 text-sm mb-3">📊 Taburan Markah Rumah Sukan</h3><canvas id="chartRumah" height="180"></canvas></div>
     </div>
-
-    <!-- Recent Activity & Pending -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Keputusan Terkini -->
-      <div class="card p-4">
-        <h3 class="font-semibold text-gray-800 text-sm mb-3">🕐 Keputusan Terkini Dimasukkan</h3>
-        <div id="recent-results" class="space-y-2 max-h-64 overflow-y-auto">
-          <div class="flex justify-center py-4"><div class="loader"></div></div>
-        </div>
-      </div>
-      <!-- Acara Belum Selesai -->
-      <div class="card p-4">
-        <h3 class="font-semibold text-gray-800 text-sm mb-3">⏳ Acara Belum Dimasukkan Keputusan</h3>
-        <div id="pending-events" class="space-y-2 max-h-64 overflow-y-auto">
-          <div class="flex justify-center py-4"><div class="loader"></div></div>
-        </div>
-      </div>
+      <div class="card p-4"><h3 class="font-semibold text-gray-800 text-sm mb-3">🕐 Keputusan Terkini Dimasukkan</h3><div id="recent-results" class="space-y-2 max-h-64 overflow-y-auto"><div class="flex justify-center py-4"><div class="loader"></div></div></div></div>
+      <div class="card p-4"><h3 class="font-semibold text-gray-800 text-sm mb-3">⏳ Acara Belum Dimasukkan Keputusan</h3><div id="pending-events" class="space-y-2 max-h-64 overflow-y-auto"><div class="flex justify-center py-4"><div class="loader"></div></div></div></div>
     </div>
   </div>
 
-  <!-- =================== KEPUTUSAN TAB =================== -->
+  <!-- KEPUTUSAN TAB -->
   <div id="pane-keputusan" class="tab-pane hidden">
-    <!-- Filter Bar -->
     <div class="card p-3 mb-4">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-        <select id="flt-kategori" onchange="filterKeputusan()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="">Semua Kategori</option>
-        </select>
-        <select id="flt-status-pub" onchange="filterKeputusan()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="">Semua Status</option>
-          <option value="1">Diterbitkan</option>
-          <option value="0">Draf</option>
-        </select>
-        <select id="flt-jenis" onchange="filterKeputusan()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="">Saringan & Final</option>
-          <option value="1">Final Sahaja</option>
-          <option value="0">Saringan Sahaja</option>
-        </select>
+        <select id="flt-kategori" onchange="filterKeputusan()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"><option value="">Semua Kategori</option></select>
+        <select id="flt-status-pub" onchange="filterKeputusan()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"><option value="">Semua Status</option><option value="1">Diterbitkan</option><option value="0">Draf</option></select>
+        <select id="flt-jenis" onchange="filterKeputusan()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"><option value="">Saringan & Final</option><option value="1">Final Sahaja</option><option value="0">Saringan Sahaja</option></select>
         <div class="flex gap-2">
           <input type="text" id="flt-cari" oninput="filterKeputusan()" placeholder="Cari acara..." class="flex-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
           <button onclick="openModalTambahKeputusan()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-lg transition font-medium">+ Tambah</button>
         </div>
       </div>
     </div>
-
-    <!-- Bulk Actions -->
     <div id="bulk-actions" class="hidden card p-3 mb-3 flex items-center gap-3 bg-blue-50 border border-blue-200">
       <span class="text-sm text-blue-700 font-medium" id="bulk-count">0 dipilih</span>
       <button onclick="bulkPublish(true)" class="bg-green-600 text-white text-xs px-3 py-1 rounded transition hover:bg-green-700">✓ Terbitkan Semua</button>
       <button onclick="bulkPublish(false)" class="bg-yellow-600 text-white text-xs px-3 py-1 rounded transition hover:bg-yellow-700">Draft Semua</button>
       <button onclick="clearSelection()" class="text-gray-500 text-xs hover:text-gray-700">Batal</button>
     </div>
-
-    <!-- Table -->
     <div class="card overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
@@ -184,9 +122,7 @@
               <th class="p-3 text-center text-xs font-semibold text-gray-600">TINDAKAN</th>
             </tr>
           </thead>
-          <tbody id="keputusan-tbody">
-            <tr><td colspan="8" class="text-center py-8"><div class="flex justify-center"><div class="loader"></div></div></td></tr>
-          </tbody>
+          <tbody id="keputusan-tbody"><tr><td colspan="8" class="text-center py-8"><div class="flex justify-center"><div class="loader"></div></div></td></tr></tbody>
         </table>
       </div>
       <div class="px-4 py-3 border-t flex items-center justify-between text-xs text-gray-500">
@@ -196,101 +132,40 @@
     </div>
   </div>
 
-  <!-- =================== PERCUBAAN TAB =================== -->
+  <!-- PERCUBAAN TAB -->
   <div id="pane-percubaan" class="tab-pane hidden">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Filter Panel -->
       <div class="card p-4">
         <h3 class="font-semibold text-sm text-gray-800 mb-3">🎯 Pilih Acara Padang</h3>
         <div class="space-y-3">
-          <div>
-            <label class="text-xs text-gray-600 font-medium">Kategori</label>
-            <select id="perc-kategori" onchange="loadAcaraPercubaan()" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-              <option value="">-- Pilih Kategori --</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-xs text-gray-600 font-medium">Acara</label>
-            <select id="perc-acara" onchange="loadPercubaan()" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-              <option value="">-- Pilih Acara --</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-xs text-gray-600 font-medium">No. KP Peserta</label>
-            <div class="flex gap-2 mt-1">
-              <input type="text" id="perc-kp" placeholder="Masukkan No. KP" class="flex-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-              <button onclick="loadPercubaanPeserta()" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-lg hover:bg-blue-700 transition">Cari</button>
-            </div>
-          </div>
+          <div><label class="text-xs text-gray-600 font-medium">Kategori</label><select id="perc-kategori" onchange="loadAcaraPercubaan()" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"><option value="">-- Pilih Kategori --</option></select></div>
+          <div><label class="text-xs text-gray-600 font-medium">Acara</label><select id="perc-acara" onchange="loadPercubaan()" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"><option value="">-- Pilih Acara --</option></select></div>
+          <div><label class="text-xs text-gray-600 font-medium">No. KP Peserta</label><div class="flex gap-2 mt-1"><input type="text" id="perc-kp" placeholder="Masukkan No. KP" class="flex-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"><button onclick="loadPercubaanPeserta()" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-lg hover:bg-blue-700 transition">Cari</button></div></div>
         </div>
-
-        <!-- Best Result Summary -->
-        <div id="perc-summary" class="mt-4 hidden">
-          <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
-            <div class="text-xs font-semibold text-blue-700 mb-2">📊 Ringkasan Peserta</div>
-            <div id="perc-summary-content"></div>
-          </div>
-        </div>
+        <div id="perc-summary" class="mt-4 hidden"><div class="bg-blue-50 rounded-lg p-3 border border-blue-200"><div class="text-xs font-semibold text-blue-700 mb-2">📊 Ringkasan Peserta</div><div id="perc-summary-content"></div></div></div>
       </div>
-
-      <!-- Attempts Grid -->
       <div class="md:col-span-2 card p-4">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-semibold text-sm text-gray-800" id="perc-title">Pilih acara dan peserta</h3>
-          <button onclick="openModalTambahPercubaan()" id="btn-tambah-perc" class="hidden bg-blue-600 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-700 transition">+ Tambah Cubaan</button>
-        </div>
-        <div id="percubaan-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3">
-          <div class="col-span-3 text-center py-8 text-gray-400 text-sm">Pilih acara padang dan No. KP peserta</div>
-        </div>
-
-        <!-- Leaderboard -->
-        <div id="perc-leaderboard" class="mt-4 hidden">
-          <h4 class="font-medium text-sm text-gray-700 mb-2">🏅 Kedudukan Terkini Acara Ini</h4>
-          <div id="perc-leaderboard-content" class="overflow-x-auto"></div>
-        </div>
+        <div class="flex items-center justify-between mb-3"><h3 class="font-semibold text-sm text-gray-800" id="perc-title">Pilih acara dan peserta</h3><button onclick="openModalTambahPercubaan()" id="btn-tambah-perc" class="hidden bg-blue-600 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-700 transition">+ Tambah Cubaan</button></div>
+        <div id="percubaan-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"><div class="col-span-3 text-center py-8 text-gray-400 text-sm">Pilih acara padang dan No. KP peserta</div></div>
+        <div id="perc-leaderboard" class="mt-4 hidden"><h4 class="font-medium text-sm text-gray-700 mb-2">🏅 Kedudukan Terkini Acara Ini</h4><div id="perc-leaderboard-content" class="overflow-x-auto"></div></div>
       </div>
     </div>
   </div>
 
-  <!-- =================== MURID TERBAIK TAB =================== -->
+  <!-- MURID TERBAIK TAB -->
   <div id="pane-terbaik" class="tab-pane hidden">
-    <div class="mb-4 card p-3 bg-amber-50 border border-amber-200">
-      <div class="flex items-start gap-2">
-        <span class="text-lg">⭐</span>
-        <div class="text-xs text-amber-800">
-          <strong>Sistem Murid Terbaik:</strong> Dikira automatik berdasarkan jumlah emas → perak → gangsa. Boleh override secara manual dengan sebab.
-        </div>
-      </div>
-    </div>
-
+    <div class="mb-4 card p-3 bg-amber-50 border border-amber-200"><div class="flex items-start gap-2"><span class="text-lg">⭐</span><div class="text-xs text-amber-800"><strong>Sistem Murid Terbaik:</strong> Dikira automatik berdasarkan jumlah emas → perak → gangsa. Boleh override secara manual dengan sebab.</div></div></div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Per Kategori -->
       <div class="card p-4">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-semibold text-sm text-gray-800">🏅 Murid Terbaik Per Kategori</h3>
-          <button onclick="autoCalculateTerbaik()" class="bg-purple-600 text-white text-xs px-3 py-1 rounded-lg hover:bg-purple-700 transition">🔄 Kira Semula</button>
-        </div>
-        <div id="terbaik-list" class="space-y-3 max-h-96 overflow-y-auto">
-          <div class="flex justify-center py-4"><div class="loader"></div></div>
-        </div>
+        <div class="flex items-center justify-between mb-3"><h3 class="font-semibold text-sm text-gray-800">🏅 Murid Terbaik Per Kategori</h3><button onclick="autoCalculateTerbaik()" class="bg-purple-600 text-white text-xs px-3 py-1 rounded-lg hover:bg-purple-700 transition">🔄 Kira Semula</button></div>
+        <div id="terbaik-list" class="space-y-3 max-h-96 overflow-y-auto"><div class="flex justify-center py-4"><div class="loader"></div></div></div>
       </div>
-
-      <!-- Top Athletes Overall -->
-      <div class="card p-4">
-        <h3 class="font-semibold text-sm text-gray-800 mb-3">🏆 Ranking Keseluruhan</h3>
-        <div id="terbaik-overall" class="space-y-2 max-h-96 overflow-y-auto">
-          <div class="flex justify-center py-4"><div class="loader"></div></div>
-        </div>
-      </div>
+      <div class="card p-4"><h3 class="font-semibold text-sm text-gray-800 mb-3">🏆 Ranking Keseluruhan</h3><div id="terbaik-overall" class="space-y-2 max-h-96 overflow-y-auto"><div class="flex justify-center py-4"><div class="loader"></div></div></div></div>
     </div>
-
-    <!-- Manual Override Modal trigger -->
     <div class="card p-4 mt-4">
       <h3 class="font-semibold text-sm text-gray-800 mb-3">✏️ Override Manual</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <select id="override-kategori" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="">-- Pilih Kategori --</option>
-        </select>
+        <select id="override-kategori" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"><option value="">-- Pilih Kategori --</option></select>
         <input type="text" id="override-kp" placeholder="No. KP Murid Terpilih" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
         <input type="text" id="override-notes" placeholder="Sebab override..." class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
       </div>
@@ -298,119 +173,81 @@
     </div>
   </div>
 
-  <!-- =================== REKOD SEKOLAH TAB =================== -->
+  <!-- REKOD KEJOHANAN TAB (BARU — guna tbl_rekod) -->
   <div id="pane-rekod" class="tab-pane hidden">
+    <!-- Alert rekod baru semasa sesi ini -->
+    <div id="rekod-baru-alert" class="hidden mb-4 card p-3 bg-purple-50 border border-purple-200">
+      <div class="flex items-center gap-2"><span class="text-lg">🏅</span><div id="rekod-baru-list" class="text-xs text-purple-800"></div></div>
+    </div>
     <div class="card p-3 mb-4">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-        <select id="rekod-flt-kategori" onchange="filterRekod()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="">Semua Kategori</option>
+        <select id="rekod-flt-peringkat" onchange="filterRekod()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="">Semua Peringkat</option>
+          <option value="SEKOLAH">Sekolah</option>
+          <option value="DAERAH">Daerah</option>
+          <option value="NEGERI">Negeri</option>
+          <option value="KEBANGSAAN">Kebangsaan</option>
         </select>
-        <select id="rekod-flt-jenis" onchange="filterRekod()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="">Semua Jenis Acara</option>
-          <option value="LARI">Lari</option>
-          <option value="PADANG">Padang</option>
+        <select id="rekod-flt-jantina" onchange="filterRekod()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="">Semua Jantina</option>
+          <option value="L">Lelaki</option>
+          <option value="P">Perempuan</option>
         </select>
-        <input type="text" id="rekod-cari" oninput="filterRekod()" placeholder="Cari rekod..." class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <button onclick="openModalTambahRekod()" class="bg-purple-600 text-white text-xs px-3 py-2 rounded-lg hover:bg-purple-700 transition">+ Tambah Rekod</button>
+        <input type="text" id="rekod-cari" oninput="filterRekod()" placeholder="Cari nama acara..." class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <div class="text-xs text-gray-500 flex items-center">Edit rekod dalam Admin Setup → Rekod Kejohanan</div>
       </div>
     </div>
-
     <div class="card overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead class="bg-gray-50 border-b">
             <tr>
               <th class="p-3 text-left text-xs font-semibold text-gray-600">ACARA</th>
-              <th class="p-3 text-left text-xs font-semibold text-gray-600">KATEGORI</th>
+              <th class="p-3 text-left text-xs font-semibold text-gray-600">JANTINA</th>
+              <th class="p-3 text-left text-xs font-semibold text-gray-600">PERINGKAT</th>
               <th class="p-3 text-left text-xs font-semibold text-gray-600">REKOD</th>
               <th class="p-3 text-left text-xs font-semibold text-gray-600">PEMEGANG</th>
               <th class="p-3 text-left text-xs font-semibold text-gray-600 hide-mobile">TAHUN</th>
-              <th class="p-3 text-left text-xs font-semibold text-gray-600 hide-mobile">NOTA</th>
-              <th class="p-3 text-center text-xs font-semibold text-gray-600">TINDAKAN</th>
+              <th class="p-3 text-left text-xs font-semibold text-gray-600 hide-mobile">CATATAN</th>
             </tr>
           </thead>
-          <tbody id="rekod-tbody">
-            <tr><td colspan="7" class="text-center py-8"><div class="flex justify-center"><div class="loader"></div></div></td></tr>
-          </tbody>
+          <tbody id="rekod-tbody"><tr><td colspan="7" class="text-center py-8"><div class="flex justify-center"><div class="loader"></div></div></td></tr></tbody>
         </table>
       </div>
       <div class="px-4 py-3 border-t text-xs text-gray-500" id="rekod-count">Memuatkan...</div>
     </div>
   </div>
 
-  <!-- =================== LAPORAN TAB =================== -->
+  <!-- LAPORAN TAB -->
   <div id="pane-laporan" class="tab-pane hidden">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Generate Reports -->
       <div class="card p-4">
         <h3 class="font-semibold text-sm text-gray-800 mb-4">📄 Jana Laporan</h3>
         <div class="space-y-3">
-          <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="generateReport('keputusan_semua')">
-            <div class="font-medium text-sm">📋 Keputusan Semua Acara</div>
-            <div class="text-xs text-gray-500 mt-1">Semua keputusan yang telah diterbitkan</div>
-          </div>
-          <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="generateReport('johan_keseluruhan')">
-            <div class="font-medium text-sm">🏆 Johan Keseluruhan Rumah Sukan</div>
-            <div class="text-xs text-gray-500 mt-1">Ranking rumah sukan dengan markah penuh</div>
-          </div>
-          <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="generateReport('murid_terbaik')">
-            <div class="font-medium text-sm">⭐ Murid Terbaik Per Kategori</div>
-            <div class="text-xs text-gray-500 mt-1">Senarai murid terbaik semua kategori</div>
-          </div>
-          <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="generateReport('rekod_baru')">
-            <div class="font-medium text-sm">🏅 Rekod Baru Kejohanan Ini</div>
-            <div class="text-xs text-gray-500 mt-1">Rekod sekolah yang dipecahkan</div>
-          </div>
-          <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="generateReport('statistik')">
-            <div class="font-medium text-sm">📊 Statistik Lengkap Kejohanan</div>
-            <div class="text-xs text-gray-500 mt-1">Analitik penuh termasuk kehadiran & pencapaian</div>
-          </div>
+          <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="generateReport('keputusan_semua')"><div class="font-medium text-sm">📋 Keputusan Semua Acara</div><div class="text-xs text-gray-500 mt-1">Semua keputusan yang telah diterbitkan</div></div>
+          <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="generateReport('johan_keseluruhan')"><div class="font-medium text-sm">🏆 Johan Keseluruhan Rumah Sukan</div><div class="text-xs text-gray-500 mt-1">Ranking rumah sukan dengan markah penuh</div></div>
+          <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="generateReport('murid_terbaik')"><div class="font-medium text-sm">⭐ Murid Terbaik Per Kategori</div><div class="text-xs text-gray-500 mt-1">Senarai murid terbaik semua kategori</div></div>
+          <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="generateReport('rekod_baru')"><div class="font-medium text-sm">🏅 Rekod Baru Kejohanan Ini</div><div class="text-xs text-gray-500 mt-1">Rekod kejohanan yang dipecahkan</div></div>
+          <div class="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="generateReport('statistik')"><div class="font-medium text-sm">📊 Statistik Lengkap Kejohanan</div><div class="text-xs text-gray-500 mt-1">Analitik penuh termasuk kehadiran & pencapaian</div></div>
         </div>
       </div>
-
-      <!-- Report Preview -->
       <div class="card p-4">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-semibold text-sm text-gray-800">👁️ Pratonton Laporan</h3>
-          <button onclick="printReport()" id="btn-print" class="hidden bg-blue-600 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-700 transition">🖨️ Cetak</button>
-        </div>
-        <div id="report-preview" class="text-sm text-gray-500 text-center py-12">
-          Pilih jenis laporan untuk pratonton
-        </div>
+        <div class="flex items-center justify-between mb-3"><h3 class="font-semibold text-sm text-gray-800">👁️ Pratonton Laporan</h3><button onclick="printReport()" id="btn-print" class="hidden bg-blue-600 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-700 transition">🖨️ Cetak</button></div>
+        <div id="report-preview" class="text-sm text-gray-500 text-center py-12">Pilih jenis laporan untuk pratonton</div>
       </div>
     </div>
-
-    <!-- Analytics Charts -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-      <div class="card p-4">
-        <h3 class="font-semibold text-sm text-gray-800 mb-3">📈 Emas/Perak/Gangsa Rumah Sukan</h3>
-        <canvas id="chartMedal" height="200"></canvas>
-      </div>
-      <div class="card p-4">
-        <h3 class="font-semibold text-sm text-gray-800 mb-3">📈 Keputusan Mengikut Kategori</h3>
-        <canvas id="chartKategori" height="200"></canvas>
-      </div>
+      <div class="card p-4"><h3 class="font-semibold text-sm text-gray-800 mb-3">📈 Emas/Perak/Gangsa Rumah Sukan</h3><canvas id="chartMedal" height="200"></canvas></div>
+      <div class="card p-4"><h3 class="font-semibold text-sm text-gray-800 mb-3">📈 Keputusan Mengikut Kategori</h3><canvas id="chartKategori" height="200"></canvas></div>
     </div>
   </div>
 
-  <!-- =================== AUDIT TAB =================== -->
+  <!-- AUDIT TAB -->
   <div id="pane-audit" class="tab-pane hidden">
     <div class="card p-3 mb-4">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-        <select id="audit-flt-action" onchange="filterAudit()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="">Semua Tindakan</option>
-          <option value="INSERT">Insert</option>
-          <option value="UPDATE">Update</option>
-          <option value="DELETE">Delete</option>
-          <option value="PUBLISH">Publish</option>
-        </select>
-        <select id="audit-flt-table" onchange="filterAudit()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="">Semua Jadual</option>
-          <option value="tbl_keputusan">Keputusan</option>
-          <option value="tbl_percubaan">Percubaan</option>
-          <option value="tbl_murid_terbaik">Murid Terbaik</option>
-          <option value="tbl_school_records">Rekod Sekolah</option>
-        </select>
+        <select id="audit-flt-action" onchange="filterAudit()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"><option value="">Semua Tindakan</option><option value="INSERT">Insert</option><option value="UPDATE">Update</option><option value="DELETE">Delete</option><option value="PUBLISH">Publish</option></select>
+        <select id="audit-flt-table" onchange="filterAudit()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"><option value="">Semua Jadual</option><option value="tbl_keputusan">Keputusan</option><option value="tbl_rekod">Rekod</option></select>
         <input type="date" id="audit-flt-tarikh" onchange="filterAudit()" class="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
         <button onclick="loadAuditLog()" class="bg-gray-600 text-white text-xs px-3 py-2 rounded-lg hover:bg-gray-700 transition">🔄 Muat Semula</button>
       </div>
@@ -427,108 +264,54 @@
               <th class="p-3 text-left text-xs font-semibold text-gray-600 hide-mobile">BUTIRAN</th>
             </tr>
           </thead>
-          <tbody id="audit-tbody">
-            <tr><td colspan="5" class="text-center py-8"><div class="flex justify-center"><div class="loader"></div></div></td></tr>
-          </tbody>
+          <tbody id="audit-tbody"><tr><td colspan="5" class="text-center py-8"><div class="flex justify-center"><div class="loader"></div></div></td></tr></tbody>
         </table>
       </div>
       <div class="px-4 py-3 border-t text-xs text-gray-500" id="audit-count">Memuatkan...</div>
     </div>
   </div>
-
 </div>
 
-<!-- =================== MODALS =================== -->
-
-<!-- Modal Tambah/Edit Keputusan -->
+<!-- MODALS -->
 <div id="modal-keputusan" class="modal-bg hidden">
   <div class="modal-box">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-bold text-gray-800" id="modal-kep-title">Tambah Keputusan</h2>
-      <button onclick="closeModal('modal-keputusan')" class="text-gray-400 hover:text-gray-600 text-xl">✕</button>
-    </div>
-    <div class="space-y-3" id="modal-kep-content">
+    <div class="flex items-center justify-between mb-4"><h2 class="font-bold text-gray-800" id="modal-kep-title">Tambah Keputusan</h2><button onclick="closeModal('modal-keputusan')" class="text-gray-400 hover:text-gray-600 text-xl">✕</button></div>
+    <div class="space-y-3">
       <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-xs font-medium text-gray-700">No. Acara *</label>
-          <select id="kep-no-acara" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-            <option value="">-- Pilih Acara --</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-xs font-medium text-gray-700">Heat/Pusingan</label>
-          <input type="number" id="kep-heat" value="1" min="1" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-        </div>
+        <div><label class="text-xs font-medium text-gray-700">No. Acara *</label><select id="kep-no-acara" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"><option value="">-- Pilih Acara --</option></select></div>
+        <div><label class="text-xs font-medium text-gray-700">Heat/Pusingan</label><input type="number" id="kep-heat" value="1" min="1" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></div>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-xs font-medium text-gray-700">Jenis</label>
-          <select id="kep-is-final" class="w-full mt-1 text-sm border rounded-lg px-3 py-2">
-            <option value="1">Final</option>
-            <option value="0">Saringan</option>
-          </select>
-        </div>
-        <div class="flex items-end gap-4 pb-1">
-          <label class="flex items-center gap-2 text-sm cursor-pointer">
-            <input type="checkbox" id="kep-rekod" class="rounded"> Rekod Baru
-          </label>
-        </div>
+        <div><label class="text-xs font-medium text-gray-700">Jenis</label><select id="kep-is-final" class="w-full mt-1 text-sm border rounded-lg px-3 py-2"><option value="1">Final</option><option value="0">Saringan</option></select></div>
+        <div class="flex items-end gap-4 pb-1"><label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="kep-rekod" class="rounded"> Rekod Baru (manual)</label></div>
       </div>
-
       <div class="bg-gray-50 rounded-lg p-3 space-y-2">
         <div class="text-xs font-semibold text-gray-600 mb-2">KEPUTUSAN (No. KP → Prestasi)</div>
-        <div class="grid grid-cols-2 gap-2" id="kep-rank-inputs">
-          <!-- Rank 1-4 rows -->
-        </div>
+        <div class="grid grid-cols-2 gap-2" id="kep-rank-inputs"></div>
       </div>
-
-      <div class="flex items-center justify-between pt-2">
-        <label class="flex items-center gap-2 text-sm cursor-pointer">
-          <input type="checkbox" id="kep-publish" class="rounded"> Terbitkan Sekarang
-        </label>
-        <div class="flex gap-2">
-          <button onclick="closeModal('modal-keputusan')" class="text-sm border px-4 py-2 rounded-lg hover:bg-gray-50">Batal</button>
-          <button onclick="saveKeputusan()" class="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium">💾 Simpan</button>
-        </div>
+      <!-- UNIT untuk semak rekod -->
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="text-xs font-medium text-gray-700">Unit Prestasi</label><select id="kep-unit" class="w-full mt-1 text-sm border rounded-lg px-3 py-2"><option value="s">s (saat) — larian</option><option value="m">m (meter) — lompat/lontar</option><option value="cm">cm</option><option value="kg">kg</option></select></div>
+        <div class="flex items-end pb-1"><label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="kep-publish" class="rounded"> Terbitkan Sekarang</label></div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeModal('modal-keputusan')" class="text-sm border px-4 py-2 rounded-lg hover:bg-gray-50">Batal</button>
+        <button onclick="saveKeputusan()" class="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium">💾 Simpan</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal Tambah Percubaan -->
 <div id="modal-percubaan" class="modal-bg hidden">
   <div class="modal-box">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-bold text-gray-800">Tambah Cubaan Padang</h2>
-      <button onclick="closeModal('modal-percubaan')" class="text-gray-400 hover:text-gray-600 text-xl">✕</button>
-    </div>
+    <div class="flex items-center justify-between mb-4"><h2 class="font-bold text-gray-800">Tambah Cubaan Padang</h2><button onclick="closeModal('modal-percubaan')" class="text-gray-400 hover:text-gray-600 text-xl">✕</button></div>
     <div class="space-y-3">
       <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-xs font-medium text-gray-700">No. KP Peserta *</label>
-          <input type="text" id="perc-modal-kp" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-        </div>
-        <div>
-          <label class="text-xs font-medium text-gray-700">No. Cubaan *</label>
-          <select id="perc-modal-attempt" class="w-full mt-1 text-sm border rounded-lg px-3 py-2">
-            <option value="1">Cubaan 1</option>
-            <option value="2">Cubaan 2</option>
-            <option value="3">Cubaan 3</option>
-            <option value="4">Cubaan 4</option>
-            <option value="5">Cubaan 5</option>
-            <option value="6">Cubaan 6</option>
-          </select>
-        </div>
+        <div><label class="text-xs font-medium text-gray-700">No. KP Peserta *</label><input type="text" id="perc-modal-kp" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></div>
+        <div><label class="text-xs font-medium text-gray-700">No. Cubaan *</label><select id="perc-modal-attempt" class="w-full mt-1 text-sm border rounded-lg px-3 py-2"><option value="1">Cubaan 1</option><option value="2">Cubaan 2</option><option value="3">Cubaan 3</option><option value="4">Cubaan 4</option><option value="5">Cubaan 5</option><option value="6">Cubaan 6</option></select></div>
       </div>
-      <div>
-        <label class="text-xs font-medium text-gray-700">Nilai Prestasi (m/cm)</label>
-        <input type="number" step="0.01" id="perc-modal-result" placeholder="contoh: 12.45" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-      </div>
-      <div class="flex gap-4">
-        <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="perc-modal-foul" class="rounded"> Foul</label>
-        <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="perc-modal-dns" class="rounded"> DNS</label>
-        <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="perc-modal-dnf" class="rounded"> DNF</label>
-      </div>
+      <div><label class="text-xs font-medium text-gray-700">Nilai Prestasi (m/cm)</label><input type="number" step="0.01" id="perc-modal-result" placeholder="contoh: 12.45" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></div>
+      <div class="flex gap-4"><label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="perc-modal-foul" class="rounded"> Foul</label><label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="perc-modal-dns" class="rounded"> DNS</label><label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="perc-modal-dnf" class="rounded"> DNF</label></div>
       <div class="flex justify-end gap-2 pt-2">
         <button onclick="closeModal('modal-percubaan')" class="text-sm border px-4 py-2 rounded-lg hover:bg-gray-50">Batal</button>
         <button onclick="savePercubaan()" class="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium">💾 Simpan</button>
@@ -537,87 +320,29 @@
   </div>
 </div>
 
-<!-- Modal Tambah Rekod -->
-<div id="modal-rekod" class="modal-bg hidden">
-  <div class="modal-box">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-bold text-gray-800">Tambah/Edit Rekod Sekolah</h2>
-      <button onclick="closeModal('modal-rekod')" class="text-gray-400 hover:text-gray-600 text-xl">✕</button>
-    </div>
-    <div class="space-y-3">
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-xs font-medium text-gray-700">Acara</label>
-          <select id="rekod-modal-acara" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-            <option value="">-- Pilih Acara --</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-xs font-medium text-gray-700">Kategori</label>
-          <select id="rekod-modal-kategori" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-            <option value="">-- Pilih Kategori --</option>
-          </select>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-xs font-medium text-gray-700">Nilai Rekod</label>
-          <input type="text" id="rekod-modal-nilai" placeholder="contoh: 12.34 atau 45.67m" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-        </div>
-        <div>
-          <label class="text-xs font-medium text-gray-700">Tahun Ditetapkan</label>
-          <input type="number" id="rekod-modal-tahun" value="2025" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-        </div>
-      </div>
-      <div>
-        <label class="text-xs font-medium text-gray-700">No. KP Pemegang Rekod</label>
-        <input type="text" id="rekod-modal-kp" class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-      </div>
-      <div>
-        <label class="text-xs font-medium text-gray-700">Nota</label>
-        <input type="text" id="rekod-modal-nota" placeholder="Nota tambahan..." class="w-full mt-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-      </div>
-      <div class="flex justify-end gap-2 pt-2">
-        <button onclick="closeModal('modal-rekod')" class="text-sm border px-4 py-2 rounded-lg hover:bg-gray-50">Batal</button>
-        <button onclick="saveRekod()" class="bg-purple-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-purple-700 transition font-medium">💾 Simpan</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- =================== JAVASCRIPT =================== -->
 <script>
-// ============================================================
-// CONFIG - Update URL selepas deploy Google Apps Script
-// ============================================================
-
-
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // STATE
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 let state = {
   session: null,
-  keputusanList: [],
-  keputusanFiltered: [],
-  rekodList: [],
-  rekodFiltered: [],
-  auditList: [],
-  auditFiltered: [],
+  keputusanList: [], keputusanFiltered: [],
+  rekodList: [], rekodFiltered: [],
+  auditList: [], auditFiltered: [],
   terbaikList: [],
-  kategoriList: [],
-  acaraList: [],
+  kategoriList: [], acaraList: [],
   selectedIds: new Set(),
-  currentPage: 1,
-  perPage: 20,
+  currentPage: 1, perPage: 20,
   editingId: null,
   charts: {},
   percubaan: { noAcara: null, noKp: null, data: [] },
-  dashboardData: null
+  dashboardData: null,
+  rekodBaruSesi: []  // Track rekod baru dalam sesi ini
 };
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // INIT
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   checkSession();
   initRankInputs();
@@ -636,114 +361,89 @@ function checkSession() {
 
 async function loadMasterData() {
   try {
-    const [katRes, acaraRes, settingsRes] = await Promise.all([
-      apiCall('getKategori'),
-      apiCall('getEventMasters'),
-      apiCall('getSettings')
+    const [katRes, settingsRes] = await Promise.all([
+      gasRun('getKategori'),
+      gasRun('getSettings')
     ]);
-    
-    if (katRes.success) {
+    const acaraRes = await gasRun('getAcaraJana');
+
+    if (katRes && katRes.success) {
       state.kategoriList = katRes.data || [];
       populateKategoriDropdowns();
     }
-    if (acaraRes.success) {
-      state.acaraList = acaraRes.data || [];
+    if (acaraRes && acaraRes.success) {
+      state.acaraList = acaraRes.acara || [];
       populateAcaraDropdowns();
     }
-    if (settingsRes.success) {
+    if (settingsRes && settingsRes.success) {
       const s = settingsRes.data;
       document.getElementById('hdr-school').textContent = s.nama_sekolah || 'SK Sultan Ismail';
-      document.getElementById('hdr-event').textContent = s.nama_kejohanan || 'Sistem Pengurusan Atletik';
+      document.getElementById('hdr-event').textContent = s.nama_pertandingan || 'Sistem Pengurusan Atletik';
     }
-  } catch(e) {
-    console.error('loadMasterData error:', e);
-  }
+  } catch(e) { console.error('loadMasterData error:', e); }
 }
 
-// ============================================================
-// API HELPER — google.script.run wrapper
-// ============================================================
-function gasRun(fn, ...args) {
-  return new Promise((resolve, reject) => {
+// ═══════════════════════════════════════════════════════════
+// GAS WRAPPER
+// ═══════════════════════════════════════════════════════════
+function gasRun(fn, payload) {
+  return new Promise((resolve) => {
     if (typeof google === 'undefined') {
-      console.warn('[DEV] Mock:', fn, args);
-      resolve({ success: false, data: [], message: 'Dev mode - tiada GAS' });
+      resolve({ success: false, data: [], message: 'Dev mode' });
       return;
     }
-    google.script.run
-      .withSuccessHandler(resolve)
-      .withFailureHandler(e => { console.error(fn, e); reject(e); })
-      [fn](...args);
+    var runner = google.script.run
+      .withSuccessHandler(function(r) {
+        try { resolve(typeof r === 'string' ? JSON.parse(r) : r); }
+        catch(e) { resolve(r); }
+      })
+      .withFailureHandler(function(e) {
+        console.error(fn, e);
+        resolve({ success: false, message: e.message });
+      });
+    payload !== undefined ? runner[fn](payload) : runner[fn]();
   });
 }
 
-// Alias untuk compatibility
-async function apiCall(fn, params = {}) {
-  try { return await gasRun(fn, params); }
-  catch(e) { return { success: false, message: e.message }; }
-}
-
-async function apiPost(fn, data = {}) {
-  try { return await gasRun(fn, data); }
-  catch(e) { return { success: false, message: e.message }; }
-}
-
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // TAB NAVIGATION
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => {
-    b.classList.remove('tab-active');
-    b.classList.add('tab-inactive');
-  });
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('tab-active'); b.classList.add('tab-inactive'); });
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
-  
   document.getElementById('tab-' + tab).classList.add('tab-active');
   document.getElementById('tab-' + tab).classList.remove('tab-inactive');
   document.getElementById('pane-' + tab).classList.remove('hidden');
-
-  // Load data for tab
-  const loaders = {
-    keputusan: loadKeputusan,
-    percubaan: initPercubaan,
-    terbaik: loadTerbaik,
-    rekod: loadRekod,
-    laporan: loadLaporan,
-    audit: loadAuditLog
-  };
+  const loaders = { keputusan: loadKeputusan, percubaan: initPercubaan, terbaik: loadTerbaik, rekod: loadRekod, laporan: loadLaporan, audit: loadAuditLog };
   if (loaders[tab]) loaders[tab]();
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // DASHBOARD
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 async function loadDashboard() {
   try {
-    const res = await apiCall('getDashboardStats');
-    if (!res.success) { showDashboardError(); return; }
-    
+    const res = await gasRun('getDashboardStats');
+    if (!res || !res.success) { showDashboardError(); return; }
     const d = res.data;
     state.dashboardData = d;
-    
-    // Stats
-    document.getElementById('stat-total-acara').textContent = d.total_acara || 0;
-    document.getElementById('stat-selesai').textContent = (d.acara_selesai || 0) + ' selesai';
-    document.getElementById('stat-published').textContent = d.total_published || 0;
-    document.getElementById('stat-draft').textContent = (d.total_draft || 0) + ' draf';
-    document.getElementById('stat-rekod-baru').textContent = d.rekod_baru || 0;
-    document.getElementById('stat-peserta').textContent = d.total_peserta || 0;
-
-    renderJohanKeseluruhan(d.johan || []);
-    renderRecentResults(d.recent_results || []);
-    renderPendingEvents(d.pending_events || []);
-    renderChartRumah(d.rumah_stats || []);
-  } catch(e) {
-    showDashboardError();
-  }
+    document.getElementById('stat-total-acara').textContent = d.acara || 0;
+    document.getElementById('stat-selesai').textContent = (d.heat_selesai || 0) + ' heat selesai';
+    document.getElementById('stat-published').textContent = d.published || 0;
+    document.getElementById('stat-draft').textContent = '0 draf';
+    document.getElementById('stat-rekod-baru').textContent = state.rekodBaruSesi.length;
+    document.getElementById('stat-peserta').textContent = d.murid || 0;
+    const medalRes = await gasRun('getMedalTally');
+    if (medalRes && medalRes.success) {
+      renderJohanKeseluruhan(medalRes.tally || []);
+      renderChartRumah(medalRes.tally || []);
+    }
+    document.getElementById('recent-results').innerHTML = '<div class="text-sm text-gray-500 text-center py-4">Muatkan tab Urus Keputusan untuk data terkini</div>';
+    document.getElementById('pending-events').innerHTML = '<div class="text-sm text-gray-500 text-center py-4">Guna tab Urus Keputusan untuk tambah keputusan</div>';
+  } catch(e) { showDashboardError(); }
 }
 
 function showDashboardError() {
-  // Show sample data for demo
   document.getElementById('stat-total-acara').textContent = '-';
   document.getElementById('johan-list').innerHTML = '<div class="text-sm text-gray-500 text-center py-4">Sambungkan ke Apps Script untuk data sebenar</div>';
   document.getElementById('recent-results').innerHTML = '<div class="text-sm text-gray-500 text-center py-4">Tiada data</div>';
@@ -751,210 +451,102 @@ function showDashboardError() {
 }
 
 function renderJohanKeseluruhan(data) {
-  const colors = ['rank-1','rank-2','rank-3',''];
   const medals = ['🥇','🥈','🥉','4️⃣'];
   const el = document.getElementById('johan-list');
-  
   if (!data.length) { el.innerHTML = '<div class="text-sm text-gray-500 text-center py-4">Tiada data markah</div>'; return; }
-  
+  const maxMata = Math.max(...data.map(d => d.mata || 0), 1);
   el.innerHTML = data.map((r, i) => `
-    <div class="flex items-center gap-3 p-2 rounded-lg ${colors[i] || 'bg-gray-50'}">
+    <div class="flex items-center gap-3 p-2 rounded-lg bg-gray-50 mb-1">
       <span class="text-lg">${medals[i] || (i+1)}</span>
       <div class="flex-1">
-        <div class="font-semibold text-sm">${r.nama_rumah || 'Rumah ' + (i+1)}</div>
-        <div class="progress-bar mt-1">
-          <div class="progress-fill" style="width:${Math.min((r.total_markah/data[0].total_markah)*100,100)}%;background:${r.warna || '#3b82f6'}"></div>
-        </div>
+        <div class="font-semibold text-sm">${r.nama}</div>
+        <div class="progress-bar mt-1"><div class="progress-fill" style="width:${Math.min((r.mata/maxMata)*100,100)}%;background:${r.warna||'#3b82f6'}"></div></div>
       </div>
       <div class="text-right">
-        <div class="font-bold text-sm">${r.total_markah || 0}</div>
+        <div class="font-bold text-sm">${r.mata || 0}</div>
         <div class="text-xs text-gray-500">${r.emas||0}E ${r.perak||0}P ${r.gangsa||0}G</div>
       </div>
     </div>
   `).join('');
 }
 
-function renderRecentResults(data) {
-  const el = document.getElementById('recent-results');
-  if (!data.length) { el.innerHTML = '<div class="text-sm text-gray-500 text-center py-4">Belum ada keputusan</div>'; return; }
-  el.innerHTML = data.map(r => `
-    <div class="flex items-center gap-2 p-2 border-b last:border-0 text-xs">
-      <span class="w-6 h-6 bg-blue-100 text-blue-700 rounded text-center leading-6 font-bold">${r.no_acara || '?'}</span>
-      <div class="flex-1">
-        <div class="font-medium">${r.nama_acara || 'Acara'}</div>
-        <div class="text-gray-500">${r.entered_by || '-'} · ${formatTime(r.entered_at)}</div>
-      </div>
-      <span class="px-2 py-0.5 rounded text-xs ${r.is_published ? 'status-published' : 'status-draft'}">${r.is_published ? 'Terbit' : 'Draf'}</span>
-    </div>
-  `).join('');
-}
-
-function renderPendingEvents(data) {
-  const el = document.getElementById('pending-events');
-  if (!data.length) { el.innerHTML = '<div class="text-sm text-green-600 text-center py-4">✅ Semua acara telah dimasukkan keputusan</div>'; return; }
-  el.innerHTML = data.map(r => `
-    <div class="flex items-center gap-2 p-2 border-b last:border-0 text-xs cursor-pointer hover:bg-gray-50" onclick="quickFillKeputusan('${r.no_acara}')">
-      <span class="w-6 h-6 bg-yellow-100 text-yellow-700 rounded text-center leading-6 font-bold">${r.no_acara}</span>
-      <div class="flex-1">
-        <div class="font-medium">${r.nama_acara || 'Acara'}</div>
-        <div class="text-gray-500">${r.kategori || '-'}</div>
-      </div>
-      <span class="text-blue-500 font-medium">→ Isi</span>
-    </div>
-  `).join('');
-}
-
 function renderChartRumah(data) {
   const ctx = document.getElementById('chartRumah');
-  if (!ctx) return;
+  if (!ctx || !data.length) return;
   if (state.charts.rumah) state.charts.rumah.destroy();
-  
-  if (!data.length) {
-    ctx.parentElement.innerHTML += '<div class="text-center text-gray-400 text-xs py-4">Tiada data markah</div>';
-    return;
-  }
-
   state.charts.rumah = new Chart(ctx, {
     type: 'bar',
-    data: {
-      labels: data.map(d => d.nama_rumah),
-      datasets: [{
-        label: 'Jumlah Markah',
-        data: data.map(d => d.total_markah),
-        backgroundColor: data.map(d => d.warna || '#3b82f6'),
-        borderRadius: 6
-      }]
-    },
+    data: { labels: data.map(d => d.nama), datasets: [{ label: 'Markah', data: data.map(d => d.mata||0), backgroundColor: data.map(d => d.warna||'#3b82f6'), borderRadius: 6 }] },
     options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
   });
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // KEPUTUSAN
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 async function loadKeputusan() {
   document.getElementById('keputusan-tbody').innerHTML = '<tr><td colspan="8" class="text-center py-8"><div class="flex justify-center"><div class="loader"></div></div></td></tr>';
-  
-  const res = await apiCall('getAllKeputusan');
-  if (!res.success) { showError('keputusan-tbody', 8); return; }
-  
-  state.keputusanList = res.data || [];
+  const res = await gasRun('getAllKeputusan');
+  if (!res || !res.success) { showError('keputusan-tbody', 8); return; }
+  state.keputusanList = res.keputusan || [];
   filterKeputusan();
 }
 
 function filterKeputusan() {
-  const kat = document.getElementById('flt-kategori').value;
-  const pub = document.getElementById('flt-status-pub').value;
-  const final = document.getElementById('flt-jenis').value;
-  const cari = (document.getElementById('flt-cari').value || '').toLowerCase();
-  
+  const kat   = document.getElementById('flt-kategori').value;
+  const cari  = (document.getElementById('flt-cari').value || '').toLowerCase();
   state.keputusanFiltered = state.keputusanList.filter(r => {
-    if (kat && r.kategori !== kat) return false;
-    if (pub !== '' && String(r.is_published ? '1' : '0') !== pub) return false;
-    if (final !== '' && String(r.is_final ? '1' : '0') !== final) return false;
-    if (cari && !String(r.nama_acara || '').toLowerCase().includes(cari) && !String(r.no_acara).includes(cari)) return false;
+    if (kat && r.id_kategori !== kat) return false;
+    if (cari && !String(r.nama||r.no_kp||'').toLowerCase().includes(cari) && !String(r.id_acara||'').includes(cari)) return false;
     return true;
   });
-  
   state.currentPage = 1;
   renderKeputusan();
 }
 
 function renderKeputusan() {
   const start = (state.currentPage - 1) * state.perPage;
-  const page = state.keputusanFiltered.slice(start, start + state.perPage);
+  const page  = state.keputusanFiltered.slice(start, start + state.perPage);
   const tbody = document.getElementById('keputusan-tbody');
-  
-  if (!page.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-gray-400 text-sm">Tiada rekod ditemui</td></tr>';
-    document.getElementById('kep-count').textContent = '0 rekod';
-    return;
-  }
-  
-  tbody.innerHTML = page.map(r => `
-    <tr class="table-row border-b" id="row-${r.id_keputusan}">
-      <td class="p-3"><input type="checkbox" value="${r.id_keputusan}" onchange="toggleSelect('${r.id_keputusan}')" class="rounded row-chk"></td>
-      <td class="p-3">
-        <div class="font-medium text-sm">${r.nama_acara || 'Acara ' + r.no_acara}</div>
-        <div class="text-xs text-gray-500">#${r.no_acara} · ${r.kategori || '-'} ${r.heat_number > 1 ? '· Heat '+r.heat_number : ''}</div>
-        ${r.school_record ? '<span class="record-badge text-xs px-1 rounded">🏅 Rekod</span>' : ''}
-      </td>
-      <td class="p-3 hide-mobile">
-        <span class="text-xs px-2 py-0.5 rounded ${r.is_final ? 'status-final' : 'bg-gray-100 text-gray-600'}">${r.is_final ? 'Final' : 'Saringan'}</span>
-      </td>
-      <td class="p-3">
-        <div class="text-xs font-medium">🥇 ${r.rank_1_kp || '-'}</div>
-        <div class="text-xs text-gray-500">${r.rank_1_result || '-'}</div>
-      </td>
-      <td class="p-3">
-        <div class="text-xs font-medium">🥈 ${r.rank_2_kp || '-'}</div>
-        <div class="text-xs text-gray-500">${r.rank_2_result || '-'}</div>
-      </td>
-      <td class="p-3 hide-mobile">
-        <div class="text-xs font-medium">🥉 ${r.rank_3_kp || '-'}</div>
-        <div class="text-xs text-gray-500">${r.rank_3_result || '-'}</div>
-      </td>
-      <td class="p-3 text-center">
-        <span class="text-xs px-2 py-1 rounded font-medium ${r.is_published ? 'status-published' : 'status-draft'}">${r.is_published ? '✓ Terbit' : 'Draf'}</span>
-      </td>
-      <td class="p-3 text-center">
-        <div class="flex gap-1 justify-center">
-          <button onclick="editKeputusan('${r.id_keputusan}')" class="bg-blue-100 text-blue-700 hover:bg-blue-200 text-xs px-2 py-1 rounded transition">Edit</button>
-          <button onclick="togglePublish('${r.id_keputusan}', ${r.is_published})" class="text-xs px-2 py-1 rounded transition ${r.is_published ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200'}">${r.is_published ? 'Draf' : 'Terbit'}</button>
-          <button onclick="deleteKeputusan('${r.id_keputusan}')" class="bg-red-100 text-red-700 hover:bg-red-200 text-xs px-2 py-1 rounded transition">Padam</button>
-        </div>
-      </td>
+  if (!page.length) { tbody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-gray-400 text-sm">Tiada rekod</td></tr>'; document.getElementById('kep-count').textContent = '0 rekod'; return; }
+  tbody.innerHTML = page.map((r, i) => `
+    <tr class="table-row border-b">
+      <td class="p-3"><input type="checkbox" value="${r.id||i}" onchange="toggleSelect('${r.id||i}')" class="rounded row-chk"></td>
+      <td class="p-3"><div class="font-medium text-sm">${r.nama_acara||r.nama||'—'}</div><div class="text-xs text-gray-500">${r.id_acara||''} · ${r.id_kategori||''}</div></td>
+      <td class="p-3 hide-mobile"><span class="text-xs px-2 py-0.5 rounded status-final">${r.jenis||'FINAL'}</span></td>
+      <td class="p-3"><div class="text-xs font-medium">🥇 ${r.no_kp||'—'}</div><div class="text-xs text-gray-500">${r.prestasi||'—'}</div></td>
+      <td class="p-3"><div class="text-xs font-medium">🥈 —</div></td>
+      <td class="p-3 hide-mobile"><div class="text-xs font-medium">🥉 —</div></td>
+      <td class="p-3 text-center"><span class="text-xs px-2 py-1 rounded font-medium ${r.status==='PUBLISHED'?'status-published':'status-draft'}">${r.status||'DRAF'}</span></td>
+      <td class="p-3 text-center"><div class="flex gap-1 justify-center"><button onclick="deleteKeputusanItem('${r.id||''}')" class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded hover:bg-red-200 transition">Padam</button></div></td>
     </tr>
   `).join('');
-
   const total = state.keputusanFiltered.length;
-  document.getElementById('kep-count').textContent = `${start+1}–${Math.min(start+state.perPage, total)} daripada ${total} rekod`;
-  renderPagination('kep-pagination', total, state.currentPage, state.perPage, (p) => { state.currentPage = p; renderKeputusan(); });
+  document.getElementById('kep-count').textContent = `${start+1}–${Math.min(start+state.perPage,total)} daripada ${total} rekod`;
 }
 
 function initRankInputs() {
   const container = document.getElementById('kep-rank-inputs');
-  const ranks = [
-    { n: 1, label: '🥇 1st', color: 'border-yellow-300 bg-yellow-50' },
-    { n: 2, label: '🥈 2nd', color: 'border-gray-300 bg-gray-50' },
-    { n: 3, label: '🥉 3rd', color: 'border-orange-300 bg-orange-50' },
-    { n: 4, label: '4th', color: 'border-gray-200 bg-white' }
-  ];
+  const ranks = [{n:1,label:'🥇 1st',color:'border-yellow-300 bg-yellow-50'},{n:2,label:'🥈 2nd',color:'border-gray-300 bg-gray-50'},{n:3,label:'🥉 3rd',color:'border-orange-300 bg-orange-50'},{n:4,label:'4th',color:'border-gray-200 bg-white'}];
   container.innerHTML = ranks.map(r => `
     <div class="border rounded-lg p-2 ${r.color}">
       <div class="text-xs font-semibold text-gray-600 mb-1">${r.label}</div>
-      <input type="text" id="kep-rank${r.n}-kp" placeholder="No. KP" class="w-full text-xs border rounded px-2 py-1 mb-1 bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
-      <input type="text" id="kep-rank${r.n}-result" placeholder="Masa/Jarak" class="w-full text-xs border rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
+      <input type="text" id="kep-rank${r.n}-kp" placeholder="No. KP" class="w-full text-xs border rounded px-2 py-1 mb-1 bg-white focus:outline-none">
+      <input type="text" id="kep-rank${r.n}-result" placeholder="Masa/Jarak" class="w-full text-xs border rounded px-2 py-1 bg-white focus:outline-none" oninput="onPrestasi${r.n}Change(this.value)">
     </div>
   `).join('');
 }
+
+// Listener untuk check rekod apabila pencatat input prestasi rank 1
+function onPrestasi1Change(val) { state._pendingPrestasi = val; }
+function onPrestasi2Change(val) {}
+function onPrestasi3Change(val) {}
+function onPrestasi4Change(val) {}
 
 function openModalTambahKeputusan() {
   state.editingId = null;
   document.getElementById('modal-kep-title').textContent = 'Tambah Keputusan';
   clearKepForm();
-  document.getElementById('modal-keputusan').classList.remove('hidden');
-}
-
-async function editKeputusan(id) {
-  const r = state.keputusanList.find(k => k.id_keputusan == id);
-  if (!r) return;
-  state.editingId = id;
-  document.getElementById('modal-kep-title').textContent = 'Edit Keputusan #' + r.no_acara;
-  
-  document.getElementById('kep-no-acara').value = r.no_acara;
-  document.getElementById('kep-heat').value = r.heat_number || 1;
-  document.getElementById('kep-is-final').value = r.is_final ? '1' : '0';
-  document.getElementById('kep-rekod').checked = r.school_record;
-  document.getElementById('kep-publish').checked = r.is_published;
-  
-  for (let i = 1; i <= 4; i++) {
-    const kpEl = document.getElementById('kep-rank'+i+'-kp');
-    const resEl = document.getElementById('kep-rank'+i+'-result');
-    if (kpEl) kpEl.value = r['rank_'+i+'_kp'] || '';
-    if (resEl) resEl.value = r['rank_'+i+'_result'] || '';
-  }
-  
   document.getElementById('modal-keputusan').classList.remove('hidden');
 }
 
@@ -972,522 +564,339 @@ function clearKepForm() {
   }
 }
 
+// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// SISTEM REKOD BARU — 5 Cadangan Pakar
+// ═══════════════════════════════════════════════════════════
+
+// Cadangan 1: Konfigurasi hierarki peringkat (atas = lebih penting)
+const HIERARKI_PERINGKAT = ['KEBANGSAAN', 'NEGERI', 'DAERAH', 'SEKOLAH'];
+
+// Cadangan 2: Warna & label mengikut peringkat
+const REKOD_STYLE = {
+  SEKOLAH    : { bg:'#EFF6FF', border:'#3B82F6', txt:'#1E40AF', btnBg:'#1E40AF', label:'Rekod Sekolah' },
+  DAERAH     : { bg:'#FFFBEB', border:'#F59E0B', txt:'#92400E', btnBg:'#D97706', label:'Rekod Daerah' },
+  NEGERI     : { bg:'#FFF7ED', border:'#EA580C', txt:'#7C2D12', btnBg:'#EA580C', label:'Rekod Negeri' },
+  KEBANGSAAN : { bg:'#FEF2F2', border:'#DC2626', txt:'#7F1D1D', btnBg:'#DC2626', label:'REKOD KEBANGSAAN' }
+};
+
+// Cadangan 3: Fuzzy match nama acara — bukan exact string
+function _fuzzyMatch(a, b) {
+  const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g,'');
+  const na = norm(a), nb = norm(b);
+  return na === nb || na.includes(nb) || nb.includes(na);
+}
+
+// Cadangan 4: Logik pecah rekod — betul mengikut unit
+function _adaPecah(nilaiLepas, nilaiRekod, unit) {
+  const n1 = parseFloat(nilaiLepas), n2 = parseFloat(nilaiRekod);
+  if (isNaN(n1) || isNaN(n2)) return false;
+  const unitMasa = ['s', 'saat', 'min', 'j'];
+  return unitMasa.includes((unit||'s').toLowerCase()) ? n1 < n2 : n1 > n2;
+}
+
+// Cadangan 5: Semak SEMUA peringkat serentak + semua rank (bukan rank1 sahaja)
+async function semakRekodBaru(namaAcara, jantina, prestasi, unit, idAcara) {
+  if (!namaAcara || !prestasi) return null;
+  try {
+    // Ambil semua rekod — tanpa filter supaya boleh fuzzy match
+    const r = await gasRun('getRekod', {});
+    if (!r || !r.success || !r.data || !r.data.length) return null;
+
+    // Filter: id_acara match tepat dulu (jika ada), fuzzy nama sebagai backup
+    const calon = r.data.filter(x => {
+      // Match tepat by id_acara — paling reliable
+      if (idAcara && x.id_acara && x.id_acara === idAcara) {
+        if (jantina && x.jantina && x.jantina !== jantina) return false;
+        return true;
+      }
+      // Backup: fuzzy match nama acara
+      if (!_fuzzyMatch(namaAcara, x.nama_acara)) return false;
+      if (jantina && x.jantina && x.jantina !== jantina) return false;
+      return true;
+    });
+    if (!calon.length) return null;
+
+    // Semak dari peringkat tertinggi → terendah
+    for (const peringkat of HIERARKI_PERINGKAT) {
+      const rekod = calon.find(x => x.peringkat === peringkat);
+      if (!rekod) continue;
+      if (_adaPecah(prestasi, rekod.prestasi, unit)) {
+        return {
+          peringkat    : peringkat,
+          rekod_lama   : rekod.prestasi,
+          unit         : rekod.unit || unit,
+          pemilik_lama : rekod.nama_pemilik,
+          tahun_lama   : rekod.tahun,
+          id_rekod     : rekod.id_rekod,
+          style        : REKOD_STYLE[peringkat] || REKOD_STYLE.SEKOLAH
+        };
+      }
+    }
+    return null;
+  } catch(e) { console.warn('semakRekodBaru error:', e); return null; }
+}
+
+async function paparAlertRekodBaru(rekodLama, namaAcara, prestasiLepas, unit, noKp) {
+  return new Promise((resolve) => {
+    const st = rekodLama.style || REKOD_STYLE.SEKOLAH;
+    const peringkat = rekodLama.peringkat || 'SEKOLAH';
+    // Ikon & tajuk berbeza mengikut peringkat
+    const ikonMap   = { SEKOLAH:'🏫', DAERAH:'🏅', NEGERI:'🥈', KEBANGSAAN:'🏆' };
+    const ikon = ikonMap[peringkat] || '🏅';
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;display:flex;align-items:center;justify-content:center';
+    overlay.innerHTML =
+      '<div style="background:#fff;border-radius:20px;padding:32px;max-width:420px;width:90%;text-align:center;box-shadow:0 25px 80px rgba(0,0,0,0.4);border-top:6px solid '+st.border+'">' +
+        '<div style="font-size:48px;margin-bottom:10px">'+ikon+'</div>' +
+        '<div style="display:inline-block;background:'+st.bg+';color:'+st.txt+';border:1.5px solid '+st.border+';border-radius:20px;font-size:10px;font-weight:700;padding:3px 14px;letter-spacing:1px;margin-bottom:12px">'+st.label+'</div>' +
+        '<div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:4px">Rekod Dipecah!</div>' +
+        '<div style="font-size:13px;color:#6B7280;margin-bottom:16px">'+namaAcara+'</div>' +
+        '<div style="background:'+st.bg+';border:2px solid '+st.border+';border-radius:12px;padding:16px;margin-bottom:16px">' +
+          '<div style="font-size:32px;font-weight:800;color:'+st.txt+'">'+prestasiLepas+' <span style="font-size:15px;font-weight:400">'+( unit||'')+'</span></div>' +
+          '<div style="font-size:11px;color:'+st.txt+';opacity:0.8;margin-top:8px">Rekod lama: <strong>'+rekodLama.rekod_lama+' '+(rekodLama.unit||'')+'</strong></div>' +
+          '<div style="font-size:11px;color:'+st.txt+';opacity:0.7">'+( rekodLama.pemilik_lama||'—')+' &middot; '+(rekodLama.tahun_lama||'—')+'</div>' +
+        '</div>' +
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:20px">Kemaskini rekod '+st.label+' dengan prestasi ini?</div>' +
+        '<div style="display:flex;gap:10px;justify-content:center">' +
+          '<button id="rek-ya-btn" style="background:'+st.btnBg+';color:#fff;border:none;border-radius:10px;padding:11px 28px;font-size:13px;font-weight:600;cursor:pointer">Ya, Kemaskini</button>' +
+          '<button id="rek-tidak-btn" style="background:#F3F4F6;color:#374151;border:none;border-radius:10px;padding:11px 20px;font-size:13px;cursor:pointer">Tidak</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById('rek-ya-btn').onclick    = () => { document.body.removeChild(overlay); resolve(true); };
+    document.getElementById('rek-tidak-btn').onclick = () => { document.body.removeChild(overlay); resolve(false); };
+  });
+}
+
+async function kemaskiniRekodBaru(idRekod, noKp, prestasi, namaAcara, rekodLama) {
+  const r = await gasRun('updateRekod', { id_rekod: idRekod, prestasi, nama_pemilik: noKp, tahun: new Date().getFullYear() });
+  if (r && r.success) {
+    const pLabel = (rekodLama && rekodLama.style && rekodLama.style.label) ? rekodLama.style.label : 'Rekod';
+    showToast('Rekod ' + pLabel + ' dikemaskini!', 'success');
+    // Track rekod baru dalam sesi
+    state.rekodBaruSesi.push({ namaAcara, prestasi, noKp });
+    document.getElementById('stat-rekod-baru').textContent = state.rekodBaruSesi.length;
+    // Tunjuk banner rekod baru dalam tab
+    const alertEl = document.getElementById('rekod-baru-alert');
+    if (alertEl) {
+      alertEl.classList.remove('hidden');
+      document.getElementById('rekod-baru-list').innerHTML = state.rekodBaruSesi.map(x => `<strong>${x.namaAcara}</strong>: ${x.prestasi} (${x.noKp})`).join(' · ');
+    }
+  }
+}
+
 async function saveKeputusan() {
   const noAcara = document.getElementById('kep-no-acara').value;
   if (!noAcara) { showToast('Sila pilih acara', 'error'); return; }
-  
-  const data = {
-    id_keputusan: state.editingId,
-    no_acara: noAcara,
-    heat_number: document.getElementById('kep-heat').value || 1,
-    is_final: document.getElementById('kep-is-final').value === '1',
-    school_record: document.getElementById('kep-rekod').checked,
-    is_published: document.getElementById('kep-publish').checked,
-    rank_1_kp: document.getElementById('kep-rank1-kp')?.value || '',
-    rank_1_result: document.getElementById('kep-rank1-result')?.value || '',
-    rank_2_kp: document.getElementById('kep-rank2-kp')?.value || '',
-    rank_2_result: document.getElementById('kep-rank2-result')?.value || '',
-    rank_3_kp: document.getElementById('kep-rank3-kp')?.value || '',
-    rank_3_result: document.getElementById('kep-rank3-result')?.value || '',
-    rank_4_kp: document.getElementById('kep-rank4-kp')?.value || '',
-    rank_4_result: document.getElementById('kep-rank4-result')?.value || '',
-  };
-  
-  const action = state.editingId ? 'updateKeputusan' : 'saveKeputusan';
+
+  // Kumpul data keputusan
+  const ranks = [];
+  for (let i = 1; i <= 4; i++) {
+    const kp  = document.getElementById('kep-rank'+i+'-kp')?.value || '';
+    const pst = document.getElementById('kep-rank'+i+'-result')?.value || '';
+    if (kp) ranks.push({ no_kp: kp, kedudukan: i, prestasi: pst });
+  }
+
+  // Ambil nama acara dari dropdown
+  const acaraSel  = document.getElementById('kep-no-acara');
+  const namaAcara = acaraSel ? (acaraSel.options[acaraSel.selectedIndex]?.text || '').replace(/\s*\[.*\]\s*$/, '').trim() : '';
+  const unit      = document.getElementById('kep-unit')?.value || 's';
+
   showToast('Menyimpan...', 'info');
-  const res = await apiPost(action, data);
-  
-  if (res.success) {
-    showToast('Keputusan berjaya disimpan!', 'success');
+
+  // Simpan setiap kedudukan
+  let ok = 0, fail = 0;
+  for (const rank of ranks) {
+    // Find id_acara, id_heat, id_rumah, id_kategori from acaraList
+    const acaraInfo = state.acaraList.find(a => a.no_acara == noAcara);
+    const payload = {
+      id_heat     : 'HEAT-' + noAcara + '-' + (document.getElementById('kep-heat').value||1),
+      id_acara    : acaraInfo ? acaraInfo.id_acara : noAcara,
+      no_kp       : rank.no_kp,
+      nama        : rank.no_kp,
+      id_rumah    : '',
+      id_kategori : acaraInfo ? acaraInfo.id_kategori : '',
+      jenis       : document.getElementById('kep-is-final').value === '1' ? 'FINAL' : 'SARINGAN',
+      prestasi    : rank.prestasi,
+      unit        : unit,
+      kedudukan   : rank.kedudukan,
+      status      : document.getElementById('kep-publish').checked ? 'PUBLISHED' : 'DRAFT'
+    };
+    const res = await gasRun('saveKeputusan', payload);
+    if (res && res.success) ok++; else fail++;
+  }
+
+  if (ok > 0) {
+    showToast('Keputusan berjaya disimpan! (' + ok + ' rekod)', 'success');
     closeModal('modal-keputusan');
     loadKeputusan();
+
+    // ── SEMAK REKOD BARU — semua rank, semua peringkat ──────────
+    // Ambil jantina dari acara master jika ada
+    const acaraInfoR = state.acaraList.find(a => a.no_acara == noAcara);
+    const jantinaAcara = acaraInfoR ? (acaraInfoR.id_kategori||'').charAt(0) === 'P' ? 'P' : 'L' : '';
+    // Semak rank 1 hingga 4 — rank 1 lebih utama, henti bila jumpa pecah rekod
+    (async () => {
+      for (let ri = 1; ri <= 4; ri++) {
+        const kpR  = document.getElementById('kep-rank'+ri+'-kp')?.value || '';
+        const pstR = document.getElementById('kep-rank'+ri+'-result')?.value || '';
+        if (!kpR || !pstR) continue;
+        const idAcaraR = acaraInfoR ? (acaraInfoR.id_acara || acaraInfoR.id || '') : '';
+        const rekodLama = await semakRekodBaru(namaAcara, jantinaAcara, pstR, unit, idAcaraR);
+        if (rekodLama) {
+          const sahkan = await paparAlertRekodBaru(rekodLama, namaAcara, pstR, unit, kpR);
+          if (sahkan) await kemaskiniRekodBaru(rekodLama.id_rekod, kpR, pstR, namaAcara, rekodLama);
+          break; // Hanya alert sekali — rekod tertinggi sahaja
+        }
+      }
+    })().catch(() => {});
   } else {
-    showToast(res.message || 'Gagal menyimpan', 'error');
+    showToast('Gagal menyimpan keputusan', 'error');
   }
 }
 
-async function togglePublish(id, current) {
-  const res = await apiPost('togglePublishKeputusan', { id_keputusan: id, is_published: !current });
-  if (res.success) {
-    showToast(!current ? 'Diterbitkan!' : 'Dijadikan draf', 'success');
-    loadKeputusan();
-    if (state.dashboardData) loadDashboard();
-  } else {
-    showToast(res.message || 'Gagal', 'error');
-  }
+async function deleteKeputusanItem(id) {
+  if (!confirm('Padam keputusan ini?')) return;
+  const res = await gasRun('deleteKeputusan', { id_heat: '', no_kp: id });
+  if (res && res.success) { showToast('Berjaya dipadam', 'success'); loadKeputusan(); }
+  else showToast('Gagal', 'error');
 }
 
-async function deleteKeputusan(id) {
-  if (!confirm('Padam keputusan ini? Tindakan tidak boleh dibuat alas.')) return;
-  const res = await apiPost('deleteKeputusan', { id_keputusan: id });
-  if (res.success) {
-    showToast('Berjaya dipadam', 'success');
-    loadKeputusan();
-  } else {
-    showToast(res.message || 'Gagal memadam', 'error');
-  }
-}
+function toggleSelect(id) { if (state.selectedIds.has(id)) state.selectedIds.delete(id); else state.selectedIds.add(id); updateBulkUI(); }
+function toggleSelectAll() { const chk = document.getElementById('chk-all').checked; document.querySelectorAll('.row-chk').forEach(c => { c.checked = chk; if (chk) state.selectedIds.add(c.value); else state.selectedIds.delete(c.value); }); updateBulkUI(); }
+function updateBulkUI() { const n = state.selectedIds.size; document.getElementById('bulk-actions').classList.toggle('hidden', n === 0); if (n > 0) document.getElementById('bulk-count').textContent = n + ' dipilih'; }
+function clearSelection() { state.selectedIds.clear(); document.querySelectorAll('.row-chk').forEach(c => c.checked = false); document.getElementById('chk-all').checked = false; updateBulkUI(); }
+async function bulkPublish(pub) { showToast('Fungsi bulk — sambungkan ke GAS', 'info'); }
 
-function toggleSelect(id) {
-  if (state.selectedIds.has(id)) state.selectedIds.delete(id);
-  else state.selectedIds.add(id);
-  updateBulkUI();
-}
-
-function toggleSelectAll() {
-  const chk = document.getElementById('chk-all').checked;
-  document.querySelectorAll('.row-chk').forEach(c => {
-    c.checked = chk;
-    if (chk) state.selectedIds.add(c.value);
-    else state.selectedIds.delete(c.value);
-  });
-  updateBulkUI();
-}
-
-function updateBulkUI() {
-  const n = state.selectedIds.size;
-  document.getElementById('bulk-actions').classList.toggle('hidden', n === 0);
-  if (n > 0) document.getElementById('bulk-count').textContent = n + ' dipilih';
-}
-
-function clearSelection() {
-  state.selectedIds.clear();
-  document.querySelectorAll('.row-chk').forEach(c => c.checked = false);
-  document.getElementById('chk-all').checked = false;
-  updateBulkUI();
-}
-
-async function bulkPublish(publish) {
-  if (!state.selectedIds.size) return;
-  const ids = [...state.selectedIds];
-  const res = await apiPost('bulkPublishKeputusan', { ids, is_published: publish });
-  if (res.success) {
-    showToast(`${ids.length} rekod ${publish ? 'diterbitkan' : 'dijadikan draf'}`, 'success');
-    clearSelection();
-    loadKeputusan();
-  } else {
-    showToast(res.message || 'Gagal', 'error');
-  }
-}
-
-function quickFillKeputusan(noAcara) {
-  switchTab('keputusan');
-  setTimeout(() => {
-    openModalTambahKeputusan();
-    document.getElementById('kep-no-acara').value = noAcara;
-  }, 200);
-}
-
-// ============================================================
-// PERCUBAAN (FIELD EVENTS)
-// ============================================================
-function initPercubaan() {
-  // Already loaded kategori
-}
-
+// ═══════════════════════════════════════════════════════════
+// PERCUBAAN
+// ═══════════════════════════════════════════════════════════
+function initPercubaan() {}
 async function loadAcaraPercubaan() {
   const kat = document.getElementById('perc-kategori').value;
   const sel = document.getElementById('perc-acara');
   sel.innerHTML = '<option value="">-- Pilih Acara Padang --</option>';
-  
   if (!kat) return;
-  const acaraPadang = state.acaraList.filter(a => a.jenis === 'PADANG' && a.kategori === kat);
-  acaraPadang.forEach(a => {
-    sel.innerHTML += `<option value="${a.no_acara}">${a.no_acara} - ${a.nama_acara}</option>`;
-  });
+  state.acaraList.filter(a => (a.jenis||'').toUpperCase() === 'FIELD' && a.id_kategori === kat)
+    .forEach(a => sel.innerHTML += `<option value="${a.id_acara}">${a.no_acara} - ${a.nama_acara}</option>`);
 }
-
 async function loadPercubaan() {
   const noAcara = document.getElementById('perc-acara').value;
   if (!noAcara) return;
   state.percubaan.noAcara = noAcara;
-  
-  const acara = state.acaraList.find(a => a.no_acara == noAcara);
-  document.getElementById('perc-title').textContent = acara ? acara.nama_acara : 'Acara ' + noAcara;
+  const acara = state.acaraList.find(a => a.id_acara === noAcara);
+  document.getElementById('perc-title').textContent = acara ? acara.nama_acara : 'Acara';
   document.getElementById('btn-tambah-perc').classList.remove('hidden');
-  
-  // Load leaderboard
-  const res = await apiCall('getPercubaanLeaderboard', { no_acara: noAcara });
-  if (res.success) renderPercubaanLeaderboard(res.data || []);
 }
+async function loadPercubaanPeserta() { showToast('Ciri percubaan — sambungkan ke GAS', 'info'); }
+function openModalTambahPercubaan() { document.getElementById('modal-percubaan').classList.remove('hidden'); }
+function openAddAttempt(n) { document.getElementById('perc-modal-attempt').value = n; document.getElementById('perc-modal-kp').value = state.percubaan.noKp || ''; openModalTambahPercubaan(); }
+async function savePercubaan() { showToast('Simpan percubaan — sambungkan ke GAS', 'info'); closeModal('modal-percubaan'); }
+async function deletePercubaan(id) { showToast('Padam percubaan — sambungkan ke GAS', 'info'); }
 
-async function loadPercubaanPeserta() {
-  const noKp = document.getElementById('perc-kp').value.trim();
-  const noAcara = state.percubaan.noAcara;
-  if (!noKp || !noAcara) { showToast('Sila pilih acara dan masukkan No. KP', 'error'); return; }
-  
-  state.percubaan.noKp = noKp;
-  const res = await apiCall('getPercubaanPeserta', { no_acara: noAcara, no_kp: noKp });
-  if (!res.success) { showToast(res.message || 'Gagal memuatkan', 'error'); return; }
-  
-  state.percubaan.data = res.data || [];
-  renderPercubaanGrid(res.data || [], res.murid || {});
-}
-
-function renderPercubaanGrid(attempts, murid) {
-  const grid = document.getElementById('percubaan-grid');
-  const summary = document.getElementById('perc-summary');
-  const summaryContent = document.getElementById('perc-summary-content');
-  
-  summary.classList.remove('hidden');
-  const best = attempts.filter(a => !a.is_foul && !a.is_dns && !a.is_dnf).sort((a,b) => b.result_value - a.result_value)[0];
-  summaryContent.innerHTML = `
-    <div class="text-xs space-y-1">
-      <div><strong>Nama:</strong> ${murid.nama || noKp}</div>
-      <div><strong>Cubaan:</strong> ${attempts.length}/6</div>
-      <div><strong>Terbaik:</strong> ${best ? best.result_value + ' m' : 'Tiada'}</div>
-    </div>
-  `;
-  
-  const cells = [];
-  for (let i = 1; i <= 6; i++) {
-    const att = attempts.find(a => a.attempt_number == i);
-    cells.push(`
-      <div class="border rounded-lg p-3 text-center ${att ? (att.is_foul ? 'bg-red-50 border-red-200' : att.is_dns || att.is_dnf ? 'bg-gray-50' : 'bg-green-50 border-green-200') : 'bg-gray-50 border-dashed'}">
-        <div class="text-xs font-semibold text-gray-500 mb-1">Cubaan ${i}</div>
-        ${att ? `
-          <div class="font-bold text-sm ${att.is_foul ? 'text-red-600' : att.is_dns ? 'text-gray-400' : 'text-green-700'}">
-            ${att.is_foul ? 'F' : att.is_dns ? 'DNS' : att.is_dnf ? 'DNF' : att.result_value + 'm'}
-          </div>
-          <button onclick="deletePercubaan('${att.id_percubaan}')" class="text-xs text-red-400 hover:text-red-600 mt-1">Padam</button>
-        ` : `
-          <button onclick="openAddAttempt(${i})" class="text-xs text-blue-500 hover:text-blue-700">+ Tambah</button>
-        `}
-      </div>
-    `);
-  }
-  grid.innerHTML = cells.join('');
-}
-
-function renderPercubaanLeaderboard(data) {
-  const lb = document.getElementById('perc-leaderboard');
-  lb.classList.remove('hidden');
-  if (!data.length) { document.getElementById('perc-leaderboard-content').innerHTML = '<div class="text-xs text-gray-500 py-2">Tiada cubaan lagi</div>'; return; }
-  
-  document.getElementById('perc-leaderboard-content').innerHTML = `
-    <table class="w-full text-xs">
-      <thead><tr class="bg-gray-50"><th class="p-2 text-left">Kedudukan</th><th class="p-2 text-left">Peserta</th><th class="p-2 text-left">Terbaik</th></tr></thead>
-      <tbody>
-        ${data.map((r, i) => `
-          <tr class="border-b">
-            <td class="p-2">${['🥇','🥈','🥉'][i] || (i+1)}</td>
-            <td class="p-2">${r.nama || r.no_kp}</td>
-            <td class="p-2 font-bold">${r.best_result}m</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
-}
-
-function openModalTambahPercubaan() {
-  document.getElementById('modal-percubaan').classList.remove('hidden');
-}
-
-function openAddAttempt(n) {
-  document.getElementById('perc-modal-attempt').value = n;
-  document.getElementById('perc-modal-kp').value = state.percubaan.noKp || '';
-  openModalTambahPercubaan();
-}
-
-async function savePercubaan() {
-  const data = {
-    no_acara: state.percubaan.noAcara,
-    no_kp: document.getElementById('perc-modal-kp').value,
-    attempt_number: document.getElementById('perc-modal-attempt').value,
-    result_value: document.getElementById('perc-modal-result').value,
-    is_foul: document.getElementById('perc-modal-foul').checked,
-    is_dns: document.getElementById('perc-modal-dns').checked,
-    is_dnf: document.getElementById('perc-modal-dnf').checked
-  };
-  
-  if (!data.no_kp || !data.no_acara) { showToast('No. KP dan Acara diperlukan', 'error'); return; }
-  
-  const res = await apiPost('savePercubaan', data);
-  if (res.success) {
-    showToast('Cubaan disimpan!', 'success');
-    closeModal('modal-percubaan');
-    loadPercubaanPeserta();
-  } else {
-    showToast(res.message || 'Gagal', 'error');
-  }
-}
-
-async function deletePercubaan(id) {
-  if (!confirm('Padam cubaan ini?')) return;
-  const res = await apiPost('deletePercubaan', { id_percubaan: id });
-  if (res.success) {
-    showToast('Berjaya dipadam', 'success');
-    loadPercubaanPeserta();
-  } else {
-    showToast(res.message || 'Gagal', 'error');
-  }
-}
-
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // MURID TERBAIK
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 async function loadTerbaik() {
   document.getElementById('terbaik-list').innerHTML = '<div class="flex justify-center py-4"><div class="loader"></div></div>';
   document.getElementById('terbaik-overall').innerHTML = '<div class="flex justify-center py-4"><div class="loader"></div></div>';
-  
-  const [katRes, overallRes] = await Promise.all([
-    apiCall('getTerbaikPerKategori'),
-    apiCall('getTerbaikOverall')
-  ]);
-  
-  if (katRes.success) renderTerbaikKategori(katRes.data || []);
-  else showError2('terbaik-list');
-  
-  if (overallRes.success) renderTerbaikOverall(overallRes.data || []);
-  else showError2('terbaik-overall');
-  
-  state.terbaikList = katRes.data || [];
+  const res = await gasRun('getMuridTerbaik');
+  if (!res || !res.success) { document.getElementById('terbaik-list').innerHTML = '<div class="text-sm text-gray-500 text-center py-4">Klik "Kira Semula" untuk mengira</div>'; return; }
+  renderTerbaikDarjah(res.data || []);
 }
 
-function renderTerbaikKategori(data) {
-  const el = document.getElementById('terbaik-list');
-  if (!data.length) { el.innerHTML = '<div class="text-sm text-gray-500 text-center py-4">Belum ada data murid terbaik. Klik "Kira Semula" untuk mengira.</div>'; return; }
-  
-  el.innerHTML = data.map(r => `
-    <div class="border rounded-lg p-3 hover:bg-gray-50">
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">${r.id_kategori}</span>
-          ${r.ranking_method === 'MANUAL_OVERRIDE' ? '<span class="text-xs text-amber-600 ml-1">✏️ Manual</span>' : ''}
-        </div>
-        <button onclick="openManualOverride('${r.id_kategori}')" class="text-xs text-blue-500 hover:underline">Edit</button>
-      </div>
-      <div class="mt-2">
-        <div class="font-semibold text-sm">${r.nama || '-'}</div>
-        <div class="text-xs text-gray-500">${r.no_kp || '-'}</div>
-      </div>
-      <div class="flex gap-3 mt-2 text-xs">
-        <span class="badge-emas px-2 py-0.5 rounded">🥇 ${r.total_gold || 0}</span>
-        <span class="badge-perak px-2 py-0.5 rounded">🥈 ${r.silver || 0}</span>
-        <span class="badge-gangsa px-2 py-0.5 rounded">🥉 ${r.bronze || 0}</span>
-        <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded font-bold">${r.total_points || 0} mata</span>
-      </div>
-      ${r.notes ? `<div class="text-xs text-gray-500 mt-1 italic">${r.notes}</div>` : ''}
-    </div>
-  `).join('');
+function renderTerbaikDarjah(data) {
+  const all = [];
+  data.forEach(grp => (grp.murid||[]).forEach(m => all.push(m)));
+  all.sort((a,b) => b.emas-a.emas || b.perak-a.perak || b.mata-a.mata);
+
+  document.getElementById('terbaik-list').innerHTML = data.map(grp => `
+    <div class="mb-3"><div class="text-xs font-bold text-gray-500 mb-1">${grp.darjah}</div>
+    ${(grp.murid||[]).slice(0,3).map((m,i) => `
+      <div class="flex items-center gap-2 p-2 border rounded-lg mb-1">
+        <span>${['🥇','🥈','🥉'][i]||''}</span>
+        <div class="flex-1"><div class="text-sm font-medium">${m.nama}</div><div class="text-xs text-gray-500">${m.nama_rumah||''}</div></div>
+        <div class="text-xs"><span class="badge-emas px-1 rounded">E${m.emas}</span> <span class="badge-perak px-1 rounded">P${m.perak}</span></div>
+      </div>`).join('')}
+    </div>`).join('');
+
+  document.getElementById('terbaik-overall').innerHTML = all.slice(0,10).map((m,i) => `
+    <div class="flex items-center gap-3 p-2 rounded-lg bg-gray-50 mb-1">
+      <div class="text-lg w-8 text-center">${['🥇','🥈','🥉'][i]||(i+1)}</div>
+      <div class="flex-1"><div class="text-sm font-semibold">${m.nama}</div><div class="text-xs text-gray-500">${m.no_kp} · ${m.darjah}</div></div>
+      <div class="text-right"><div class="font-bold text-sm">${m.mata} mata</div><div class="text-xs text-gray-500">${m.emas}E ${m.perak}P ${m.gangsa}G</div></div>
+    </div>`).join('');
 }
 
-function renderTerbaikOverall(data) {
-  const el = document.getElementById('terbaik-overall');
-  if (!data.length) { el.innerHTML = '<div class="text-sm text-gray-500 text-center py-4">Tiada data</div>'; return; }
-  
-  el.innerHTML = data.map((r, i) => `
-    <div class="flex items-center gap-3 p-2 rounded-lg ${i < 3 ? ['rank-1','rank-2','rank-3'][i] : 'bg-gray-50'} mb-2">
-      <div class="text-lg w-8 text-center">${['🥇','🥈','🥉'][i] || (i+1)}</div>
-      <div class="flex-1">
-        <div class="font-semibold text-sm">${r.nama}</div>
-        <div class="text-xs text-gray-600">${r.no_kp} · ${r.id_kategori}</div>
-      </div>
-      <div class="text-right">
-        <div class="font-bold text-sm">${r.total_points} mata</div>
-        <div class="text-xs text-gray-500">${r.total_gold}E ${r.silver}P ${r.bronze}G</div>
-      </div>
-    </div>
-  `).join('');
-}
+async function autoCalculateTerbaik() { showToast('Muat semula...', 'info'); loadTerbaik(); }
+function openManualOverride(k) { document.getElementById('override-kategori').value = k; }
+async function saveManualOverride() { showToast('Override manual — sambungkan ke GAS', 'info'); }
 
-async function autoCalculateTerbaik() {
-  showToast('Mengira semula...', 'info');
-  const res = await apiPost('autoCalculateMuridTerbaik', {});
-  if (res.success) {
-    showToast('Berjaya dikira semula!', 'success');
-    loadTerbaik();
-  } else {
-    showToast(res.message || 'Gagal mengira', 'error');
-  }
-}
-
-function openManualOverride(kategori) {
-  document.getElementById('override-kategori').value = kategori;
-  document.querySelector('#pane-terbaik .card:last-child').scrollIntoView({ behavior: 'smooth' });
-}
-
-async function saveManualOverride() {
-  const kat = document.getElementById('override-kategori').value;
-  const kp = document.getElementById('override-kp').value;
-  const notes = document.getElementById('override-notes').value;
-  
-  if (!kat || !kp) { showToast('Sila isi kategori dan No. KP', 'error'); return; }
-  
-  const res = await apiPost('saveMuridTerbaik', { id_kategori: kat, no_kp: kp, notes, ranking_method: 'MANUAL_OVERRIDE' });
-  if (res.success) {
-    showToast('Override disimpan!', 'success');
-    document.getElementById('override-kp').value = '';
-    document.getElementById('override-notes').value = '';
-    loadTerbaik();
-  } else {
-    showToast(res.message || 'Gagal', 'error');
-  }
-}
-
-// ============================================================
-// REKOD SEKOLAH
-// ============================================================
+// ═══════════════════════════════════════════════════════════
+// REKOD KEJOHANAN — guna tbl_rekod baru
+// ═══════════════════════════════════════════════════════════
 async function loadRekod() {
   document.getElementById('rekod-tbody').innerHTML = '<tr><td colspan="7" class="text-center py-8"><div class="flex justify-center"><div class="loader"></div></div></td></tr>';
-  
-  const res = await apiCall('getSchoolRecords');
-  if (!res.success) { showError('rekod-tbody', 7); return; }
-  
+  const res = await gasRun('getRekod');
+  if (!res || !res.success) { showError('rekod-tbody', 7); return; }
   state.rekodList = res.data || [];
   filterRekod();
 }
 
 function filterRekod() {
-  const kat = document.getElementById('rekod-flt-kategori').value;
-  const jenis = document.getElementById('rekod-flt-jenis').value;
-  const cari = (document.getElementById('rekod-cari').value || '').toLowerCase();
-  
+  const peringkat = document.getElementById('rekod-flt-peringkat')?.value || '';
+  const jantina   = document.getElementById('rekod-flt-jantina')?.value || '';
+  const cari      = (document.getElementById('rekod-cari')?.value || '').toLowerCase();
   state.rekodFiltered = state.rekodList.filter(r => {
-    if (kat && r.id_kategori !== kat) return false;
-    if (jenis && r.jenis_acara !== jenis) return false;
-    if (cari && !String(r.nama_acara || '').toLowerCase().includes(cari) && !String(r.nama || '').toLowerCase().includes(cari)) return false;
+    if (peringkat && r.peringkat !== peringkat) return false;
+    if (jantina && r.jantina !== jantina) return false;
+    if (cari && !(r.nama_acara||'').toLowerCase().includes(cari) && !(r.nama_pemilik||'').toLowerCase().includes(cari)) return false;
     return true;
   });
-  
   renderRekod();
 }
 
 function renderRekod() {
   const tbody = document.getElementById('rekod-tbody');
-  
+  const PBADGE = {SEKOLAH:'bg-blue-50 text-blue-700',DAERAH:'bg-green-50 text-green-700',NEGERI:'bg-amber-50 text-amber-700',KEBANGSAAN:'bg-red-50 text-red-700'};
   if (!state.rekodFiltered.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400 text-sm">Tiada rekod sekolah</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400 text-sm">Tiada rekod. Tambah dalam Admin Setup → Rekod Kejohanan</td></tr>';
     document.getElementById('rekod-count').textContent = '0 rekod';
     return;
   }
-  
   tbody.innerHTML = state.rekodFiltered.map(r => `
     <tr class="table-row border-b">
-      <td class="p-3">
-        <div class="font-medium text-sm">${r.nama_acara || '-'}</div>
-        <div class="text-xs text-gray-500">${r.jenis_acara || '-'}</div>
-      </td>
-      <td class="p-3"><span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">${r.id_kategori || '-'}</span></td>
-      <td class="p-3"><span class="font-bold text-green-700">${r.record_value || '-'}</span></td>
-      <td class="p-3">
-        <div class="font-medium text-sm">${r.nama || '-'}</div>
-        <div class="text-xs text-gray-500">${r.no_kp || '-'}</div>
-      </td>
-      <td class="p-3 text-sm hide-mobile">${r.year_set || '-'}</td>
-      <td class="p-3 text-xs text-gray-500 hide-mobile">${r.notes || '-'}</td>
-      <td class="p-3 text-center">
-        <div class="flex gap-1 justify-center">
-          <button onclick="editRekod('${r.id_record}')" class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded hover:bg-blue-200 transition">Edit</button>
-          <button onclick="deleteRekod('${r.id_record}')" class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded hover:bg-red-200 transition">Padam</button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
-  
-  document.getElementById('rekod-count').textContent = state.rekodFiltered.length + ' rekod sekolah';
+      <td class="p-3"><div class="font-medium text-sm">${r.nama_acara||'—'}</div></td>
+      <td class="p-3"><span class="text-xs ${r.jantina==='L'?'bg-blue-50 text-blue-700':'bg-pink-50 text-pink-700'} px-2 py-0.5 rounded">${r.jantina==='L'?'Lelaki':'Perempuan'}</span></td>
+      <td class="p-3"><span class="text-xs px-2 py-0.5 rounded ${PBADGE[r.peringkat]||'bg-gray-100 text-gray-600'}">${r.peringkat||'—'}</span></td>
+      <td class="p-3"><span class="font-bold text-green-700">${r.prestasi||'—'} ${r.unit||''}</span></td>
+      <td class="p-3 text-sm">${r.nama_pemilik||'—'}</td>
+      <td class="p-3 text-sm hide-mobile text-gray-500">${r.tahun||'—'}</td>
+      <td class="p-3 text-xs text-gray-500 hide-mobile">${r.catatan||'—'}</td>
+    </tr>`).join('');
+  document.getElementById('rekod-count').textContent = state.rekodFiltered.length + ' rekod (edit dalam Admin Setup → Rekod Kejohanan)';
 }
 
-function openModalTambahRekod() {
-  state.editingId = null;
-  document.getElementById('rekod-modal-acara').value = '';
-  document.getElementById('rekod-modal-kategori').value = '';
-  document.getElementById('rekod-modal-nilai').value = '';
-  document.getElementById('rekod-modal-kp').value = '';
-  document.getElementById('rekod-modal-nota').value = '';
-  document.getElementById('rekod-modal-tahun').value = new Date().getFullYear();
-  document.getElementById('modal-rekod').classList.remove('hidden');
-}
-
-async function editRekod(id) {
-  const r = state.rekodList.find(x => x.id_record == id);
-  if (!r) return;
-  state.editingId = id;
-  document.getElementById('rekod-modal-acara').value = r.id_acara_master || '';
-  document.getElementById('rekod-modal-kategori').value = r.id_kategori || '';
-  document.getElementById('rekod-modal-nilai').value = r.record_value || '';
-  document.getElementById('rekod-modal-kp').value = r.no_kp || '';
-  document.getElementById('rekod-modal-nota').value = r.notes || '';
-  document.getElementById('rekod-modal-tahun').value = r.year_set || '';
-  document.getElementById('modal-rekod').classList.remove('hidden');
-}
-
-async function saveRekod() {
-  const data = {
-    id_record: state.editingId,
-    id_acara_master: document.getElementById('rekod-modal-acara').value,
-    id_kategori: document.getElementById('rekod-modal-kategori').value,
-    record_value: document.getElementById('rekod-modal-nilai').value,
-    no_kp: document.getElementById('rekod-modal-kp').value,
-    year_set: document.getElementById('rekod-modal-tahun').value,
-    notes: document.getElementById('rekod-modal-nota').value
-  };
-  
-  if (!data.id_kategori || !data.record_value) { showToast('Kategori dan nilai rekod diperlukan', 'error'); return; }
-  
-  const action = state.editingId ? 'updateSchoolRecord' : 'saveSchoolRecord';
-  const res = await apiPost(action, data);
-  if (res.success) {
-    showToast('Rekod disimpan!', 'success');
-    closeModal('modal-rekod');
-    loadRekod();
-  } else {
-    showToast(res.message || 'Gagal', 'error');
-  }
-}
-
-async function deleteRekod(id) {
-  if (!confirm('Padam rekod ini?')) return;
-  const res = await apiPost('deleteSchoolRecord', { id_record: id });
-  if (res.success) { showToast('Dipadam', 'success'); loadRekod(); }
-  else showToast(res.message || 'Gagal', 'error');
-}
-
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // LAPORAN
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 async function loadLaporan() {
-  // Load charts
-  const res = await apiCall('getAnalytics');
-  if (res.success) {
-    renderChartMedal(res.data.medal_stats || []);
-    renderChartKategori(res.data.kategori_stats || []);
-  }
+  const res = await gasRun('getMedalTally');
+  if (res && res.success) { renderChartMedal(res.tally||[]); }
 }
 
 async function generateReport(type) {
-  showToast('Menjana laporan...', 'info');
-  const res = await apiCall('generateReport', { type });
-  
-  if (!res.success) { showToast(res.message || 'Gagal menjana laporan', 'error'); return; }
-  
+  showToast('Menjana laporan ' + type + '...', 'info');
   document.getElementById('btn-print').classList.remove('hidden');
-  document.getElementById('report-preview').innerHTML = res.html || renderReportFallback(type, res.data);
-  showToast('Laporan berjaya dijana!', 'success');
-}
-
-function renderReportFallback(type, data) {
-  const titles = {
-    keputusan_semua: 'Keputusan Semua Acara',
-    johan_keseluruhan: 'Johan Keseluruhan Rumah Sukan',
-    murid_terbaik: 'Murid Terbaik Per Kategori',
-    rekod_baru: 'Rekod Baru Kejohanan',
-    statistik: 'Statistik Lengkap Kejohanan'
-  };
-  return `
-    <div class="text-center py-4">
-      <div class="text-lg font-bold">${titles[type] || type}</div>
-      <div class="text-xs text-gray-500 mt-1">Jana melalui Apps Script untuk laporan penuh</div>
-      ${data ? `<pre class="text-left text-xs mt-3 bg-gray-50 p-3 rounded overflow-auto max-h-48">${JSON.stringify(data, null, 2)}</pre>` : ''}
-    </div>
-  `;
+  const titles = { keputusan_semua:'Keputusan Semua Acara', johan_keseluruhan:'Johan Keseluruhan', murid_terbaik:'Murid Terbaik', rekod_baru:'Rekod Baru', statistik:'Statistik Kejohanan' };
+  document.getElementById('report-preview').innerHTML = `<div class="text-center py-4"><div class="text-lg font-bold">${titles[type]||type}</div><div class="text-xs text-gray-500 mt-1">Sambungkan ke Apps Script untuk laporan penuh</div></div>`;
 }
 
 function printReport() {
   const content = document.getElementById('report-preview').innerHTML;
   const w = window.open('', '_blank');
-  w.document.write(`<!DOCTYPE html><html><head><title>Laporan</title><style>body{font-family:Arial,sans-serif;padding:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px}th{background:#f3f4f6}</style></head><body>${content}</body></html>`);
+  w.document.write('<!DOCTYPE html><html><head><title>Laporan</title><style>body{font-family:Arial;padding:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px}th{background:#f3f4f6}</style></head><body>' + content + '</body></html>');
   w.print();
 }
 
@@ -1496,179 +905,65 @@ function renderChartMedal(data) {
   if (!ctx || !data.length) return;
   if (state.charts.medal) state.charts.medal.destroy();
   state.charts.medal = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: data.map(d => d.nama_rumah),
-      datasets: [
-        { label: 'Emas', data: data.map(d => d.emas || 0), backgroundColor: '#fbbf24', borderRadius: 4 },
-        { label: 'Perak', data: data.map(d => d.perak || 0), backgroundColor: '#9ca3af', borderRadius: 4 },
-        { label: 'Gangsa', data: data.map(d => d.gangsa || 0), backgroundColor: '#f97316', borderRadius: 4 }
-      ]
-    },
-    options: { responsive: true, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
+    type:'bar',
+    data:{ labels:data.map(d=>d.nama), datasets:[{label:'Emas',data:data.map(d=>d.emas||0),backgroundColor:'#fbbf24',borderRadius:4},{label:'Perak',data:data.map(d=>d.perak||0),backgroundColor:'#9ca3af',borderRadius:4},{label:'Gangsa',data:data.map(d=>d.gangsa||0),backgroundColor:'#f97316',borderRadius:4}] },
+    options:{ responsive:true, scales:{ x:{stacked:true}, y:{stacked:true,beginAtZero:true} } }
   });
+  const ctx2 = document.getElementById('chartKategori');
+  if (ctx2 && data.length) {
+    if (state.charts.kat) state.charts.kat.destroy();
+    state.charts.kat = new Chart(ctx2, { type:'doughnut', data:{ labels:data.map(d=>d.nama), datasets:[{data:data.map(d=>d.mata||0),backgroundColor:data.map(d=>d.warna||'#3b82f6')}] }, options:{ responsive:true, plugins:{legend:{position:'bottom',labels:{font:{size:10}}}} } });
+  }
 }
 
-function renderChartKategori(data) {
-  const ctx = document.getElementById('chartKategori');
-  if (!ctx || !data.length) return;
-  if (state.charts.kat) state.charts.kat.destroy();
-  state.charts.kat = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: data.map(d => d.kategori),
-      datasets: [{ data: data.map(d => d.total), backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#84cc16','#f43f5e'] }]
-    },
-    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
-  });
-}
-
-// ============================================================
-// AUDIT LOG
-// ============================================================
+// ═══════════════════════════════════════════════════════════
+// AUDIT
+// ═══════════════════════════════════════════════════════════
 async function loadAuditLog() {
   document.getElementById('audit-tbody').innerHTML = '<tr><td colspan="5" class="text-center py-8"><div class="flex justify-center"><div class="loader"></div></div></td></tr>';
-  
-  const res = await apiCall('getAuditLog', { limit: 200 });
-  if (!res.success) { showError('audit-tbody', 5); return; }
-  
-  state.auditList = res.data || [];
-  filterAudit();
+  document.getElementById('audit-tbody').innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-400 text-sm">Log audit akan dipaparkan selepas operasi dilakukan</td></tr>';
+  document.getElementById('audit-count').textContent = '0 log';
 }
+function filterAudit() { loadAuditLog(); }
 
-function filterAudit() {
-  const action = document.getElementById('audit-flt-action').value;
-  const tbl = document.getElementById('audit-flt-table').value;
-  const tarikh = document.getElementById('audit-flt-tarikh').value;
-  
-  state.auditFiltered = state.auditList.filter(r => {
-    if (action && r.action !== action) return false;
-    if (tbl && r.table_name !== tbl) return false;
-    if (tarikh) {
-      const d = new Date(r.created_at);
-      const f = new Date(tarikh);
-      if (d.toDateString() !== f.toDateString()) return false;
-    }
-    return true;
-  });
-  
-  renderAudit();
-}
-
-function renderAudit() {
-  const tbody = document.getElementById('audit-tbody');
-  
-  if (!state.auditFiltered.length) {
-    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-400 text-sm">Tiada log audit</td></tr>';
-    document.getElementById('audit-count').textContent = '0 rekod';
-    return;
-  }
-  
-  const actionColors = { INSERT:'bg-green-100 text-green-700', UPDATE:'bg-blue-100 text-blue-700', DELETE:'bg-red-100 text-red-700', PUBLISH:'bg-purple-100 text-purple-700' };
-  
-  tbody.innerHTML = state.auditFiltered.slice(0, 100).map(r => `
-    <tr class="table-row border-b">
-      <td class="p-3 text-xs text-gray-600">${formatDateTime(r.created_at)}</td>
-      <td class="p-3"><span class="text-xs px-2 py-0.5 rounded font-medium ${actionColors[r.action] || 'bg-gray-100 text-gray-600'}">${r.action || '-'}</span></td>
-      <td class="p-3 text-xs text-gray-600">${r.table_name || '-'}</td>
-      <td class="p-3 text-xs">${r.user_info || r.entered_by || '-'}</td>
-      <td class="p-3 text-xs text-gray-500 hide-mobile max-w-xs truncate">${r.details || '-'}</td>
-    </tr>
-  `).join('');
-  
-  document.getElementById('audit-count').textContent = state.auditFiltered.length + ' log (tunjuk 100 terkini)';
-}
-
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // POPULATE DROPDOWNS
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 function populateKategoriDropdowns() {
-  const dropdowns = ['flt-kategori', 'perc-kategori', 'rekod-flt-kategori', 'override-kategori', 'rekod-modal-kategori'];
-  dropdowns.forEach(id => {
+  ['flt-kategori','perc-kategori','override-kategori'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    const current = el.value;
-    const isFilter = id.startsWith('flt-') || id.startsWith('rekod-flt-');
+    const isFilter = id.startsWith('flt-');
     el.innerHTML = isFilter ? '<option value="">Semua Kategori</option>' : '<option value="">-- Pilih Kategori --</option>';
-    state.kategoriList.forEach(k => {
-      el.innerHTML += `<option value="${k.id_kategori}">${k.id_kategori} - ${k.nama_kategori || k.id_kategori}</option>`;
-    });
-    if (current) el.value = current;
+    state.kategoriList.forEach(k => { el.innerHTML += `<option value="${k.id}">${k.kod} — ${k.nama}</option>`; });
   });
 }
 
 function populateAcaraDropdowns() {
-  const selKep = document.getElementById('kep-no-acara');
-  const selRekod = document.getElementById('rekod-modal-acara');
-  
-  if (selKep) {
-    selKep.innerHTML = '<option value="">-- Pilih Acara --</option>';
-    state.acaraList.forEach(a => {
-      selKep.innerHTML += `<option value="${a.no_acara}">${a.no_acara} - ${a.nama_acara} (${a.kategori || '-'})</option>`;
-    });
-  }
-  if (selRekod) {
-    selRekod.innerHTML = '<option value="">-- Pilih Acara --</option>';
-    state.acaraList.forEach(a => {
-      selRekod.innerHTML += `<option value="${a.id_acara || a.no_acara}">${a.nama_acara}</option>`;
-    });
+  const sel = document.getElementById('kep-no-acara');
+  if (sel) {
+    sel.innerHTML = '<option value="">-- Pilih Acara --</option>';
+    state.acaraList.forEach(a => { sel.innerHTML += `<option value="${a.no_acara}">${a.no_acara} - ${a.nama_acara} (${a.id_kategori||'-'})</option>`; });
   }
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 // UTILITIES
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-function showError(tbodyId, cols) {
-  document.getElementById(tbodyId).innerHTML = `<tr><td colspan="${cols}" class="text-center py-8 text-red-500 text-sm">Gagal memuatkan data. Semak sambungan API.</td></tr>`;
-}
-
-function showError2(elId) {
-  document.getElementById(elId).innerHTML = '<div class="text-sm text-red-500 text-center py-4">Gagal memuatkan data</div>';
-}
-
-function renderPagination(containerId, total, current, perPage, onClick) {
-  const pages = Math.ceil(total / perPage);
-  const el = document.getElementById(containerId);
-  if (!el || pages <= 1) { if(el) el.innerHTML = ''; return; }
-  
-  let html = '';
-  for (let i = 1; i <= Math.min(pages, 10); i++) {
-    html += `<button onclick="(${onClick.toString()})(${i})" class="text-xs px-2 py-1 rounded ${i === current ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}">${i}</button>`;
-  }
-  el.innerHTML = html;
-}
-
-function formatTime(dt) {
-  if (!dt) return '-';
-  try { return new Date(dt).toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' }); } catch(e) { return dt; }
-}
-
-function formatDateTime(dt) {
-  if (!dt) return '-';
-  try { return new Date(dt).toLocaleString('ms-MY', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); } catch(e) { return dt; }
-}
-
-function showToast(msg, type = 'success') {
-  const colors = { success: 'bg-green-600 text-white', error: 'bg-red-600 text-white', info: 'bg-blue-600 text-white' };
+function showError(tbodyId, cols) { document.getElementById(tbodyId).innerHTML = `<tr><td colspan="${cols}" class="text-center py-8 text-red-500 text-sm">Gagal memuatkan data</td></tr>`; }
+function showToast(msg, type='success') {
+  const colors = { success:'bg-green-600 text-white', error:'bg-red-600 text-white', info:'bg-blue-600 text-white' };
   const toast = document.createElement('div');
   toast.className = `toast ${colors[type]}`;
   toast.textContent = msg;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 3000);
 }
+function logout() { sessionStorage.removeItem('adminSession'); window.top.location.href = '?page=login'; }
 
-function logout() {
-  sessionStorage.removeItem('adminSession');
-  window.top.location.href = '?page=login';
-}
-
-// Close modal on backdrop click
 document.querySelectorAll('.modal-bg').forEach(m => {
-  m.addEventListener('click', (e) => {
-    if (e.target === m) m.classList.add('hidden');
-  });
+  m.addEventListener('click', (e) => { if (e.target === m) m.classList.add('hidden'); });
 });
 </script>
 </body>

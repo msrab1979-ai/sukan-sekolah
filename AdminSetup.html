@@ -7,17 +7,18 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0A0F1E;--bg2:#0F1629;--bg3:#141D35;--card:#161E36;--card2:#1C2540;--border:rgba(99,120,200,0.15);--border2:rgba(99,120,200,0.25);--blue:#4F8EF7;--blue2:#3B7BF0;--cyan:#22D3EE;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--purple:#8B5CF6;--gold:#F6C90E;--text:#E2E8F0;--text2:#94A3B8;--text3:#64748B;--sidebar-w:248px;--header-h:58px}
+:root{--bg:#F0F4F8;--bg2:#1E3A5F;--bg3:#EBF0F7;--card:#FFFFFF;--card2:#EEF2F7;--border:rgba(30,58,95,0.10);--border2:rgba(30,58,95,0.18);--blue:#4F8EF7;--blue2:#3B7BF0;--cyan:#22D3EE;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--purple:#8B5CF6;--gold:#F6C90E;--text:#1E293B;--text2:#475569;--text3:#64748B;--sidebar-w:248px;--header-h:58px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
-#header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:100;background:rgba(10,15,30,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px}
+#header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:100;background:rgba(30,58,95,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;padding:0 20px;gap:12px}
 .logo-badge{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff;letter-spacing:-0.3px}
 .logo-badge .tag{font-size:10px;font-family:'DM Mono',monospace;font-weight:500;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;padding:2px 8px;border-radius:20px;letter-spacing:1px}
 .header-spacer{flex:1}
 .header-meta{font-size:11px;color:var(--text3);text-align:right;line-height:1.4}
 .header-meta strong{color:var(--text2);display:block}
-.hbtn{background:var(--card2);border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.hbtn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);
+padding:6px 12px;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;white-space:nowrap}
 .hbtn:hover{background:var(--card);border-color:var(--blue);color:var(--blue)}
 .hbtn.danger:hover{border-color:var(--red);color:var(--red)}
 #hamburger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:4px;padding:4px}
@@ -26,10 +27,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 #sidebar-overlay.show{display:block}
 #sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);z-index:90;overflow-y:auto;padding:12px 8px 80px;transition:transform 0.3s ease}
 @media(max-width:900px){#sidebar{transform:translateX(-100%)}#sidebar.mobile-open{transform:translateX(0)}#main-content{margin-left:0!important}#hamburger{display:flex}}
-.sb-section{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:1.5px;padding:12px 10px 4px;text-transform:uppercase}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all 0.2s;margin-bottom:1px}
-.nav-item:hover{background:var(--card);color:var(--text)}
-.nav-item.active{background:linear-gradient(135deg,rgba(79,142,247,0.15),rgba(34,211,238,0.08));color:var(--blue);border:1px solid rgba(79,142,247,0.2)}
+.sb-section{font-size:10px;font-family:'DM Mono',monospace;color:rgba(255,255,255,0.38);letter-spacing:1.5px;padding:12px 10px 4px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,0.75);transition:all 0.2s;margin-bottom:1px}
+.nav-item:hover{background:rgba(255,255,255,0.10);color:#fff}
+.nav-item.active{background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.25)}
 .nav-item .icon{font-size:15px;width:20px;text-align:center}
 .nav-badge{margin-left:auto;font-size:10px;background:var(--blue);color:#fff;padding:1px 6px;border-radius:10px;font-family:'DM Mono',monospace}
 .nav-sub{display:flex;align-items:center;gap:7px;padding:7px 12px 7px 34px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--text3);transition:all 0.2s;margin-bottom:1px}
@@ -47,7 +48,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .stpane{display:none}.stpane.active{display:block}
 .breadcrumb{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);margin-bottom:20px;font-family:'DM Mono',monospace}
 .breadcrumb .sep{color:var(--text3)}.breadcrumb .current{color:var(--cyan)}
-.page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
 .page-sub{font-size:12px;color:var(--text3);margin-top:3px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
 .card-sm{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
@@ -60,7 +61,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-color,var(--blue));border-radius:12px 12px 0 0}
 .stat-card .stat-icon{font-size:26px;margin-bottom:8px}
 .stat-card .stat-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
-.stat-card .stat-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;line-height:1}
+.stat-card .stat-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--text);line-height:1}
 .stat-card .stat-trend{font-size:11px;color:var(--text3);margin-top:6px}
 .stat-card .stat-trend.up{color:var(--green)}.stat-card .stat-trend.warn{color:var(--amber)}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:all 0.2s;white-space:nowrap}
@@ -117,7 +118,7 @@ tbody td{padding:11px 14px;color:var(--text2);vertical-align:middle}
 .modal{background:var(--card);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:modal-in 0.2s ease}
 @keyframes modal-in{from{opacity:0;transform:scale(0.95) translateY(10px)}to{opacity:1;transform:none}}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border)}
-.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#fff}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--text)
 .modal-close{background:var(--card2);border:1px solid var(--border);color:var(--text2);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
 .modal-close:hover{border-color:var(--red);color:var(--red)}
 .modal-body{padding:20px}
@@ -126,7 +127,7 @@ tbody td{padding:11px 14px;color:var(--text2);vertical-align:middle}
 .toast{background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:toast-in 0.3s ease}
 @keyframes toast-in{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
 .toast.success{border-color:rgba(16,185,129,0.4)}.toast.error{border-color:rgba(239,68,68,0.4)}.toast.info{border-color:rgba(79,142,247,0.4)}.toast.warn{border-color:rgba(245,158,11,0.4)}
-#loading-overlay{display:none;position:fixed;inset:0;background:rgba(10,15,30,0.8);backdrop-filter:blur(4px);z-index:300;align-items:center;justify-content:center}
+#loading-overlay{display:none;position:fixed;inset:0;background:rgba(240,244,248,0.88);backdrop-filter:blur(4px);z-index:300;align-items:center;justify-content:center}
 #loading-overlay.show{display:flex}
 .spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -178,6 +179,20 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
 @keyframes fade-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .fade-up{animation:fade-up 0.35s ease both}
 .fade-up-1{animation-delay:0.05s}.fade-up-2{animation-delay:0.1s}.fade-up-3{animation-delay:0.15s}.fade-up-4{animation-delay:0.2s}
+.jdl-table{width:100%;border-collapse:collapse;font-size:12px;}
+.jdl-table thead tr{background:var(--card2);}
+.jdl-table th{padding:10px 14px;font-size:10px;font-weight:700;color:var(--text3);text-align:left;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;font-family:'DM Mono',monospace;}
+.jdl-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2);}
+.jdl-table tbody tr:hover{background:var(--card2);}
+.jdl-table tbody tr:last-child td{border-bottom:none;}
+.jdl-tarikh-cell{min-width:110px;}
+.peringkat-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
+.peringkat-akhir{background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.25);}
+.peringkat-saringan{background:rgba(245,158,11,0.15);color:var(--amber);border:1px solid rgba(245,158,11,0.25);}
+.jdl-no-warning{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--red);margin-top:6px;display:none;}
+.jdl-link-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(79,142,247,0.15);color:var(--blue);cursor:pointer;border:1px solid rgba(79,142,247,0.25);}
+.jdl-link-badge:hover{background:rgba(79,142,247,0.25);}
+.no-link-badge{background:rgba(100,116,139,0.1);color:var(--text3);border-color:var(--border);cursor:default;}
 </style>
 </head>
 <body>
@@ -211,6 +226,10 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
     <div class="nav-sub" onclick="navigate('settings','rumah')" id="sub-rumah">Rumah Sukan</div>
     <div class="nav-sub" onclick="navigate('settings','acara')" id="sub-acara">Acara Master</div>
   </div>
+  <div class="sb-section">Rekod</div>
+  <div class="nav-item" onclick="bukaRekodAcara()" id="nav-rekod"><span class="icon">🏆</span> Rekod Acara</div>
+  <div class="sb-section">Jadual</div>
+  <div class="nav-item" onclick="navigate('jadual')" id="nav-jadual"><span class="icon">📅</span> Jadual Acara</div>
   <div class="sb-section">Pengguna</div>
   <div class="nav-item" onclick="navigate('users')" id="nav-users"><span class="icon">👥</span> Pengguna <span class="nav-badge" id="badge-users">0</span></div>
   <div class="sb-footer"><span class="status-dot green" id="sys-dot"></span><span id="sys-txt" style="color:var(--text3)">Sistem Aktif</span><div style="margin-top:4px;font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)" id="sb-time">—</div></div>
@@ -309,13 +328,16 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
       <div style="display:flex;flex-direction:column;gap:16px">
         <div class="card">
           <div class="section-header"><div><div class="section-title">🏟️ Konfigurasi Trek</div></div></div>
-          <div class="form-group"><label class="form-label">Bilangan Lorong Trek</label><select class="form-select" id="set-lorong" onchange="updateLorongPreview()"><option value="4">4 Lorong</option><option value="6">6 Lorong</option><option value="8">8 Lorong</option></select><div class="form-hint">Digunakan untuk undian lorong acara balapan</div></div>
+          <div class="form-group"><label class="form-label">Bilangan Lorong Trek</label><select class="form-select" id="set-lorong" onchange="updateLorongPreview();saveTrekSettings()"><option value="4">4 Lorong</option><option value="6">6 Lorong</option><option value="8">8 Lorong</option></select><div class="form-hint">Digunakan untuk undian lorong acara balapan</div></div>
           <div id="lorong-preview" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"></div>
+          <div style="margin-top:12px;">
+            <button class="btn btn-primary btn-sm" onclick="saveTrekSettings()">💾 Simpan Lorong</button>
+          </div>
         </div>
         <div class="card">
           <div class="section-header"><div><div class="section-title">📊 Tetapan Paparan</div></div></div>
-          <div class="form-group"><label class="form-label">Bilangan Tempat Podium</label><select class="form-select" id="set-podium"><option value="3">3 Tempat (Emas/Perak/Gangsa)</option><option value="4">4 Tempat (+ Ke-4)</option><option value="8">8 Tempat (Penuh)</option></select></div>
-          <div class="form-group"><label class="form-label">Format Paparan Nama</label><select class="form-select" id="set-nama-format"><option value="penuh">Nama Penuh</option><option value="pendek">Nama Pendek</option></select></div>
+          <div class="form-group"><label class="form-label">Bilangan Tempat Podium</label><select class="form-select" id="set-podium" onchange="savePaparanSettings()"><option value="3">3 Tempat (Emas/Perak/Gangsa)</option><option value="4">4 Tempat (+ Ke-4)</option><option value="8">8 Tempat (Penuh)</option></select></div>
+          <div class="form-group"><label class="form-label">Format Paparan Nama</label><select class="form-select" onchange="savePaparanSettings()"><option value="penuh">Nama Penuh</option><option value="pendek">Nama Pendek</option></select></div>
         </div>
       </div>
     </div>
@@ -369,7 +391,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
   <!-- RUMAH -->
   <div id="stpane-rumah" class="stpane" style="display:none">
     <div class="card">
-      <div class="section-header"><div><div class="section-title">🏠 Rumah Sukan</div><div class="section-sub">Urus 4 rumah sukan & warna identiti</div></div><button class="btn btn-primary btn-sm" onclick="openRumahModal()">＋ Tambah Rumah</button></div>
+      <div class="section-header"><div><div class="section-title">🏠 Rumah Sukan</div><div class="section-sub">Urus rumah sukan, warna identiti & dropdown Sheet untuk guru</div></div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="doSetupSheetValidation()" title="Pasang dropdown darjah & rumah sukan dalam tbl_murid Sheet untuk kegunaan guru">📋 Setup Dropdown Sheet</button><button class="btn btn-primary btn-sm" onclick="openRumahModal()">＋ Tambah Rumah</button></div></div>
       <div class="rumah-grid" id="rumah-grid"><div style="color:var(--text3);font-size:12px;text-align:center;padding:24px;grid-column:1/-1">Memuatkan...</div></div>
     </div>
   </div>
@@ -384,11 +406,508 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
           <button class="btn btn-primary btn-sm" onclick="openAcaraModal()">＋ Tambah Acara</button>
         </div>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>EMOJI</th><th>KOD</th><th>NAMA ACARA</th><th>JENIS</th><th>KATEGORI</th><th>LORONG</th><th>FORMAT</th><th>STATUS</th><th>TINDAKAN</th></tr></thead><tbody id="acara-tbody"><tr><td colspan="9" style="text-align:center;color:var(--text3);padding:24px">Memuatkan...</td></tr></tbody></table></div>
+      <div class="tbl-wrap"><table><thead><tr><th>EMOJI</th><th>KOD</th><th>NAMA ACARA</th><th>JENIS</th><th>KATEGORI</th><th>LORONG</th><th>FORMAT</th><th style='text-align:center'>KUOTA/RUMAH</th><th>STATUS</th><th>TINDAKAN</th></tr></thead><tbody id="acara-tbody"><tr><td colspan="10" style="text-align:center;color:var(--text3);padding:24px">Memuatkan...</td></tr></tbody></table></div>
     </div>
   </div>
 </div>
 
+<!-- ② PANEL UTAMA -->
+<div id="pane-jadual" class="tab-pane">
+ 
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+    <div>
+      <h2 style="font-size:18px;font-weight:800;margin:0 0 4px;">📅 Jadual Acara Pertandingan</h2>
+      <p style="font-size:13px;color:#64748B;margin:0;">Tetapkan tarikh, masa dan lokasi untuk setiap acara dan peringkat</p>
+    </div>
+    <button class="btn btn-primary" onclick="openJadualModal()">+ Tambah Jadual</button>
+  </div>
+ 
+  <!-- Filter bar -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="padding:12px 16px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:#64748B;margin-bottom:4px;">TARIKH</div>
+        <select id="jdl-flt-tarikh" style="border:1.5px solid #E2E8F0;border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;background:#fff;min-width:160px;" onchange="filterJadual()">
+          <option value="">Semua Tarikh</option>
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:#64748B;margin-bottom:4px;">PERINGKAT</div>
+        <select id="jdl-flt-peringkat" style="border:1.5px solid #E2E8F0;border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;background:#fff;min-width:150px;" onchange="filterJadual()">
+          <option value="">Semua Peringkat</option>
+          <option value="AKHIR">🏆 Akhir</option>
+          <option value="SARINGAN">⚡ Saringan (semua)</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:160px;">
+        <div style="font-size:11px;font-weight:600;color:#64748B;margin-bottom:4px;">CARI</div>
+        <input id="jdl-flt-cari" style="border:1.5px solid #E2E8F0;border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;width:100%;" placeholder="No. acara / nama acara..." oninput="filterJadual()">
+      </div>
+      <button style="border:1.5px solid #E2E8F0;border-radius:8px;padding:7px 12px;font-size:12px;background:#fff;cursor:pointer;font-family:inherit;" onclick="clearJadualFilter()">Reset</button>
+      <button style="border:none;border-radius:8px;padding:7px 12px;font-size:12px;background:#F1F5F9;color:#475569;cursor:pointer;font-family:inherit;" onclick="loadJadual()">🔄</button>
+      <button style="border:none;border-radius:8px;padding:7px 12px;font-size:12px;background:#1E3A5F;color:#fff;cursor:pointer;font-family:inherit;" onclick="cetakJadualAcara()">🖨️ Cetak Jadual</button>
+    </div>
+  </div>
+ 
+  <!-- Jadual table -->
+  <div class="card">
+    <div style="overflow-x:auto;">
+      <table class="jdl-table">
+        <thead>
+          <tr>
+            <th class="jdl-tarikh-cell">Tarikh / Hari</th>
+            <th>Masa</th>
+            <th>No.</th>
+            <th>Nama Acara</th>
+            <th>Kategori</th>
+            <th>Peringkat</th>
+            <th>Lokasi</th>
+            <th>Starting List</th>
+            <th class="no-print">Tindakan</th>
+          </tr>
+        </thead>
+        <tbody id="jdl-tbody">
+          <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text2);">
+            <div style="font-size:28px;margin-bottom:8px;">📅</div>
+            Tiada jadual. Klik "+ Tambah Jadual" untuk mulakan.
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:10px 16px;border-top:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:12px;color:#64748B;" id="jdl-footer">0 jadual</span>
+      <span style="font-size:11px;color:#94A3B8;">💡 No. acara sama = slot berbeza (Saringan 1, Saringan 2, Akhir)</span>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══════════════════════════════════════════════════════════════════
+     LANGKAH 4: Tambah MODAL — letak sebelum </body>
+     ══════════════════════════════════════════════════════════════════ -->
+ 
+<!-- ③ MODAL TAMBAH/EDIT -->
+<div class="modal-overlay" id="modal-jadual">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-jadual-title">📅 Tambah Jadual Acara</span>
+      <button class="modal-close" onclick="closeModal('modal-jadual')">✕</button>
+    </div>
+    <div class="modal-body">
+ 
+      <!-- Row 1: No Acara + Warning -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;">No. Acara <span style="color:#EF4444;">*</span></label>
+          <input type="number" min="1" id="jdl-no-acara" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;" placeholder="cth: 1, 2, 3..." oninput="semakNoAcaraDuplikasi()">
+          <div class="jdl-no-warning" id="jdl-no-warning">⚠️ No. acara + peringkat ini sudah wujud</div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;">Peringkat <span style="color:#EF4444;">*</span></label>
+          <select id="jdl-peringkat" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;background:#fff;cursor:pointer;" onchange="semakNoAcaraDuplikasi()">
+            <option value="AKHIR">🏆 Akhir / Final</option>
+            <option value="SARINGAN 1">⚡ Saringan 1</option>
+            <option value="SARINGAN 2">⚡ Saringan 2</option>
+            <option value="SARINGAN 3">⚡ Saringan 3</option>
+          </select>
+        </div>
+      </div>
+ 
+      <!-- Row 2: Nama Acara + Kategori -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;">Nama Acara <span style="color:#EF4444;">*</span></label>
+          <input id="jdl-nama-acara" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;" placeholder="cth: 100m Lelaki">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;">Kategori</label>
+          <input id="jdl-kategori" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;" placeholder="cth: P4, L1">
+        </div>
+      </div>
+ 
+      <!-- Row 3: Tarikh + Hari -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;">Tarikh <span style="color:#EF4444;">*</span></label>
+          <input type="date" id="jdl-tarikh" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;" onchange="jdlAutoHari()">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;">Hari (auto)</label>
+          <input id="jdl-hari" readonly style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;background:#F8FAFC;color:#64748B;">
+        </div>
+      </div>
+ 
+      <!-- Row 4: Masa + Lokasi -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;">Masa Mula</label>
+          <input type="time" id="jdl-masa" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;">Lokasi</label>
+          <input id="jdl-lokasi" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;" placeholder="cth: Trek Utama, Padang B">
+        </div>
+      </div>
+ 
+      <!-- Link ke tbl_acara_jana (optional) -->
+      <div style="background:#F8FAFC;border-radius:8px;padding:12px;font-size:12px;">
+        <div style="font-weight:600;color:#475569;margin-bottom:8px;">🔗 Link ke Acara (untuk Starting List PDF)</div>
+        <select id="jdl-link-acara" style="width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:12px;font-family:inherit;background:#fff;">
+          <option value="">-- Tiada link (jadual bebas) --</option>
+        </select>
+        <div style="font-size:11px;color:#94A3B8;margin-top:6px;">Pilih acara dalam sistem untuk aktifkan butang "Starting List PDF" dalam jadual</div>
+      </div>
+ 
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-jadual')">Batal</button>
+      <button class="btn btn-primary" onclick="saveJadualAcara()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══════════════════════════════════════════════════════════════════
+     LANGKAH 5: Tambah JAVASCRIPT dalam <script> block
+     ══════════════════════════════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════════════
+// JADUAL ACARA — STATE & HELPERS
+// ═══════════════════════════════════════════
+var _jadualList     = [];
+var _jadualFiltered = [];
+var _jadualAcaraJana = []; // cache dari tbl_acara_jana untuk link
+var _editJadualId   = null;
+ 
+var _HARI = ['Ahad','Isnin','Selasa','Rabu','Khamis','Jumaat','Sabtu'];
+ 
+function _jdlAutoHariStr(tarikhStr) {
+  if (!tarikhStr) return '';
+  try { return _HARI[new Date(tarikhStr + 'T00:00:00').getDay()]; }
+  catch(e) { return ''; }
+}
+ 
+function _jdlFmtTarikh(tarikhStr) {
+  if (!tarikhStr) return '—';
+  try {
+    var d = new Date(tarikhStr + 'T00:00:00');
+    return d.toLocaleDateString('ms-MY', {day:'2-digit', month:'short', year:'numeric'});
+  } catch(e) { return tarikhStr; }
+}
+ 
+function _jdlFmtMasa(masaStr) {
+  if (!masaStr) return '—';
+  try {
+    var parts = masaStr.split(':');
+    var h = parseInt(parts[0]);
+    var m = parts[1] || '00';
+    var ampm = h >= 12 ? 'PTG' : 'PGI';
+    var h12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    return h12 + ':' + m + ' ' + ampm;
+  } catch(e) { return masaStr; }
+}
+ 
+// ═══════════════════════════════════════════
+// LOAD & RENDER
+// ═══════════════════════════════════════════
+async function loadJadual() {
+  console.log('[loadJadual] start'); 
+  var r = await gasRun('getJadualAcara', {});
+  console.log('[loadJadual] result:', r); 
+  if (!r || !r.success) { showToast('Gagal muatkan jadual', 'error'); return; }
+  _jadualList = r.jadual || [];
+ 
+  // Populate filter tarikh
+  var sel = document.getElementById('jdl-flt-tarikh');
+  var cur = sel.value;
+  var uniqueTarikh = [];
+  _jadualList.forEach(function(j) {
+    if (j.tarikh && uniqueTarikh.indexOf(j.tarikh) === -1) uniqueTarikh.push(j.tarikh);
+  });
+  uniqueTarikh.sort();
+  sel.innerHTML = '<option value="">Semua Tarikh</option>' +
+    uniqueTarikh.map(function(t) {
+      return '<option value="' + t + '"' + (t===cur?' selected':'') + '>' +
+             _jdlFmtTarikh(t) + ' (' + _jdlAutoHariStr(t) + ')</option>';
+    }).join('');
+ 
+  filterJadual();
+}
+ 
+function filterJadual() {
+  var tarikh    = document.getElementById('jdl-flt-tarikh').value;
+  var peringkat = document.getElementById('jdl-flt-peringkat').value;
+  var cari      = (document.getElementById('jdl-flt-cari').value || '').toLowerCase();
+ 
+  _jadualFiltered = _jadualList.filter(function(j) {
+    if (tarikh && j.tarikh !== tarikh) return false;
+    if (peringkat) {
+      if (peringkat === 'SARINGAN' && j.peringkat.indexOf('SARINGAN') === -1) return false;
+      if (peringkat === 'AKHIR' && j.peringkat !== 'AKHIR') return false;
+    }
+    if (cari) {
+      var noAcara   = String(j.no_acara || '').toLowerCase();
+      var namaAcara = (j.nama_acara || '').toLowerCase();
+      if (noAcara.indexOf(cari) === -1 && namaAcara.indexOf(cari) === -1) return false;
+    }
+    return true;
+  });
+ 
+  renderJadual();
+}
+ 
+function clearJadualFilter() {
+  document.getElementById('jdl-flt-tarikh').value    = '';
+  document.getElementById('jdl-flt-peringkat').value = '';
+  document.getElementById('jdl-flt-cari').value      = '';
+  filterJadual();
+}
+ 
+function renderJadual() {
+  var tbody = document.getElementById('jdl-tbody');
+  document.getElementById('jdl-footer').textContent = _jadualFiltered.length + ' jadual';
+ 
+  if (!_jadualFiltered.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text2);">' +
+      '<div style="font-size:28px;margin-bottom:8px;">📅</div>' +
+      'Tiada jadual ditemui.</td></tr>';
+    return;
+  }
+ 
+  tbody.innerHTML = _jadualFiltered.map(function(j) {
+    // Peringkat badge
+    var isAkhir    = j.peringkat === 'AKHIR';
+    var pgClass    = isAkhir ? 'peringkat-akhir' : 'peringkat-saringan';
+    var pgIcon     = isAkhir ? '🏆' : '⚡';
+ 
+    // Starting List link
+    var slBtn = '';
+    if (j.id_acara_link) {
+      slBtn = '<span class="jdl-link-badge" onclick="bukaStartingList(\'' + j.id_acara_link + '\',\'' + j.peringkat + '\')" title="Buka Starting List PDF">📋 Starting List</span>';
+    } else {
+      slBtn = '<span class="jdl-link-badge no-link-badge" title="Tiada link ke acara">— Tiada Link</span>';
+    }
+ 
+    return '<tr>' +
+      '<td class="jdl-tarikh-cell">' +
+        '<div style="font-weight:700;font-size:13px;">' + _jdlFmtTarikh(j.tarikh) + '</div>' +
+        '<div style="font-size:11px;color:#64748B;">' + (j.hari || _jdlAutoHariStr(j.tarikh)) + '</div>' +
+      '</td>' +
+      '<td style="font-family:monospace;font-size:13px;font-weight:600;color:#1E293B;">' + _jdlFmtMasa(j.masa_mula) + '</td>' +
+      '<td><span style="font-family:monospace;font-weight:800;font-size:14px;color:#3B82F6;">' + (j.no_acara || '—') + '</span></td>' +
+      '<td style="font-weight:500;">' + (j.nama_acara || '—') + '</td>' +
+      '<td>' +
+        (j.kategori ? '<span style="background:#EFF6FF;color:#1D4ED8;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;">' + j.kategori + '</span>' : '<span style="color:#94A3B8;font-size:12px;">—</span>') +
+      '</td>' +
+      '<td><span class="peringkat-badge ' + pgClass + '">' + pgIcon + ' ' + j.peringkat + '</span></td>' +
+      '<td style="font-size:12px;color:#475569;">' + (j.lokasi || '—') + '</td>' +
+      '<td>' + slBtn + '</td>' +
+      '<td>' +
+        '<div style="display:flex;gap:4px;">' +
+          '<button onclick="editJadual(\'' + j.id_jadual + '\')" style="padding:4px 8px;border-radius:6px;border:1px solid #E2E8F0;background:#F8FAFC;cursor:pointer;font-size:11px;">✏️</button>' +
+          '<button onclick="deleteJadualUI(\'' + j.id_jadual + '\')" style="padding:4px 8px;border-radius:6px;border:none;background:#FEF2F2;color:#991B1B;cursor:pointer;font-size:11px;">🗑️</button>' +
+        '</div>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+}
+ 
+// ═══════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════
+async function openJadualModal(data) {
+  _editJadualId = data ? data.id_jadual : null;
+ 
+  // Load acara jana untuk dropdown link (jika belum)
+  if (!_jadualAcaraJana.length) {
+    var r = await gasRun('getAcaraJana', {});
+    if (r && r.acara) _jadualAcaraJana = r.acara;
+  }
+ 
+  // Populate dropdown link acara
+  var sel = document.getElementById('jdl-link-acara');
+  sel.innerHTML = '<option value="">-- Tiada link (jadual bebas) --</option>' +
+    _jadualAcaraJana.map(function(a) {
+      return '<option value="' + a.id_acara + '">[' + a.no_acara + '] ' + a.nama_acara + '</option>';
+    }).join('');
+ 
+  // Default tarikh = hari ini
+  var today = new Date().toISOString().split('T')[0];
+ 
+  if (data) {
+    document.getElementById('jdl-no-acara').value    = data.no_acara || '';
+    document.getElementById('jdl-peringkat').value   = data.peringkat || 'AKHIR';
+    document.getElementById('jdl-nama-acara').value  = data.nama_acara || '';
+    document.getElementById('jdl-kategori').value    = data.kategori || '';
+    document.getElementById('jdl-tarikh').value      = data.tarikh || today;
+    document.getElementById('jdl-hari').value        = data.hari || _jdlAutoHariStr(data.tarikh || today);
+    document.getElementById('jdl-masa').value        = data.masa_mula || '';
+    document.getElementById('jdl-lokasi').value      = data.lokasi || '';
+    document.getElementById('jdl-link-acara').value  = data.id_acara_link || '';
+    document.getElementById('modal-jadual-title').textContent = '✏️ Edit Jadual Acara';
+  } else {
+    document.getElementById('jdl-no-acara').value    = '';
+    document.getElementById('jdl-peringkat').value   = 'AKHIR';
+    document.getElementById('jdl-nama-acara').value  = '';
+    document.getElementById('jdl-kategori').value    = '';
+    document.getElementById('jdl-tarikh').value      = today;
+    document.getElementById('jdl-hari').value        = _jdlAutoHariStr(today);
+    document.getElementById('jdl-masa').value        = '';
+    document.getElementById('jdl-lokasi').value      = '';
+    document.getElementById('jdl-link-acara').value  = '';
+    document.getElementById('modal-jadual-title').textContent = '📅 Tambah Jadual Acara';
+  }
+ 
+  document.getElementById('jdl-no-warning').style.display = 'none';
+  openModal('modal-jadual');
+}
+ 
+function jdlAutoHari() {
+  var tarikh = document.getElementById('jdl-tarikh').value;
+  document.getElementById('jdl-hari').value = _jdlAutoHariStr(tarikh);
+}
+ 
+function semakNoAcaraDuplikasi() {
+  var noAcara   = document.getElementById('jdl-no-acara').value.trim();
+  var peringkat = document.getElementById('jdl-peringkat').value;
+  var warn      = document.getElementById('jdl-no-warning');
+ 
+  if (!noAcara || !peringkat) { warn.style.display = 'none'; return; }
+ 
+  // Semak duplikasi dalam senarai sedia ada (kecuali rekod yang sedang diedit)
+  var duplikasi = _jadualList.some(function(j) {
+    if (_editJadualId && j.id_jadual === _editJadualId) return false;
+    return String(j.no_acara) === String(noAcara) && j.peringkat === peringkat;
+  });
+ 
+  warn.style.display = duplikasi ? 'block' : 'none';
+}
+ 
+async function saveJadualAcara() {
+  var noAcara   = document.getElementById('jdl-no-acara').value.trim();
+  var namaAcara = document.getElementById('jdl-nama-acara').value.trim();
+  var tarikh    = document.getElementById('jdl-tarikh').value;
+ 
+  if (!noAcara)   { showToast('No. acara wajib diisi', 'error'); return; }
+  if (!namaAcara) { showToast('Nama acara wajib diisi', 'error'); return; }
+  if (!tarikh)    { showToast('Tarikh wajib diisi', 'error'); return; }
+ 
+  // Block jika duplikasi
+  var warn = document.getElementById('jdl-no-warning');
+  if (warn.style.display !== 'none') { showToast('No. acara + peringkat sudah wujud', 'error'); return; }
+ 
+  var payload = {
+    id_jadual      : _editJadualId,
+    no_acara       : noAcara,
+    peringkat      : document.getElementById('jdl-peringkat').value,
+    nama_acara     : namaAcara,
+    kategori       : document.getElementById('jdl-kategori').value,
+    tarikh         : tarikh,
+    hari           : document.getElementById('jdl-hari').value,
+    masa_mula      : document.getElementById('jdl-masa').value,
+    lokasi         : document.getElementById('jdl-lokasi').value,
+    id_acara_link  : document.getElementById('jdl-link-acara').value
+  };
+ 
+  showLoading('Menyimpan jadual...');
+  var r = await gasRun('saveJadualAcara', payload);
+  hideLoading();
+ 
+  if (r && r.success) {
+    showToast(r.message || 'Jadual disimpan ✅', 'success');
+    closeModal('modal-jadual');
+    loadJadual();
+  } else {
+    showToast((r && r.message) || 'Gagal simpan', 'error');
+  }
+}
+ 
+function editJadual(id) {
+  var j = _jadualList.find(function(x) { return x.id_jadual === id; });
+  if (j) openJadualModal(j);
+}
+ 
+async function deleteJadualUI(id) {
+  if (!confirm('Padam jadual ini?')) return;
+  var r = await gasRun('deleteJadualAcara', { id_jadual: id });
+  if (r && r.success) { showToast('Jadual dipadam', 'success'); loadJadual(); }
+  else showToast('Gagal padam', 'error');
+}
+ 
+// ═══════════════════════════════════════════
+// STARTING LIST LINK
+// ═══════════════════════════════════════════
+function bukaStartingList(idAcara, peringkat) {
+  // Map peringkat jadual → jenis heat dalam tbl_heat
+  // AKHIR → FINAL, SARINGAN x → SARINGAN
+  var jenisHeat = peringkat === 'AKHIR' ? 'FINAL' : 'SARINGAN';
+ 
+  // Buka AdminOps dengan parameter
+  var url = (typeof S !== 'undefined' && S.SCRIPT_URL ? S.SCRIPT_URL : window.location.href.split('?')[0]);
+  url += '?page=admin-ops&sl_acara=' + encodeURIComponent(idAcara) + '&sl_jenis=' + encodeURIComponent(jenisHeat);
+  window.open(url, '_blank');
+}
+ 
+// ═══════════════════════════════════════════
+// CETAK JADUAL
+// ═══════════════════════════════════════════
+function cetakJadualAcara() {
+  var list = _jadualFiltered.length ? _jadualFiltered : _jadualList;
+  if (!list.length) { showToast('Tiada jadual untuk dicetak', 'warning'); return; }
+ 
+  var ss = (typeof _settings !== 'undefined') ? _settings : {};
+ 
+  var rows = list.map(function(j, i) {
+    var isAkhir = j.peringkat === 'AKHIR';
+    return '<tr style="background:' + (i%2 ? '#F8FAFC' : '#fff') + '">' +
+      '<td>' + _jdlFmtTarikh(j.tarikh) + '<br><small style="color:#64748B;">' + (j.hari || _jdlAutoHariStr(j.tarikh)) + '</small></td>' +
+      '<td style="text-align:center;font-weight:700;font-family:monospace;">' + _jdlFmtMasa(j.masa_mula) + '</td>' +
+      '<td style="text-align:center;font-weight:800;font-size:13pt;color:#3B82F6;">' + (j.no_acara || '—') + '</td>' +
+      '<td style="font-weight:600;">' + (j.nama_acara || '—') + '</td>' +
+      '<td style="text-align:center;">' + (j.kategori || '—') + '</td>' +
+      '<td style="text-align:center;">' +
+        '<span style="padding:2px 8px;border-radius:8px;font-size:10pt;font-weight:700;' +
+        (isAkhir ? 'background:#DCFCE7;color:#166534;' : 'background:#FEF3C7;color:#92400E;') + '">' +
+        (isAkhir ? '🏆' : '⚡') + ' ' + j.peringkat + '</span>' +
+      '</td>' +
+      '<td>' + (j.lokasi || '—') + '</td>' +
+    '</tr>';
+  }).join('');
+ 
+  var popup = window.open('', '_blank', 'width=900,height=700,scrollbars=yes');
+  if (!popup) { showToast('Popup disekat. Benarkan popup.', 'warning'); return; }
+ 
+  popup.document.write('<!DOCTYPE html><html lang="ms"><head>' +
+    '<meta charset="UTF-8"><title>Jadual Acara</title>' +
+    '<style>' +
+    '*{margin:0;padding:0;box-sizing:border-box;}' +
+    'body{font-family:Arial,sans-serif;padding:20px;font-size:11pt;}' +
+    'table{width:100%;border-collapse:collapse;}' +
+    'th,td{border:1px solid #CBD5E1;padding:8px 10px;}' +
+    'thead{background:#1E3A5F;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
+    'th{font-size:9.5pt;text-transform:uppercase;letter-spacing:0.3px;}' +
+    '.header{border-bottom:3px solid #1E3A5F;padding-bottom:12px;margin-bottom:16px;}' +
+    '.school-name{font-size:16pt;font-weight:900;color:#1E3A5F;text-transform:uppercase;}' +
+    '.event-name{font-size:13pt;font-weight:700;color:#1E3A5F;}' +
+    '@media print{button{display:none!important;}@page{size:A4 landscape;margin:10mm;}}' +
+    '</style></head><body>' +
+    '<button onclick="window.print()" style="position:fixed;top:12px;right:12px;padding:8px 18px;background:#1E3A5F;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">🖨️ Cetak PDF</button>' +
+    '<div class="header">' +
+      '<div class="school-name">' + (ss.nama_sekolah || 'SK SULTAN ISMAIL, KEMAMAN') + '</div>' +
+      '<div class="event-name">' + (ss.nama_pertandingan || 'SUKAN TAHUNAN') + ' ' + (ss.tahun || '') + '</div>' +
+    '</div>' +
+    '<h2 style="background:#1E3A5F;color:#fff;padding:10px 16px;border-radius:6px;margin-bottom:14px;font-size:13pt;">' +
+      '📅 JADUAL ACARA PERTANDINGAN' +
+    '</h2>' +
+    '<table><thead><tr>' +
+      '<th>Tarikh</th><th>Masa</th><th>No.</th><th>Nama Acara</th><th>Kategori</th><th>Peringkat</th><th>Lokasi</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>' +
+    '<div style="text-align:right;font-size:9pt;color:#94A3B8;margin-top:12px;">Dicetak: ' + new Date().toLocaleString('ms-MY') + '</div>' +
+    '</body></html>');
+  popup.document.close();
+  popup.focus();
+}
+</script>
+ 
 <!-- TAB USERS -->
 <div class="tab-pane" id="pane-users">
   <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
@@ -397,7 +916,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
   </div>
   <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
     <input class="form-input" id="user-search" placeholder="🔍 Cari nama / username..." style="max-width:240px;font-size:12px" oninput="filterUsers()">
-    <select class="form-select" id="user-role-filter" style="width:auto;font-size:12px;padding:5px 10px" onchange="filterUsers()"><option value="">Semua Role</option><option value="Admin">Admin</option><option value="Guru Rumah">Guru Rumah</option><option value="Pengurus">Pengurus</option><option value="Pencatat">Pencatat</option></select>
+    <select class="form-select" id="user-role-filter" style="width:auto;font-size:12px;padding:5px 10px" onchange="filterUsers()"><option value="">Semua Role</option><option value="Admin">Admin</option><option value="Pengurus">Pengurus</option><option value="Urusetia">Urusetia</option><option value="Pencatat">Pencatat</option></select>
   </div>
   <div class="card"><div class="tbl-wrap"><table><thead><tr><th>USERNAME</th><th>NAMA PENUH</th><th>ROLE</th><th>RUMAH</th><th>LOG MASUK TERAKHIR</th><th>STATUS</th><th>TINDAKAN</th></tr></thead><tbody id="users-tbody"><tr><td colspan="7" style="text-align:center;color:var(--text3);padding:24px">Memuatkan...</td></tr></tbody></table></div></div>
 </div>
@@ -435,10 +954,60 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
   <div class="modal-body">
     <input type="hidden" id="acara-id">
     <div class="form-row"><div class="form-group"><label class="form-label">Kod Acara</label><input class="form-input" id="acara-kod" placeholder="cth: 100M" style="text-transform:uppercase"></div><div class="form-group"><label class="form-label">Nama Acara</label><input class="form-input" id="acara-nama" placeholder="cth: Lari 100 Meter"></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Jenis Acara</label><select class="form-select" id="acara-jenis" onchange="toggleLorongField()"><option value="track">🏃 Track (Balapan)</option><option value="field">🏋️ Field (Padang)</option><option value="road">🚶 Road (Jalan Raya)</option></select></div><div class="form-group"><label class="form-label">Format Perlawanan</label><select class="form-select" id="acara-format"><option value="final">Terus Final</option><option value="heat_final">Heat → Final</option><option value="cubaan">Cubaan (Field)</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Jenis Acara</label><select class="form-select" id="acara-jenis" onchange="toggleLorongField()"><option value="TRACK">🏃 Track (Balapan)</option><option value="FIELD">🏋️ Field (Padang)</option><option value="ROAD">🚶 Road (Jalan Raya)</option></select></div><div class="form-group"><label class="form-label">Format Perlawanan</label><select class="form-select" id="acara-format"><option value="TERUS_FINAL">Terus Final</option><option value="HEAT_FINAL">Heat → Final</option><option value="CUBAAN">Cubaan (Field)</option></select></div></div>
+    <div class="form-group">
+      <label class="form-label">Jenis Pendaftaran
+        <span title="INDIVIDU: daftar atlet seorang-seorang. KUMPULAN: daftar pasukan/relay." style="cursor:help;color:#64748B;margin-left:4px">ⓘ</span>
+      </label>
+      <select class="form-select" id="acara-jenis-pend" onchange="onJenisPendChange()">
+        <option value="INDIVIDU">👤 INDIVIDU — Daftar seorang-seorang</option>
+        <option value="KUMPULAN">🏃 KUMPULAN — Daftar pasukan/relay</option>
+      </select>
+    </div>
     <div class="form-group" id="lorong-field"><label class="form-label">Perlukan Lorong?</label><select class="form-select" id="acara-lorong"><option value="1">Ya — guna lorong trek</option><option value="0">Tidak — bebas</option></select></div>
     <div class="form-group"><label class="form-label">Kategori Terlibat</label><div id="acara-kat-checks" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px"></div></div>
     <div class="form-group"><label class="form-label">Emoji Acara</label><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div id="acara-emoji-preview" style="font-size:28px;width:40px;height:40px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center">🏃</div><input class="form-input" id="acara-emoji" value="🏃" maxlength="4" style="width:80px;font-size:18px;text-align:center" oninput="updateAcaraEmojiPreview()"></div><div class="emoji-grid" id="emoji-grid"></div></div>
+    <!-- ── Kuota Section ── -->
+    <div style="background:#1E293B;border:1px solid #334155;border-radius:8px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:600;color:#64748B;letter-spacing:.5px;margin-bottom:10px">⚙️ TETAPAN KUOTA PENYERTAAN</div>
+
+      <!-- Tip konteks -->
+      <div id="kuota-tip" style="font-size:11px;background:#0F172A;border-left:3px solid #3B82F6;padding:7px 10px;border-radius:4px;color:#94A3B8;margin-bottom:12px">
+        💡 Acara <b>Individu</b>: isi Wakil sahaja, set Pasukan=0 &amp; Ahli=0.<br>
+        💡 Acara <b>Pasukan/Relay</b>: isi Pasukan, Ahli Utama &amp; Simpanan. Set Wakil=0.
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">👤 Wakil Individu / Rumah
+            <span title="Berapa orang atlet dari SATU rumah boleh bertanding dalam acara ini. Contoh: 100m = 2 wakil. Isi 0 jika acara pasukan." style="cursor:help;color:#64748B;margin-left:4px">ⓘ</span>
+          </label>
+          <input class="form-input" id="acara-kuota-ind" type="number" min="0" max="20" value="2" oninput="updateKuotaTip()">
+          <small style="color:#94A3B8;font-size:11px">Acara individu sahaja. Isi <b>0</b> untuk acara pasukan.</small>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🏃 Pasukan / Rumah
+            <span title="Berapa pasukan dari SATU rumah boleh masuk. Contoh: relay = 2 pasukan. Isi 0 jika acara individu." style="cursor:help;color:#64748B;margin-left:4px">ⓘ</span>
+          </label>
+          <input class="form-input" id="acara-kuota-pasukan" type="number" min="0" max="10" value="0" oninput="updateKuotaTip()">
+          <small style="color:#94A3B8;font-size:11px">Acara pasukan/relay sahaja. Isi <b>0</b> untuk acara individu.</small>
+        </div>
+      </div>
+
+      <div class="form-row" id="ahli-fields">
+        <div class="form-group">
+          <label class="form-label">⚡ Ahli Utama / Pasukan
+            <span title="Bilangan pemain yang BERTANDING dalam satu pasukan. Contoh: relay 4x100m = 4 orang. Isi 0 jika acara individu." style="cursor:help;color:#64748B;margin-left:4px">ⓘ</span>
+          </label>
+          <input class="form-input" id="acara-ahli-utama" type="number" min="0" max="20" value="0" oninput="updateKuotaTip()">
+          <small style="color:#94A3B8;font-size:11px">Pemain yang akan berlari/bertanding.</small>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🔄 Ahli Simpanan / Pasukan
+            <span title="Bilangan pemain sandaran (bench). Mereka didaftarkan tapi hanya turun jika ada kecemasan. Boleh isi 0." style="cursor:help;color:#64748B;margin-left:4px">ⓘ</span>
+          </label>
+          <input class="form-input" id="acara-ahli-simpanan" type="number" min="0" max="10" value="0"></div>
+    </div>
     <div class="form-group"><label class="form-label">Catatan</label><textarea class="form-textarea" id="acara-catatan" placeholder="Catatan tambahan..."></textarea></div>
   </div>
   <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-acara')">Batal</button><button class="btn btn-amber btn-sm" id="acara-clone-btn" onclick="cloneAcara()" style="display:none">📋 Klon</button><button class="btn btn-primary" onclick="saveAcara()">💾 Simpan</button></div></div>
@@ -450,7 +1019,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
     <input type="hidden" id="user-id">
     <div class="form-row"><div class="form-group"><label class="form-label">Username</label><input class="form-input" id="user-username" placeholder="cth: cg_merah"></div><div class="form-group"><label class="form-label">Kata Laluan</label><div style="position:relative"><input class="form-input" type="password" id="user-password" placeholder="Min 6 aksara"><button type="button" onclick="toggleUserPw()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px">👁️</button></div></div></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Nama Penuh</label><input class="form-input" id="user-nama" placeholder="Nama penuh"></div><div class="form-group"><label class="form-label">E-mel</label><input class="form-input" type="email" id="user-email" placeholder="email@sekolah.edu.my"></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Role / Peranan</label><select class="form-select" id="user-role" onchange="toggleRumahField()"><option value="Admin">Admin</option><option value="Guru Rumah">Guru Rumah</option><option value="Pengurus">Pengurus</option><option value="Pencatat">Pencatat</option></select></div><div class="form-group" id="user-rumah-group"><label class="form-label">Rumah Sukan</label><select class="form-select" id="user-rumah"><option value="">— Pilih Rumah —</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Role / Peranan</label><select class="form-select" id="user-role" onchange="toggleRumahField()"><option value="Admin">Admin</option><option value="Pengurus">Pengurus</option><option value="Urusetia">Urusetia</option><option value="Pencatat">Pencatat</option></select></div><div class="form-group" id="user-rumah-group"><label class="form-label">Rumah Sukan</label><select class="form-select" id="user-rumah"><option value="">— Pilih Rumah —</option></select></div></div>
   </div>
   <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-user')">Batal</button><button class="btn btn-primary" onclick="saveUser()">💾 Simpan</button></div></div>
 </div>
@@ -466,6 +1035,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
 // MOCK DATA (GAS stub — tukar ke google.script.run)
 // ═══════════════════════════════════════════════════
 const IS_GAS = (typeof google !== 'undefined' && google.script);
+var _scriptUrl = '';
 
 let _settings = {
   nama_sekolah:'SK Sultan Ismail',nama_pertandingan:'Sukan Tahunan 2025',
@@ -500,11 +1070,12 @@ let _acara = [
 ];
 let _users = [
   {id:'U1',username:'admin',full_name:'Rizal Admin',email:'admin@sk.edu.my',role:'Admin',id_rumah:'',is_active:true,last_login:'2025-03-07T07:00:00'},
-  {id:'U2',username:'cg_merah',full_name:'Cikgu Ahmad',email:'ahmad@sk.edu.my',role:'Guru Rumah',id_rumah:'R1',is_active:true,last_login:'2025-03-06T08:30:00'},
-  {id:'U3',username:'cg_biru',full_name:'Cikgu Siti',email:'siti@sk.edu.my',role:'Guru Rumah',id_rumah:'R2',is_active:true,last_login:'2025-03-05T09:00:00'},
-  {id:'U4',username:'cg_hijau',full_name:'Cikgu Kumar',email:'kumar@sk.edu.my',role:'Guru Rumah',id_rumah:'R3',is_active:true,last_login:'2025-03-06T10:00:00'},
-  {id:'U5',username:'cg_kuning',full_name:'Cikgu Nora',email:'nora@sk.edu.my',role:'Guru Rumah',id_rumah:'R4',is_active:false,last_login:null},
+  {id:'U2',username:'pengurus_bestari',full_name:'Pengurus Bestari',email:'bestari@sk.edu.my',role:'Pengurus',id_rumah:'R1',is_active:true,last_login:'2025-03-06T08:30:00'},
+  {id:'U3',username:'pengurus_gemilang',full_name:'Pengurus Gemilang',email:'gemilang@sk.edu.my',role:'Pengurus',id_rumah:'R2',is_active:true,last_login:'2025-03-05T09:00:00'},
+  {id:'U4',username:'pengurus_amal',full_name:'Pengurus Amal',email:'amal@sk.edu.my',role:'Pengurus',id_rumah:'R3',is_active:true,last_login:'2025-03-06T10:00:00'},
+  {id:'U5',username:'pengurus_cemerlang',full_name:'Pengurus Cemerlang',email:'cemerlang@sk.edu.my',role:'Pengurus',id_rumah:'R4',is_active:false,last_login:null},
   {id:'U6',username:'pencatat1',full_name:'Pencatat Sukan',email:'pencatat@sk.edu.my',role:'Pencatat',id_rumah:'',is_active:true,last_login:'2025-03-07T07:30:00'},
+  {id:'U7',username:'urusetia',full_name:'Urusetia Sukan',email:'urusetia@sk.edu.my',role:'Urusetia',id_rumah:'',is_active:true,last_login:'2025-03-07T08:00:00'},
 ];
 let _activityLog = [
   {time:'2025-03-07T07:45:00',user:'admin',action:'Kemaskini tetapan sistem',type:'info'},
@@ -515,14 +1086,31 @@ let _activityLog = [
 ];
 
 // GAS API wrapper
-function gasRun(fn, ...args) {
-  return new Promise((resolve) => {
+function gasRun(fn) {
+  var args = Array.prototype.slice.call(arguments, 1);
+  return new Promise(function(resolve) {
     if (IS_GAS) {
-      let call = google.script.run.withSuccessHandler(resolve).withFailureHandler(e => { showToast('Ralat: '+e.message,'error'); resolve(null); });
-      call[fn](...args);
+      var runner = google.script.run
+        .withSuccessHandler(function(result) {
+        console.log('[gasRun OK]', fn, JSON.stringify(result||{}).substring(0,120));
+        if (typeof result === 'string') {
+         try { resolve(JSON.parse(result)); }
+         catch(e) { resolve(result); }  // ← bukan JSON, return as-is
+        } else {
+          resolve(result);
+        }
+})
+        .withFailureHandler(function(e) {
+          console.error('[gasRun FAIL]', fn, e);
+          showToast('Ralat ' + fn + ': ' + (e.message||e), 'error');
+          resolve(null);
+        });
+      if (args.length === 0)      runner[fn]();
+      else if (args.length === 1) runner[fn](args[0]);
+      else if (args.length === 2) runner[fn](args[0], args[1]);
+      else                        runner[fn](args[0], args[1], args[2]);
     } else {
-      // Mock responses
-      setTimeout(() => resolve(mockApi(fn, ...args)), 300);
+      setTimeout(function(){ resolve(mockApi.apply(null, [fn].concat(args))); }, 300);
     }
   });
 }
@@ -543,11 +1131,15 @@ function mockApi(fn, ...args) {
     createAcara:    (d) => { const n={...d,id:'A'+Date.now(),aktif:true}; _acara.push(n); return {success:true,data:n}; },
     updateAcara:    (d) => { const i=_acara.findIndex(a=>a.id===d.id); if(i>=0) _acara[i]={..._acara[i],...d}; return {success:true}; },
     deleteAcara:    (d) => { _acara=_acara.filter(a=>a.id!==d.id); return {success:true}; },
+    deleteAcaraMaster:(d) => { _acara=_acara.filter(a=>a.id!==d.id); return {success:true}; },
     getUsers:       () => ({success:true, data:[..._users]}),
     createUser:     (d) => { const n={...d,id:'U'+Date.now(),is_active:true,last_login:null}; _users.push(n); return {success:true,data:n}; },
     updateUser:     (d) => { const i=_users.findIndex(u=>u.id===d.id); if(i>=0) _users[i]={..._users[i],...d}; return {success:true}; },
     deleteUser:     (d) => { _users=_users.filter(u=>u.id!==d.id); return {success:true}; },
     getDashboardStats: () => ({success:true, data:{murid:_kategori.length*120,acara:_acara.length,reg:_acara.length*16,users:_users.filter(u=>u.is_active).length,rumah:_rumah.length,keputusan:8}}),
+    getJadualAcara:    () => ({success:true, jadual:[], total:0}),
+    saveJadualAcara:   (d) => ({success:true, id_jadual:'JDL-MOCK', message:'Jadual disimpan (mock)'}),
+    deleteJadualAcara: (d) => ({success:true}),
     getScriptUrl:   () => 'https://script.google.com/macros/s/DEMO/exec',
   };
   return mocks[fn] ? mocks[fn](...args) : {success:false,message:'Unknown fn: '+fn};
@@ -577,6 +1169,7 @@ function navigate(tab, sub=null) {
   updateBreadcrumb(tab, sub);
   if(window.innerWidth<=900) closeSidebar();
   if(tab==='dashboard') loadDashboard();
+  else if(tab==='jadual') loadJadual();
   else if(tab==='users') loadUsers();
 }
 
@@ -600,7 +1193,7 @@ function showSubTab(sub) {
 }
 
 function updateBreadcrumb(tab, sub) {
-  const lbl = {dashboard:'Dashboard',settings:'Tetapan',users:'Pengguna',asas:'Tetapan Asas',mata:'Sistem Mata',kategori:'Kategori',rumah:'Rumah Sukan',acara:'Acara Master'};
+  const lbl = {dashboard:'Dashboard',settings:'Tetapan',jadual:'Jadual Acara',users:'Pengguna',asas:'Tetapan Asas',mata:'Sistem Mata',kategori:'Kategori',rumah:'Rumah Sukan',acara:'Acara Master'};
   document.getElementById('bc-tab').textContent = lbl[tab]||tab;
   if(sub){document.getElementById('bc-sep2').style.display='inline';document.getElementById('bc-sub-txt').style.display='inline';document.getElementById('bc-sub-txt').textContent=lbl[sub]||sub;}
   else{document.getElementById('bc-sep2').style.display='none';document.getElementById('bc-sub-txt').style.display='none';}
@@ -609,6 +1202,7 @@ function updateBreadcrumb(tab, sub) {
 function refreshCurrentTab() {
   if(currentTab==='dashboard') loadDashboard();
   else if(currentTab==='settings') showSubTab(currentSubTab);
+  else if(currentTab==='jadual') loadJadual();
   else if(currentTab==='users') loadUsers();
   showToast('Disegar semula','info');
 }
@@ -705,8 +1299,8 @@ async function loadSettings() {
   setValue('set-sekolah',d.nama_sekolah);setValue('set-nama',d.nama_pertandingan);
   setValue('set-tahun',d.tahun);setValue('set-jenis',d.jenis_sekolah);
   setValue('set-tarikh',d.tarikh_sukan);setValue('set-lokasi',d.lokasi);
-  setValue('set-tema',d.tema);setValue('set-lorong',d.lorong_trek||'6');
-  setValue('set-podium',d.podium||'4');setValue('set-nama-format',d.nama_format||'penuh');
+  setValue('set-tema',d.tema);setValue('set-lorong', String(d.lorong_trek||'6'));
+  setValue('set-podium', String(d.podium||'4'));setValue('set-nama-format',d.nama_format||'penuh');
   setToggle('tgl-reg',d.pendaftaran_buka);setToggle('tgl-pub',d.paparan_awam);setToggle('tgl-maint',d.mod_penyelenggaraan);
   updateLorongPreview();
 }
@@ -726,11 +1320,35 @@ async function saveSettings() {
   else showToast('Gagal simpan tetapan','error');
 }
 
+async function savePaparanSettings() {
+  const payload = {
+    podium: getVal('set-podium'),
+    nama_format: getVal('set-nama-format')
+  };
+  showLoading('Menyimpan...');
+  const r = await gasRun('saveSettings', payload);
+  hideLoading();
+  if(r&&r.success){ Object.assign(_settings,payload); showToast('Tetapan Paparan disimpan ✅','success'); }
+  else showToast('Gagal simpan','error');
+}
+
 function updateLorongPreview() {
-  const n = parseInt(getVal('set-lorong')||'6');
+  const n = parseInt(document.getElementById('set-lorong').value || '6');
   const cont = document.getElementById('lorong-preview');
+  if (!cont) return;
   const colors = ['#4F8EF7','#10B981','#F59E0B','#EF4444','#8B5CF6','#EC4899','#22D3EE','#F97316'];
-  cont.innerHTML = Array.from({length:n},(_,i)=>`<div style="background:${colors[i%colors.length]};color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;font-family:'DM Mono',monospace">L${i+1}</div>`).join('');
+  cont.innerHTML = Array.from({length:n}, (_,i) =>
+    `<div style="background:${colors[i%colors.length]};color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;">${i+1}</div>`
+  ).join('');
+}
+
+async function saveTrekSettings() {
+  const payload = { lorong_trek: getVal('set-lorong') };
+  showLoading('Menyimpan...');
+  const r = await gasRun('saveSettings', payload);
+  hideLoading();
+  if(r&&r.success){ Object.assign(_settings, payload); showToast('Lorong Trek disimpan ✅','success'); }
+  else showToast('Gagal simpan','error');
 }
 
 // ═══════════════════════════════════════════════════
@@ -788,9 +1406,11 @@ function applyPreset(type) {
 // KATEGORI
 // ═══════════════════════════════════════════════════
 async function loadKategori() {
-  const r = await gasRun('getKategori');
-  if(!r||!r.success) return;
-  _kategori = r.data;
+  let raw = await gasRun('getKategori');
+  const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+  console.log('[loadKategori] response:', JSON.stringify(r).substring(0,200));
+  if(!r||!r.success){ console.warn('[loadKategori] gagal:', r); return; }
+  _kategori = r.data || [];
   const tbody = document.getElementById('kat-tbody');
   if(_kategori.length===0){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px">Tiada kategori. Klik "+ Tambah Kategori"</td></tr>';return;}
   tbody.innerHTML = _kategori.map(k=>`
@@ -865,10 +1485,24 @@ async function deleteKategori(id){
 // ═══════════════════════════════════════════════════
 // RUMAH SUKAN
 // ═══════════════════════════════════════════════════
+async function doSetupSheetValidation() {
+  if(!confirm('Pasang dropdown darjah & rumah sukan dalam tbl_murid?\nIni akan set Data Validation dalam Google Sheet untuk memudahkan guru input data.')) return;
+  showToast('Sedang pasang dropdown...','info');
+  let raw = await gasRun('setupSheetValidation');
+  const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+  if(r && r.success) {
+    showToast('✅ Dropdown berjaya dipasang! ' + (r.message||''), 'success');
+  } else {
+    showToast('❌ Gagal: ' + (r&&r.message||'Unknown error'), 'error');
+  }
+}
+
 async function loadRumah() {
-  const r = await gasRun('getRumah');
-  if(!r||!r.success) return;
-  _rumah = r.data;
+  let raw = await gasRun('getRumah');
+  const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+  console.log('[loadRumah] response:', JSON.stringify(r).substring(0,200));
+  if(!r||!r.success){ console.warn('[loadRumah] gagal:', r); return; }
+  _rumah = r.data || [];
   const grid = document.getElementById('rumah-grid');
   if(_rumah.length===0){grid.innerHTML='<div style="color:var(--text3);font-size:12px;text-align:center;padding:24px;grid-column:1/-1">Tiada rumah sukan. Klik "+ Tambah Rumah"</div>';return;}
   grid.innerHTML = _rumah.map(r=>`
@@ -880,8 +1514,7 @@ async function loadRumah() {
           <div class="rumah-card-code" style="color:var(--text3)">Rumah ${r.kod}</div>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:4px">👨‍🏫 ${r.guru||'—'}</div>
-      <div style="font-size:11px;color:var(--text2)">🏆 ${r.pengurus||'—'}</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:4px">👨‍🏫 ${r.pengurus||'—'}</div>
       <div style="display:flex;gap:6px;margin-top:12px">
         <button class="btn btn-ghost btn-xs" style="flex:1" onclick="editRumah('${r.id}')">✏️ Edit</button>
         <button class="btn btn-danger btn-xs" onclick="confirmDelete('Padam rumah ${r.nama}?',()=>deleteRumah('${r.id}'))">🗑️</button>
@@ -898,7 +1531,7 @@ function openRumahModal(id=null){
     const r=_rumah.find(x=>x.id===id);
     if(!r)return;
     setValue('rumah-id',r.id);setValue('rumah-nama',r.nama);setValue('rumah-kod',r.kod);
-    setValue('rumah-guru',r.guru);setValue('rumah-pengurus',r.pengurus);
+    setValue('rumah-guru',r.pengurus);setValue('rumah-pengurus',r.pengurus);
     document.getElementById('rumah-warna').value=r.warna||'#EF4444';
     const radios=document.querySelectorAll('input[name="rumah-txt"]');
     radios.forEach(rd=>rd.checked=(rd.value===(r.warna_teks||'#ffffff')));
@@ -967,39 +1600,51 @@ function updateAcaraEmojiPreview(){
 function buildKatChecks(){
   const cont=document.getElementById('acara-kat-checks');
   if(!cont)return;
+  if(!_kategori||!_kategori.length){
+    cont.innerHTML='<span style="color:var(--text3);font-size:12px;">Tiada kategori. Setup kategori dahulu.</span>';
+    return;
+  }
   cont.innerHTML=_kategori.map(k=>`
     <label style="display:flex;align-items:center;gap:5px;cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--card2);font-size:12px;color:var(--text2)">
-      <input type="checkbox" class="kat-check" value="${k.kod}"> ${k.kod}
+      <input type="checkbox" class="kat-check" value="${k.kod}"> ${k.kod} <span style="color:var(--text3)">${k.nama||''}</span>
     </label>`).join('');
 }
 
+
 function toggleLorongField(){
-  const jenis=getVal('acara-jenis');
-  document.getElementById('lorong-field').style.display=jenis==='track'?'block':'none';
-  if(jenis!=='track') setValue('acara-lorong','0');
+  const jenis=(getVal('acara-jenis')||'').toUpperCase();
+  document.getElementById('lorong-field').style.display=jenis==='TRACK'?'block':'none';
+  if(jenis!=='TRACK') setValue('acara-lorong','0');
 }
 
 async function loadAcara(){
-  const r=await gasRun('getAcara');
-  if(!r||!r.success)return;
-  _acara=r.data;
+  let raw=await gasRun('getAcara');
+  const r=(typeof raw==='string')?JSON.parse(raw):raw;
+  console.log('[loadAcara] response:', JSON.stringify(r).substring(0,200));
+  if(!r||!r.success){ console.warn('[loadAcara] gagal:', r); return; }
+  _acara=r.data || [];
   renderAcaraTable(_acara);
 }
 
 function renderAcaraTable(data){
   const tbody=document.getElementById('acara-tbody');
-  if(data.length===0){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:24px">Tiada acara. Klik "+ Tambah Acara"</td></tr>';return;}
-  const jenisLabel={track:'🏃 Track',field:'🏋️ Field',road:'🚶 Road'};
-  const formatLabel={final:'Terus Final',heat_final:'Heat→Final',cubaan:'Cubaan'};
+  if(data.length===0){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:24px">Tiada acara. Klik "+ Tambah Acara"</td></tr>';return;}
+  const jenisLabel={'TRACK':'🏃 Track','FIELD':'🏋️ Field','ROAD':'🚶 Road'};
+  const formatLabel={'TERUS_FINAL':'Terus Final','HEAT_FINAL':'Heat→Final','CUBAAN':'Cubaan'};
   tbody.innerHTML=data.map(a=>`
     <tr>
       <td style="font-size:20px">${a.emoji||'🏃'}</td>
       <td><span class="td-mono">${a.kod}</span></td>
       <td style="color:var(--text);font-weight:500">${a.nama}</td>
-      <td><span class="badge ${a.jenis==='track'?'badge-blue':a.jenis==='field'?'badge-green':'badge-amber'}">${jenisLabel[a.jenis]||a.jenis}</span></td>
+      <td><span class="badge ${a.jenis==='TRACK'?'badge-blue':a.jenis==='FIELD'?'badge-green':'badge-amber'}">${jenisLabel[a.jenis]||a.jenis}</span></td>
       <td style="font-size:11px">${(a.kategori||[]).join(', ')}</td>
-      <td><span class="badge ${a.lorong?'badge-cyan':'badge-gray'}">${a.lorong?'Ya':'Tidak'}</span></td>
-      <td style="font-size:11px;color:var(--text3)">${formatLabel[a.format]||a.format}</td>
+      <td><span class="badge ${a.guna_lorong?'badge-cyan':'badge-gray'}">${a.guna_lorong?'Ya':'Tidak'}</span></td>
+      <td style="font-size:11px;color:var(--text3)">${formatLabel[a.format_acara]||a.format_acara}</td>
+      <td style="font-size:11px;text-align:center">
+        ${a.jenis_pendaftaran==='KUMPULAN'
+          ? `<span style="color:var(--amber)">${a.kuota_pasukan_rumah||1} pasukan<br><small style="color:var(--text3)">${a.ahli_utama||4}u+${a.ahli_simpanan||0}s</small></span>`
+          : `<span style="color:var(--cyan)">${a.kuota_ind_rumah||2} wakil</span>`}
+      </td>
       <td><span class="badge ${a.aktif?'badge-green':'badge-gray'}">${a.aktif?'Aktif':'Tidak'}</span></td>
       <td><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-xs" onclick="editAcara('${a.id}')">✏️</button><button class="btn btn-amber btn-xs" onclick="cloneAcaraById('${a.id}')">📋</button><button class="btn btn-danger btn-xs" onclick="confirmDelete('Padam acara ${a.kod}?',()=>deleteAcara('${a.id}'))">🗑️</button></div></td>
     </tr>`).join('');
@@ -1010,38 +1655,115 @@ function filterAcara(){
   renderAcaraTable(f?_acara.filter(a=>a.jenis===f):_acara);
 }
 
+function onJenisPendChange(){
+  var jp = getVal('acara-jenis-pend') || 'INDIVIDU';
+  var isKump = jp === 'KUMPULAN';
+  // Tunjuk/sorok field mengikut jenis
+  var indDiv   = document.getElementById('acara-kuota-ind')     ? document.getElementById('acara-kuota-ind').closest('.form-group')     : null;
+  var pasukanDiv = document.getElementById('acara-kuota-pasukan') ? document.getElementById('acara-kuota-pasukan').closest('.form-group') : null;
+  var ahliRow  = document.getElementById('ahli-fields');
+  var lorongFld= document.getElementById('lorong-field');
+  if (indDiv)     indDiv.style.display     = isKump ? 'none' : '';   // sorok Wakil jika KUMPULAN
+  if (pasukanDiv) pasukanDiv.style.display  = isKump ? ''     : 'none'; // sorok Pasukan jika INDIVIDU
+  if (ahliRow)    ahliRow.style.display     = isKump ? ''     : 'none'; // sorok Ahli jika INDIVIDU
+  if (lorongFld)  lorongFld.style.display   = '';                        // SENTIASA tunjuk Lorong
+  // Set default values
+  if (!isKump) {
+    if (!getVal('acara-kuota-ind'))  setValue('acara-kuota-ind', 2);
+    setValue('acara-kuota-pasukan', 0);
+    setValue('acara-ahli-utama',    0);
+    setValue('acara-ahli-simpanan', 0);
+  } else {
+    setValue('acara-kuota-ind', 0);
+    if (!getVal('acara-kuota-pasukan')) setValue('acara-kuota-pasukan', 1);
+    if (!getVal('acara-ahli-utama'))    setValue('acara-ahli-utama',    4);
+  }
+  updateKuotaTip();
+}
+
+function updateKuotaTip(){
+  var ind     = parseInt(document.getElementById('acara-kuota-ind').value)||0;
+  var pasukan = parseInt(document.getElementById('acara-kuota-pasukan').value)||0;
+  var utama   = parseInt(document.getElementById('acara-ahli-utama').value)||0;
+  var simpanan= parseInt(document.getElementById('acara-ahli-simpanan').value)||0;
+  var tip = document.getElementById('kuota-tip');
+  if (!tip) return;
+  if (pasukan > 0) {
+    var totalAhli = (utama + simpanan) * pasukan;
+    tip.style.borderLeftColor = '#F59E0B';
+    tip.innerHTML = '🏃 <b>Acara Pasukan/Relay</b> — Setiap rumah: <b>'+pasukan+' pasukan</b>, setiap pasukan: <b>'+utama+' utama</b> + <b>'+simpanan+' simpanan</b> = <b>'+totalAhli+' nama didaftarkan</b> per rumah.';
+  } else if (ind > 0) {
+    tip.style.borderLeftColor = '#22D3EE';
+    tip.innerHTML = '👤 <b>Acara Individu</b> — Setiap rumah hantar <b>'+ind+' wakil</b> sahaja. Pastikan Pasukan=0 dan Ahli=0.';
+  } else {
+    tip.style.borderLeftColor = '#64748B';
+    tip.innerHTML = '💡 Isi <b>Wakil Individu</b> untuk acara individu, atau <b>Pasukan/Rumah</b> untuk acara relay/pasukan.';
+  }
+}
+
 function openAcaraModal(id=null){
   clearAcaraForm();
   document.getElementById('acara-modal-title').textContent=id?'Edit Acara':'Tambah Acara Master';
   document.getElementById('acara-clone-btn').style.display=id?'inline-flex':'none';
-  buildEmojiGrid();buildKatChecks();toggleLorongField();
+  // SELALU reload kategori terkini sebelum bina checkbox
+  loadKategori().then(() => { buildEmojiGrid(); buildKatChecks(); toggleLorongField(); });
   openModal('modal-acara');
+  setTimeout(onJenisPendChange, 100);
   if(id){
     const a=_acara.find(x=>x.id===id);
     if(!a)return;
     setValue('acara-id',a.id);setValue('acara-kod',a.kod);setValue('acara-nama',a.nama);
-    setValue('acara-jenis',a.jenis);setValue('acara-format',a.format);
-    setValue('acara-lorong',a.lorong?'1':'0');setValue('acara-emoji',a.emoji||'🏃');
+    setValue('acara-jenis',a.jenis);setValue('acara-format',a.format_acara);
+    setValue('acara-lorong',a.guna_lorong?'1':'0');setValue('acara-emoji',a.emoji||'🏃');
     setValue('acara-catatan',a.catatan||'');
+    setValue('acara-jenis-pend',    a.jenis_pendaftaran || 'INDIVIDU');
+    setValue('acara-kuota-ind',     a.kuota_ind_rumah     !== undefined ? a.kuota_ind_rumah     : 2);
+    setValue('acara-kuota-pasukan', a.kuota_pasukan_rumah !== undefined ? a.kuota_pasukan_rumah : 1);
+    setValue('acara-ahli-utama',    a.ahli_utama          !== undefined ? a.ahli_utama          : 4);
+    setValue('acara-ahli-simpanan', a.ahli_simpanan       !== undefined ? a.ahli_simpanan       : 0);
+    onJenisPendChange();
     document.getElementById('acara-emoji-preview').textContent=a.emoji||'🏃';
     setTimeout(()=>{document.querySelectorAll('.kat-check').forEach(cb=>{cb.checked=(a.kategori||[]).includes(cb.value)});},100);
     toggleLorongField();
   }
 }
 function editAcara(id){openAcaraModal(id);}
-function clearAcaraForm(){['acara-id','acara-kod','acara-nama','acara-catatan'].forEach(id=>setValue(id,''));setValue('acara-jenis','track');setValue('acara-format','heat_final');setValue('acara-lorong','1');setValue('acara-emoji','🏃');document.getElementById('acara-emoji-preview').textContent='🏃';}
+function clearAcaraForm(){['acara-id','acara-kod','acara-nama','acara-catatan'].forEach(id=>setValue(id,''));setValue('acara-jenis','TRACK');setValue('acara-format','HEAT_FINAL');setValue('acara-lorong','1');setValue('acara-emoji','🏃');document.getElementById('acara-emoji-preview').textContent='🏃';}
 
 async function saveAcara(){
   const kod=getVal('acara-kod').toUpperCase();
   const nama=getVal('acara-nama');
   if(!kod||!nama){showToast('Kod dan nama acara wajib','error');return;}
   const kats=Array.from(document.querySelectorAll('.kat-check:checked')).map(cb=>cb.value);
-  const payload={id:getVal('acara-id'),kod,nama,jenis:getVal('acara-jenis'),format:getVal('acara-format'),lorong:getVal('acara-lorong')==='1',kategori:kats,emoji:getVal('acara-emoji')||'🏃',catatan:getVal('acara-catatan')};
+  const kuotaInd     = parseInt(getVal('acara-kuota-ind'))     || 0;
+  const kuotaPasukan = parseInt(getVal('acara-kuota-pasukan')) || 0;
+  const ahliUtama    = parseInt(getVal('acara-ahli-utama'))    || 0;
+  const ahliSimpanan = parseInt(getVal('acara-ahli-simpanan')) || 0;
+  // Baca terus dari dropdown — lebih jelas
+  const jenisPend = getVal('acara-jenis-pend') || 'INDIVIDU';
+  const payload={
+    id          : getVal('acara-id'),
+    kod, nama,
+    jenis       : getVal('acara-jenis'),
+    format_acara: getVal('acara-format'),      // standardkan → format_acara
+    guna_lorong : getVal('acara-lorong')==='1', // standardkan → guna_lorong
+    jenis_pendaftaran: jenisPend,
+    kategori    : kats,
+    emoji       : getVal('acara-emoji')||'🏃',
+    catatan     : getVal('acara-catatan'),
+    kuota_ind_rumah    : kuotaInd,
+    kuota_pasukan_rumah: kuotaPasukan,
+    ahli_utama         : ahliUtama,
+    ahli_simpanan      : ahliSimpanan,
+    min_ahli    : ahliUtama || 1,
+    max_ahli    : ahliUtama || 1
+  };
   showLoading('Menyimpan acara...');
-  const r=await gasRun(payload.id?'updateAcara':'createAcara',payload);
+  const rawR=await gasRun(payload.id?'updateAcara':'createAcara',payload);
+  const r=(typeof rawR==='string')?JSON.parse(rawR):rawR;
   hideLoading();closeModal('modal-acara');
   if(r&&r.success){showToast(payload.id?'Acara dikemaskini ✅':'Acara ditambah ✅','success');loadAcara();}
-  else showToast('Gagal simpan acara','error');
+  else showToast((r&&r.message)||'Gagal simpan acara','error');
 }
 
 async function cloneAcaraById(id){
@@ -1057,7 +1779,8 @@ function cloneAcara(){const id=getVal('acara-id');if(id){closeModal('modal-acara
 
 async function deleteAcara(id){
   showLoading('Mempadam...');
-  const r=await gasRun('deleteAcara',{id});
+  const raw=await gasRun('deleteAcaraMaster',{id});
+  const r=(typeof raw==='string')?JSON.parse(raw):raw;
   hideLoading();
   if(r&&r.success){showToast('Acara dipadam','success');loadAcara();}
   else showToast('Gagal padam','error');
@@ -1069,9 +1792,10 @@ async function deleteAcara(id){
 // USERS
 // ═══════════════════════════════════════════════════
 async function loadUsers(){
-  const r=await gasRun('getUsers');
+  const raw=await gasRun('getUsers');
+  const r=(typeof raw==='string')?JSON.parse(raw):raw;
   if(!r||!r.success)return;
-  _users=r.data;
+  _users=r.data||r.users||[];
   document.getElementById('badge-users').textContent=_users.filter(u=>u.is_active).length;
   renderUsersTable(_users);
 }
@@ -1079,7 +1803,7 @@ async function loadUsers(){
 function renderUsersTable(data){
   const tbody=document.getElementById('users-tbody');
   if(data.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:24px">Tiada pengguna</td></tr>';return;}
-  const roleBadge={Admin:'badge-red',Guru Rumah:'badge-blue',Pengurus:'badge-amber',Pencatat:'badge-cyan'};
+  const roleBadge={'Admin':'badge-red','Pengurus':'badge-amber','Urusetia':'badge-blue','Pencatat':'badge-cyan'};
   tbody.innerHTML=data.map(u=>`
     <tr>
       <td><div style="display:flex;align-items:center;gap:8px">
@@ -1139,7 +1863,7 @@ function populateUserRumahSelect(){
 function toggleRumahField(){
   const role=getVal('user-role');
   const grp=document.getElementById('user-rumah-group');
-  grp.style.display=['Guru Rumah','Pengurus'].includes(role)?'block':'none';
+  grp.style.display=['Pengurus','Pencatat'].includes(role)?'block':'none';
 }
 
 function toggleUserPw(){
@@ -1189,6 +1913,13 @@ async function deleteUser(id){
 // ═══════════════════════════════════════════════════
 // MODAL & CONFIRM HELPERS
 // ═══════════════════════════════════════════════════
+function bukaRekodAcara(){
+  if(typeof _scriptUrl!=='undefined'&&_scriptUrl){
+    const a=document.createElement('a');a.href=_scriptUrl+'?page=rekod-acara';a.target='_top';document.body.appendChild(a);a.click();
+  } else {
+    gasRun('getScriptUrl').then(function(url){if(url){const a=document.createElement('a');a.href=url+'?page=rekod-acara';a.target='_top';document.body.appendChild(a);a.click();}});
+  }
+}
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 
@@ -1219,9 +1950,8 @@ function closeSidebar(){
 function confirmLogout(){
   if(confirm('Log keluar dari sistem?')){
     if(IS_GAS){
-      gasRun('getScriptUrl').then(url=>{
-        if(url){const a=document.createElement('a');a.href=url+'?page=home';a.target='_top';document.body.appendChild(a);a.click();}
-      });
+      if(_scriptUrl){const a=document.createElement('a');a.href=_scriptUrl+'?page=home';a.target='_top';document.body.appendChild(a);a.click();}
+      else{gasRun('getScriptUrl').then(function(url){if(url){_scriptUrl=url;const a=document.createElement('a');a.href=url+'?page=home';a.target='_top';document.body.appendChild(a);a.click();}});}
     } else {
       showToast('Log keluar (dev mode)','info');
     }
@@ -1230,9 +1960,8 @@ function confirmLogout(){
 
 function goToModule(page){
   if(IS_GAS){
-    gasRun('getScriptUrl').then(url=>{
-      if(url){const a=document.createElement('a');a.href=url+'?page='+page;a.target='_top';document.body.appendChild(a);a.click();}
-    });
+    if(_scriptUrl){const a=document.createElement('a');a.href=_scriptUrl+'?page='+page;a.target='_top';document.body.appendChild(a);a.click();}
+    else{gasRun('getScriptUrl').then(function(url){if(url){_scriptUrl=url;const a=document.createElement('a');a.href=url+'?page='+page;a.target='_top';document.body.appendChild(a);a.click();}});}
   } else {
     showToast('Navigate to '+page+' (dev mode)','info');
   }
@@ -1296,6 +2025,28 @@ function updateClock(){
 // ═══════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════
+// Preload kategori & rumah silently on startup
+// Supaya buildKatChecks() ada data bila modal dibuka
+async function preloadMasterData() {
+  try {
+    // Cache SCRIPT_URL sekali semasa page load
+    if (IS_GAS && !_scriptUrl) {
+      gasRun('getScriptUrl').then(function(url){ if(url) _scriptUrl = url; });
+    }
+    // SELALU load dari GAS — pastikan data terkini
+    const [rawK, rawR] = await Promise.all([
+      gasRun('getKategori'),
+      gasRun('getRumah')
+    ]);
+    const rK = (typeof rawK === 'string') ? JSON.parse(rawK) : rawK;
+    const rR = (typeof rawR === 'string') ? JSON.parse(rawR) : rawR;
+    if (rK && rK.success) { _kategori = rK.data || []; console.log('[preload] kategori:', _kategori.length); }
+    if (rR && rR.success) { _rumah    = rR.data || []; console.log('[preload] rumah:',    _rumah.length); }
+  } catch(e) {
+    console.warn('[preloadMasterData] error:', e);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async ()=>{
   // Year select
   const ysel=document.getElementById('set-tahun');
@@ -1309,6 +2060,9 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   // Clock
   updateClock();
   setInterval(updateClock,1000);
+
+  // Preload master data (kategori & rumah) — untuk modal acara
+  await preloadMasterData();
 
   // Auto refresh dashboard every 60s
   setInterval(()=>{if(currentTab==='dashboard')loadDashboard();},60000);
