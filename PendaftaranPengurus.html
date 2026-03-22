@@ -6,6 +6,8 @@
 <title>Pengurus Pasukan</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 <style>
+#btn-balik-ind,#btn-balik-kump{display:none;margin-bottom:10px;}
+
 :root{--navy:#003087;--blue:#0055B3;--light:#E8F0FA;--gold:#C8962A;--bg:#F0F4FB;--card:#fff;--border:#D0DDEF;--text:#0F1E3C;--text2:#3A5070;--text3:#7A95B0;--green:#059669;--red:#DC2626;--amber:#D97706;--rmh:#003087;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
@@ -63,7 +65,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .murid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px;max-height:200px;overflow-y:auto;}
 .mc{background:#F7FAFF;border:1.5px solid var(--border);border-radius:8px;padding:9px 10px;cursor:pointer;}
 .mc:hover:not(.dis){border-color:var(--blue);background:var(--light);}
-.mc.dis{opacity:0.4;cursor:not-allowed;}
+.mc.dis{opacity:0.4;cursor:not-allowed;}.mc.quota-full{border-color:#EF4444;background:#FEF2F2;cursor:not-allowed;}.mc.quota-full .murid-nm{color:#991B1B;}.quota-tag{display:block;font-size:10px;font-weight:700;color:#DC2626;margin-top:3px;letter-spacing:.3px;}
 .form-g{margin-bottom:10px;}
 .form-l{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.3px;}
 .form-c{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;background:#fff;color:var(--text);outline:none;}
@@ -85,8 +87,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .modal-x{background:rgba(255,255,255,0.15);border:none;color:#fff;width:24px;height:24px;border-radius:5px;cursor:pointer;font-size:12px;}
 .modal-b{padding:14px 16px;}
 .modal-f{padding:10px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
-#toast-wrap{position:fixed;bottom:16px;right:14px;z-index:200;display:flex;flex-direction:column;gap:6px;}
-.toast{padding:9px 13px;border-radius:8px;font-size:12px;font-weight:600;box-shadow:0 3px 12px rgba(0,0,0,0.1);}
+#toast-wrap{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
+.toast{padding:13px 22px;border-radius:14px;font-size:13px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.18);min-width:280px;max-width:400px;text-align:center;pointer-events:auto;animation:toastIn .25s ease;}
 .ts{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;}
 .te{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;}
 .tw{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A;}
@@ -95,7 +97,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:sp 0.7s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg);}}
 select.form-c{appearance:auto;}
-@media(max-width:560px){.grid2{grid-template-columns:1fr;}}
+@media(max-width:560px){.grid2{grid-template-columns:1fr;}.ind-panel-wrap{display:none;}.ind-panel-wrap.aktif{display:block;}.kump-panel-wrap{display:none;}.kump-panel-wrap.aktif{display:block;}#btn-balik-ind{display:inline-flex;}#btn-balik-kump{display:inline-flex;}}
+.stab{padding:8px 14px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text2);border-bottom:2.5px solid transparent;white-space:nowrap;margin-bottom:-1.5px;}
+.stab.on{color:var(--blue);border-bottom-color:var(--blue);}
+.stab:hover:not(.on){background:var(--bg2);}
+.spane{display:none;} .spane.on{display:block;}
+@media print{.tab-bar,.modal-bg,.loading,#toast-wrap,#alert-overlay,.stab,.card-h button{display:none!important;}.pane{display:block!important;} .spane{display:block!important;}body{background:#fff;} .card{border:none;box-shadow:none;}#print-area-kad>.kad-intro{display:none!important;}#print-area-kad>.kad-grid{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:6mm!important;width:100%!important;}#print-area-kad>.kad-grid>.kad-item{min-height:130mm!important;page-break-inside:avoid!important;break-inside:avoid!important;border:1.5px solid #94a3b8!important;border-radius:4mm!important;}#print-area-kad>.kad-grid>.kad-item>.kad-head{padding:5mm 6mm!important;}#print-area-kad>.kad-grid>.kad-item>.kad-head>.kad-nama{font-size:14pt!important;}#print-area-kad>.kad-grid>.kad-item>.kad-head>.kad-meta{font-size:10pt!important;}#print-area-kad>.kad-grid>.kad-item>.kad-body{padding:5mm 6mm!important;font-size:11pt!important;line-height:1.9!important;}@page{margin:10mm;size:A4;}}
 </style>
 </head>
 <body>
@@ -155,8 +162,11 @@ select.form-c{appearance:auto;}
         </div>
       </div>
     </div>
-    <div class="card" style="height:fit-content">
-      <div class="card-h"><span class="card-t" id="ind-panel-ttl">Pilih Acara →</span></div>
+    <div class="card ind-panel-wrap" id="ind-panel-wrap" style="height:fit-content">
+      <div class="card-h" style="display:flex;align-items:center;justify-content:space-between;">
+        <span class="card-t" id="ind-panel-ttl">Pilih Acara →</span>
+        <button class="btn btn-ghost btn-xs" id="btn-balik-ind" onclick="balikListInd()">← Senarai</button>
+      </div>
       <div class="card-b" id="ind-panel"><div class="empty">👈 Pilih acara</div></div>
     </div>
   </div>
@@ -180,8 +190,11 @@ select.form-c{appearance:auto;}
         </div>
       </div>
     </div>
-    <div class="card" style="height:fit-content">
-      <div class="card-h"><span class="card-t" id="kump-panel-ttl">Pilih Acara →</span></div>
+    <div class="card kump-panel-wrap" id="kump-panel-wrap" style="height:fit-content">
+      <div class="card-h" style="display:flex;align-items:center;justify-content:space-between;">
+        <span class="card-t" id="kump-panel-ttl">Pilih Acara →</span>
+        <button class="btn btn-ghost btn-xs" id="btn-balik-kump" onclick="balikListKump()">← Senarai</button>
+      </div>
       <div class="card-b" id="kump-panel"><div class="empty">👈 Pilih acara pasukan</div></div>
     </div>
   </div>
@@ -189,24 +202,73 @@ select.form-c{appearance:auto;}
 
 <!-- SENARAI -->
 <div id="pane-list" class="pane">
-  <div class="card" style="margin-bottom:12px;">
-    <div class="card-h"><span class="card-t">🏃 Pendaftaran Individu</span>
-      <button class="btn btn-g btn-xs" onclick="loadSenarai()">↺</button>
+  <!-- Sub-tabs -->
+  <div style="display:flex;gap:0;border-bottom:1.5px solid var(--border);margin-bottom:12px;overflow-x:auto;">
+    <button class="stab on" id="st-senarai" onclick="goSubTab('senarai',this)">📋 Senarai</button>
+    <button class="stab" id="st-ringkasan" onclick="goSubTab('ringkasan',this)">🖨 Ringkasan Penuh</button>
+    <button class="stab" id="st-byacara" onclick="goSubTab('byacara',this)">📌 By Acara</button>
+    <button class="stab" id="st-kad" onclick="goSubTab('kad',this)">🪪 Kad Murid</button>
+  </div>
+
+  <!-- SUB-PANE: Senarai (asal) -->
+  <div id="spane-senarai" class="spane on">
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-h"><span class="card-t">🏃 Pendaftaran Individu</span>
+        <button class="btn btn-g btn-xs" onclick="loadSenarai()">↺</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Acara</th><th>Murid</th><th>Kat</th><th>Status</th><th>Tindakan</th></tr></thead>
+          <tbody id="tb-ind"><tr><td colspan="6" class="empty">Memuatkan...</td></tr></tbody>
+        </table>
+      </div>
     </div>
-    <div style="overflow-x:auto;">
-      <table class="tbl">
-        <thead><tr><th>#</th><th>Acara</th><th>Murid</th><th>Kat</th><th>Status</th><th>Tindakan</th></tr></thead>
-        <tbody id="tb-ind"><tr><td colspan="6" class="empty">Memuatkan...</td></tr></tbody>
-      </table>
+    <div class="card">
+      <div class="card-h"><span class="card-t">👥 Pendaftaran Pasukan</span></div>
+      <div style="overflow-x:auto;">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Acara</th><th>Pasukan</th><th>Ahli</th><th>Status</th><th>Tindakan</th></tr></thead>
+          <tbody id="tb-kump"><tr><td colspan="6" class="empty">Memuatkan...</td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
-  <div class="card">
-    <div class="card-h"><span class="card-t">👥 Pendaftaran Pasukan</span></div>
-    <div style="overflow-x:auto;">
-      <table class="tbl">
-        <thead><tr><th>#</th><th>Acara</th><th>Pasukan</th><th>Ahli</th><th>Status</th><th>Tindakan</th></tr></thead>
-        <tbody id="tb-kump"><tr><td colspan="6" class="empty">Memuatkan...</td></tr></tbody>
-      </table>
+
+  <!-- SUB-PANE: Ringkasan Penuh -->
+  <div id="spane-ringkasan" class="spane">
+    <div class="card">
+      <div class="card-h" style="justify-content:space-between;">
+        <span class="card-t">📄 Ringkasan Penuh Pendaftaran</span>
+        <button class="btn btn-p btn-xs" onclick="printRingkasan()">🖨 Print PDF</button>
+      </div>
+      <div class="card-b" id="rpt-ringkasan"><div class="empty">Memuatkan...</div></div>
+    </div>
+  </div>
+
+  <!-- SUB-PANE: By Acara -->
+  <div id="spane-byacara" class="spane">
+    <div class="card">
+      <div class="card-h" style="justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span class="card-t">📌 Senarai Murid By Acara</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select class="form-c" id="sel-acara-print" onchange="renderByAcara()" style="min-width:200px;padding:5px 8px;font-size:12px;">
+            <option value="">— Pilih Acara —</option>
+          </select>
+          <button class="btn btn-p btn-xs" onclick="printByAcara()">🖨 Print</button>
+        </div>
+      </div>
+      <div class="card-b" id="rpt-byacara"><div class="empty">Pilih acara di atas</div></div>
+    </div>
+  </div>
+
+  <!-- SUB-PANE: Kad Murid -->
+  <div id="spane-kad" class="spane">
+    <div class="card">
+      <div class="card-h" style="justify-content:space-between;">
+        <span class="card-t">🪪 Kad Acara Murid</span>
+        <button class="btn btn-p btn-xs" onclick="printKadMurid()">🖨 Print Semua Kad</button>
+      </div>
+      <div class="card-b" id="rpt-kad"><div class="empty">Memuatkan...</div></div>
     </div>
   </div>
 </div>
@@ -260,6 +322,14 @@ select.form-c{appearance:auto;}
 </div>
 
 <div id="toast-wrap"></div>
+<div id="alert-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div id="alert-box" style="background:var(--bg);border-radius:16px;border:0.5px solid var(--border);padding:28px 24px 20px;width:100%;max-width:360px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.18);">
+    <div id="alert-icon" style="width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;"></div>
+    <div id="alert-title" style="font-size:16px;font-weight:700;margin-bottom:10px;color:var(--text);line-height:1.3;"></div>
+    <div id="alert-body" style="font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:22px;"></div>
+    <button id="alert-btn" onclick="closeAlert()" style="width:100%;padding:13px;border-radius:10px;font-size:15px;font-weight:700;border:none;cursor:pointer;letter-spacing:.2px;">OK, Faham</button>
+  </div>
+</div>
 <div class="loading" id="loading"><div style="text-align:center;"><div class="spin"></div><div style="font-size:11px;color:var(--text3);margin-top:8px;" id="loading-msg">Memuatkan...</div></div></div>
 
 <script>
@@ -352,6 +422,98 @@ function autoKat(m) {
   return '';
 }
 
+// Semak sama ada murid LAYAK untuk acara (termasuk kategori Open/Terbuka)
+// Cara: exact match KOD DULU, kalau gagal, semak umin/umax dari tbl_kategori
+// Dapat kuota max yang betul untuk acara berdasarkan tbl_kategori
+// - Acara Open (umax-umin >= 2) → guna kuota_terbuka
+// - Acara biasa → guna kuota_individu
+// - Override: acara.kuota_ind_rumah (dari tbl_acara_jana) jika ada
+function getKuotaInd(acara) {
+  // KEUTAMAAN: tbl_acara_jana > tbl_kategori
+  // tbl_acara_jana kuota_ind_rumah = 0 bermakna "tiada override" → baca tbl_kategori
+  var katAcara = normKat(acara.id_kategori||'');
+
+  // Cari definisi dari tbl_kategori (sumber kebenaran kuota dinamik)
+  for (var i=0; i<S.katList.length; i++) {
+    var ki = S.katList[i];
+    if (normKat(ki.kod||ki.id||'') === katAcara) {
+      var isOpen = (parseInt(ki.umax||0) - parseInt(ki.umin||0)) >= 2;
+      var kuotaKat = isOpen
+        ? (parseInt(ki.kuota_terbuka)||1)
+        : (parseInt(ki.kuota_individu)||3);
+      // Override dengan nilai acara jika > 0 (admin set override)
+      var overrideAcara = parseInt(acara.kuota_ind_rumah)||0;
+      return overrideAcara > 0 ? overrideAcara : kuotaKat;
+    }
+  }
+  return parseInt(acara.kuota_ind_rumah)||2;
+}
+
+function getKuotaKumpMurid(noKp, katId) {
+  // Kira berapa acara kumpulan kategori katId yang noKp sudah sertai (AKTIF)
+  var normKp = _normKp(noKp);
+  var count = 0;
+  for (var i=0; i<S.kumpulan.length; i++) {
+    var k = S.kumpulan[i];
+    if (k.status !== 'AKTIF') continue;
+    if (normKat(k.id_kategori||'') !== normKat(katId||'')) continue;
+    // Parse ahli_json
+    var ahliArr = k.ahli_json||[];
+    if (typeof ahliArr === 'string') { try { ahliArr=JSON.parse(ahliArr); } catch(e){ ahliArr=[]; } }
+    if (!Array.isArray(ahliArr)) continue;
+    if (ahliArr.some(function(a){ return _normKp(a.no_kp||'')===normKp; })) count++;
+  }
+  return count;
+}
+function _normKp(s){ return (s||'').toString().replace(/[-\s]/g,'').toUpperCase(); }
+function getKuotaKump(acara) {
+  // KEUTAMAAN: tbl_acara_jana > tbl_kategori
+  var katAcara = normKat(acara.id_kategori||'');
+  for (var i=0; i<S.katList.length; i++) {
+    var ki = S.katList[i];
+    if (normKat(ki.kod||ki.id||'') === katAcara) {
+      var kuotaKat = parseInt(ki.kuota_kumpulan)||1;
+      var overrideAcara = parseInt(acara.kuota_pasukan_rumah)||0;
+      return overrideAcara > 0 ? overrideAcara : kuotaKat;
+    }
+  }
+  return parseInt(acara.kuota_pasukan_rumah)||1;
+}
+
+function muridLayak(m, idKategoriAcara) {
+  var katAcara = normKat(idKategoriAcara||'');
+  if (!katAcara) return false;
+
+  // 1. Exact match — murid kategori sama dengan acara
+  if (autoKat(m) === katAcara) return true;
+
+  // 2. Range match — untuk kategori Open/Terbuka
+  // Cari definisi kategori acara dari S.katList
+  var katDef = null;
+  for (var i=0; i<S.katList.length; i++) {
+    var ki = S.katList[i];
+    if (normKat(ki.kod||ki.id||'') === katAcara) { katDef = ki; break; }
+  }
+  if (!katDef) return false;
+
+  // Kira umur murid
+  var umurMurid = -1;
+  try {
+    if (m.tarikh_lahir && S.tarikhSukan) {
+      umurMurid = new Date(S.tarikhSukan).getFullYear() - new Date(m.tarikh_lahir).getFullYear();
+    }
+  } catch(e) {}
+  if (umurMurid < 0) return false;
+
+  // Semak jantina + umur dalam julat kategori acara
+  var jntMurid = (m.jantina||'').toUpperCase();
+  var jntKat   = (katDef.jantina||'').toUpperCase();
+  var umin     = parseInt(katDef.umin||0);
+  var umax     = parseInt(katDef.umax||99);
+
+  return (jntMurid === jntKat) && (umurMurid >= umin) && (umurMurid <= umax);
+}
+
 // ── INIT ────────────────────────────────────────────────────────
 async function init() {
   showL(true,'Memuatkan sesi...');
@@ -436,8 +598,13 @@ async function loadAcara() {
 }
 
 async function loadSenaraiSilent() {
-  var ri = await gasRun('getPendaftaran',{id_rumah:S.sess.id_rumah});
-  var rk = await gasRun('getKumpulan',{id_rumah:S.sess.id_rumah});
+  // Parallel calls — lebih cepat dari sequential await
+  var _id_rumah = S.sess.id_rumah;
+  var results = await Promise.all([
+    gasRun('getPendaftaran', {id_rumah:_id_rumah}),
+    gasRun('getKumpulan',    {id_rumah:_id_rumah})
+  ]);
+  var ri=results[0], rk=results[1];
   if (ri&&ri.success) S.daftar   = ri.pendaftaran||[];
   if (rk&&rk.success) S.kumpulan = rk.kumpulan||[];
 }
@@ -478,7 +645,13 @@ function renderCountdown(r) {
 var _cdInt = null;
 function startCountdown(tarikhTutup, masaTutup) {
   if (_cdInt) clearInterval(_cdInt);
-  var dt = new Date(tarikhTutup+'T'+(masaTutup||'23:59')+':00');
+  // Pastikan tarikhTutup dalam format YYYY-MM-DD sahaja
+  var _tDate = tarikhTutup ? tarikhTutup.substring(0,10) : '';
+  if(!_tDate||_tDate.length<10){ return; } // guard: tarikh tidak valid
+  // Normalize masaTutup: ambil HH:MM sahaja
+  var _masaMatch = (masaTutup||'').match(/^(\d{1,2}:\d{2})/);
+  var _masa = _masaMatch ? _masaMatch[1] : '23:59';
+  var dt = new Date(_tDate+'T'+_masa+':00');
   function tick() {
     var diff = dt - new Date(), el = document.getElementById('cd-disp');
     if (!el) { clearInterval(_cdInt); return; }
@@ -524,37 +697,44 @@ function filterInd() {
 }
 
 function renderIndAcara(list) {
-  list = list||S.acaraInd;
+  list=list||S.acaraInd;
   var el=document.getElementById('ind-acara');
   if (!list.length) {
-    el.innerHTML = S.acara.length===0
-      ? '<div class="empty">⚠️<br><strong>Acara belum dijana.</strong><br><small>Admin: AdminOps → Jana Acara</small></div>'
-      : '<div class="empty">🏃<br>Tiada acara individu</div>';
-    // Reset panel kanan
-    document.getElementById('ind-panel-ttl').textContent = 'Pilih Acara →';
-    document.getElementById('ind-panel').innerHTML = '<div class="empty">👈 Pilih acara</div>';
+    el.innerHTML=S.acara.length===0
+      ?'<div class="empty">Acara belum dijana.</div>'
+      :'<div class="empty">Tiada acara individu</div>';
     return;
   }
-  // Panel kiri: senarai acara — klik untuk buka panel kanan
-  el.innerHTML = list.map(function(a) {
+  el.innerHTML=list.map(function(a){
     var sdh=S.daftar.filter(function(p){return p.id_acara===a.id_acara&&p.status==='AKTIF';}).length;
-    var max=a.kuota_ind_rumah||2, penuh=sdh>=max, pct=Math.min(100,Math.round(sdh/max*100));
-    var col=penuh?'var(--red)':pct>=75?'var(--amber)':'var(--green)';
-    var isAktif = S.indAcaraAktif && S.indAcaraAktif.id_acara===a.id_acara;
-    return '<div class="acara-item'+(isAktif?' on':'')+'" data-id="'+a.id_acara+'" onclick="openIndPanel(this.dataset.id)" style="'+(isAktif?'border-color:var(--blue);background:var(--light);':'')+'cursor:pointer;">'
-      +'<div style="flex:1;">'
-      +'<div class="acara-nm">'+a.nama_acara+'</div>'
-      +'<div class="acara-sb">'+a.id_kategori+' · '+a.jenis
-      +'<span class="kbar"><span class="kbar-bg"><span class="kbar-fill" style="width:'+pct+'%;background:'+col+'"></span></span>'
-      +'<span class="kt" style="color:'+col+'">'+sdh+'/'+max+'</span></span></div>'
-      +'</div>'
-      +(penuh?'<span class="bdg bdg-r">PENUH</span>':'<span style="color:var(--blue);font-size:18px;">›</span>')
-      +'</div>';
+    var max=getKuotaInd(a), penuh=sdh>=max;
+    var pct=Math.min(100,Math.round(sdh/max*100));
+    var hampir=!penuh&&pct>=75;
+    var col=penuh?'var(--red)':hampir?'var(--amber)':'var(--green)';
+    var isAktif=S.indAcaraAktif&&S.indAcaraAktif.id_acara===a.id_acara;
+    var h='<div class="acara-item'+(isAktif?' active':'')+'"';
+    h+=' data-id="'+a.id_acara+'" onclick="openIndPanel(this.dataset.id)"';
+    if(penuh&&!isAktif) h+=' style="opacity:.55;background:var(--bg3);"';
+    h+='>';
+    h+='<div style="flex:1;">';
+    h+='<div class="acara-nm" style="color:'+(penuh&&!isAktif?'var(--text3)':'var(--text)')+'">'+a.nama_acara+'</div>';
+    h+='<div class="acara-sb">'+a.id_kategori;
+    h+='<span class="kbar"><span class="kbar-bg"><span class="kbar-fill" style="width:'+pct+'%;background:'+col+'"></span></span>';
+    h+='<span class="kt" style="color:'+col+';font-weight:700;">'+sdh+'/'+max+'</span></span></div></div>';
+    if(penuh){ h+='<span class="bdg bdg-r" style="font-size:11px;">PENUH</span>'; }
+    else if(hampir){ h+='<span class="bdg" style="background:var(--amber-lt);color:var(--amber);font-size:11px;">HAMPIR</span>'; }
+    else { h+='<span style="color:var(--blue);font-size:18px;">›</span>'; }
+    h+='</div>';
+    return h;
   }).join('');
 }
 
-// Buka panel kanan — tunjuk murid untuk acara dipilih
 function openIndPanel(idAcara) {
+  // Mobile: tunjuk panel, sembunyi list
+  var wrap = document.getElementById('ind-panel-wrap');
+  if(wrap){ wrap.classList.add('aktif'); }
+  // Scroll ke panel
+  if(wrap) setTimeout(function(){ wrap.scrollIntoView({behavior:'smooth',block:'start'}); }, 50);
   var a = S.acara.find(function(x){return x.id_acara===idAcara;});
   if (!a) return;
   S.indAcaraAktif = a;
@@ -562,8 +742,8 @@ function openIndPanel(idAcara) {
   renderIndAcara(S.indAcaraAktifList || S.acaraInd);
 
   var sdh=S.daftar.filter(function(p){return p.id_acara===a.id_acara&&p.status==='AKTIF';}).length;
-  var max=a.kuota_ind_rumah||2, penuh=sdh>=max;
-  var muridKat=S.murid.filter(function(m){return autoKat(m)===normKat(a.id_kategori);});
+  var max=getKuotaInd(a), penuh=sdh>=max;
+  var muridKat=S.murid.filter(function(m){return muridLayak(m, a.id_kategori);});
   var sdh_kp=S.daftar.filter(function(p){return p.id_acara===a.id_acara&&p.status==='AKTIF';}).map(function(p){return p.no_kp;});
 
   document.getElementById('ind-panel-ttl').textContent = a.nama_acara;
@@ -616,6 +796,25 @@ async function daftarInd(idAcara, noKp) {
   } else { toast('⚠️ '+(r&&r.message?r.message:'Gagal daftar.'),'e'); }
 }
 
+async function editInd(idReg, idAcara, nama) {
+  if (!confirm('Edit pendaftaran "'+nama+'"?\nMurid ini akan dibatalkan dulu, kemudian pilih murid baru dari panel Individu.')) return;
+  showL(true,'Membatalkan...');
+  var r = await gasRun('deletePendaftaran',{id_reg:idReg});
+  showL(false);
+  if (r&&r.success) {
+    toast('Pendaftaran dibatalkan. Pilih murid baru.','s');
+    await loadSenaraiSilent();
+    renderDash();
+    // Navigate ke tab Individu dan pilih acara yang sama
+    var btnInd = document.getElementById('t-ind');
+    if(btnInd) goTab('ind', btnInd);
+    // Pilih acara semula selepas render
+    setTimeout(function(){
+      renderIndAcara(S.indAcaraAktifList||S.acaraInd);
+      if(idAcara) openIndPanel(idAcara);
+    }, 300);
+  } else { toast((r&&r.message)||'Gagal edit.','e'); }
+}
 async function batalInd(id, nama) {
   if (!confirm('Batal pendaftaran "'+nama+'"?')) return;
   showL(true,'Membatalkan...');
@@ -642,40 +841,56 @@ function renderKumpAcara(list) {
   var el=document.getElementById('kump-acara');
   if (!list.length) {
     el.innerHTML=S.acara.length===0
-      ? '<div class="empty">⚠️<br>Acara belum dijana.</div>'
-      : '<div class="empty">👥<br>Tiada acara pasukan</div>';
+      ?'<div class="empty">Acara belum dijana.</div>'
+      :'<div class="empty">Tiada acara pasukan</div>';
     return;
   }
-  el.innerHTML = list.map(function(a) {
+  el.innerHTML=list.map(function(a){
     var sdh=S.kumpulan.filter(function(k){return k.id_acara===a.id_acara&&k.status==='AKTIF';}).length;
-    var max=a.kuota_pasukan_rumah||1, penuh=sdh>=max, pct=Math.min(100,Math.round(sdh/max*100));
-    var col=penuh?'var(--red)':'var(--green)';
-    return '<div class="acara-item" onclick="openKump(\''+a.id_acara+'\')">'
-      +'<div style="flex:1;"><div class="acara-nm">'+a.nama_acara+'</div>'
-      +'<div class="acara-sb">'+a.id_kategori+' · '+a.ahli_utama+' ahli'
-      +'<span class="kbar"><span class="kbar-bg"><span class="kbar-fill" style="width:'+pct+'%;background:'+col+'"></span></span>'
-      +'<span class="kt" style="color:'+col+'">'+sdh+'/'+max+' pasukan</span></span></div></div>'
-      +(penuh?'<span class="bdg bdg-r">PENUH</span>':'<span style="color:var(--blue);font-size:18px;">›</span>')
-      +'</div>';
+    var max=getKuotaKump(a), penuh=sdh>=max;
+    var pct=Math.min(100,Math.round(sdh/max*100));
+    var hampir=!penuh&&pct>=75;
+    var col=penuh?'var(--red)':hampir?'var(--amber)':'var(--green)';
+    var h='<div class="acara-item"';
+    if(penuh){
+      h+=' style="opacity:.55;cursor:not-allowed;pointer-events:none;background:var(--bg3);">';
+    }else{
+      h+=' onclick="openKump(\'' + a.id_acara + '\')">'; 
+    }
+    h+='<div style="flex:1;">';
+    h+='<div class="acara-nm" style="color:'+(penuh?'var(--text3)':'var(--text)')+'">'+a.nama_acara+'</div>';
+    h+='<div class="acara-sb">'+a.id_kategori+' · '+a.ahli_utama+' ahli';
+    h+='<span class="kbar"><span class="kbar-bg"><span class="kbar-fill" style="width:'+pct+'%;background:'+col+'"></span></span>';
+    h+='<span class="kt" style="color:'+col+';font-weight:700;">'+sdh+'/'+max+' pasukan</span></span></div></div>';
+    if(penuh){ h+='<span class="bdg bdg-r" style="font-size:11px;">PENUH</span>'; }
+    else if(hampir){ h+='<span class="bdg" style="background:var(--amber-lt);color:var(--amber);font-size:11px;">HAMPIR</span>'; }
+    else { h+='<span style="color:var(--blue);font-size:18px;">›</span>'; }
+    h+='</div>';
+    return h;
   }).join('');
 }
 
 function openKump(idAcara) {
-  if (!S.buka) { toast('Pendaftaran ditutup.','e'); return; }
+  // Semak buka dan kuota DULU sebelum buka panel
+  if (!S.buka) { alertBox('Pendaftaran telah ditutup.<br><br>Hubungi Urusetia untuk maklumat lanjut.','e'); return; }
   var a=S.acara.find(function(x){return x.id_acara===idAcara;});
   if (!a) return;
   var sdh=S.kumpulan.filter(function(k){return k.id_acara===idAcara&&k.status==='AKTIF';}).length;
-  if (sdh>=(a.kuota_pasukan_rumah||1)) { toast('Kuota penuh.','w'); return; }
+  if (sdh>=getKuotaKump(a)) { alertBox('Acara <strong>'+a.nama_acara+'</strong> sudah penuh.<br><br>Kuota: <strong>'+sdh+'/'+getKuotaKump(a)+'</strong> pasukan dari rumah ini.','e'); return; }
+  // Lulus semua semakan — baru buka panel mobile
+  var wrap = document.getElementById('kump-panel-wrap');
+  if(wrap){ wrap.classList.add('aktif'); }
+  if(wrap) setTimeout(function(){ wrap.scrollIntoView({behavior:'smooth',block:'start'}); }, 50);
   S.kumpAcara=a; S.kumpU=a.ahli_utama||4; S.kumpS=a.ahli_simpanan||0;
   S.kumpSlots=new Array(S.kumpU+S.kumpS).fill(null); S.kumpSlotAktif=0;
-  S.kumpMurid=S.murid.filter(function(m){return autoKat(m)===normKat(a.id_kategori);});
+  S.kumpMurid=S.murid.filter(function(m){return muridLayak(m, a.id_kategori);});
   var huruf=['A','B','C','D'];
   var existing=S.kumpulan.filter(function(k){return k.id_acara===idAcara&&k.status==='AKTIF';}).map(function(k){return (k.nama_pasukan||'').toUpperCase();});
   var rumah=(S.sess.nama_rumah||S.sess.id_rumah||'PASUKAN').split(' ').pop().toUpperCase();
   var sfx=huruf.find(function(h){return existing.indexOf(rumah+' '+h)===-1;})||'A';
   document.getElementById('kump-nama').value=rumah+' '+sfx;
   document.getElementById('mk-ttl').textContent=a.nama_acara;
-  document.getElementById('mk-info').innerHTML='<strong>'+a.nama_acara+'</strong><br>Kategori: '+a.id_kategori+' · Ahli utama: <strong>'+S.kumpU+'</strong>'+(S.kumpS>0?' + Simpanan: <strong>'+S.kumpS+'</strong>':'')+' · Slot: <span style="color:var(--green);">'+((a.kuota_pasukan_rumah||1)-sdh)+'</span>';
+  document.getElementById('mk-info').innerHTML='<strong>'+a.nama_acara+'</strong><br>Kategori: '+a.id_kategori+' · Ahli utama: <strong>'+S.kumpU+'</strong>'+(S.kumpS>0?' + Simpanan: <strong>'+S.kumpS+'</strong>':'')+' · Slot: <span style="color:var(--green);">'+Math.max(0,getKuotaKump(a)-sdh)+'</span>';
   document.getElementById('slot-simp-wrap').style.display=S.kumpS>0?'block':'none';
   document.getElementById('btn-kump').disabled=true;
   renderSlots(); renderPicker();
@@ -735,13 +950,26 @@ function filterPicker() {
 
 function renderPickerGrid(list) {
   var g=document.getElementById('picker-grid');
-  if (!list||!list.length) { g.innerHTML='<div class="empty" style="grid-column:1/-1;">👤<br>Tiada murid</div>'; return; }
+  if (!list||!list.length) { g.innerHTML='<div class="empty" style="grid-column:1/-1;">&#128100;<br>Tiada murid</div>'; return; }
   var inSlots=S.kumpSlots.filter(Boolean).map(function(s){return s.no_kp;});
+  var katId=S.kumpAcara?S.kumpAcara.id_kategori:'';
+  var hadMax=1;
+  for(var ki=0;ki<S.katList.length;ki++){
+    if(normKat(S.katList[ki].kod||S.katList[ki].id||'')===normKat(katId)){
+      hadMax=parseInt(S.katList[ki].kuota_kumpulan)||1; break;
+    }
+  }
   g.innerHTML=list.map(function(m){
     var taken=inSlots.indexOf(m.no_kp)!==-1;
-    return '<div class="mc'+(taken?' dis':'')+'" onclick="pickMurid(\''+m.no_kp+'\')">'
+    var sudah=getKuotaKumpMurid(m.no_kp, katId);
+    var quotaFull=!taken&&sudah>=hadMax;
+    var cls='mc'+(taken?' dis':quotaFull?' quota-full':'');
+    var onclick=taken||quotaFull?'':' onclick="pickMurid(\''+m.no_kp+'\')"';
+    var badge=quotaFull?'<span class="quota-tag">Cukup Kuota ('+sudah+'/'+hadMax+')</span>':'';
+    return '<div class="'+cls+'"'+onclick+'>'
       +'<div class="murid-nm">'+m.nama+'</div>'
-      +'<div class="murid-kl">'+(m.kelas||'—')+(taken?' ✓':'')+'</div></div>';
+      +'<div class="murid-kl">'+(m.kelas||'&#8212;')+(taken?' &#10003;':'')+'</div>'
+      +badge+'</div>';
   }).join('');
 }
 
@@ -762,7 +990,7 @@ function pickMurid(kp) {
 }
 
 async function submitKump() {
-  if (!S.buka) { toast('Pendaftaran ditutup.','e'); return; }
+  if (!S.buka) { alertBox('Pendaftaran telah ditutup.<br><br>Hubungi Urusetia untuk maklumat lanjut.','e'); return; }
   var nama=document.getElementById('kump-nama').value.trim();
   if (!nama) { toast('Nama pasukan diperlukan.','w'); return; }
   if (!S.kumpSlots.slice(0,S.kumpU).every(Boolean)) { toast('Semua slot utama mesti diisi.','w'); return; }
@@ -771,10 +999,9 @@ async function submitKump() {
   var r=await gasRun('saveKumpulan',{id_acara:S.kumpAcara.id_acara,no_acara:S.kumpAcara.no_acara,nama_acara:S.kumpAcara.nama_acara,id_rumah:S.sess.id_rumah,id_kategori:S.kumpAcara.id_kategori,nama_pasukan:nama,ahli_json:JSON.stringify(ahli),bilangan_ahli:ahli.length,created_by:S.sess.username});
   showL(false);
   if (r&&r.success) {
-    toast('✅ '+(r.message||'Pasukan berjaya!'),'s');
-    closeM('modal-kump');
+    alertBox((r.message||'Pasukan berjaya didaftarkan!'),'s', function(){ closeM('modal-kump'); });
     await loadSenaraiSilent(); renderDash(); renderKumpAcara(); renderSenarai();
-  } else { toast('⚠️ '+(r&&r.message?r.message:'Gagal.'),'e'); }
+  } else { alertBox((r&&r.message?r.message:'Pendaftaran gagal. Cuba semula.'),'e'); }
 }
 
 // ── SENARAI ─────────────────────────────────────────────────────
@@ -788,7 +1015,7 @@ function renderSenarai() {
           +'<td>'+(p.nama_murid||'—')+'<div style="font-size:10px;color:var(--text3);">'+(p.no_kp||'')+'</div></td>'
           +'<td><span class="bdg bdg-b">'+(p.id_kategori||'—')+'</span></td>'
           +'<td><span class="bdg bdg-g">'+(p.status||'AKTIF')+'</span></td>'
-          +'<td>'+(S.buka?'<button class="btn btn-r btn-xs" onclick="batalInd(\''+p.id_reg+'\',\''+(p.nama_murid||'').replace(/'/g,'')+'\')">🗑️</button>':'—')+'</td></tr>';
+          +(S.buka?'<td style="display:flex;gap:4px;"><button class="btn btn-b btn-xs" data-r="'+p.id_reg+'" data-a="'+p.id_acara+'" data-n="'+(p.nama_murid||'').replace(/"/g,'&quot;')+'" onclick="editInd(this.dataset.r,this.dataset.a,this.dataset.n)">✎ Edit</button> <button class="btn btn-r btn-xs" data-r="'+p.id_reg+'" data-n="'+(p.nama_murid||'').replace(/"/g,'&quot;')+'" onclick="batalInd(this.dataset.r,this.dataset.n)">✕ Batal</button></td>':'<td>—</td>')+'</tr>';
       }).join('');
   var tk=document.getElementById('tb-kump');
   tk.innerHTML = !S.kumpulan.length
@@ -801,20 +1028,41 @@ function renderSenarai() {
           +'<td><span class="bdg bdg-g">'+(k.status||'AKTIF')+'</span></td>'
           +'<td style="display:flex;gap:4px;">'
           +'<button class="btn btn-g btn-xs" onclick="lihatKump(\''+k.id_kumpulan+'\')">👁️</button>'
-          +(S.buka?'<button class="btn btn-r btn-xs" onclick="batalKump(\''+k.id_kumpulan+'\',\''+(k.nama_pasukan||'').replace(/'/g,'')+'\')">🗑️</button>':'')
+          +(S.buka
+            ?'<button class="btn btn-b btn-xs" data-kid="'+k.id_kumpulan+'" data-aid="'+k.id_acara+'" data-nm="'+(k.nama_pasukan||'').replace(/"/g,'&quot;')+'" onclick="editKump(this.dataset.kid,this.dataset.aid,this.dataset.nm)">✎ Edit</button>'
+            +' <button class="btn btn-r btn-xs" data-kid="'+k.id_kumpulan+'" data-nm="'+(k.nama_pasukan||'').replace(/"/g,'&quot;')+'" onclick="batalKump(this.dataset.kid,this.dataset.nm)">🗑️</button>'
+            :'')
           +'</td></tr>';
       }).join('');
 }
 
+async function editKump(idKump, idAcara, nama) {
+  if (!confirm('Edit pasukan "'+nama+'"?\nPasukan ini akan dibatalkan dulu, kemudian daftar pasukan baru untuk acara yang sama.')) return;
+  showL(true,'Membatalkan pasukan...');
+  var r = await gasRun('deleteKumpulan',{id_kumpulan:idKump});
+  showL(false);
+  if (r&&r.success) {
+    alertBox('Pasukan dibatalkan. Daftar pasukan baru dari tab Pasukan.','s');
+    await loadSenaraiSilent();
+    renderDash(); renderKumpAcara(); renderSenarai();
+    var btnKump = document.getElementById('t-kump');
+    if(btnKump) goTab('kump', btnKump);
+    setTimeout(function(){
+      renderKumpAcara(S.acaraKump);
+      if(idAcara) openKump(idAcara);
+    }, 300);
+  } else { alertBox((r&&r.message)||'Gagal edit pasukan. Cuba semula.','e'); }
+}
 async function batalKump(id, nama) {
+  if (!S.buka) { alertBox('Pendaftaran telah ditutup.<br><br>Pembatalan tidak dibenarkan.','e'); return; }
   if (!confirm('Batal pasukan "'+nama+'"?')) return;
   showL(true,'Membatalkan...');
   var r=await gasRun('deleteKumpulan',{id_kumpulan:id});
   showL(false);
   if (r&&r.success) {
-    toast('Pasukan dibatalkan.','s');
+    alertBox('Pasukan berjaya dibatalkan.','s');
     await loadSenaraiSilent(); renderDash(); renderKumpAcara(); renderSenarai();
-  } else { toast((r&&r.message)||'Gagal batal.','e'); }
+  } else { alertBox((r&&r.message)||'Gagal batal pasukan. Cuba semula.','e'); }
 }
 
 function lihatKump(id) {
@@ -833,12 +1081,340 @@ function lihatKump(id) {
 }
 
 // ── UTILITIES ───────────────────────────────────────────────────
+function balikListInd() {
+  var wrap = document.getElementById('ind-panel-wrap');
+  if(wrap){ wrap.classList.remove('aktif'); }
+  S.indAcaraAktif = null;
+  renderIndAcara(S.indAcaraAktifList || S.acaraInd);
+}
+function balikListKump() {
+  var wrap = document.getElementById('kump-panel-wrap');
+  if(wrap){ wrap.classList.remove('aktif'); }
+}
+// ── SUB-TAB ──────────────────────────────────────────────
+function goSubTab(id, el) {
+  document.querySelectorAll('.spane').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.stab').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('spane-'+id).classList.add('on');
+  if(el) el.classList.add('on');
+  if(id==='ringkasan') renderRingkasan();
+  if(id==='byacara') renderByAcaraInit();
+  if(id==='kad') renderKadMurid();
+}
+
+// ── RENDER RINGKASAN PENUH ───────────────────────────────
+function renderRingkasan() {
+  var el = document.getElementById('rpt-ringkasan');
+  if(!el) return;
+  var rumah = S.sess?S.sess.nama_rumah||S.sess.id_rumah:'—';
+  var guru  = S.sess?S.sess.full_name||S.sess.username:'—';
+  var now   = new Date().toLocaleDateString('ms-MY',{day:'2-digit',month:'long',year:'numeric'});
+  var ind   = S.daftar.filter(function(p){return p.status==='AKTIF';});
+  var kump  = S.kumpulan.filter(function(k){return k.status==='AKTIF';});
+  var h = '<div id="print-area">';
+  // Header
+  h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #1e3a5f;">';
+  h += '<div><div style="font-size:11px;color:#64748b;">SK SULTAN ISMAIL, KEMAMAN, TERENGGANU</div>';
+  h += '<div style="font-size:17px;font-weight:700;color:#1e3a5f;margin:3px 0;">Laporan Pendaftaran Sukan Tahunan</div>';
+  h += '<div style="font-size:11px;color:#64748b;">Dicetak: '+now+'</div></div>';
+  h += '<div style="background:#1e3a5f;color:#fff;padding:8px 16px;border-radius:8px;text-align:right;">';
+  h += '<div style="font-weight:700;font-size:14px;">'+rumah+'</div>';
+  h += '<div style="font-size:10px;margin-top:2px;">'+guru+'</div></div></div>';
+  // Stats
+  h += '<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">';
+  var stats = [
+    {n:S.murid.length, l:'Murid Rumah'},
+    {n:ind.length, l:'Pend. Individu'},
+    {n:kump.length, l:'Pend. Pasukan'},
+    {n:(new Set(ind.map(function(p){return p.id_acara;}))).size + kump.length, l:'Acara Disertai'}
+  ];
+  stats.forEach(function(s){
+    h += '<div style="background:#f1f5f9;border-radius:8px;padding:10px 16px;flex:1;min-width:100px;">';
+    h += '<div style="font-size:20px;font-weight:700;color:#1e3a5f;">'+s.n+'</div>';
+    h += '<div style="font-size:11px;color:#64748b;">'+s.l+'</div></div>';
+  });
+  h += '</div>';
+  // Jadual Individu
+  h += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#1e3a5f;margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid #e2e8f0;">Pendaftaran Individu ('+ind.length+' rekod)</div>';
+  if(!ind.length){ h += '<p style="font-size:12px;color:#94a3b8;padding:8px 0;">Tiada pendaftaran individu.</p>'; }
+  else {
+    h += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px;">';
+    h += '<thead><tr style="background:#1e3a5f;color:#fff;">';
+    h += '<th style="padding:6px 8px;text-align:left;font-weight:500;">#</th>';
+    h += '<th style="padding:6px 8px;text-align:left;font-weight:500;">Acara</th>';
+    h += '<th style="padding:6px 8px;text-align:left;font-weight:500;">Nama Murid</th>';
+    h += '<th style="padding:6px 8px;text-align:left;font-weight:500;">Darjah</th>';
+    h += '<th style="padding:6px 8px;text-align:left;font-weight:500;">Kelas</th>';
+    h += '<th style="padding:6px 8px;text-align:left;font-weight:500;">Kategori</th>';
+    h += '</tr></thead><tbody>';
+    ind.forEach(function(p,i){
+      var bg = i%2===0?'#fff':'#f8fafc';
+      h += '<tr style="background:'+bg+';">';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;">'+(i+1)+'</td>';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;font-weight:600;">'+(p.nama_acara||'—')+'</td>';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;">'+(p.nama_murid||'—')+'</td>';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;">'+(p.darjah||'—')+'</td>';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;">'+(p.kelas||'—')+'</td>';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;"><span style="background:#EFF6FF;color:#1D4ED8;padding:2px 6px;border-radius:8px;font-size:10px;font-weight:600;">'+(p.id_kategori||'—')+'</span></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+  }
+  // Jadual Pasukan
+  h += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#1e3a5f;margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid #e2e8f0;">Pendaftaran Pasukan ('+kump.length+' pasukan)</div>';
+  if(!kump.length){ h += '<p style="font-size:12px;color:#94a3b8;padding:8px 0;">Tiada pendaftaran pasukan.</p>'; }
+  else {
+    h += '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+    h += '<thead><tr style="background:#1e3a5f;color:#fff;">';
+    h += '<th style="padding:6px 8px;font-weight:500;">#</th>';
+    h += '<th style="padding:6px 8px;font-weight:500;">Acara</th>';
+    h += '<th style="padding:6px 8px;font-weight:500;">Nama Pasukan</th>';
+    h += '<th style="padding:6px 8px;font-weight:500;text-align:center;">Ahli</th>';
+    h += '<th style="padding:6px 8px;font-weight:500;">Kategori</th>';
+    h += '</tr></thead><tbody>';
+    kump.forEach(function(k,i){
+      var bg = i%2===0?'#fff':'#f8fafc';
+      h += '<tr style="background:'+bg+';">';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;">'+(i+1)+'</td>';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;font-weight:600;">'+(k.nama_acara||'—')+'</td>';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;">'+(k.nama_pasukan||'—')+'</td>';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;text-align:center;">'+(k.bilangan_ahli||0)+' ahli</td>';
+      h += '<td style="padding:5px 8px;border-bottom:0.5px solid #e2e8f0;"><span style="background:#F0FDF4;color:#166534;padding:2px 6px;border-radius:8px;font-size:10px;font-weight:600;">'+(k.id_kategori||'—')+'</span></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+  }
+  // Footer
+  h += '<div style="margin-top:16px;padding-top:8px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;">';
+  h += '<span>SK Sultan Ismail, Kemaman &nbsp;|&nbsp; Sistem Sukan Tahunan</span>';
+  h += '<span>'+now+'</span></div>';
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+function printRingkasan() {
+  var area = document.getElementById('print-area');
+  if(!area){ renderRingkasan(); area = document.getElementById('print-area'); }
+  var w = window.open('','_blank');
+  w.document.write('<html><head><title>Laporan Pendaftaran</title>');
+  w.document.write('<style>body{font-family:Arial,sans-serif;margin:20px;} table{width:100%;border-collapse:collapse;} th,td{padding:5px 8px;} @page{margin:15mm;}</style>');
+  w.document.write('</head><body>'+area.innerHTML+'</body></html>');
+  w.document.close(); w.focus(); w.print();
+}
+
+// ── RENDER BY ACARA ──────────────────────────────────────
+function renderByAcaraInit() {
+  var sel = document.getElementById('sel-acara-print');
+  if(!sel) return;
+  // Populate dropdown
+  var used = {};
+  sel.innerHTML = '<option value="">— Pilih Acara —</option>';
+  S.daftar.concat(S.kumpulan).forEach(function(x){
+    var id = x.id_acara||x.id_kumpulan;
+    var nm = x.nama_acara||'';
+    if(nm && !used[x.id_acara]) {
+      used[x.id_acara] = true;
+      var opt = document.createElement('option');
+      opt.value = x.id_acara;
+      opt.textContent = nm;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+function renderByAcara() {
+  var sel = document.getElementById('sel-acara-print');
+  var el  = document.getElementById('rpt-byacara');
+  if(!sel||!el) return;
+  var idAcara = sel.value;
+  if(!idAcara){ el.innerHTML='<div class="empty">Pilih acara di atas</div>'; return; }
+  var nama = sel.options[sel.selectedIndex].textContent;
+  var ind  = S.daftar.filter(function(p){return p.id_acara===idAcara&&p.status==='AKTIF';});
+  var rumah = S.sess?S.sess.nama_rumah||S.sess.id_rumah:'—';
+  var now  = new Date().toLocaleDateString('ms-MY',{day:'2-digit',month:'long',year:'numeric'});
+  var h = '<div id="print-area-acara">';
+  h += '<div style="display:flex;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #1e3a5f;">';
+  h += '<div><div style="font-size:11px;color:#64748b;">SK SULTAN ISMAIL, KEMAMAN</div>';
+  h += '<div style="font-size:16px;font-weight:700;color:#1e3a5f;margin:3px 0;">'+nama+'</div>';
+  h += '<div style="font-size:11px;color:#64748b;">Peserta dari '+rumah+' &nbsp;|&nbsp; Sukan Tahunan 2026</div></div>';
+  h += '<div style="background:#1e3a5f;color:#fff;padding:6px 14px;border-radius:8px;text-align:center;">';
+  h += '<div style="font-weight:700;">'+rumah+'</div>';
+  h += '<div style="font-size:10px;">'+ind.length+' peserta</div></div></div>';
+  if(!ind.length){ h += '<p style="font-size:12px;color:#94a3b8;">Tiada peserta dari rumah ini.</p>'; }
+  else {
+    h += '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+    h += '<thead><tr style="background:#1e3a5f;color:#fff;">';
+    h += '<th style="padding:6px 8px;font-weight:500;">#</th>';
+    h += '<th style="padding:6px 8px;font-weight:500;">Nama Murid</th>';
+    h += '<th style="padding:6px 8px;font-weight:500;">Darjah</th>';
+    h += '<th style="padding:6px 8px;font-weight:500;">Kelas</th>';
+    h += '<th style="padding:6px 8px;font-weight:500;text-align:center;">Hadir &#9633;</th>';
+    h += '</tr></thead><tbody>';
+    ind.forEach(function(p,i){
+      var bg = i%2===0?'#fff':'#f8fafc';
+      h += '<tr style="background:'+bg+';">';
+      h += '<td style="padding:6px 8px;border-bottom:0.5px solid #e2e8f0;">'+(i+1)+'</td>';
+      h += '<td style="padding:6px 8px;border-bottom:0.5px solid #e2e8f0;">'+(p.nama_murid||'—')+'</td>';
+      h += '<td style="padding:6px 8px;border-bottom:0.5px solid #e2e8f0;">'+(p.darjah||'—')+'</td>';
+      h += '<td style="padding:6px 8px;border-bottom:0.5px solid #e2e8f0;">'+(p.kelas||'—')+'</td>';
+      h += '<td style="padding:6px 8px;border-bottom:0.5px solid #e2e8f0;text-align:center;font-size:16px;">&#9633;</td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+  }
+  h += '<div style="margin-top:12px;font-size:10px;color:#94a3b8;display:flex;justify-content:space-between;">';
+  h += '<span>SK Sultan Ismail &nbsp;|&nbsp; Sistem Sukan Tahunan 2026</span><span>'+now+'</span></div>';
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+function printByAcara() {
+  var area = document.getElementById('print-area-acara');
+  if(!area){ alert('Sila pilih acara dahulu.'); return; }
+  var w = window.open('','_blank');
+  w.document.write('<html><head><title>Senarai Peserta</title>');
+  w.document.write('<style>body{font-family:Arial,sans-serif;margin:20px;} table{width:100%;border-collapse:collapse;} @page{margin:15mm;}</style>');
+  w.document.write('</head><body>'+area.innerHTML+'</body></html>');
+  w.document.close(); w.focus(); w.print();
+}
+
+// ── RENDER KAD MURID ────────────────────────────────────
+function renderKadMurid() {
+  var el = document.getElementById('rpt-kad');
+  if(!el) return;
+  var rumah = S.sess?S.sess.nama_rumah||S.sess.id_rumah:'—';
+  var muridMap = {};
+  S.daftar.filter(function(p){return p.status==='AKTIF';}).forEach(function(p){
+    var kp = p.no_kp||p.nama_murid;
+    if(!muridMap[kp]) muridMap[kp] = {nama:p.nama_murid,kelas:p.kelas||'',darjah:p.darjah||'',acara:[]};
+    muridMap[kp].acara.push({nm:p.nama_acara,jenis:'Individu'});
+  });
+  S.kumpulan.filter(function(k){return k.status==='AKTIF';}).forEach(function(k){
+    var ahliArr = k.ahli_json||[];
+    if(typeof ahliArr==='string'){try{ahliArr=JSON.parse(ahliArr);}catch(e){ahliArr=[];}}
+    if(!Array.isArray(ahliArr)) return;
+    ahliArr.forEach(function(a){
+      var kp = a.no_kp||a.nama;
+      if(!muridMap[kp]) muridMap[kp] = {nama:a.nama,kelas:'',darjah:'',acara:[]};
+      muridMap[kp].acara.push({nm:k.nama_acara,jenis:'Kumpulan'});
+    });
+  });
+  var keys = Object.keys(muridMap);
+  if(!keys.length){ el.innerHTML='<div class="empty">Tiada data pendaftaran.</div>'; return; }
+  var h = '<div id="print-area-kad">';
+  h += '<p class="kad-intro" style="font-size:12px;color:#64748b;text-align:center;margin-bottom:14px;padding:8px;background:#f1f5f9;border-radius:8px;">&#128438; Print &rarr; Gunting &rarr; Bagi kepada murid · <strong>4 kad per muka surat (A4)</strong></p>';
+  h += '<div class="kad-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">';
+  keys.forEach(function(kp){
+    var m = muridMap[kp];
+    var darjahKelas = [m.darjah,m.kelas].filter(Boolean).join(' · ');
+    h += '<div class="kad-item" style="border:1.5px solid #cbd5e1;border-radius:10px;overflow:hidden;min-height:200px;">';
+    h += '<div class="kad-head" style="background:#1e3a5f;padding:12px 16px;">';
+    h += '<div class="kad-nama" style="color:#fff;font-weight:700;font-size:14px;line-height:1.3;margin-bottom:4px;">'+m.nama+'</div>';
+    h += '<div class="kad-meta" style="color:#93c5fd;font-size:11px;">'+(darjahKelas||'—')+' &nbsp;|&nbsp; '+rumah+'</div>';
+    h += '</div>';
+    h += '<div class="kad-body" style="padding:12px 16px;font-size:12px;line-height:1.9;">';
+    m.acara.forEach(function(a){
+      var col = a.jenis==='Kumpulan'?'#166534':'#1D4ED8';
+      var bg  = a.jenis==='Kumpulan'?'#F0FDF4':'#EFF6FF';
+      h += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">';
+      h += '<span style="color:#1e3a5f;">&#8226;</span>';
+      h += '<span>'+a.nm+'</span>';
+      h += '<span style="font-size:10px;background:'+bg+';color:'+col+';padding:1px 6px;border-radius:8px;white-space:nowrap;">'+a.jenis+'</span>';
+      h += '</div>';
+    });
+    h += '</div></div>';
+  });
+  h += '</div></div>';
+  el.innerHTML = h;
+}
+
+function printKadMurid() {
+  // Pastikan data terbaru
+  if(!document.getElementById('print-area-kad') ||
+     !document.getElementById('print-area-kad').querySelector('.kad-item')) {
+    renderKadMurid();
+  }
+  // Bina semula dari S data — lebih selamat
+  var rumah = S.sess ? S.sess.nama_rumah||S.sess.id_rumah : '—';
+  var sekolah = 'SK Sultan Ismail, Kemaman';
+  var muridMap = {};
+  S.daftar.filter(function(p){return p.status==='AKTIF';}).forEach(function(p){
+    var kp = p.no_kp||p.nama_murid;
+    if(!muridMap[kp]) muridMap[kp]={nama:p.nama_murid,kelas:p.kelas||'',darjah:p.darjah||'',acara:[]};
+    muridMap[kp].acara.push({nm:p.nama_acara,jenis:'Individu'});
+  });
+  S.kumpulan.filter(function(k){return k.status==='AKTIF';}).forEach(function(k){
+    var arr=k.ahli_json||[];
+    if(typeof arr==='string'){try{arr=JSON.parse(arr);}catch(e){arr=[];}}
+    if(!Array.isArray(arr)) return;
+    arr.forEach(function(a){
+      var kp=a.no_kp||a.nama;
+      if(!muridMap[kp]) muridMap[kp]={nama:a.nama,kelas:'',darjah:'',acara:[]};
+      muridMap[kp].acara.push({nm:k.nama_acara,jenis:'Kumpulan'});
+    });
+  });
+  var keys = Object.keys(muridMap);
+  if(!keys.length){ alertBox('Tiada data untuk dicetak.','w'); return; }
+
+  // CSS untuk window print — 2x2 per A4
+  var css = [
+    '@page{size:A4 portrait;margin:8mm;}',
+    '*{box-sizing:border-box;margin:0;padding:0;}',
+    'body{font-family:Arial,sans-serif;background:#fff;}',
+    '.grid{display:grid;grid-template-columns:1fr 1fr;gap:6mm;width:100%;}',
+    '.kad{border:1.5px solid #94a3b8;border-radius:3mm;overflow:hidden;',
+         'height:130mm;display:flex;flex-direction:column;',
+         'page-break-inside:avoid;break-inside:avoid;}',
+    '.kad-head{background:#1e3a5f;padding:5mm 6mm;flex-shrink:0;}',
+    '.kad-nama{color:#fff;font-weight:700;font-size:12pt;line-height:1.3;margin-bottom:2mm;}',
+    '.kad-meta{color:#93c5fd;font-size:9pt;}',
+    '.kad-body{padding:4mm 6mm;flex:1;font-size:10pt;line-height:1.8;}',
+    '.kad-row{display:flex;align-items:baseline;gap:3mm;margin-bottom:1mm;}',
+    '.bullet{color:#1e3a5f;font-size:10pt;}',
+    '.badge{font-size:8pt;padding:0 3mm;border-radius:2mm;white-space:nowrap;}',
+    '.ind{background:#EFF6FF;color:#1D4ED8;}',
+    '.kump{background:#F0FDF4;color:#166534;}',
+    '.footer{font-size:7pt;color:#94a3b8;margin-top:2mm;}'
+  ].join('');
+
+  // Bina HTML kad
+  var rows = '';
+  keys.forEach(function(kp){
+    var m = muridMap[kp];
+    var dk = [m.darjah, m.kelas].filter(Boolean).join(' · ');
+    var acaraHtml = m.acara.map(function(a){
+      return '<div class="kad-row"><span class="bullet">&bull;</span><span>'+a.nm+'</span>'
+           + '<span class="badge '+(a.jenis==='Kumpulan'?'kump':'ind')+'">'+a.jenis+'</span></div>';
+    }).join('');
+    rows += '<div class="kad">'
+          + '<div class="kad-head">'
+          + '<div class="kad-nama">'+m.nama+'</div>'
+          + '<div class="kad-meta">'+(dk||'&mdash;')+' &nbsp;|&nbsp; '+rumah+'</div>'
+          + '</div>'
+          + '<div class="kad-body">'+acaraHtml+'</div>'
+          + '</div>';
+  });
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+           + '<title>Kad Murid &mdash; '+rumah+'</title>'
+           + '<style>'+css+'</style></head><body>'
+           + '<div class="grid">'+rows+'</div>'
+           + '</body></html>';
+
+  var w = window.open('','_blank','width=800,height=900');
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+  w.onload = function(){ w.focus(); w.print(); };
+}
+
+
 function goTab(id, btn) {
   document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('on');});
   document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
   document.getElementById('pane-'+id).classList.add('on');
   if (btn) btn.classList.add('on');
-  if (id==='list') renderSenarai();
+  if (id==='list') { renderSenarai(); goSubTab('senarai', document.getElementById('st-senarai')); }
 }
 
 function refreshAll() {
@@ -855,6 +1431,30 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape') document.querySelectorAll('.modal-bg.on').forEach(function(m){m.classList.remove('on');});
 });
 
+function alertBox(msg, t, cb) {
+  var cfg = {
+    s: {bg:'#D1FAE5',ic:'#059669',icon:'&#10003;',btn:'#10B981',title:'Berjaya'},
+    e: {bg:'#FEE2E2',ic:'#DC2626',icon:'&#9888;',btn:'#EF4444',title:'Perhatian'},
+    w: {bg:'#FEF3C7',ic:'#D97706',icon:'&#9888;',btn:'#F59E0B',title:'Amaran'}
+  }[t||'w']||{bg:'#FEF3C7',ic:'#D97706',icon:'&#9888;',btn:'#F59E0B',title:'Amaran'};
+  document.getElementById('alert-icon').style.background = cfg.bg;
+  document.getElementById('alert-icon').style.color = cfg.ic;
+  document.getElementById('alert-icon').innerHTML = cfg.icon;
+  document.getElementById('alert-title').textContent = cfg.title;
+  document.getElementById('alert-body').innerHTML = msg;
+  var btn = document.getElementById('alert-btn');
+  btn.style.background = cfg.btn;
+  btn.style.color = '#fff';
+  btn.textContent = t==='s' ? 'OK, Tutup' : 'OK, Faham';
+  _alertCb = cb||null;
+  var ov = document.getElementById('alert-overlay');
+  ov.style.display = 'flex';
+}
+var _alertCb = null;
+function closeAlert() {
+  document.getElementById('alert-overlay').style.display = 'none';
+  if (_alertCb) { var fn=_alertCb; _alertCb=null; fn(); }
+}
 function toast(msg, t) {
   var cls={s:'ts',e:'te',w:'tw'}[t]||'ts';
   var el=document.createElement('div'); el.className='toast '+cls; el.textContent=msg;

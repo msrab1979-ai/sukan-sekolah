@@ -407,7 +407,7 @@ function deleteRumah(payload) {
 
 // ── KATEGORI ───────────────────────────────────────────────────────
 // tbl_kategori: id[0],kod[1],nama[2],jantina[3],umin[4],umax[5],
-//   kuota_individu[6],kuota_kumpulan[7],warna[8],aktif[9],created_at[10]
+//   kuota_individu[6],kuota_kumpulan[7],kuota_terbuka[8],warna[9],aktif[10],created_at[11]
 
 function getKategori() {
   var sheet = _sheet('tbl_kategori');
@@ -425,9 +425,10 @@ function getKategori() {
       umax            : parseInt(data[i][5]) || 12,
       kuota_individu  : parseInt(data[i][6]) || 3,
       kuota_kumpulan  : parseInt(data[i][7]) || 1,
-      warna           : data[i][8] || '#4F8EF7',
-      aktif           : data[i][9] !== false && data[i][9] !== 'FALSE',
-      created_at      : data[i][10] ? data[i][10].toString() : ''
+      kuota_terbuka   : parseInt(data[i][8]) || 1,
+      warna           : data[i][9] || '#4F8EF7',
+      aktif           : data[i][10] !== false && data[i][10] !== 'FALSE',
+      created_at      : data[i][11] ? data[i][11].toString() : ''
     });
   }
   return JSON.stringify({ success: true, data: list, total: list.length });
@@ -438,7 +439,7 @@ function createKategori(payload) {
     return { success: false, message: 'Kod dan nama kategori diperlukan' };
   }
   var sheet = _ensureSheet('tbl_kategori',
-    ['id','kod','nama','jantina','umin','umax','kuota_individu','kuota_kumpulan','warna','aktif','created_at']);
+    ['id','kod','nama','jantina','umin','umax','kuota_individu','kuota_kumpulan','kuota_terbuka','warna','aktif','created_at']);
   var data = sheet.getDataRange().getValues();
   for (var i = 1; i < data.length; i++) {
     if (data[i][1] && data[i][1].toString().toUpperCase() === payload.kod.toString().toUpperCase()) {
@@ -455,6 +456,7 @@ function createKategori(payload) {
     parseInt(payload.umax)  || 12,
     parseInt(payload.kuota_individu)  || 3,
     parseInt(payload.kuota_kumpulan)  || 1,
+    parseInt(payload.kuota_terbuka)   || 1,
     payload.warna           || '#4F8EF7',
     true,
     new Date()
@@ -476,6 +478,7 @@ function updateKategori(payload) {
       if (payload.umax            !== undefined) sheet.getRange(i+1,6).setValue(parseInt(payload.umax)||12);
       if (payload.kuota_individu  !== undefined) sheet.getRange(i+1,7).setValue(parseInt(payload.kuota_individu)||3);
       if (payload.kuota_kumpulan  !== undefined) sheet.getRange(i+1,8).setValue(parseInt(payload.kuota_kumpulan)||1);
+      if (payload.kuota_terbuka   !== undefined) sheet.getRange(i+1,9).setValue(parseInt(payload.kuota_terbuka)||1);
       if (payload.warna           !== undefined) sheet.getRange(i+1,9).setValue(payload.warna);
       if (payload.aktif           !== undefined) sheet.getRange(i+1,10).setValue(_boolVal(payload.aktif));
       return { success: true, message: 'Kategori dikemaskini' };
@@ -1053,8 +1056,8 @@ function getAcaraJana(payload) {
       format_acara        : (data[i][10] || 'TERUS_FINAL').toUpperCase(),
       top_n_final         : parseInt(data[i][11]) || 8,
       created_at          : data[i][12] ? data[i][12].toString() : '',
-      kuota_ind_rumah     : parseInt(data[i][13]) || 2,
-      kuota_pasukan_rumah : parseInt(data[i][14]) || 1,
+      kuota_ind_rumah     : parseInt(data[i][13]) || 0,  // 0 = tiada override, guna tbl_kategori
+      kuota_pasukan_rumah : parseInt(data[i][14]) || 0,  // 0 = tiada override, guna tbl_kategori
       ahli_utama          : parseInt(data[i][15]) || 4,
       ahli_simpanan       : parseInt(data[i][16]) || 0
     });
@@ -1233,11 +1236,27 @@ function getPendaftaran(payload) {
   var sheet = _sheet('tbl_pendaftaran');
   if (!sheet) return JSON.stringify({ success: true, pendaftaran: [], total: 0 });
   var data = sheet.getDataRange().getValues();
+  // Bina muridMap: no_kp → {kelas, darjah} dari tbl_murid
+  var muridMap = {};
+  var muridSheet = _sheet('tbl_murid');
+  if (muridSheet) {
+    var mData = muridSheet.getDataRange().getValues();
+    for (var m = 1; m < mData.length; m++) {
+      if (!mData[m][0]) continue;
+      var mkp = _normalizeKp((mData[m][1]||'').toString());
+      muridMap[mkp] = {
+        kelas  : (mData[m][7]  || '').toString().trim(),
+        darjah : mData[m][17] ? mData[m][17].toString().trim() : ''
+      };
+    }
+  }
   var list = [];
   for (var i = 1; i < data.length; i++) {
     if (!data[i][0]) continue;
     if (payload && payload.id_rumah && data[i][5] !== payload.id_rumah) continue;
     if (payload && payload.id_acara && data[i][1] !== payload.id_acara) continue;
+    var mkp2 = _normalizeKp((data[i][4]||'').toString());
+    var mInfo = muridMap[mkp2] || {kelas:'', darjah:''};
     list.push({
       id_reg      : data[i][0],
       id_acara    : data[i][1],
@@ -1249,7 +1268,9 @@ function getPendaftaran(payload) {
       nama_murid  : data[i][7],
       status      : data[i][8] || 'AKTIF',
       created_at  : data[i][9] ? data[i][9].toString() : '',
-      created_by  : data[i][10] ? data[i][10].toString() : ''
+      created_by  : data[i][10] ? data[i][10].toString() : '',
+      kelas       : mInfo.kelas,
+      darjah      : mInfo.darjah
     });
   }
   return JSON.stringify({ success: true, pendaftaran: list, total: list.length });
@@ -1341,22 +1362,112 @@ function savePendaftaran(payload) {
     }
   }
 
+  // ── GATE 6A: Had acara murid — max acara individu/terbuka per kategori ──
+  // Peraturan: kuota_individu = max acara INDIVIDU murid dalam kategori ini
+  //            kuota_terbuka  = max acara TERBUKA murid dalam kategori ini
+  // Query: kira dalam tbl_pendaftaran berapa acara jenis ini murid sudah daftar
+  var hadAcaraMax = 0, hadAcaraSudah = 0, hadAcaraJenis = '';
+  if (katSheet) {
+    var kdHad = katSheet.getDataRange().getValues();
+    for (var kh = 1; kh < kdHad.length; kh++) {
+      var khId  = (kdHad[kh][0]||'').toString().trim();
+      var khKod = (kdHad[kh][1]||'').toString().trim();
+      if (khId === acara.id_kategori || khKod === acara.id_kategori) {
+        var khUmin = parseInt(kdHad[kh][4])||0;
+        var khUmax = parseInt(kdHad[kh][5])||0;
+        var khIsOpen = (khUmax - khUmin) >= 2;
+        if (khIsOpen) {
+          hadAcaraMax   = parseInt(kdHad[kh][8])||1; // kuota_terbuka
+          hadAcaraJenis = 'TERBUKA';
+        } else {
+          hadAcaraMax   = parseInt(kdHad[kh][6])||3; // kuota_individu
+          hadAcaraJenis = 'INDIVIDU';
+        }
+        break;
+      }
+    }
+  }
+  if (hadAcaraMax > 0) {
+    // Bina acaraMap: id_acara → isOpen (untuk classify jenis setiap acara)
+    var acaraJanaSheet = _sheet('tbl_acara_jana');
+    var acaraJanaMap   = {}; // id_acara → {id_kategori, jenis_pend}
+    if (acaraJanaSheet) {
+      var ajData = acaraJanaSheet.getDataRange().getValues();
+      for (var aj = 1; aj < ajData.length; aj++) {
+        if (ajData[aj][0]) {
+          acaraJanaMap[ajData[aj][0]] = {
+            id_kategori   : (ajData[aj][3]||'').toString().trim(),
+            jenis_pend    : (ajData[aj][7]||'INDIVIDU').toString().trim().toUpperCase()
+          };
+        }
+      }
+    }
+    // Bina kategoriOpenMap: id_kategori / kod → isOpen
+    var katOpenMap = {};
+    if (katSheet) {
+      var koData = katSheet.getDataRange().getValues();
+      for (var ko = 1; ko < koData.length; ko++) {
+        var koUmin = parseInt(koData[ko][4])||0;
+        var koUmax = parseInt(koData[ko][5])||0;
+        var koIsOpen = (koUmax - koUmin) >= 2;
+        if (koData[ko][0]) katOpenMap[(koData[ko][0]||'').toString().trim()] = koIsOpen;
+        if (koData[ko][1]) katOpenMap[(koData[ko][1]||'').toString().trim()] = koIsOpen;
+      }
+    }
+    // Kira berapa acara jenis sama dalam kategori sama yang murid sudah daftar
+    var pdHadSheet = _sheet('tbl_pendaftaran');
+    if (pdHadSheet) {
+      var pdHadData = pdHadSheet.getDataRange().getValues();
+      for (var ph = 1; ph < pdHadData.length; ph++) {
+        if (pdHadData[ph][8] !== 'AKTIF') continue;
+        if (_normalizeKp(pdHadData[ph][4]) !== _normalizeKp(payload.no_kp)) continue;
+        // Kategori acara ini mesti sama dengan acara yang hendak didaftar
+        var phIdAcara = pdHadData[ph][1];
+        var phKatId   = pdHadData[ph][6]; // id_kategori tersimpan dalam pendaftaran
+        if (phKatId !== acara.id_kategori) continue;
+        // Classify jenis acara yang sudah didaftar
+        var phInfo     = acaraJanaMap[phIdAcara] || {};
+        var phJenisPend = phInfo.jenis_pend || 'INDIVIDU';
+        var phKatIsOpen = katOpenMap[phKatId] || false;
+        var phJenisSebenar = (phJenisPend === 'KUMPULAN') ? 'KUMPULAN'
+                           : (phKatIsOpen ? 'TERBUKA' : 'INDIVIDU');
+        if (phJenisSebenar === hadAcaraJenis) hadAcaraSudah++;
+      }
+    }
+    if (hadAcaraSudah >= hadAcaraMax) {
+      return { success: false,
+        message: 'Had acara ' + hadAcaraJenis + ' murid ini telah penuh (' +
+                 hadAcaraSudah + '/' + hadAcaraMax + ' acara ' + hadAcaraJenis +
+                 ' dalam kategori ' + acara.id_kategori + ').' };
+    }
+  }
+
   // ── GATE 6: Semak kuota individu (dari acara → fallback kategori) ──
   var pdSheet = _ensureSheet('tbl_pendaftaran',
     ['id_reg','id_acara','no_acara','nama_acara','no_kp','id_rumah',
      'id_kategori','nama_murid','status','created_at','created_by']);
   var pdData    = pdSheet.getDataRange().getValues();
   // Kuota dari tbl_acara_jana[13] kuota_ind_rumah (dinamik per acara)
-  var kuotaMax = acara.kuota_ind_rumah && acara.kuota_ind_rumah > 0
-    ? acara.kuota_ind_rumah : 0;
-  if (!kuotaMax && katSheet) {
-    // Fallback: guna kuota_individu dari tbl_kategori
+  // KUOTA: tbl_kategori = sumber kebenaran (dinamik), tbl_acara_jana = override
+  var kuotaMax = 2; // absolute fallback
+  if (katSheet) {
     var kd2 = katSheet.getDataRange().getValues();
     for (var k2 = 1; k2 < kd2.length; k2++) {
-      if (kd2[k2][0] === acara.id_kategori) { kuotaMax = parseInt(kd2[k2][6]) || 2; break; }
+      var katKod = (kd2[k2][1] || '').toString().trim();
+      var katId  = (kd2[k2][0] || '').toString().trim();
+      if (katId === acara.id_kategori || katKod === acara.id_kategori) {
+        var umin2 = parseInt(kd2[k2][4]) || 0;
+        var umax2 = parseInt(kd2[k2][5]) || 0;
+        var kuotaTerbuka  = parseInt(kd2[k2][8]) || 0;  // kolum[8] = kuota_terbuka
+        var kuotaIndividu = parseInt(kd2[k2][6]) || 2;  // kolum[6] = kuota_individu
+        var isOpen = (umax2 - umin2) >= 2;  // Open: range ≥ 2 tahun
+        kuotaMax = isOpen && kuotaTerbuka > 0 ? kuotaTerbuka : kuotaIndividu;
+        break;
+      }
     }
   }
-  if (!kuotaMax) kuotaMax = 2; // absolute fallback
+  // Override: jika acara ada nilai spesifik > 0, admin sengaja set untuk acara ini
+  if (acara.kuota_ind_rumah && acara.kuota_ind_rumah > 0) kuotaMax = acara.kuota_ind_rumah;
   var sudahDaftar = 0;
   for (var p = 1; p < pdData.length; p++) {
     if (pdData[p][1] === payload.id_acara &&
@@ -1582,18 +1693,69 @@ function saveKumpulan(payload) {
     }
   }
 
+  // ── GATE 5A: Had acara kumpulan murid — max acara kumpulan per kategori ──
+  // Peraturan: kuota_kumpulan = max acara KUMPULAN murid dalam kategori ini
+  // Semak setiap ahli: berapa acara kumpulan dalam kategori ini sudah disertai
+  var kumpKatMax = 0;
+  if (katSheet) {
+    var kkData = katSheet.getDataRange().getValues();
+    for (var kk = 1; kk < kkData.length; kk++) {
+      var kkId  = (kkData[kk][0]||'').toString().trim();
+      var kkKod = (kkData[kk][1]||'').toString().trim();
+      if (kkId === acara.id_kategori || kkKod === acara.id_kategori) {
+        kumpKatMax = parseInt(kkData[kk][7])||1; // kuota_kumpulan[7]
+        break;
+      }
+    }
+  }
+  if (kumpKatMax > 0) {
+    var kpSheet = _sheet('tbl_pendaftaran_kumpulan');
+    if (kpSheet) {
+      var kpAllData = kpSheet.getDataRange().getValues();
+      for (var ai3 = 0; ai3 < ahli.length; ai3++) {
+        var ahliKp3  = _normalizeKp(ahli[ai3].no_kp||'');
+        var kumpSudah3 = 0;
+        for (var kp3 = 1; kp3 < kpAllData.length; kp3++) {
+          if (kpAllData[kp3][9] !== 'AKTIF') continue;
+          // Kategori mesti sama
+          var kp3Kat = (kpAllData[kp3][5]||'').toString().trim();
+          if (kp3Kat !== acara.id_kategori) continue;
+          // Semak ahli dalam ahli_json
+          var kp3Ahli = kpAllData[kp3][7];
+          try { kp3Ahli = JSON.parse(kp3Ahli); } catch(e) { kp3Ahli = []; }
+          if (!Array.isArray(kp3Ahli)) continue;
+          var found3 = kp3Ahli.some(function(a3){
+            return _normalizeKp(a3.no_kp||'') === ahliKp3;
+          });
+          if (found3) kumpSudah3++;
+        }
+        if (kumpSudah3 >= kumpKatMax) {
+          return { success: false,
+            message: 'Ahli "' + (ahli[ai3].nama||ahliKp3) + '" telah mencapai had acara kumpulan (' +
+                     kumpSudah3 + '/' + kumpKatMax + ' acara kumpulan dalam kategori ' +
+                     acara.id_kategori + ').' };
+        }
+      }
+    }
+  }
+
   // ── GATE 5: Semak kuota kumpulan (dari acara → fallback kategori) ──
   var kSheet = _ensureSheet('tbl_pendaftaran_kumpulan',
     ['id_kumpulan','id_acara','no_acara','nama_acara','id_rumah','id_kategori',
      'nama_pasukan','ahli_json','bilangan_ahli','status','created_at','created_by']);
   var kData = kSheet.getDataRange().getValues();
-  // Kuota dari tbl_acara_jana[14] kuota_pasukan_rumah (dinamik per acara)
+  // Kuota: tbl_kategori = default, acara.kuota_pasukan_rumah = override jika > 0
   var kuotaKump = acara.kuota_pasukan_rumah && acara.kuota_pasukan_rumah > 0
     ? acara.kuota_pasukan_rumah : 0;
   if (!kuotaKump && katSheet) {
     var kd2 = katSheet.getDataRange().getValues();
     for (var k2 = 1; k2 < kd2.length; k2++) {
-      if (kd2[k2][0] === acara.id_kategori) { kuotaKump = parseInt(kd2[k2][7]) || 1; break; }
+        var kId2  = (kd2[k2][0]||'').toString().trim();
+        var kKod2 = (kd2[k2][1]||'').toString().trim();
+        if (kId2 === acara.id_kategori || kKod2 === acara.id_kategori) {
+          kuotaKump = parseInt(kd2[k2][7]) || 1;
+          break;
+        }
     }
   }
   if (!kuotaKump) kuotaKump = 1;
@@ -2390,7 +2552,7 @@ function setupInitialData() {
 
   // 3. tbl_kategori — 4 kategori standard
   var katSheet = _ensureSheet('tbl_kategori',
-    ['id','kod','nama','jantina','umin','umax','kuota_individu','kuota_kumpulan','warna','aktif','created_at']);
+    ['id','kod','nama','jantina','umin','umax','kuota_individu','kuota_kumpulan','kuota_terbuka','warna','aktif','created_at']);
   if (katSheet.getLastRow() <= 1) {
     katSheet.appendRow(['KAT-L1','L1','Lelaki Bawah 12', 'L',7,11,3,1,'#4F8EF7',true,new Date()]);
     katSheet.appendRow(['KAT-L2','L2','Lelaki Bawah 15', 'L',12,14,3,1,'#10B981',true,new Date()]);
@@ -3089,7 +3251,12 @@ function getPendaftaranStatus() {
     var s      = getSettings();
     var sData  = (typeof s === 'string' ? JSON.parse(s) : s).data || {};
     var buka   = sData.pendaftaran_buka !== false;
-    var tarikhTutup = (sData.tarikh_tutup_daftar || '').toString().trim();
+    // Normalise tarikh: ambil YYYY-MM-DD sahaja tanpa kira format asal
+    var _rawTarikh = (sData.tarikh_tutup_daftar || '').toString().trim();
+    // Jika format ISO '2026-03-28T...' atau Date.toString() → ambil 10 char pertama
+    var tarikhTutup = _rawTarikh.length >= 10
+      ? _rawTarikh.substring(0, 10)  // '2026-03-28'
+      : _rawTarikh;
     var masaTutup   = (sData.masa_tutup_daftar   || '23:59').toString().trim();
 
     var tarikhSukan = _tarikhSukanStr();
@@ -3100,7 +3267,12 @@ function getPendaftaranStatus() {
     if (!tarikhTutup) return JSON.stringify(result);
 
     // Bina datetime tutup
-    var dtTutup = new Date(tarikhTutup + 'T' + masaTutup + ':00');
+    // Normalize masaTutup ke HH:MM — elak format salah seperti '10:16 AM'
+    var _masaNorm = (function(m){
+      var match = m && m.match(/^(\d{1,2}:\d{2})/);
+      return match ? match[1] : '23:59';
+    })(masaTutup);
+    var dtTutup = new Date(tarikhTutup + 'T' + _masaNorm + ':00');
     var dtNow   = new Date();
     var diff    = dtTutup - dtNow; // ms
 
