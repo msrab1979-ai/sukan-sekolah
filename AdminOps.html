@@ -141,6 +141,7 @@ select.form-control{cursor:pointer;}
 
 /* TOAST */
 #toast-container{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast.success{background:#059669}.toast.error{background:#DC2626}.toast.warn{background:#D97706}.toast.info{background:#1E3A5F}
 .toast{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,0.12);animation:slideUp 0.3s ease;pointer-events:auto;}
 .toast.success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;}
 .toast.error{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;}
@@ -207,12 +208,14 @@ select.form-control{cursor:pointer;}
   <div class="sidebar-section">Acara & Pendaftaran</div>
   <div class="nav-item" onclick="goTab('acara')" id="nav-acara"><span class="icon">🏃</span>Jana Acara</div>
   <div class="nav-item" onclick="goTab('pendaftaran')" id="nav-pendaftaran"><span class="icon">📋</span>Pendaftaran</div>
+  <div class="nav-item" onclick="goTab('semak')" id="nav-semak"><span class="icon">✅</span>Semak Pendaftaran</div>
 
   <div class="sidebar-section">Undian Lorong</div>
   <div class="nav-item" onclick="goTab('heat')" id="nav-heat"><span class="icon">🔥</span>Heat & List</div>
 
   <div class="sidebar-section">Laporan</div>
-  <div class="nav-item" onclick="goTab('laporan')" id="nav-laporan"><span class="icon">📄</span>Laporan Ops</div>
+  <div class="nav-item" onclick="goTab('jadual')" id="nav-jadual"><span class="icon">📅</span>Jadual</div>
+    <div class="nav-item" onclick="goTab('laporan')" id="nav-laporan"><span class="icon">🖨️</span>Cetakan</div>
 </nav>
 
 <!-- MAIN -->
@@ -255,14 +258,8 @@ select.form-control{cursor:pointer;}
       </div>
     </div>
 
-    <!-- Ringkasan Rumah -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-      <div class="card">
-        <div class="card-header"><span class="card-title">🏠 Penyertaan Mengikut Rumah</span></div>
-        <div class="card-body" id="dash-rumah-list">
-          <div style="text-align:center;padding:20px;color:#94A3B8;">Memuatkan...</div>
-        </div>
-      </div>
+    <!-- Tindakan Cepat -->
+    <div>
       <div class="card">
         <div class="card-header"><span class="card-title">⚡ Tindakan Cepat</span></div>
         <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
@@ -486,6 +483,37 @@ select.form-control{cursor:pointer;}
 
   <!-- ═══ UNDIAN LORONG ═══ -->
   <!-- ═══ HEAT & STARTING LIST ═══ -->
+  <!-- ═══ SEMAK KELENGKAPAN ═══ -->
+  <div id="pane-semak" class="tab-pane">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 style="font-size:20px;font-weight:800;margin:0 0 4px;">✅ Semak Pendaftaran</h1>
+        <p style="font-size:13px;color:#64748B;margin:0;">Status pendaftaran setiap rumah mengikut acara dan kategori</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <select class="form-control" id="semak-flt-kat" onchange="renderSemak()" style="min-width:160px;">
+          <option value="">Semua Kategori</option>
+        </select>
+        <select class="form-control" id="semak-flt-jenis" onchange="renderSemak()">
+          <option value="">Semua Jenis</option>
+          <option value="INDIVIDU">Individu</option>
+          <option value="KUMPULAN">Kumpulan</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="loadSemak()">🔄 Refresh</button>
+      </div>
+    </div>
+    <!-- Legend -->
+    <div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#D1FAE5;border:1px solid #6EE7B7;"></span>Lengkap</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#FEF3C7;border:1px solid #FCD34D;"></span>Separuh</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#FEE2E2;border:1px solid #FCA5A5;"></span>Tiada / Tidak Lengkap</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#F1F5F9;border:1px solid #CBD5E1;"></span>Tidak Aktif</div>
+    </div>
+    <div id="semak-container" style="overflow-x:auto;">
+      <div style="text-align:center;padding:40px;color:#94A3B8;font-size:14px;">Klik Refresh untuk muatkan data...</div>
+    </div>
+  </div>
+
   <div id="pane-heat" class="tab-pane">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
       <h1 style="font-size:20px;font-weight:800;margin:0;">🔥 Heat &amp; Starting List</h1>
@@ -612,31 +640,135 @@ select.form-control{cursor:pointer;}
   </div>
 
   <!-- ═══ LAPORAN OPS ═══ -->
+  <div id="pane-jadual" class="tab-pane">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 style="font-size:20px;font-weight:800;margin:0 0 4px;">📅 Jadual Kejohanan</h1>
+        <p style="font-size:13px;color:#64748B;margin:0;">Urus jadual acara untuk paparan umum</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer;background:#F8FAFC;border:1px solid #E2E8F0;padding:8px 14px;border-radius:8px;">
+          <span>Papar di Laman Utama</span>
+          <div style="position:relative;width:40px;height:22px;">
+            <input type="checkbox" id="toggle-jadual-awam" onchange="toggleJadualAwam(this.checked)" style="opacity:0;width:100%;height:100%;position:absolute;cursor:pointer;margin:0;z-index:1;">
+            <div id="toggle-jadual-track" style="position:absolute;inset:0;background:#CBD5E1;border-radius:11px;transition:background .2s;"></div>
+            <div id="toggle-jadual-thumb" style="position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);"></div>
+          </div>
+        </label>
+        <button class="btn btn-primary btn-sm" onclick="bukaFormJadual()">+ Tambah Jadual</button>
+      </div>
+    </div>
+
+    <!-- Form tambah/edit jadual -->
+    <div id="jadual-form-wrap" style="display:none;margin-bottom:20px;" class="card">
+      <div class="card-header"><span class="card-title" id="jadual-form-title">Tambah Jadual Acara</span></div>
+      <div class="card-body">
+        <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+          <div style="font-size:12px;font-weight:700;color:#1D4ED8;margin-bottom:10px;">1 - Pilih Acara</div>
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">Filter Kategori</label>
+              <select class="form-control" id="jform-filter-kat" onchange="onJadualKatFilter()">
+                <option value="">Semua Kategori</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">Pilih Acara *</label>
+              <select class="form-control" id="jform-no-acara" onchange="onJadualAcaraChange()">
+                <option value="">-- Pilih Acara --</option>
+              </select>
+            </div>
+          </div>
+          <div id="jform-acara-preview" style="display:none;margin-top:10px;background:#fff;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;flex-wrap:wrap;gap:16px;">
+            <div><div style="font-size:10px;color:#64748B;font-weight:700;">NAMA ACARA</div><div style="font-weight:700;font-size:13px;" id="jform-nama-display">-</div></div>
+            <div><div style="font-size:10px;color:#64748B;font-weight:700;">KATEGORI</div><div id="jform-kat-display" style="font-weight:700;font-size:13px;color:#7C3AED;">-</div></div>
+            <div><div style="font-size:10px;color:#64748B;font-weight:700;">JENIS</div><div id="jform-jenis-display" style="font-weight:700;font-size:13px;">-</div></div>
+          </div>
+          <input type="hidden" id="jform-nama">
+          <input type="hidden" id="jform-kat">
+        </div>
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+          <div style="font-size:12px;font-weight:700;color:#15803D;margin-bottom:10px;">2 - Tetapkan Masa &amp; Lokasi</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;">
+            <div class="form-group" style="margin:0;"><label class="form-label">Tarikh *</label><input class="form-control" type="date" id="jform-tarikh"></div>
+            <div class="form-group" style="margin:0;"><label class="form-label">Masa Mula</label><input class="form-control" type="time" id="jform-masa"></div>
+            <div class="form-group" style="margin:0;"><label class="form-label">Lokasi</label><input class="form-control" id="jform-lokasi" placeholder="cth: Trek Utama, Padang B"></div>
+          </div>
+        </div>
+        <input type="hidden" id="jform-id">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="simpanJadual()">Simpan Jadual</button>
+          <button class="btn btn-ghost btn-sm" onclick="tutupFormJadual()">Batal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jadual table -->
+    <div class="card">
+      <div class="card-header" style="justify-content:space-between;">
+        <span class="card-title">📋 Senarai Jadual</span>
+        <button class="btn btn-ghost btn-sm" onclick="loadJadual()">🔄 Refresh</button>
+      </div>
+      <div class="card-body" style="padding:0;overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr style="background:#1E3A5F;color:#fff;">
+            <th style="padding:10px 12px;text-align:left;width:80px;">No. Acara</th>
+            <th style="padding:10px 12px;text-align:left;">Nama Acara</th>
+            <th style="padding:10px 12px;text-align:center;width:80px;">Kategori</th>
+            <th style="padding:10px 12px;text-align:center;width:100px;">Tarikh</th>
+            <th style="padding:10px 12px;text-align:center;width:80px;">Masa</th>
+            <th style="padding:10px 12px;text-align:center;width:120px;">Status</th>
+            <th style="padding:10px 12px;text-align:center;width:80px;">Tindakan</th>
+          </tr></thead>
+          <tbody id="jadual-tbody">
+            <tr><td colspan="7" style="text-align:center;padding:30px;color:#94A3B8;">Memuatkan...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <div id="pane-laporan" class="tab-pane">
-    <h1 style="font-size:20px;font-weight:800;margin:0 0 20px;">📄 Laporan Operasi</h1>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
-      <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''" onclick="cetakLaporan('murid')">
-        <div class="card-body" style="text-align:center;padding:24px;">
-          <div style="font-size:32px;margin-bottom:12px;">👤</div>
-          <div style="font-weight:700;margin-bottom:4px;">Senarai Murid</div>
-          <div style="font-size:12px;color:#64748B;">Semua murid mengikut rumah & kategori</div>
-          <button class="btn btn-ghost btn-sm" style="margin-top:12px;">🖨️ Cetak</button>
-        </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 style="font-size:20px;font-weight:800;margin:0 0 4px;">🖨️ Cetakan</h1>
+        <p style="font-size:13px;color:#64748B;margin:0;">Cetak laporan dan senarai untuk kegunaan hari sukan</p>
       </div>
-      <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''" onclick="cetakLaporan('pendaftaran')">
-        <div class="card-body" style="text-align:center;padding:24px;">
-          <div style="font-size:32px;margin-bottom:12px;">📋</div>
-          <div style="font-weight:700;margin-bottom:4px;">Senarai Pendaftaran</div>
-          <div style="font-size:12px;color:#64748B;">Semua pendaftaran acara mengikut rumah</div>
-          <button class="btn btn-ghost btn-sm" style="margin-top:12px;">🖨️ Cetak</button>
-        </div>
+    </div>
+
+
+
+    <div class="card">
+      <div class="card-header" style="justify-content:space-between;">
+        <span class="card-title">🏃 Start List</span>
+        <button class="btn btn-ghost btn-sm" onclick="loadCetakStartList()">🔄 Refresh</button>
       </div>
-      <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''" onclick="cetakLaporan('lorong')">
-        <div class="card-body" style="text-align:center;padding:24px;">
-          <div style="font-size:32px;margin-bottom:12px;">🎰</div>
-          <div style="font-weight:700;margin-bottom:4px;">Jadual Lorong</div>
-          <div style="font-size:12px;color:#64748B;">Susunan lorong semua acara track</div>
-          <button class="btn btn-ghost btn-sm" style="margin-top:12px;">🖨️ Cetak</button>
+      <div class="card-body">
+        <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-end;">
+          <div class="form-group" style="margin:0;min-width:160px;">
+            <label class="form-label">Kategori</label>
+            <select class="form-control" id="ct-kat" onchange="filterCetakAcara()">
+              <option value="">-- Semua --</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;min-width:200px;">
+            <label class="form-label">Acara</label>
+            <select class="form-control" id="ct-acara" onchange="loadCetakStartList()">
+              <option value="">-- Pilih Acara --</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;min-width:150px;">
+            <label class="form-label">Heat</label>
+            <select class="form-control" id="ct-heat" onchange="renderCetakStartList()">
+              <option value="">-- Pilih Heat --</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="cetakStartList()">🖨️ Cetak Satu Heat</button>
+          <button class="btn btn-ghost btn-sm" onclick="cetakSemuaHeat()">🖨️ Cetak Semua Heat</button>
+        </div>
+        <div id="ct-label" style="font-size:12px;color:#64748B;margin-bottom:10px;">—</div>
+        <div id="ct-table-wrap" style="overflow-x:auto;">
+          <div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px;">Pilih acara untuk muat data...</div>
         </div>
       </div>
     </div>
@@ -808,9 +940,9 @@ select.form-control{cursor:pointer;}
 
 <!-- ═══ JAVASCRIPT ═══ -->
 <script>
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // GAS WRAPPER
-// ═══════════════════════════════════════════
+// -------------------------------------------
 function gasRun(fn, ...args) {
   return new Promise((resolve, reject) => {
     if (typeof google === 'undefined') {
@@ -836,9 +968,9 @@ function gasResult(raw) {
   return raw;
 }
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // MOCK DATA (DEV MODE)
-// ═══════════════════════════════════════════
+// -------------------------------------------
 function getMockData(fn, args) {
   const rumahList = [
     {id_rumah:'MERAH',nama_rumah:'Rumah Merah',warna:'#EF4444'},
@@ -896,9 +1028,9 @@ function getMockData(fn, args) {
   return (map[fn] || (() => ({success:false, message:'Fungsi tidak dijumpai: '+fn})))();
 }
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // STATE
-// ═══════════════════════════════════════════
+// -------------------------------------------
 const S = {
   rumah: [], kategori: [], murid: [], acaraList: [], acaraMaster: [], regList: [],
   muridFiltered: [], regFiltered: [],
@@ -906,13 +1038,13 @@ const S = {
   editMuridId: null,
   lorongDraw: [], lorongAcaraId: null,
   heatList: [], pesertaHeat: [], heatAcaraId: null,
-  settings: {}, // ← settings dari tbl_settings
+  settings: {}, // ? settings dari tbl_settings
   SCRIPT_URL: ''
 };
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // INIT
-// ═══════════════════════════════════════════
+// -------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
   if (typeof google !== 'undefined') {
     google.script.run.withSuccessHandler(u => S.SCRIPT_URL = u).getScriptUrl();
@@ -942,7 +1074,7 @@ async function loadMasterData() {
   const jkat = document.getElementById('jana-kat');
   if (jkat) {
     jkat.innerHTML = '<option value="">-- Semua Kategori --</option>';
-    S.kategori.forEach(k => jkat.innerHTML += `<option value="${k.kod||k.id}">${k.kod} — ${k.nama||''}</option>`);
+    S.kategori.forEach(k => jkat.innerHTML += `<option value="${k.kod||k.id}">${k.kod} ? ${k.nama||''}</option>`);
   }
 }
 
@@ -965,13 +1097,13 @@ function populateKatDropdowns() {
     if (!el) return;
     const orig = el.options[0].outerHTML;
     el.innerHTML = orig;
-    katSrc.forEach(k => el.innerHTML += `<option value="${k.id||k.id_kategori}">${k.kod||k.id_kategori} — ${k.nama||k.nama_kategori||''}</option>`);
+    katSrc.forEach(k => el.innerHTML += `<option value="${k.id||k.id_kategori}">${k.kod||k.id_kategori} ? ${k.nama||k.nama_kategori||''}</option>`);
   });
 }
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // NAV
-// ═══════════════════════════════════════════
+// -------------------------------------------
 function goTab(tab) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -984,6 +1116,9 @@ function goTab(tab) {
     murid: loadMurid,
     acara: loadAcara,
     pendaftaran: loadPendaftaran,
+    semak: loadSemak,
+    jadual: loadJadual,
+    laporan: initCetakan,
     heat: loadHeat
   };
   if (loaders[tab]) loaders[tab]();
@@ -999,42 +1134,46 @@ function refreshTab() {
 
 function goToSetup() {
   const url = S.SCRIPT_URL || '?page=admin-setup';
-  window.top.location.href = S.SCRIPT_URL ? S.SCRIPT_URL+'?page=admin-setup' : url;
+  window.location.assign(S.SCRIPT_URL ? S.SCRIPT_URL+'?page=admin-setup' : url);
 }
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // DASHBOARD
-// ═══════════════════════════════════════════
+// -------------------------------------------
 async function loadDashboard() {
   const r = await gas('getDashboardOps');
   if (!r.success) return;
   const d = r.data || {};
-  document.getElementById('d-murid').textContent = d.murid ?? '—';
-  document.getElementById('d-reg').textContent = d.pendaftaran ?? '—';
-  document.getElementById('d-acara').textContent = d.acara ?? '—';
-  document.getElementById('d-lorong').textContent = d.lorong ?? '—';
+  document.getElementById('d-murid').textContent = d.murid ?? '?';
+  document.getElementById('d-reg').textContent = d.pendaftaran ?? '?';
+  document.getElementById('d-acara').textContent = d.acara ?? '?';
+  document.getElementById('d-lorong').textContent = d.lorong ?? '?';
 
   const rumahData = r.rumah || [];
   const el = document.getElementById('dash-rumah-list');
+  if (!el) return; // card dibuang ? skip
   if (!rumahData.length) { el.innerHTML = '<div style="text-align:center;color:#94A3B8;padding:20px;font-size:13px;">Tiada data</div>'; return; }
   const max = Math.max(...rumahData.map(x => x.count || 0), 1);
-  el.innerHTML = rumahData.map(r => `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-      <div style="width:10px;height:10px;border-radius:50%;background:${r.warna};flex-shrink:0;"></div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:12px;font-weight:600;margin-bottom:3px;">${r.nama_rumah}</div>
-        <div style="background:#F1F5F9;border-radius:4px;height:6px;overflow:hidden;">
-          <div style="height:100%;border-radius:4px;background:${r.warna};width:${Math.round((r.count/max)*100)}%;transition:width 0.5s;"></div>
-        </div>
-      </div>
-      <div style="font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#1E293B;width:24px;text-align:right;">${r.count}</div>
-    </div>
-  `).join('');
+  el.innerHTML = rumahData.map(r => {
+    const nm = r.nama_rumah || r.nama || r.id_rumah || '?';
+    const cnt = r.count ?? r.mata ?? 0;
+    const w = r.warna || '#6B7280';
+    const pct = Math.round((cnt/max)*100);
+    return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:10px 12px;background:#F8FAFC;border-radius:8px;">`
+      + `<div style="width:12px;height:12px;border-radius:50%;background:${w};flex-shrink:0;"></div>`
+      + `<div style="flex:1;min-width:0;">`
+      + `<div style="font-size:13px;font-weight:600;margin-bottom:4px;">${nm}</div>`
+      + `<div style="background:#E2E8F0;border-radius:4px;height:7px;overflow:hidden;">`
+      + `<div style="height:100%;border-radius:4px;background:${w};width:${pct}%;transition:width 0.5s;"></div>`
+      + `</div></div>`
+      + `<div style="font-size:14px;font-weight:700;color:#1E293B;min-width:30px;text-align:right;">${cnt}</div>`
+      + `</div>`;
+  }).join('');
 }
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // MURID CRUD
-// ═══════════════════════════════════════════
+// -------------------------------------------
 async function loadMurid() {
   showLoading(true,'Memuatkan murid...');
   const raw = await gas('getMurid');
@@ -1091,29 +1230,29 @@ function renderMurid() {
   tbody.innerHTML = page.map((m, i) => {
     const rumahBadge = m.nama_rumah
       ? `<span style="background:#EFF6FF;color:#1D4ED8;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;">${m.nama_rumah}</span>`
-      : `<span style="color:#94A3B8;font-size:11px;">—</span>`;
+      : `<span style="color:#94A3B8;font-size:11px;">?</span>`;
     return `<tr>
       <td style="color:#94A3B8;font-size:12px;">${start+i+1}</td>
       <td>
         <div style="font-weight:600;font-size:13px;">${m.nama}</div>
-        <div style="font-size:11px;color:#94A3B8;font-family:monospace;">${m.no_kp||'—'}</div>
+        <div style="font-size:11px;color:#94A3B8;font-family:monospace;">${m.no_kp||'?'}</div>
       </td>
       <td style="text-align:center;">
-        <span style="background:#F1F5F9;color:#475569;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;">${m.darjah||'—'}</span>
+        <span style="background:#F1F5F9;color:#475569;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;">${m.darjah||'?'}</span>
       </td>
-      <td style="font-size:12px;color:#475569;">${m.kelas||'—'}</td>
+      <td style="font-size:12px;color:#475569;">${m.kelas||'?'}</td>
       <td>${rumahBadge}</td>
       <td>
         <div style="display:flex;gap:4px;">
-          <button class="btn btn-ghost btn-xs" onclick="editMurid('${m.id||m.no_kp}')">✏️ Edit</button>
-          <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="deleteMurid('${m.id||m.no_kp}','${m.nama}')">🗑️</button>
+          <button class="btn btn-ghost btn-xs" onclick="editMurid('${m.id||m.no_kp}')">? Edit</button>
+          <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="deleteMurid('${m.id||m.no_kp}','${m.nama}')">?</button>
         </div>
       </td>
     </tr>`;
   }).join('');
 
   const total = S.muridFiltered.length;
-  document.getElementById('murid-footer').textContent = `${start+1}–${Math.min(start+S.perPage,total)} daripada ${total} murid`;
+  document.getElementById('murid-footer').textContent = `${start+1}?${Math.min(start+S.perPage,total)} daripada ${total} murid`;
   renderPagination('murid-pagination', total, S.muridPage, S.perPage, p => { S.muridPage=p; renderMurid(); });
 }
 
@@ -1175,9 +1314,9 @@ function deleteMurid(id, nama) {
   });
 }
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // IMPORT CSV
-// ═══════════════════════════════════════════
+// -------------------------------------------
 function openImportModal() { openModal('modal-import'); }
 
 function previewImport() {
@@ -1209,12 +1348,12 @@ async function uploadImport() {
     const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
     showLoading(false);
     if (r && r.success) {
-      let msg = `✅ ${r.count||0} murid berjaya diimport`;
+      let msg = `? ${r.count||0} murid berjaya diimport`;
       if (r.skipped > 0) msg += `, ${r.skipped} diskip`;
       showToast(msg, 'success');
       if (r.errors && r.errors.length > 0) {
         console.warn('Import warnings:', r.errors);
-        showToast('⚠️ ' + r.errors[0], 'warn');
+        showToast('? ' + r.errors[0], 'warn');
       }
       closeModal('modal-import');
       loadMurid();
@@ -1225,9 +1364,9 @@ async function uploadImport() {
   reader.readAsText(file);
 }
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // JANA ACARA
-// ═══════════════════════════════════════════
+// -------------------------------------------
 async function loadAcara() {
   const [jRaw, mRaw] = await Promise.all([
     gas('getAcaraJana'),
@@ -1250,7 +1389,7 @@ function renderAcaraMaster(list) {
     const katArr = Array.isArray(a.kategori) ? a.kategori : [a.kategori];
     return `<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;border:1px solid #E2E8F0;margin-bottom:6px;font-size:12px;transition:all 0.15s;" onmouseover="this.style.background='#F0F9FF'" onmouseout="this.style.background=''">
       <input type="checkbox" value="${a.id}" data-nama="${a.nama}" data-jenis="${a.jenis}" data-format="${a.format||'AUTO'}" data-lorong="${a.lorong||false}" style="accent-color:#3B82F6;">
-      <span style="flex:1;">${a.emoji||'🏃'} ${a.nama}</span>
+      <span style="flex:1;">${a.emoji||'?'} ${a.nama}</span>
       <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:#EFF6FF;color:#1D4ED8;">${katArr.join(',')}</span>
       <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:#F5F3FF;color:#6D28D9;">${a.jenis||'TRACK'}</span>
     </label>`;
@@ -1277,12 +1416,12 @@ function renderAcara(list) {
   tbody.innerHTML = list.map(a => `<tr>
     <td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;">${a.no_acara}</span></td>
     <td style="font-weight:600;">${a.nama_acara}</td>
-    <td><span class="badge badge-blue">${a.id_kategori||a.kategori||'—'}</span></td>
+    <td><span class="badge badge-blue">${a.id_kategori||a.kategori||'?'}</span></td>
     <td><span class="badge ${a.jenis==='TRACK'?'badge-purple':'badge-green'}">${a.jenis||'TRACK'}</span></td>
     <td><span class="badge badge-gray">${a.format||'FINAL'}</span></td>
-    <td>${a.guna_lorong?'✅':'—'}</td>
+    <td>${a.guna_lorong?'?':'?'}</td>
     <td>
-      <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="padamAcara('${a.id_acara||a.no_acara}','${a.nama_acara}')">🗑️</button>
+      <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="padamAcara('${a.id_acara||a.no_acara}','${a.nama_acara}')">?</button>
     </td>
   </tr>`).join('');
 }
@@ -1308,7 +1447,7 @@ async function janaAcara() {
     if (r && r.success) success++; else fail++;
   }
   showLoading(false);
-  if (success) showToast(`✅ ${success} acara berjaya dijana${fail?' ('+fail+' gagal)':''}`, 'success');
+  if (success) showToast(`? ${success} acara berjaya dijana${fail?' ('+fail+' gagal)':''}`, 'success');
   else showToast('Gagal jana acara','error');
   loadAcara();
 }
@@ -1341,9 +1480,9 @@ async function padamSemuaAcara() {
   }, 'Padam Semua');
 }
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // PENDAFTARAN
-// ═══════════════════════════════════════════
+// -------------------------------------------
 async function loadPendaftaran() {
   showLoading(true,'Memuatkan pendaftaran...');
   const r = gasResult(await gas('getPendaftaran'));
@@ -1365,6 +1504,662 @@ function filterReg() {
   });
   S.regPage = 1;
   renderReg();
+}
+
+// -------------------------------------------------------
+// SEMAK KELENGKAPAN
+// -------------------------------------------------------
+async function loadSemak() {
+  document.getElementById('semak-container').innerHTML =
+    '<div style="text-align:center;padding:40px;color:#94A3B8;">? Memuatkan data...</div>';
+
+  // Load semua data yang diperlukan serentak
+  const [rAcara, rInd, rKump, rRumah] = await Promise.all([
+    gas('getAcaraJana'),
+    gas('getPendaftaran'),
+    gas('getKumpulan'),
+    gas('getRumah')
+  ]);
+
+  const acaraList = (rAcara && (rAcara.acara || rAcara.data)) || [];
+  const indList   = (rInd && rInd.pendaftaran) || [];
+  const kumpList  = (rKump && (rKump.kumpulan || rKump.data)) || [];
+  const rumahRaw  = (typeof rRumah === 'string' ? JSON.parse(rRumah) : rRumah);
+  const rumahList = (rumahRaw && rumahRaw.data) || [];
+
+  if (!acaraList.length || !rumahList.length) {
+    document.getElementById('semak-container').innerHTML =
+      '<div style="text-align:center;padding:40px;color:#EF4444;">? Tiada data acara atau rumah.</div>';
+    return;
+  }
+
+  // Populate kategori dropdown
+  const katSel = document.getElementById('semak-flt-kat');
+  const kats   = [...new Set(acaraList.map(a => a.id_kategori||'').filter(Boolean))].sort();
+  const curKat = katSel.value;
+  katSel.innerHTML = '<option value="">Semua Kategori</option>' +
+    kats.map(k => `<option value="${k}" ${k===curKat?'selected':''}>${k}</option>`).join('');
+
+  // Simpan dalam S untuk renderSemak
+  S._semakAcara  = acaraList;
+  S._semakInd    = indList;
+  S._semakKump   = kumpList;
+  S._semakRumah  = rumahList;
+
+  renderSemak();
+}
+
+function renderSemak() {
+  const con = document.getElementById('semak-container');
+  if (!S._semakAcara) return;
+
+  const fKat   = document.getElementById('semak-flt-kat').value;
+  const fJenis = document.getElementById('semak-flt-jenis').value;
+  const normK  = s => (s||'').toString().trim().toUpperCase();
+
+  // Filter acara
+  let acara = S._semakAcara.filter(a => a.status !== 'BATAL');
+  if (fKat)   acara = acara.filter(a => normK(a.id_kategori) === normK(fKat));
+  if (fJenis) acara = acara.filter(a => normK(a.jenis_pendaftaran||'INDIVIDU') === fJenis);
+
+  if (!acara.length) {
+    con.innerHTML = '<div style="text-align:center;padding:40px;color:#94A3B8;">Tiada acara untuk paparan</div>';
+    return;
+  }
+
+  // Bina lookup: id_acara + id_rumah ? bilangan pendaftaran
+  const normR = s => (s||'').toString().trim().toUpperCase();
+  const indMap  = {};
+  S._semakInd.filter(p => p.status === 'AKTIF').forEach(p => {
+    const k = p.id_acara + '|' + normR(p.id_rumah);
+    indMap[k] = (indMap[k]||0) + 1;
+  });
+  const kumpMap = {};
+  S._semakKump.filter(k => k.status === 'AKTIF').forEach(k => {
+    const key = k.id_acara + '|' + normR(k.id_rumah);
+    kumpMap[key] = (kumpMap[key]||0) + 1;
+  });
+
+  const rumah = S._semakRumah;
+
+  // Bina jadual
+  let h = '<table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px;">';
+  // Header ? nama rumah
+  h += '<thead><tr style="background:#1E3A5F;color:#fff;">';
+  h += '<th style="padding:10px 12px;text-align:left;font-weight:600;min-width:200px;">Acara</th>';
+  h += '<th style="padding:10px 8px;text-align:center;font-weight:600;white-space:nowrap;">Kat</th>';
+  h += '<th style="padding:10px 8px;text-align:center;font-weight:600;white-space:nowrap;">Jenis</th>';
+  rumah.forEach(r => {
+    h += '<th style="padding:10px 8px;text-align:center;font-weight:600;white-space:nowrap;">';
+    h += (r.nama||r.id_rumah||'?') + '</th>';
+  });
+  h += '</tr></thead><tbody>';
+
+  // Rows
+  acara.forEach((a, idx) => {
+    const jenis   = normK(a.jenis_pendaftaran||'INDIVIDU');
+    const isKump  = jenis === 'KUMPULAN';
+    const map     = isKump ? kumpMap : indMap;
+    const kuota   = isKump ? (parseInt(a.kuota_pasukan_rumah)||0) : (parseInt(a.kuota_ind_rumah)||0);
+    const bg      = idx % 2 === 0 ? '#fff' : '#F8FAFC';
+
+    h += `<tr style="background:${bg};">`;
+    h += `<td style="padding:9px 12px;font-weight:600;">${a.nama_acara||'?'}</td>`;
+    h += `<td style="padding:9px 8px;text-align:center;"><span style="background:#EFF6FF;color:#1D4ED8;padding:2px 6px;border-radius:8px;font-size:11px;">${a.id_kategori||'?'}</span></td>`;
+    h += `<td style="padding:9px 8px;text-align:center;"><span style="background:${isKump?'#F0FDF4':'#FEF3C7'};color:${isKump?'#166534':'#92400E'};padding:2px 6px;border-radius:8px;font-size:11px;">${jenis}</span></td>`;
+
+    rumah.forEach(r => {
+      const rid  = normR(r.id||r.id_rumah||'');
+      const cnt  = map[a.id_acara + '|' + rid] || 0;
+      const max  = kuota > 0 ? kuota : (isKump ? 1 : 3);
+      const pct  = Math.min(100, Math.round(cnt/max*100));
+      let bg2, icon, txt;
+
+      if (cnt === 0) {
+        bg2 = '#FEE2E2'; icon = '?'; txt = '0';
+      } else if (cnt >= max) {
+        bg2 = '#D1FAE5'; icon = '?'; txt = cnt + '/' + max;
+      } else {
+        bg2 = '#FEF3C7'; icon = '~'; txt = cnt + '/' + max;
+      }
+
+      h += `<td style="padding:8px;text-align:center;">`;
+      h += `<div style="background:${bg2};border-radius:6px;padding:4px 6px;display:inline-flex;flex-direction:column;align-items:center;min-width:44px;">`;
+      h += `<span style="font-size:13px;">${icon}</span>`;
+      h += `<span style="font-size:10px;font-weight:700;">${txt}</span>`;
+      h += `</div></td>`;
+    });
+
+    h += '</tr>';
+  });
+
+  h += '</tbody></table>';
+
+  // Summary row
+  let total_ok = 0, total_half = 0, total_tiada = 0;
+  acara.forEach(a => {
+    const jenis = normK(a.jenis_pendaftaran||'INDIVIDU');
+    const map   = jenis === 'KUMPULAN' ? kumpMap : indMap;
+    const kuota = jenis === 'KUMPULAN' ? (parseInt(a.kuota_pasukan_rumah)||1) : (parseInt(a.kuota_ind_rumah)||3);
+    rumah.forEach(r => {
+      const rid = normR(r.id||r.id_rumah||'');
+      const cnt = map[a.id_acara + '|' + rid] || 0;
+      if (cnt >= kuota) total_ok++;
+      else if (cnt > 0) total_half++;
+      else total_tiada++;
+    });
+  });
+
+  const totalCells = acara.length * rumah.length;
+  const pctOk = totalCells ? Math.round(total_ok/totalCells*100) : 0;
+
+  h = `<div style="display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;">`
+    + `<div style="background:#D1FAE5;border-radius:8px;padding:8px 16px;font-size:13px;"><strong>${total_ok}</strong> Lengkap</div>`
+    + `<div style="background:#FEF3C7;border-radius:8px;padding:8px 16px;font-size:13px;"><strong>${total_half}</strong> Separuh</div>`
+    + `<div style="background:#FEE2E2;border-radius:8px;padding:8px 16px;font-size:13px;"><strong>${total_tiada}</strong> Tiada</div>`
+    + `<div style="background:#EFF6FF;border-radius:8px;padding:8px 16px;font-size:13px;"><strong>${pctOk}%</strong> Siap keseluruhan</div>`
+    + `</div>` + h;
+
+  con.innerHTML = h;
+}
+
+// -------------------------------------------------------
+// CETAKAN ? START LIST
+// -------------------------------------------------------
+async function initCetakan() {
+  const katSel = document.getElementById('ct-kat');
+  if (!katSel) return;
+  // Muat data acara jika belum ada
+  if (!S.acaraList || !S.acaraList.length) {
+    try {
+      const raw = await gas('getAcaraJana');
+      const r   = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+      if (r && r.success) S.acaraList = r.acara || r.data || [];
+    } catch(e) { console.warn('initCetakan: gagal load acara', e); }
+  }
+  const kats = [...new Set((S.acaraList||[]).map(a=>a.id_kategori||'').filter(Boolean))].sort();
+  const cur  = katSel.value;
+  katSel.innerHTML = '<option value="">-- Semua --</option>' +
+    kats.map(k=>`<option value="${k}" ${k===cur?'selected':''}>${k}</option>`).join('');
+  filterCetakAcara();
+}
+
+function filterCetakAcara() {
+  const kat = document.getElementById('ct-kat').value;
+  const sel = document.getElementById('ct-acara');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Pilih Acara --</option>';
+  (S.acaraList||[]).filter(a => !kat || a.id_kategori === kat)
+    .forEach(a => sel.innerHTML += `<option value="${a.id_acara}" ${a.id_acara===cur?'selected':''}>${a.nama_acara} (${a.id_kategori})</option>`);
+  if (!sel.value) {
+    document.getElementById('ct-heat').innerHTML = '<option value="">-- Pilih Heat --</option>';
+    document.getElementById('ct-table-wrap').innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px;">Pilih acara...</div>';
+  }
+}
+
+async function loadCetakStartList() {
+  const acaraId = document.getElementById('ct-acara').value;
+  const heatSel = document.getElementById('ct-heat');
+  heatSel.innerHTML = '<option value="">-- Pilih Heat --</option>';
+  document.getElementById('ct-table-wrap').innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px;">Memuatkan...</div>';
+  if (!acaraId) {
+    document.getElementById('ct-table-wrap').innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px;">Pilih acara untuk muat data...</div>';
+    return;
+  }
+  showLoading(true,'Memuatkan heat...');
+  const r = await gas('getHeat', { id_acara: acaraId });
+  showLoading(false);
+  if (!r || !r.heat || !r.heat.length) {
+    document.getElementById('ct-table-wrap').innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px;">Tiada heat untuk acara ini. Jana heat dahulu.</div>';
+    return;
+  }
+  S._ctHeatList = r.heat.filter(h => h.status !== 'VOID');
+  S._ctPeserta  = r.peserta || [];
+  // Fallback jika peserta kosong
+  if (!S._ctPeserta.length && S._ctHeatList.length) {
+    for (const h of S._ctHeatList) {
+      const rH = await gas('getPesertaHeat', { id_heat: h.id_heat });
+      const rHp = (typeof rH==='string') ? JSON.parse(rH) : rH;
+      if (rHp && rHp.peserta && rHp.peserta.length) S._ctPeserta.push(...rHp.peserta);
+    }
+  }
+  S._ctHeatList.forEach(h => {
+    const label = `Heat ${h.no_heat} ? ${h.jenis}${h.status==='SELESAI'?' ?':''}`;
+    heatSel.innerHTML += `<option value="${h.id_heat}">${label}</option>`;
+  });
+  if (S._ctHeatList.length === 1) {
+    heatSel.value = S._ctHeatList[0].id_heat;
+    renderCetakStartList();
+  } else {
+    document.getElementById('ct-table-wrap').innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px;">Pilih heat untuk paparan...</div>';
+  }
+}
+
+function renderCetakStartList() {
+  const heatId  = document.getElementById('ct-heat').value;
+  const acaraId = document.getElementById('ct-acara').value;
+  const wrap    = document.getElementById('ct-table-wrap');
+  const lbl     = document.getElementById('ct-label');
+  if (!heatId || !S._ctHeatList) { wrap.innerHTML='<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px;">Pilih heat...</div>'; return; }
+  const heat   = S._ctHeatList.find(h => h.id_heat === heatId);
+  const acara  = (S.acaraList||[]).find(a => a.id_acara === acaraId);
+  const peserta= (S._ctPeserta||[]).filter(p => p.id_heat === heatId && p.status !== 'VOID');
+  const gunaLorong = acara && (acara.guna_lorong === true || acara.guna_lorong === 'TRUE');
+  lbl.textContent = heat ? `Heat ${heat.no_heat} . ${heat.jenis} . ${peserta.length} peserta` : '?';
+  const sorted = [...peserta].sort((a,b) => (parseInt(a.lorong||a.giliran)||99)-(parseInt(b.lorong||b.giliran)||99));
+  const rumahWarna = {};
+  (S.rumah||[]).forEach(r => rumahWarna[r.id||r.id_rumah] = r.warna||'#94A3B8');
+  wrap.innerHTML = _buildStartListHTML(acara, heat, sorted, gunaLorong, rumahWarna);
+}
+
+function _buildStartListHTML(acara, heat, peserta, gunaLorong, rumahWarna) {
+  var sekolah  = (S.settings && S.settings.nama_sekolah)      || 'SK SULTAN ISMAIL, KEMAMAN, TERENGGANU';
+  var kejohanan= (S.settings && S.settings.nama_pertandingan)  || 'KEJOHANAN SUKAN TAHUNAN';
+  var tarikh   = (S.settings && S.settings.tarikh_sukan)       || '';
+  var lokasi   = (S.settings && S.settings.lokasi)             || '';
+  var noAcara  = acara ? (acara.no_acara || '') : '';
+  var namaAcara= acara ? (acara.nama_acara || '?') : '?';
+  var katAcara = acara ? (acara.id_kategori || '') : '';
+  var heatNo   = heat  ? heat.no_heat : '';
+  var heatJenis= heat  ? heat.jenis   : '';
+  var heatMasa = heat  ? (heat.masa_mula || '') : '';
+  var posLabel = gunaLorong ? 'LORONG' : 'GILIRAN';
+  var totalPst = peserta.length;
+  var now      = new Date();
+  var cetakAt  = now.getDate()+'/'+(now.getMonth()+1)+'/'+now.getFullYear()+' '+
+                 String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+
+  var h = '<div id="sl-print-area" style="font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">';
+
+  // -- HEADER RASMI ------------------------------------------
+  h += '<div style="border-bottom:3px solid #1E3A5F;padding-bottom:12px;margin-bottom:16px;">';
+  h += '<div style="display:flex;align-items:flex-start;justify-content:space-between;">';
+  // Kiri: maklumat sekolah
+  h += '<div style="flex:1;">';
+  h += '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;">' + sekolah + '</div>';
+  h += '<div style="font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#1E3A5F;margin:4px 0 2px;">' + kejohanan + '</div>';
+  if (tarikh) h += '<div style="font-size:10px;color:#64748b;">' + tarikh + (lokasi ? ' &nbsp;|&nbsp; ' + lokasi : '') + '</div>';
+  h += '</div>';
+  // Kanan: no acara badge
+  h += '<div style="text-align:right;">';
+  h += '<div style="background:#1E3A5F;color:#fff;padding:8px 18px;border-radius:6px;display:inline-block;">';
+  h += '<div style="font-size:10px;letter-spacing:.5px;">NO. ACARA</div>';
+  h += '<div style="font-size:22px;font-weight:900;line-height:1;">' + (noAcara||'?') + '</div>';
+  h += '</div></div></div>';
+  h += '</div>';
+
+  // -- MAKLUMAT ACARA -----------------------------------------
+  h += '<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px 16px;margin-bottom:16px;">';
+  h += '<div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center;">';
+  h += '<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#94A3B8;">ACARA</div>';
+  h += '<div style="font-size:15px;font-weight:800;color:#1E3A5F;">' + namaAcara + '</div></div>';
+  if (katAcara) {
+    h += '<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#94A3B8;">KATEGORI</div>';
+    h += '<div style="font-size:14px;font-weight:700;color:#1E3A5F;">' + katAcara + '</div></div>';
+  }
+  h += '<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#94A3B8;">PUSINGAN</div>';
+  h += '<div style="font-size:14px;font-weight:700;color:#' + (heatJenis==='FINAL'?'166534':'1D4ED8') + ';">' + heatJenis + '</div></div>';
+  h += '<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#94A3B8;">HEAT</div>';
+  h += '<div style="font-size:14px;font-weight:700;color:#1E3A5F;">' + heatNo + '</div></div>';
+  if (heatMasa) {
+    h += '<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#94A3B8;">MASA MULA</div>';
+    h += '<div style="font-size:14px;font-weight:700;color:#1E3A5F;">' + heatMasa + '</div></div>';
+  }
+  h += '<div><div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#94A3B8;">PESERTA</div>';
+  h += '<div style="font-size:14px;font-weight:700;color:#1E3A5F;">' + totalPst + '</div></div>';
+  h += '</div></div>';
+
+  // -- JADUAL PESERTA -----------------------------------------
+  if (!peserta.length) {
+    h += '<div style="text-align:center;padding:40px;color:#94A3B8;font-size:13px;">Tiada peserta dalam heat ini</div>';
+  } else {
+    h += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:4px;">';
+    h += '<thead><tr style="background:#1E3A5F;color:#fff;">';
+    h += '<th style="padding:9px 12px;text-align:center;width:70px;font-size:11px;letter-spacing:.5px;">' + posLabel + '</th>';
+    h += '<th style="padding:9px 12px;text-align:left;font-size:11px;letter-spacing:.5px;">NAMA PESERTA</th>';
+    h += '<th style="padding:9px 12px;text-align:center;font-size:11px;letter-spacing:.5px;">RUMAH SUKAN</th>';
+    if (gunaLorong) {
+      h += '<th style="padding:9px 12px;text-align:center;width:120px;font-size:11px;letter-spacing:.5px;">MASA (s)</th>';
+    } else {
+      h += '<th style="padding:9px 12px;text-align:center;width:120px;font-size:11px;letter-spacing:.5px;">' + (peserta[0] && peserta[0].unit ? peserta[0].unit.toUpperCase() : 'PRESTASI') + '</th>';
+    }
+    h += '</tr></thead><tbody>';
+
+    peserta.forEach(function(p, i) {
+      var warna   = rumahWarna[p.id_rumah] || '#94A3B8';
+      var pos     = gunaLorong ? (p.lorong||'?') : (p.giliran||'?');
+      var bgRow   = i%2===0 ? '#fff' : '#F8FAFC';
+      h += '<tr style="background:' + bgRow + ';border-bottom:1px solid #E2E8F0;">';
+      // Lorong/Giliran ? bulatan berwarna
+      h += '<td style="padding:10px 12px;text-align:center;">';
+      h += '<div style="width:36px;height:36px;border-radius:50%;background:' + warna + ';';
+      h += 'color:#fff;font-weight:900;font-size:15px;display:inline-flex;';
+      h += 'align-items:center;justify-content:center;margin:0 auto;">' + pos + '</div></td>';
+      // Nama
+      h += '<td style="padding:10px 12px;font-weight:700;font-size:13px;">' + (p.nama||'?') + '</td>';
+      // Rumah badge
+      h += '<td style="padding:10px 12px;text-align:center;">';
+      h += '<span style="background:' + warna + '22;color:' + warna + ';padding:4px 12px;';
+      h += 'border-radius:20px;font-size:11px;font-weight:700;border:1px solid ' + warna + '44;">';
+      h += (p.id_rumah||'?') + '</span></td>';
+      // Ruangan prestasi
+      h += '<td style="padding:10px 12px;text-align:center;">';
+      h += '<div style="border-bottom:1px solid #94A3B8;height:20px;min-width:80px;margin:0 auto;"></div>';
+      h += '</td></tr>';
+    });
+    h += '</tbody></table>';
+  }
+
+  // -- FOOTER TANDATANGAN -------------------------------------
+  h += '<div style="display:flex;justify-content:space-between;margin-top:48px;padding-top:16px;">';
+  h += '<div style="text-align:center;width:200px;">';
+  h += '<div style="border-top:1.5px solid #1E3A5F;padding-top:6px;">';
+  h += '<div style="font-size:11px;font-weight:700;">PENGURUS ACARA</div>';
+  h += '<div style="font-size:10px;color:#64748b;margin-top:4px;">Nama: _______________________</div>';
+  h += '</div></div>';
+  h += '<div style="text-align:center;">';
+  h += '<div style="font-size:10px;color:#94A3B8;">Dicetak: ' + cetakAt + '</div>';
+  h += '<div style="font-size:8px;color:#CBD5E1;margin-top:2px;">Sistem Sukan Tahunan ? ' + sekolah + '</div>';
+  h += '</div>';
+  h += '<div style="text-align:center;width:200px;">';
+  h += '<div style="border-top:1.5px solid #1E3A5F;padding-top:6px;">';
+  h += '<div style="font-size:11px;font-weight:700;">PENGADIL UTAMA</div>';
+  h += '<div style="font-size:10px;color:#64748b;margin-top:4px;">Nama: _______________________</div>';
+  h += '</div></div>';
+  h += '</div>';
+
+  h += '</div>'; // end sl-print-area
+  return h;
+}
+
+
+function cetakStartList() {
+  // Ambil dari ct-table-wrap (pane Cetakan) atau sl-table-wrap (pane Heat)
+  var wrap = document.getElementById('ct-table-wrap') || document.getElementById('sl-table-wrap');
+  var area = wrap ? wrap.querySelector('#sl-print-area') : null;
+  if (!area || area.querySelector('.empty') || area.textContent.trim() === 'Pilih acara dan heat') {
+    alert('Pilih acara dan heat dahulu, kemudian tunggu data dimuatkan.');
+    return;
+  }
+  var sekolah = (S.settings && S.settings.nama_sekolah) || 'SK Sultan Ismail';
+  var content = area.outerHTML;
+  var w = window.open('','_blank','width=1000,height=800');
+  w.document.open();
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8">');
+  w.document.write('<title>Start List ? ' + sekolah + '</title>');
+  w.document.write('<style>');
+  w.document.write('*{box-sizing:border-box;margin:0;padding:0;}');
+  w.document.write('body{font-family:Arial,Helvetica,sans-serif;padding:15mm;background:#fff;color:#1a1a1a;}');
+  w.document.write('table{width:100%;border-collapse:collapse;}');
+  w.document.write('th,td{padding:0;}');  
+  w.document.write('.no-print{display:none!important;}');
+  w.document.write('@page{margin:12mm;size:A4 portrait;}');
+  w.document.write('@media print{body{padding:0;}}');
+  w.document.write('</style></head><body>');
+  w.document.write(content);
+  w.document.write('</body></html>');
+  w.document.close();
+  w.onload = function(){ w.focus(); w.print(); };
+}
+
+async function cetakSemuaHeat() {
+  if (!S._ctHeatList || !S._ctHeatList.length) { alert('Pilih acara dahulu.'); return; }
+  const acaraId = document.getElementById('ct-acara').value;
+  const acara   = (S.acaraList||[]).find(a => a.id_acara === acaraId);
+  const gunaLorong = acara && (acara.guna_lorong === true || acara.guna_lorong === 'TRUE');
+  const rumahWarna = {};
+  (S.rumah||[]).forEach(r => rumahWarna[r.id||r.id_rumah] = r.warna||'#94A3B8');
+  const sekolah = (S.settings && S.settings.nama_sekolah) || 'SK Sultan Ismail';
+  const w = window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Start List ? Semua Heat</title>');
+  w.document.write('<style>body{font-family:Arial,sans-serif;margin:15mm;} table{width:100%;border-collapse:collapse;} .page-break{page-break-before:always;} @page{margin:15mm;size:A4;}</style>');
+  w.document.write('</head><body>');
+  S._ctHeatList.forEach((heat, idx) => {
+    const peserta = (S._ctPeserta||[]).filter(p => p.id_heat === heat.id_heat && p.status !== 'VOID');
+    const sorted  = [...peserta].sort((a,b) => (parseInt(a.lorong||a.giliran)||99)-(parseInt(b.lorong||b.giliran)||99));
+    if (idx > 0) w.document.write('<div class="page-break"></div>');
+    w.document.write(_buildStartListHTML(acara, heat, sorted, gunaLorong, rumahWarna));
+  });
+  w.document.write('</body></html>');
+  w.document.close(); w.focus(); w.print();
+}
+
+function cetakSenaraiiMurid() {
+  if (!S.murid || !S.murid.length) { alert('Data murid tiada. Buka tab Murid dahulu.'); return; }
+  const sekolah = (S.settings && S.settings.nama_sekolah) || 'SK Sultan Ismail';
+  const w = window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Senarai Murid</title>');
+  w.document.write('<style>body{font-family:Arial,sans-serif;margin:15mm;font-size:12px;} table{width:100%;border-collapse:collapse;} th{background:#1E3A5F;color:#fff;padding:7px 8px;font-size:11px;} td{padding:6px 8px;border-bottom:1px solid #e2e8f0;} @page{margin:12mm;size:A4;}</style>');
+  w.document.write('</head><body>');
+  w.document.write(`<div style="text-align:center;margin-bottom:16px;"><div style="font-size:16px;font-weight:800;">${sekolah}</div><div style="font-size:13px;">Senarai Murid ? Sukan Tahunan</div></div>`);
+  w.document.write('<table><thead><tr><th>#</th><th>Nama</th><th>No. KP</th><th>Rumah</th><th>Kategori</th><th>Kelas</th></tr></thead><tbody>');
+  S.murid.forEach((m,i) => {
+    w.document.write(`<tr><td>${i+1}</td><td>${m.nama||'?'}</td><td style="font-family:monospace;">${m.no_kp||'?'}</td><td>${m.id_rumah||'?'}</td><td>${m.id_kategori||'?'}</td><td>${m.kelas||'?'}</td></tr>`);
+  });
+  w.document.write('</tbody></table></body></html>');
+  w.document.close(); w.focus(); w.print();
+}
+
+function cetakPendaftaran() {
+  if (!S.regList || !S.regList.length) { alert('Data pendaftaran tiada. Buka tab Pendaftaran dahulu.'); return; }
+  const sekolah = (S.settings && S.settings.nama_sekolah) || 'SK Sultan Ismail';
+  const w = window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Senarai Pendaftaran</title>');
+  w.document.write('<style>body{font-family:Arial,sans-serif;margin:15mm;font-size:12px;} table{width:100%;border-collapse:collapse;} th{background:#1E3A5F;color:#fff;padding:7px 8px;font-size:11px;} td{padding:6px 8px;border-bottom:1px solid #e2e8f0;} @page{margin:12mm;size:A4;}</style>');
+  w.document.write('</head><body>');
+  w.document.write(`<div style="text-align:center;margin-bottom:16px;"><div style="font-size:16px;font-weight:800;">${sekolah}</div><div style="font-size:13px;">Senarai Pendaftaran Acara</div></div>`);
+  w.document.write('<table><thead><tr><th>#</th><th>No. Acara</th><th>Nama Acara</th><th>Murid</th><th>Rumah</th><th>Kat</th></tr></thead><tbody>');
+  S.regList.filter(x=>x.status==='AKTIF').forEach((x,i) => {
+    w.document.write(`<tr><td>${i+1}</td><td>${x.no_acara||'?'}</td><td>${x.nama_acara||'?'}</td><td>${x.nama_murid||'?'}</td><td>${x.id_rumah||'?'}</td><td>${x.id_kategori||'?'}</td></tr>`);
+  });
+  w.document.write('</tbody></table></body></html>');
+  w.document.close(); w.focus(); w.print();
+}
+
+function goTabStartList() { goTab('laporan'); }
+
+// -----------------------------------------------------------
+// JADUAL KEJOHANAN
+// -----------------------------------------------------------
+async function loadJadual() {
+  const tbody = document.getElementById('jadual-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:#94A3B8;">Memuatkan...</td></tr>';
+  // Muat S.acaraList jika kosong ? diperlukan untuk dropdown No. Acara
+  if (!S.acaraList || !S.acaraList.length) {
+    try {
+      const raw = await gas('getAcaraJana');
+      const r   = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+      if (r && r.success) S.acaraList = r.acara || r.data || [];
+    } catch(e) { console.warn('loadJadual: gagal load acara', e); }
+  }
+  // Load toggle state
+  const rSet = await gas('getSettings');
+  const settings = (rSet && rSet.data) ? rSet.data : {};
+  const papar = settings.papar_jadual_awam === true || settings.papar_jadual_awam === 'true';
+  const tog = document.getElementById('toggle-jadual-awam');
+  if (tog) {
+    tog.checked = papar;
+    _updateToggleUI(papar);
+  }
+  // Load jadual
+  const r = await gas('getJadualAcara');
+  const jadual = (r && r.jadual) ? r.jadual : [];
+  if (!jadual.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#94A3B8;">Tiada jadual. Klik "+ Tambah Jadual" untuk menambah.</td></tr>';
+    return;
+  }
+  // Sort: tarikh + masa
+  jadual.sort((a,b) => { const ka=(a.tarikh||'')+(a.masa_mula||''), kb=(b.tarikh||'')+(b.masa_mula||''); return ka>kb?1:ka<kb?-1:0; });
+  tbody.innerHTML = jadual.map(j => {
+    const isRasmi = (j.auto_status || j.status) === 'RASMI';
+    const statusBadge = isRasmi
+      ? '<span style="background:#D1FAE5;color:#065F46;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;">? Keputusan Rasmi</span>'
+      : '<span style="background:#FEE2E2;color:#991B1B;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;">? Belum Mula</span>';
+    return `<tr style="border-bottom:1px solid #F1F5F9;">
+      <td style="padding:10px 12px;font-weight:700;text-align:center;">${j.no_acara||'?'}</td>
+      <td style="padding:10px 12px;font-weight:600;">${j.nama_acara||'?'}</td>
+      <td style="padding:10px 12px;text-align:center;">${j.kategori||'?'}</td>
+      <td style="padding:10px 12px;text-align:center;">${j.tarikh||'?'}</td>
+      <td style="padding:10px 12px;text-align:center;">${j.masa_mula||'?'}</td>
+      <td style="padding:10px 12px;text-align:center;">${statusBadge}</td>
+      <td style="padding:10px 12px;text-align:center;">
+        <button class="btn btn-ghost btn-xs" onclick="editJadual('${j.id_jadual}')">?</button>
+        <button class="btn btn-ghost btn-xs" style="color:#EF4444;" onclick="hapusJadual('${j.id_jadual}')">?</button>
+      </td></tr>`;
+  }).join('');
+  // Populate form dropdown
+  _populateJadualAcaraDropdown();
+}
+
+function _updateToggleUI(on) {
+  const track = document.getElementById('toggle-jadual-track');
+  const thumb = document.getElementById('toggle-jadual-thumb');
+  if (track) track.style.background = on ? '#10B981' : '#CBD5E1';
+  if (thumb) thumb.style.transform = on ? 'translateX(18px)' : 'translateX(0)';
+}
+
+async function toggleJadualAwam(on) {
+  _updateToggleUI(on);
+  await gas('saveSetting', { key: 'papar_jadual_awam', value: on });
+  showToast && showToast(on ? 'Jadual akan dipapar di laman utama ?' : 'Jadual disembunyikan dari laman utama', on ? 'success' : 'info');
+}
+
+async function _populateJadualAcaraDropdown(filterKat) {
+  const sel = document.getElementById('jform-no-acara');
+  if (!sel) return;
+  // Fetch acaraList jika masih kosong
+  if (!S.acaraList || !S.acaraList.length) {
+    try {
+      const raw = await gas('getAcaraJana');
+      const r   = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+      if (r && r.success) S.acaraList = r.acara || r.data || [];
+    } catch(e) { console.warn('_populateJadualAcaraDropdown: gagal load acara', e); }
+  }
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Pilih Acara --</option>';
+  if (!S.acaraList || !S.acaraList.length) {
+    sel.innerHTML += '<option value="" disabled>Tiada acara ? jana acara dahulu</option>';
+    return;
+  }
+    // Populate filter kategori
+    const katSel = document.getElementById('jform-filter-kat');
+    if(katSel && katSel.options.length <= 1) {
+      const kats = [...new Set((S.acaraList||[]).map(a=>a.id_kategori).filter(Boolean))].sort();
+      kats.forEach(k => { katSel.innerHTML += '<option value="'+k+'">'+k+'</option>'; });
+    }
+    const _list = filterKat ? (S.acaraList||[]).filter(a=>a.id_kategori===filterKat) : (S.acaraList||[]);
+    _list.sort((a,b)=>parseInt(a.no_acara)-parseInt(b.no_acara));
+  (_list).forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.no_acara;
+    opt.dataset.id   = a.id_acara;
+    opt.dataset.nama = a.nama_acara;
+    opt.dataset.kat  = a.id_kategori;
+      opt.dataset.jenis = a.jenis || '';
+    opt.textContent  = `[${a.no_acara}] ${a.nama_acara} (${a.id_kategori})`;
+    sel.appendChild(opt);
+  });
+  if (cur) sel.value = cur;
+}
+
+  function onJadualAcaraChange() {
+    const sel = document.getElementById('jform-no-acara');
+    const opt = sel && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
+    const nama = (opt && opt.dataset.nama) ? opt.dataset.nama : '';
+    const kat  = (opt && opt.dataset.kat)  ? opt.dataset.kat  : '';
+    const jenis= (opt && opt.dataset.jenis) ? opt.dataset.jenis : '';
+    const namaEl = document.getElementById('jform-nama'); if(namaEl) namaEl.value = nama;
+    const katEl  = document.getElementById('jform-kat');  if(katEl)  katEl.value  = kat;
+    const prev = document.getElementById('jform-acara-preview');
+    const nd = document.getElementById('jform-nama-display');
+    const kd = document.getElementById('jform-kat-display');
+    const jd = document.getElementById('jform-jenis-display');
+    if(prev) prev.style.display = (opt && opt.value) ? 'flex' : 'none';
+    if(nd) nd.textContent = nama || '-';
+    if(kd) kd.textContent = kat  || '-';
+    if(jd) jd.textContent = jenis || '-';
+  }
+
+  function onJadualKatFilter() {
+    const kat = (document.getElementById('jform-filter-kat')||{}).value || '';
+    _populateJadualAcaraDropdown(kat);
+    const prev = document.getElementById('jform-acara-preview');
+    if(prev) prev.style.display = 'none';
+  }
+
+async function bukaFormJadual() {
+  document.getElementById('jform-id').value = '';
+  document.getElementById('jform-no-acara').value = '';
+  document.getElementById('jform-nama').value = '';
+  document.getElementById('jform-kat').value = '';
+  const today = new Date();
+  document.getElementById('jform-tarikh').value = today.toISOString().split('T')[0];
+  document.getElementById('jform-masa').value = String(today.getHours()).padStart(2,'0') + ':' + String(today.getMinutes()).padStart(2,'0');
+  document.getElementById('jform-lokasi').value = '';
+  document.getElementById('jadual-form-title').textContent = '? Tambah Jadual';
+  document.getElementById('jadual-form-wrap').style.display = 'block';
+  await _populateJadualAcaraDropdown();
+}
+
+function editJadual(id) {
+  const tbody = document.getElementById('jadual-tbody');
+  // Find from DOM tidak reliable, re-fetch
+  gas('getJadualAcara').then(r => {
+    const j = (r && r.jadual || []).find(x => x.id_jadual === id);
+    if (!j) return;
+    bukaFormJadual();
+    document.getElementById('jform-id').value = j.id_jadual;
+    document.getElementById('jform-no-acara').value = j.no_acara || '';
+    onJadualAcaraChange();
+    document.getElementById('jform-tarikh').value = j.tarikh || '';
+    document.getElementById('jform-masa').value = j.masa_mula || '';
+    document.getElementById('jform-lokasi').value = j.lokasi || '';
+    document.getElementById('jadual-form-title').textContent = '? Kemaskini Jadual';
+  });
+}
+
+async function simpanJadual() {
+  const no = document.getElementById('jform-no-acara').value;
+  const nama = document.getElementById('jform-nama').value;
+  const tarikh = document.getElementById('jform-tarikh').value;
+  const masa = document.getElementById('jform-masa').value;
+  if (!no || !tarikh || !masa) { showToast('Sila lengkapkan No. Acara, Tarikh dan Masa.','warning'); return; }
+  const sel = document.getElementById('jform-no-acara');
+  const opt = sel.options[sel.selectedIndex];
+  const payload = {
+    id_jadual: document.getElementById('jform-id').value || '',
+    no_acara: no,
+    nama_acara: nama,
+    kategori: document.getElementById('jform-kat').value,
+    tarikh: tarikh,
+    masa_mula: masa,
+    lokasi: document.getElementById('jform-lokasi').value,
+    peringkat: 'AKHIR',
+    id_acara_link: (S.acaraList||[]).find(a=>String(a.no_acara)===String(no)) ? (S.acaraList.find(a=>String(a.no_acara)===String(no)).id_acara||'') : '',
+  };
+  showLoading(true,'Menyimpan jadual...');
+  const r = await gas('saveJadualAcara', payload);
+  showLoading(false);
+  if (r && r.success) {
+    tutupFormJadual();
+    loadJadual();
+    showToast('Jadual berjaya disimpan ?','success');
+  } else {
+    showToast((r ? r.message : 'Gagal simpan jadual.'),'error');
+  }
+}
+
+async function hapusJadual(id) {
+  if (!confirm('Padam jadual ini?')) return;
+  showLoading(true);
+  const r = await gas('deleteJadualAcara', { id_jadual: id });
+  showLoading(false);
+  if (r && r.success) { loadJadual(); } else { showToast('Gagal padam jadual.','error'); }
+}
+
+function tutupFormJadual() {
+  document.getElementById('jadual-form-wrap').style.display = 'none';
 }
 
 function clearRegFilter() {
@@ -1390,18 +2185,18 @@ function renderReg() {
     <td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;">${x.no_acara}</span></td>
     <td style="font-weight:500;">${x.nama_acara}</td>
     <td>
-      <div style="font-weight:600;font-size:13px;">${x.nama_murid||'—'}</div>
+      <div style="font-weight:600;font-size:13px;">${x.nama_murid||'?'}</div>
       <div style="font-size:11px;color:#94A3B8;">${x.no_kp}</div>
     </td>
     <td><span class="badge rumah-${x.id_rumah}" style="font-size:11px;">${x.id_rumah}</span></td>
     <td><span class="badge badge-blue" style="font-size:11px;">${x.id_kategori}</span></td>
     <td><span class="badge ${x.status==='AKTIF'?'badge-green':'badge-red'}" style="font-size:11px;">${x.status||'AKTIF'}</span></td>
     <td>
-      <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="deleteReg('${x.id_reg}','${x.nama_murid}')">🗑️</button>
+      <button class="btn btn-xs" style="background:#FEF2F2;color:#991B1B;" onclick="deleteReg('${x.id_reg}','${x.nama_murid}')">?</button>
     </td>
   </tr>`).join('');
   const total = S.regFiltered.length;
-  document.getElementById('reg-footer').textContent = `${start+1}–${Math.min(start+S.perPage,total)} daripada ${total}`;
+  document.getElementById('reg-footer').textContent = `${start+1}?${Math.min(start+S.perPage,total)} daripada ${total}`;
   renderPagination('reg-pagination', total, S.regPage, S.perPage, p => { S.regPage=p; renderReg(); });
 }
 
@@ -1444,10 +2239,10 @@ function deleteReg(id, nama) {
   });
 }
 
-// ═══════════════════════════════════════════
-// UNDIAN LORONG (LAMA — diganti oleh Heat Module)
+// -------------------------------------------
+// UNDIAN LORONG (LAMA ? diganti oleh Heat Module)
 // Fungsi ini dikekalkan untuk backward compat sahaja
-// ═══════════════════════════════════════════
+// -------------------------------------------
 async function loadAcaraLorong() { console.warn('deprecated'); }
 async function loadPesertaLorong() { console.warn('deprecated'); }
 function undianLorong() { console.warn('deprecated'); }
@@ -1456,9 +2251,9 @@ function resetLorong() { S.lorongDraw = []; }
 async function simpanLorong() { showToast('Sila guna tab Heat & List','info'); }
 
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // LAPORAN
-// ═══════════════════════════════════════════
+// -------------------------------------------
 function cetakLaporan(jenis) {
   const judul = {murid:'Senarai Murid',pendaftaran:'Senarai Pendaftaran',heat:'Jadual Starting List'};
   const data  = jenis==='murid' ? S.murid : jenis==='pendaftaran' ? S.regList : [];
@@ -1471,7 +2266,7 @@ function cetakLaporan(jenis) {
     <div style="border-bottom:3px solid #1E3A5F;padding-bottom:10px;margin-bottom:14px;">
       <div style="font-size:16pt;font-weight:900;text-transform:uppercase;color:#1E3A5F;">${ss.nama_sekolah||'SK SULTAN ISMAIL, KEMAMAN'}</div>
       <div style="font-size:12pt;font-weight:700;color:#1E3A5F;margin-top:2px;">${ss.nama_pertandingan||'SUKAN TAHUNAN'} ${ss.tahun||''}</div>
-      ${ss.lokasi ? `<div style="font-size:10pt;color:#555;margin-top:4px;">📍 ${ss.lokasi}</div>` : ''}
+      ${ss.lokasi ? `<div style="font-size:10pt;color:#555;margin-top:4px;">? ${ss.lokasi}</div>` : ''}
     </div>
     <div style="background:#1E3A5F;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:14px;">
       <span style="font-size:12pt;font-weight:800;">${judul[jenis]||jenis}</span>
@@ -1487,11 +2282,11 @@ function cetakLaporan(jenis) {
       <tbody>
         ${data.map((m,i)=>`<tr style="background:${i%2?'#F8FAFC':'#fff'}">
           <td style="text-align:center;">${i+1}</td>
-          <td style="font-family:monospace;font-size:9.5pt;">${m.no_kp||'—'}</td>
-          <td>${m.nama||'—'}</td>
-          <td style="text-align:center;">${m.id_rumah||'—'}</td>
-          <td style="text-align:center;">${m.id_kategori||'—'}</td>
-          <td>${m.kelas||'—'}</td>
+          <td style="font-family:monospace;font-size:9.5pt;">${m.no_kp||'?'}</td>
+          <td>${m.nama||'?'}</td>
+          <td style="text-align:center;">${m.id_rumah||'?'}</td>
+          <td style="text-align:center;">${m.id_kategori||'?'}</td>
+          <td>${m.kelas||'?'}</td>
         </tr>`).join('')}
       </tbody>
     </table>`;
@@ -1503,11 +2298,11 @@ function cetakLaporan(jenis) {
       <tbody>
         ${data.map((x,i)=>`<tr style="background:${i%2?'#F8FAFC':'#fff'}">
           <td style="text-align:center;">${i+1}</td>
-          <td style="text-align:center;font-weight:700;">${x.no_acara||'—'}</td>
-          <td>${x.nama_acara||'—'}</td>
-          <td>${x.nama_murid||x.no_kp||'—'}</td>
-          <td style="text-align:center;">${x.id_rumah||'—'}</td>
-          <td style="text-align:center;">${x.id_kategori||'—'}</td>
+          <td style="text-align:center;font-weight:700;">${x.no_acara||'?'}</td>
+          <td>${x.nama_acara||'?'}</td>
+          <td>${x.nama_murid||x.no_kp||'?'}</td>
+          <td style="text-align:center;">${x.id_rumah||'?'}</td>
+          <td style="text-align:center;">${x.id_kategori||'?'}</td>
           <td style="text-align:center;">${x.status||'AKTIF'}</td>
         </tr>`).join('')}
       </tbody>
@@ -1526,18 +2321,18 @@ function cetakLaporan(jenis) {
       @media print{button{display:none!important;}body{padding:10mm 12mm;}@page{size:A4 portrait;margin:10mm;}}
     </style>
   </head><body>
-    <button onclick="window.print()" style="position:fixed;top:12px;right:12px;padding:8px 20px;background:#1E3A5F;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11pt;font-weight:700;">🖨️ Cetak PDF</button>
+    <button onclick="window.print()" style="position:fixed;top:12px;right:12px;padding:8px 20px;background:#1E3A5F;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11pt;font-weight:700;">? Cetak PDF</button>
     ${headerHtml}
     ${tableHtml}
-    <div style="text-align:right;font-size:8.5pt;color:#94A3B8;margin-top:16px;">Dicetak: ${cetakMasa} &nbsp;·&nbsp; ${ss.nama_sekolah||'Sistem Sukan'}</div>
+    <div style="text-align:right;font-size:8.5pt;color:#94A3B8;margin-top:16px;">Dicetak: ${cetakMasa} &nbsp;.&nbsp; ${ss.nama_sekolah||'Sistem Sukan'}</div>
   </body></html>`);
   popup.document.close();
   popup.focus();
 }
 
-// ═══════════════════════════════════════════
+// -------------------------------------------
 // UTILITIES
-// ═══════════════════════════════════════════
+// -------------------------------------------
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
@@ -1568,7 +2363,7 @@ function renderPagination(containerId, total, current, perPage, onClick) {
 }
 
 function showToast(msg, type='success') {
-  const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  const icons={success:'?',error:'?',warning:'?',info:'?'};
   const el = document.createElement('div');
   el.className = `toast ${type}`;
   el.innerHTML = `<span>${icons[type]||''}</span><span>${msg}</span>`;
@@ -1582,11 +2377,11 @@ function showLoading(show, msg='Memuatkan...') {
 }
 
 
-// ═══════════════════════════════════════════
-// HEAT & STARTING LIST — MODULE
-// ═══════════════════════════════════════════
+// -------------------------------------------
+// HEAT & STARTING LIST ? MODULE
+// -------------------------------------------
 
-// Load heat tab — populate acara dropdowns
+// Load heat tab ? populate acara dropdowns
 async function loadHeat() {
   showLoading(true, 'Memuatkan acara...');
   const raw = await gas('getAcaraJana');
@@ -1622,7 +2417,7 @@ async function loadHeatStatus() {
     const heatAcara   = heatAll.filter(h => h.id_acara===a.id_acara && h.status!=='VOID');
     const pesertaHeat = pesertaAll.filter(p => p.id_acara===a.id_acara && p.status!=='VOID');
 
-    // Kira pendaftar — INDIVIDU dari tbl_pendaftaran, KUMPULAN dari tbl_pendaftaran_kumpulan
+    // Kira pendaftar ? INDIVIDU dari tbl_pendaftaran, KUMPULAN dari tbl_pendaftaran_kumpulan
     const daftarCount = isKump
       ? kumpAll.filter(k => k.id_acara===a.id_acara && k.status==='AKTIF').length
       : pendAll.filter(p => p.id_acara===a.id_acara && p.status==='AKTIF').length;
@@ -1632,16 +2427,13 @@ async function loadHeatStatus() {
 
     let dot, badge, bs, act='';
     if (!heatCount) {
+      // Belum dijana langsung
       dot='#EF4444'; badge='Belum dijana'; bs='background:#FEF2F2;color:#991B1B;';
       act=`<button class="btn btn-xs" style="background:#EFF6FF;color:#1D4ED8;" onclick="selectAndJana('${a.id_acara}')">Jana</button>`;
-    } else if (daftarCount !== pesertaCount) {
-      dot='#F59E0B';
-      badge=`⚠ ${daftarCount} daftar / ${pesertaCount} heat`;
-      bs='background:#FFFBEB;color:#92400E;';
-      act=`<button class="btn btn-xs" style="background:#FFFBEB;color:#92400E;" onclick="selectAndJana('${a.id_acara}')">Jana Semula</button>`;
     } else {
+      // Heat sudah dijana ? tunjuk HIJAU dengan bilangan heat + daftar
       dot='#10B981';
-      badge=`✓ ${isKump ? daftarCount+' pasukan' : pesertaCount+' peserta'}`;
+      badge=`? ${heatCount} heat . ${daftarCount} ${isKump?'pasukan':'peserta'}`;
       bs='background:#ECFDF5;color:#065F46;';
     }
 
@@ -1674,7 +2466,7 @@ function _populateHeatDropdowns() {
   const katEl = document.getElementById('heat-kat');
   if (katEl && S.kategori.length) {
     katEl.innerHTML = '<option value="">-- Semua --</option>';
-    S.kategori.forEach(k => katEl.innerHTML += `<option value="${k.kod||k.id_kategori}">${k.kod||k.id_kategori} — ${k.nama||k.nama_kategori||''}</option>`);
+    S.kategori.forEach(k => katEl.innerHTML += `<option value="${k.kod||k.id_kategori}">${k.kod||k.id_kategori} ? ${k.nama||k.nama_kategori||''}</option>`);
   }
 }
 
@@ -1712,7 +2504,7 @@ async function loadHeatInfo() {
   const rPendP = gasResult(rPend);
   let pesertaCount = 0;
   if (isKump) {
-    // Kumpulan — ambil dari getKumpulan
+    // Kumpulan ? ambil dari getKumpulan
     const rK = await gas('getKumpulan', { id_acara: acaraId });
     const rKP = (typeof rK==='string')?JSON.parse(rK):rK;
     pesertaCount = (rKP&&rKP.kumpulan) ? rKP.kumpulan.filter(k=>k.id_acara===acaraId&&k.status==='AKTIF').length : 0;
@@ -1726,17 +2518,17 @@ async function loadHeatInfo() {
   if (formatAcara === 'AUTO') formatDetect = pesertaCount <= maxLorong ? 'TERUS_FINAL' : 'SARINGAN';
 
   const fmtClass = formatDetect === 'TERUS_FINAL' ? 'fmt-terus' : formatDetect === 'SARINGAN' ? 'fmt-saringan' : 'fmt-auto';
-  const fmtLabel = formatDetect === 'TERUS_FINAL' ? '✅ Terus Final' : '⚡ Saringan + Final';
+  const fmtLabel = formatDetect === 'TERUS_FINAL' ? '? Terus Final' : '? Saringan + Final';
 
   cont.innerHTML = `
     <div class="heat-info-row"><span class="heat-info-key">Acara</span><span class="heat-info-val">${acara.nama_acara}</span></div>
-    <div class="heat-info-row"><span class="heat-info-key">Kategori</span><span class="heat-info-val">${acara.id_kategori||acara.kategori||'—'}</span></div>
+    <div class="heat-info-row"><span class="heat-info-key">Kategori</span><span class="heat-info-val">${acara.id_kategori||acara.kategori||'?'}</span></div>
     <div class="heat-info-row"><span class="heat-info-key">Jenis</span><span class="heat-info-val">${acara.jenis||'TRACK'}</span></div>
-    <div class="heat-info-row"><span class="heat-info-key">Guna Lorong</span><span class="heat-info-val">${acara.guna_lorong ? '✅ Ya' : '❌ Tidak (Acara Padang)'}</span></div>
+    <div class="heat-info-row"><span class="heat-info-key">Guna Lorong</span><span class="heat-info-val">${acara.guna_lorong ? '? Ya' : '? Tidak (Acara Padang)'}</span></div>
     <div class="heat-info-row"><span class="heat-info-key">Peserta Daftar</span><span class="heat-info-val" style="color:#3B82F6;">${pesertaCount} orang</span></div>
     <div class="heat-info-row"><span class="heat-info-key">Format Dikesan</span><span class="heat-info-val"><span class="format-badge ${fmtClass}">${fmtLabel}</span></span></div>
     <div class="heat-info-row"><span class="heat-info-key">Heat Sedia Ada</span><span class="heat-info-val">${heatSedia.length > 0 ? heatSedia.length + ' heat' : 'Belum dijana'}</span></div>
-    ${heatSedia.length > 0 ? `<div style="margin-top:10px;padding:10px;background:#FEF3C7;border-radius:8px;font-size:12px;color:#92400E;">⚠️ Jana semula akan void heat lama yang belum SELESAI.</div>` : ''}
+    ${heatSedia.length > 0 ? `<div style="margin-top:10px;padding:10px;background:#FEF3C7;border-radius:8px;font-size:12px;color:#92400E;">? Jana semula akan void heat lama yang belum SELESAI.</div>` : ''}
   `;
 }
 
@@ -1755,7 +2547,7 @@ async function janaHeatUI() {
   resultCard.style.display = 'block';
 
   if (r && r.success) {
-    showToast(`✅ ${r.message}`, 'success');
+    showToast(`? ${r.message}`, 'success');
     resultCont.innerHTML = `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;">
         <div style="background:#F0FDF4;border-radius:8px;padding:14px;"><div style="font-size:24px;font-weight:800;color:#166534;">${r.heat_created}</div><div style="font-size:11px;color:#166534;">Heat Dijana</div></div>
@@ -1763,7 +2555,7 @@ async function janaHeatUI() {
         <div style="background:#F5F3FF;border-radius:8px;padding:14px;"><div style="font-size:14px;font-weight:800;color:#6D28D9;">${r.format_used||'AUTO'}</div><div style="font-size:11px;color:#6D28D9;">Format</div></div>
       </div>
       <div style="margin-top:12px;text-align:center;">
-        <button class="btn btn-ghost" onclick="showHeatSub('startlist',document.querySelector('#heat-subnav .tab-btn:nth-child(2)'));document.getElementById('sl-acara').value='${acaraId}';loadStartingList()">📋 Lihat Starting List →</button>
+        <button class="btn btn-ghost" onclick="showHeatSub('startlist',document.querySelector('#heat-subnav .tab-btn:nth-child(2)'));document.getElementById('sl-acara').value='${acaraId}';loadStartingList()">? Lihat Starting List ?</button>
       </div>`;
     // Refresh heat data
     const rHeat = await gas('getHeat', { id_acara: acaraId });
@@ -1778,14 +2570,14 @@ async function janaHeatUI() {
   }
 }
 
-// ── SUB 2: STARTING LIST ─────────────────────────────────────────
+// -- SUB 2: STARTING LIST -----------------------------------------
 
 async function loadStartingList() {
   const acaraId = document.getElementById('sl-acara').value;
   const heatSel = document.getElementById('sl-heat');
   heatSel.innerHTML = '<option value="">-- Pilih Heat --</option>';
   document.getElementById('sl-table-wrap').innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;">Pilih heat</div>';
-  if (!acaraId) { console.log('[SL] acaraId kosong — return'); return; }
+  if (!acaraId) { console.log('[SL] acaraId kosong ? return'); return; }
 
   console.log('[SL] loadStartingList() acaraId=', acaraId);
   showLoading(true);
@@ -1797,7 +2589,7 @@ async function loadStartingList() {
   console.log('[SL] r.peserta=', r ? r.peserta : 'NULL');
 
   if (!r || !r.heat) {
-    console.log('[SL] ❌ r.heat tiada → tunjuk mesej tiada heat');
+    console.log('[SL] ? r.heat tiada ? tunjuk mesej tiada heat');
     document.getElementById('sl-table-wrap').innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px;">Tiada heat dijana untuk acara ini. Sila jana heat dahulu.</div>';
     return;
   }
@@ -1809,7 +2601,7 @@ async function loadStartingList() {
 
   // Fallback: getHeat sudah return peserta, tapi jika kosong ambil per heat
   if (!S.pesertaHeat.length && S.heatList.length) {
-    console.log('[SL] peserta kosong — cuba fallback getPesertaHeat per heat');
+    console.log('[SL] peserta kosong ? cuba fallback getPesertaHeat per heat');
     for (const h of S.heatList) {
       const rH2 = await gas('getPesertaHeat', { id_heat: h.id_heat });
       const rH2P = (typeof rH2==='string')?JSON.parse(rH2):rH2;
@@ -1828,11 +2620,11 @@ async function loadStartingList() {
   }
 
   S.heatList.forEach(h => {
-    const label = `Heat ${h.no_heat} — ${h.jenis} ${h.status === 'SELESAI' ? '✅' : ''}`;
+    const label = `Heat ${h.no_heat} ? ${h.jenis} ${h.status === 'SELESAI' ? '?' : ''}`;
     heatSel.innerHTML += `<option value="${h.id_heat}">${label}</option>`;
   });
   console.log('[SL] dropdown heat diisi:', S.heatList.length, 'options');
-  // Auto-select: 1 heat (TERUS_FINAL) → terus render
+  // Auto-select: 1 heat (TERUS_FINAL) ? terus render
   if (S.heatList.length === 1) {
     console.log('[SL] auto-select heat:', S.heatList[0].id_heat);
     heatSel.value = S.heatList[0].id_heat;
@@ -1849,7 +2641,7 @@ function renderStartingList() {
   console.log('[RS] S.heatList=', S.heatList.length, S.heatList.map(h=>h.id_heat));
   console.log('[RS] S.pesertaHeat total=', S.pesertaHeat.length);
 
-  if (!heatId) { wrap.innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;">Pilih heat</div>'; label.textContent='—'; return; }
+  if (!heatId) { wrap.innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;">Pilih heat</div>'; label.textContent='?'; return; }
 
   const heat = S.heatList.find(h => h.id_heat === heatId);
   const peserta = S.pesertaHeat.filter(p => p.id_heat === heatId && p.status !== 'VOID');
@@ -1865,7 +2657,7 @@ function renderStartingList() {
   const acara = S.acaraList.find(a => a.id_acara === acaraId);
   const gunaLorong = acara && (acara.guna_lorong === true || acara.guna_lorong === 'TRUE');
 
-  label.textContent = heat ? `Heat ${heat.no_heat} · ${heat.jenis} · ${peserta.length} peserta` : '—';
+  label.textContent = heat ? `Heat ${heat.no_heat} . ${heat.jenis} . ${peserta.length} peserta` : '?';
 
   // Sort by lorong/giliran
   const sorted = [...peserta].sort((a,b) => (parseInt(a.lorong||a.giliran)||99) - (parseInt(b.lorong||b.giliran)||99));
@@ -1875,13 +2667,12 @@ function renderStartingList() {
 
   const rows = sorted.map(p => {
     const warna = rumahWarna[p.id_rumah] || '#94A3B8';
-    const pos = gunaLorong ? (p.lorong||'—') : (p.giliran||'—');
+    const pos = gunaLorong ? (p.lorong||'?') : (p.giliran||'?');
     const posLabel = gunaLorong ? 'Lorong' : 'Giliran';
     return `<tr>
       <td><div class="lorong-bubble" style="background:${warna};">${pos}</div></td>
-      <td style="font-size:11px;font-family:monospace;color:#64748B;">${p.no_kp||'—'}</td>
-      <td style="font-weight:600;">${p.nama||'—'}</td>
-      <td><span style="padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${warna}22;color:${warna};">${p.id_rumah||'—'}</span></td>
+      <td style="font-weight:600;">${p.nama||'?'}</td>
+      <td><span style="padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${warna}22;color:${warna};">${p.id_rumah||'?'}</span></td>
       <td>
         <select class="status-sel" onchange="updateStatusUI('${p.id}',this.value)">
           <option value="AKTIF" ${p.status==='AKTIF'?'selected':''}>Aktif</option>
@@ -1896,13 +2687,12 @@ function renderStartingList() {
   wrap.innerHTML = `
     <div class="print-header">
       <h2>SENARAI PESERTA ACARA</h2>
-      <p>${acara ? acara.nama_acara : ''} · ${heat ? heat.jenis : ''} ${heat ? 'Heat '+heat.no_heat : ''}</p>
+      <p>${acara ? acara.nama_acara : ''} . ${heat ? heat.jenis : ''} ${heat ? 'Heat '+heat.no_heat : ''}</p>
       <p>Tarikh: _____________ &nbsp;&nbsp; Masa: _____________</p>
     </div>
     <table class="sl-table">
       <thead><tr>
         <th>${gunaLorong ? 'Lorong' : 'Giliran'}</th>
-        <th>No. KP</th>
         <th>Nama Peserta</th>
         <th>Rumah Sukan</th>
         <th class="no-print">Status</th>
@@ -1937,9 +2727,9 @@ function cetakStartingList() {
   const ss     = S.settings || {};
 
   // Format helpers
-  const fmtKP = kp => kp ? kp.replace(/(\d{6})(\d{2})(\d{4})/, '$1-$2-$3') : '—';
+  const fmtKP = kp => kp ? kp.replace(/(\d{6})(\d{2})(\d{4})/, '$1-$2-$3') : '?';
   const fmtTarikh = d => {
-    if (!d) return '—';
+    if (!d) return '?';
     try { return new Date(d).toLocaleDateString('ms-MY',{day:'2-digit',month:'long',year:'numeric'}); }
     catch(e){ return d; }
   };
@@ -1951,29 +2741,29 @@ function cetakStartingList() {
   S.rumah.forEach(r => wMap[r.id||r.id_rumah] = {warna:r.warna||'#4F8EF7', nama:r.nama||r.nama_rumah||r.id_rumah});
 
   const rows = sorted.map((p, i) => {
-    const rm  = wMap[p.id_rumah] || {warna:'#94A3B8', nama: p.id_rumah||'—'};
-    const pos = gunaLorong ? (p.lorong||'—') : (p.giliran||'—');
+    const rm  = wMap[p.id_rumah] || {warna:'#94A3B8', nama: p.id_rumah||'?'};
+    const pos = gunaLorong ? (p.lorong||'?') : (p.giliran||'?');
     return `<tr>
       <td style="text-align:center;font-weight:700;">${i+1}</td>
       <td style="text-align:center;">
         <div style="width:30px;height:30px;border-radius:50%;background:${rm.warna};color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto;">${pos}</div>
       </td>
       <td style="font-family:monospace;font-size:11px;color:#444;">${fmtKP(p.no_kp)}</td>
-      <td style="font-weight:600;">${p.nama||'—'}</td>
+      <td style="font-weight:600;">${p.nama||'?'}</td>
       <td style="text-align:center;">
         <span style="padding:2px 10px;border-radius:12px;font-size:10px;font-weight:700;background:${rm.warna}22;color:${rm.warna};border:1px solid ${rm.warna}44;">${rm.nama}</span>
       </td>
-      <td style="text-align:center;color:#475569;font-size:12px;">${p.id_kategori||'—'}</td>
+      <td style="text-align:center;color:#475569;font-size:12px;">${p.id_kategori||'?'}</td>
       <td style="text-align:center;min-width:90px;border:1px dashed #CBD5E1;"></td>
     </tr>`;
   }).join('');
 
   const tarikhSukan = fmtTarikh(ss.tarikh_sukan);
-  const heatLabel   = heat ? `Heat ${heat.no_heat} — ${heat.jenis}` : '—';
+  const heatLabel   = heat ? `Heat ${heat.no_heat} ? ${heat.jenis}` : '?';
   const noAcara     = acara ? `[${acara.no_acara}]` : '';
-  const namaAcara   = acara ? acara.nama_acara : '—';
+  const namaAcara   = acara ? acara.nama_acara : '?';
   const idKat       = acara ? (acara.id_kategori||acara.kategori||'') : '';
-  const formatHeat  = acara ? (acara.format_acara||acara.format||'AUTO') : '—';
+  const formatHeat  = acara ? (acara.format_acara||acara.format||'AUTO') : '?';
   const maxLorong   = parseInt(ss.lorong_trek||'6');
   const cetakMasa   = new Date().toLocaleString('ms-MY');
 
@@ -1984,26 +2774,26 @@ function cetakStartingList() {
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
-<title>Starting List — ${namaAcara}</title>
+<title>Starting List ? ${namaAcara}</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family: Arial, 'Segoe UI', sans-serif; font-size:12pt; color:#000; padding:20px; }
   
-  /* ── HEADER ── */
+  /* -- HEADER -- */
   .header-wrap { border-bottom:3px solid #1E3A5F; padding-bottom:12px; margin-bottom:16px; }
   .sekolah-name { font-size:17pt; font-weight:900; text-transform:uppercase; color:#1E3A5F; letter-spacing:0.5px; }
   .pertandingan-name { font-size:13pt; font-weight:700; color:#1E3A5F; margin-top:2px; }
   .header-meta { font-size:10pt; color:#555; margin-top:6px; display:flex; gap:20px; flex-wrap:wrap; }
-  .header-meta span::before { content:'📍 '; }
-  .header-meta span.tarikh::before { content:'📅 '; }
-  .header-meta span.tema::before { content:'✨ '; }
+  .header-meta span::before { content:'? '; }
+  .header-meta span.tarikh::before { content:'? '; }
+  .header-meta span.tema::before { content:'? '; }
   
-  /* ── TITLE BAND ── */
+  /* -- TITLE BAND -- */
   .title-band { background:#1E3A5F; color:#fff; padding:10px 16px; border-radius:6px; margin:14px 0; display:flex; justify-content:space-between; align-items:center; }
   .title-band h2 { font-size:13pt; font-weight:800; letter-spacing:0.5px; }
   .title-band .badge-jenis { background:rgba(255,255,255,0.2); padding:3px 12px; border-radius:20px; font-size:10pt; font-weight:700; }
   
-  /* ── ACARA INFO BOX ── */
+  /* -- ACARA INFO BOX -- */
   .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:0; border:1.5px solid #CBD5E1; border-radius:6px; overflow:hidden; margin-bottom:14px; }
   .info-cell { padding:8px 14px; border-right:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0; }
   .info-cell:nth-child(2n) { border-right:none; }
@@ -2011,7 +2801,7 @@ function cetakStartingList() {
   .info-label { font-size:8.5pt; text-transform:uppercase; color:#64748B; font-weight:700; letter-spacing:0.5px; margin-bottom:2px; }
   .info-value { font-size:11pt; font-weight:700; color:#1E293B; }
   
-  /* ── TABLE ── */
+  /* -- TABLE -- */
   table { width:100%; border-collapse:collapse; margin-top:6px; }
   thead tr { background:#1E3A5F; color:#fff; }
   th { padding:9px 10px; font-size:9.5pt; font-weight:700; text-align:center; text-transform:uppercase; letter-spacing:0.3px; }
@@ -2020,7 +2810,7 @@ function cetakStartingList() {
   tbody tr:nth-child(even) { background:#F8FAFC; }
   tbody tr:last-child td { border-bottom:none; }
   
-  /* ── FOOTER ── */
+  /* -- FOOTER -- */
   .footer { margin-top:36px; border-top:1px solid #CBD5E1; padding-top:20px; }
   .sign-row { display:flex; justify-content:space-between; gap:30px; }
   .sign-box { flex:1; text-align:center; }
@@ -2041,7 +2831,7 @@ function cetakStartingList() {
 </head>
 <body>
 
-<button onclick="window.print()" class="no-print" style="position:fixed;top:12px;right:12px;padding:8px 20px;background:#1E3A5F;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11pt;font-weight:700;z-index:999;">🖨️ Cetak PDF</button>
+<button onclick="window.print()" class="no-print" style="position:fixed;top:12px;right:12px;padding:8px 20px;background:#1E3A5F;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11pt;font-weight:700;z-index:999;">? Cetak PDF</button>
 
 <!-- HEADER SEKOLAH -->
 <div class="header-wrap">
@@ -2049,7 +2839,7 @@ function cetakStartingList() {
   <div class="pertandingan-name">${ss.nama_pertandingan||'SUKAN TAHUNAN'} ${ss.tahun||''}</div>
   <div class="header-meta">
     ${ss.lokasi ? `<span>${ss.lokasi}</span>` : ''}
-    ${tarikhSukan !== '—' ? `<span class="tarikh">${tarikhSukan}</span>` : ''}
+    ${tarikhSukan !== '?' ? `<span class="tarikh">${tarikhSukan}</span>` : ''}
     ${ss.tema ? `<span class="tema">${ss.tema}</span>` : ''}
   </div>
 </div>
@@ -2057,14 +2847,14 @@ function cetakStartingList() {
 <!-- TITLE BAND -->
 <div class="title-band">
   <h2>SENARAI PESERTA ACARA (STARTING LIST)</h2>
-  <span class="badge-jenis">${formatHeat === 'TERUS_FINAL' ? '✅ FINAL' : formatHeat === 'SARINGAN_FINAL' ? '⚡ SARINGAN' : heat ? heat.jenis : '—'}</span>
+  <span class="badge-jenis">${formatHeat === 'TERUS_FINAL' ? '? FINAL' : formatHeat === 'SARINGAN_FINAL' ? '? SARINGAN' : heat ? heat.jenis : '?'}</span>
 </div>
 
 <!-- ACARA INFO -->
 <div class="info-grid">
   <div class="info-cell"><div class="info-label">No. Acara</div><div class="info-value">${noAcara} ${namaAcara}</div></div>
   <div class="info-cell"><div class="info-label">Kategori</div><div class="info-value">${idKat}</div></div>
-  <div class="info-cell"><div class="info-label">${gunaLorong ? 'Heat / Lorong' : 'Pusingan'}</div><div class="info-value">${heatLabel} &nbsp;·&nbsp; ${sorted.length} Peserta</div></div>
+  <div class="info-cell"><div class="info-label">${gunaLorong ? 'Heat / Lorong' : 'Pusingan'}</div><div class="info-value">${heatLabel} &nbsp;.&nbsp; ${sorted.length} Peserta</div></div>
   <div class="info-cell"><div class="info-label">${gunaLorong ? 'Bilangan Lorong' : 'Jenis Acara'}</div><div class="info-value">${gunaLorong ? maxLorong+' Lorong Trek' : (acara?.jenis||'PADANG')}</div></div>
   <div class="info-cell"><div class="info-label">Tarikh Acara</div><div class="info-value">${tarikhSukan} &nbsp;&nbsp; Masa: _________________</div></div>
   <div class="info-cell"><div class="info-label">Lokasi</div><div class="info-value">${ss.lokasi||'________________'}</div></div>
@@ -2107,7 +2897,7 @@ function cetakStartingList() {
       <div class="sign-sub">Cop Rasmi</div>
     </div>
   </div>
-  <div class="print-info">Dicetak: ${cetakMasa} &nbsp;·&nbsp; Sistem Pengurusan Sukan — ${ss.nama_sekolah||'SK Sultan Ismail'}</div>
+  <div class="print-info">Dicetak: ${cetakMasa} &nbsp;.&nbsp; Sistem Pengurusan Sukan ? ${ss.nama_sekolah||'SK Sultan Ismail'}</div>
 </div>
 
 </body>
@@ -2116,7 +2906,7 @@ function cetakStartingList() {
   popup.focus();
 }
 
-// ── SUB 3: PROSES LAYAK FINAL ────────────────────────────────────
+// -- SUB 3: PROSES LAYAK FINAL ------------------------------------
 
 async function loadLayakFinal() {
   const acaraId = document.getElementById('layak-acara').value;
@@ -2128,7 +2918,7 @@ async function loadLayakFinal() {
   showLoading(false);
 
   if (!r || !r.success) {
-    cont.innerHTML = `<div style="padding:20px;background:#FEF2F2;border-radius:8px;color:#991B1B;font-size:13px;">⚠️ ${r ? r.message : 'Ralat'}</div>`;
+    cont.innerHTML = `<div style="padding:20px;background:#FEF2F2;border-radius:8px;color:#991B1B;font-size:13px;">? ${r ? r.message : 'Ralat'}</div>`;
     return;
   }
 
@@ -2142,17 +2932,17 @@ function renderLayakFinal(layak, topN, acaraId) {
   const rows = layak.map((p, i) => `
     <tr class="${i < topN ? 'layak-row' : ''}">
       <td>${i + 1}</td>
-      <td>${p.nama||'—'}</td>
-      <td><span style="font-size:11px;font-family:monospace;">${p.no_kp||'—'}</span></td>
-      <td>${p.id_rumah||'—'}</td>
-      <td style="font-family:monospace;font-weight:700;">${p.prestasi||'—'} ${p.unit||''}</td>
-      <td><span style="font-size:11px;padding:2px 8px;border-radius:10px;background:${p.sumber_layak==='WINNER_HEAT'?'#DCFCE7':'#EFF6FF'};color:${p.sumber_layak==='WINNER_HEAT'?'#166534':'#1D4ED8'};">${p.sumber_layak==='WINNER_HEAT'?'🏆 Winner Heat':'⏱ Masa Terbaik'}</span></td>
+      <td>${p.nama||'?'}</td>
+      <td><span style="font-size:11px;font-family:monospace;">${p.no_kp||'?'}</span></td>
+      <td>${p.id_rumah||'?'}</td>
+      <td style="font-family:monospace;font-weight:700;">${p.prestasi||'?'} ${p.unit||''}</td>
+      <td><span style="font-size:11px;padding:2px 8px;border-radius:10px;background:${p.sumber_layak==='WINNER_HEAT'?'#DCFCE7':'#EFF6FF'};color:${p.sumber_layak==='WINNER_HEAT'?'#166534':'#1D4ED8'};">${p.sumber_layak==='WINNER_HEAT'?'? Winner Heat':'? Masa Terbaik'}</span></td>
     </tr>`).join('');
 
   cont.innerHTML = `
     <div style="margin-bottom:14px;padding:12px 16px;background:#F0FDF4;border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-size:13px;"><strong>${layak.length} peserta layak</strong> ke final &nbsp;·&nbsp; Top ${topN} diambil</div>
-      <button class="btn btn-primary" onclick="confirmJanaFinal('${acaraId}')">⚡ Jana Heat Final</button>
+      <div style="font-size:13px;"><strong>${layak.length} peserta layak</strong> ke final &nbsp;.&nbsp; Top ${topN} diambil</div>
+      <button class="btn btn-primary" onclick="confirmJanaFinal('${acaraId}')">? Jana Heat Final</button>
     </div>
     <div class="card" style="margin:0;">
       <div class="card-body" style="padding:0;">
@@ -2178,8 +2968,8 @@ async function confirmJanaFinal(acaraId) {
   showLoading(false);
 
   if (rf && rf.success) {
-    showToast(`✅ ${rf.message}`, 'success');
-    cont.innerHTML += `<div style="margin-top:12px;padding:12px;background:#EFF6FF;border-radius:8px;font-size:13px;">✅ Heat Final dijana — <button class="btn btn-ghost" style="padding:4px 12px;" onclick="showHeatSub('startlist',document.querySelector('#heat-subnav .tab-btn:nth-child(2)'));document.getElementById('sl-acara').value='${acaraId}';loadStartingList()">Lihat Starting List Final →</button></div>`;
+    showToast(`? ${rf.message}`, 'success');
+    cont.innerHTML += `<div style="margin-top:12px;padding:12px;background:#EFF6FF;border-radius:8px;font-size:13px;">? Heat Final dijana ? <button class="btn btn-ghost" style="padding:4px 12px;" onclick="showHeatSub('startlist',document.querySelector('#heat-subnav .tab-btn:nth-child(2)'));document.getElementById('sl-acara').value='${acaraId}';loadStartingList()">Lihat Starting List Final ?</button></div>`;
   } else {
     showToast(rf ? rf.message : 'Ralat jana final','error');
   }
@@ -2197,21 +2987,19 @@ function showHeatSub(sub, btn) {
   if (sub === 'layak' && !document.getElementById('layak-acara').options.length > 1) _populateHeatDropdowns();
 }
 
-// ═══ EXPRESS JANA SEMUA HEAT ═══
+// --- EXPRESS JANA SEMUA HEAT ---
 async function janaSemuaHeatUI() {
   if (!S.acaraList.length) { showToast('Tiada acara. Jana acara dahulu.','warning'); return; }
   const total = S.acaraList.length;
   if (!confirm(`Jana heat untuk SEMUA ${total} acara?\nHeat lama (belum SELESAI) akan di-void.`)) return;
 
   showLoading(true, 'Menjana semua heat...');
-  let ok = 0, fail = 0, failList = [];
-
-  for (const a of S.acaraList) {
-    const raw = await gas('janaHeat', { id_acara: a.id_acara });
-    const r = (typeof raw === 'string') ? JSON.parse(raw) : raw;
-    if (r && r.success) { ok++; }
-    else { fail++; failList.push(a.nama_acara); }
-  }
+  // Satu panggilan GAS sahaja ? lebih pantas
+  const rawAll = await gas('janaSemuaHeat', {});
+  const rAll   = (typeof rawAll === 'string') ? JSON.parse(rawAll) : rawAll;
+  let ok = rAll ? (rAll.ok||0) : 0;
+  let fail = rAll ? (rAll.fail||0) : 0;
+  let failList = rAll ? (rAll.failList||[]) : [];
 
   showLoading(false);
 
@@ -2220,7 +3008,7 @@ async function janaSemuaHeatUI() {
   resultCard.style.display = 'block';
 
   if (ok > 0) {
-    showToast(`✅ ${ok} acara berjaya dijana heat${fail?' ('+fail+' gagal)':''}`, 'success');
+    showToast(`? ${ok} acara berjaya dijana heat${fail?' ('+fail+' gagal)':''}`, 'success');
     resultCont.innerHTML = `
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center;">
         <div style="background:#F0FDF4;border-radius:8px;padding:14px;">
@@ -2232,9 +3020,9 @@ async function janaSemuaHeatUI() {
           <div style="font-size:11px;color:${fail?'#991B1B':'#1D4ED8'};">Gagal</div>
         </div>
       </div>
-      ${failList.length ? `<div style="margin-top:10px;padding:10px;background:#FEF2F2;border-radius:8px;font-size:12px;color:#991B1B;">❌ Gagal: ${failList.join(', ')}</div>` : ''}
+      ${failList.length ? `<div style="margin-top:10px;padding:10px;background:#FEF2F2;border-radius:8px;font-size:12px;color:#991B1B;">? Gagal: ${failList.join(', ')}</div>` : ''}
       <div style="margin-top:12px;text-align:center;">
-        <button class="btn btn-ghost" onclick="showHeatSub('startlist',document.querySelector('#heat-subnav .tab-btn:nth-child(2)'));document.getElementById('sl-acara').value='';loadStartingList()">📋 Lihat Starting List →</button>
+        <button class="btn btn-ghost" onclick="showHeatSub('startlist',document.querySelector('#heat-subnav .tab-btn:nth-child(2)'));document.getElementById('sl-acara').value='';loadStartingList()">? Lihat Starting List ?</button>
       </div>`;
     // Reload data heat
     const rH = await gas('getHeat', {});
@@ -2250,15 +3038,369 @@ async function janaSemuaHeatUI() {
 function confirmLogout() {
   if (confirm('Log keluar?')) {
     sessionStorage.clear();
-    window.top.location.href = S.SCRIPT_URL ? S.SCRIPT_URL+'?page=login' : '?page=login';
+    window.location.assign(S.SCRIPT_URL ? S.SCRIPT_URL+'?page=login' : '?page=login');
   }
 }
 
 // Load user info from session
 const sess = JSON.parse(sessionStorage.getItem('adminSession')||'null');
 if (sess) {
-  document.getElementById('hdr-user').textContent = sess.full_name || sess.username || '—';
+  document.getElementById('hdr-user').textContent = sess.full_name || sess.username || '?';
 }
 </script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sidebar-w: 240px;
+  --header-h: 58px;
+  --blue: #3B82F6;
+  --green: #10B981;
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --purple: #8B5CF6;
+}
+*,*::before,*::after{box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B;margin:0;}
+
+/* HEADER */
+#app-header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:#1E293B;z-index:50;display:flex;align-items:center;padding:0 16px;box-shadow:0 1px 0 rgba(255,255,255,0.06);}
+#app-header .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;color:#F8FAFC;flex:1;}
+#app-header .logo span{color:#60A5FA;}
+.header-btn{background:rgba(255,255,255,0.08);border:none;cursor:pointer;color:#CBD5E1;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:500;transition:background 0.2s;font-family:inherit;}
+.header-btn:hover{background:rgba(255,255,255,0.15);color:#F8FAFC;}
+.header-btn.danger:hover{background:#EF4444;color:#fff;}
+
+/* SIDEBAR */
+#sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:#1E293B;overflow-y:auto;z-index:40;transition:transform 0.3s ease;padding:12px 0;}
+.sidebar-section{padding:8px 12px 4px;font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;margin:1px 8px;border-radius:8px;cursor:pointer;color:#94A3B8;font-size:13px;font-weight:500;transition:all 0.2s;user-select:none;}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:#E2E8F0;}
+.nav-item.active{background:#3B82F6;color:#fff;}
+.nav-item .icon{width:18px;text-align:center;font-size:15px;}
+
+/* MAIN */
+#main-content{margin-left:var(--sidebar-w);margin-top:var(--header-h);min-height:calc(100vh - var(--header-h));padding:24px;transition:margin-left 0.3s;}
+
+/* CARDS */
+.card{background:#fff;border-radius:12px;border:1px solid #E2E8F0;box-shadow:0 1px 4px rgba(0,0,0,0.05);}
+.card-header{padding:14px 18px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.card-title{font-size:14px;font-weight:700;color:#1E293B;margin:0;}
+.card-body{padding:18px;}
+
+/* STAT CARDS */
+.stat-card{background:#fff;border-radius:12px;padding:18px;border:1px solid #E2E8F0;box-shadow:0 1px 4px rgba(0,0,0,0.05);transition:all 0.2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.08);}
+.stat-num{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.stat-label{font-size:12px;color:#64748B;font-weight:600;margin-top:2px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-family:inherit;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;line-height:1;}
+.btn-primary{background:#3B82F6;color:#fff;}.btn-primary:hover{background:#2563EB;}
+.btn-success{background:#10B981;color:#fff;}.btn-success:hover{background:#059669;}
+.btn-danger{background:#EF4444;color:#fff;}.btn-danger:hover{background:#DC2626;}
+.btn-warning{background:#F59E0B;color:#fff;}.btn-warning:hover{background:#D97706;}
+.btn-ghost{background:rgba(59,130,246,0.08);color:#3B82F6;border:1px solid rgba(59,130,246,0.2);}.btn-ghost:hover{background:rgba(59,130,246,0.15);}
+.btn-sm{padding:6px 10px;font-size:12px;}
+.btn-xs{padding:4px 8px;font-size:11px;}
+
+/* FORMS */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;}
+.form-label.required::after{content:' *';color:#EF4444;}
+.form-control{width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:13px;font-family:inherit;background:#fff;color:#1E293B;outline:none;transition:border-color 0.2s;}
+.form-control:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,0.1);}
+select.form-control{cursor:pointer;}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table thead tr{background:#F8FAFC;}
+.data-table th{padding:10px 14px;font-size:11px;font-weight:700;color:#64748B;text-align:left;text-transform:uppercase;border-bottom:1px solid #E2E8F0;white-space:nowrap;}
+.data-table td{padding:10px 14px;border-bottom:1px solid #F1F5F9;vertical-align:middle;}
+.data-table tbody tr:hover{background:#F8FAFC;}
+.data-table tbody tr:last-child td{border-bottom:none;}
+
+/* TABS */
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.tab-nav{display:flex;gap:2px;background:#F1F5F9;padding:4px;border-radius:10px;flex-wrap:wrap;margin-bottom:20px;}
+.tab-btn{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;font-family:inherit;color:#64748B;transition:all 0.2s;white-space:nowrap;}
+.tab-btn.active{background:#fff;color:#3B82F6;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.heat-subpane{display:none;}.heat-subpane.active{display:block;}
+/* ── Heat info box ── */
+.heat-info-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F1F5F9;font-size:12px;}
+.heat-info-row:last-child{border-bottom:none;}
+.heat-info-key{color:#64748B;}
+.heat-info-val{font-weight:700;color:#1E293B;}
+.format-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.fmt-terus{background:#DCFCE7;color:#166534;}
+.fmt-saringan{background:#FEF3C7;color:#92400E;}
+.fmt-auto{background:#EFF6FF;color:#1D4ED8;}
+/* ── Starting List table ── */
+.sl-table{width:100%;border-collapse:collapse;font-size:13px;}
+.sl-table th{padding:10px 14px;font-size:10px;font-weight:700;color:#64748B;text-align:left;text-transform:uppercase;background:#F8FAFC;border-bottom:2px solid #E2E8F0;}
+.sl-table td{padding:10px 14px;border-bottom:1px solid #F1F5F9;vertical-align:middle;}
+.sl-table tbody tr:hover{background:#F8FAFC;}
+.lorong-bubble{width:32px;height:32px;border-radius:50%;background:#3B82F6;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.status-sel{border:1px solid #E2E8F0;border-radius:6px;padding:4px 8px;font-size:11px;background:#fff;cursor:pointer;}
+/* ── Layak final ── */
+.layak-row{background:#F0FDF4;border-left:3px solid #22C55E;}
+.layak-row td:first-child{font-weight:700;color:#166534;}
+/* ── Print ── */
+@media print{
+  .sidebar,.header,.tab-nav,.heat-subnav,.no-print,.btn,.form-group select,button{display:none!important;}
+  .main-content{margin:0!important;padding:0!important;}
+  #sl-print-area{display:block!important;}
+  .print-header{display:block!important;}
+  body{font-size:12pt;color:#000;}
+  .sl-table th,.sl-table td{border:1px solid #000!important;padding:6px!important;}
+  .lorong-bubble{border:1px solid #000;color:#000;background:#fff!important;}
+  .status-sel{border:none;font-weight:700;}
+}
+.print-header{display:none;text-align:center;margin-bottom:16px;}
+.print-header h2{font-size:16pt;margin:0;}
+.print-header p{font-size:11pt;margin:4px 0;}
+.print-footer{display:none;}
+@media print{.print-header,.print-footer{display:block!important;}}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-blue{background:#EFF6FF;color:#1D4ED8;}
+.badge-green{background:#ECFDF5;color:#065F46;}
+.badge-red{background:#FEF2F2;color:#991B1B;}
+.badge-amber{background:#FFFBEB;color:#92400E;}
+.badge-purple{background:#F5F3FF;color:#5B21B6;}
+.badge-gray{background:#F1F5F9;color:#475569;}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);z-index:100;align-items:center;justify-content:center;padding:16px;}
+.modal-bg.show{display:flex;}
+.modal-box{background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.modal-header{padding:18px 20px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-size:15px;font-weight:700;color:#1E293B;}
+.modal-body{padding:20px;}
+.modal-footer{padding:14px 20px;border-top:1px solid #F1F5F9;display:flex;justify-content:flex-end;gap:8px;}
+.modal-close{background:none;border:none;cursor:pointer;color:#94A3B8;font-size:18px;line-height:1;padding:2px;}
+.modal-close:hover{color:#475569;}
+
+/* TOAST */
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,0.12);animation:slideUp 0.3s ease;pointer-events:auto;}
+.toast.success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;}
+.toast.error{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;}
+.toast.warning{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A;}
+.toast.info{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;}
+@keyframes slideUp{from{transform:translateY(10px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+/* LOADING */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,0.75);z-index:90;align-items:center;justify-content:center;}
+.loading-overlay.show{display:flex;}
+.spinner{width:36px;height:36px;border:3px solid #E2E8F0;border-top-color:#3B82F6;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* LANE DRAW */
+.lane-card{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:12px;text-align:center;transition:all 0.2s;}
+.lane-card.filled{background:#EFF6FF;border-color:#BFDBFE;}
+.lane-card .lane-num{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;color:#94A3B8;}
+.lane-card.filled .lane-num{color:#3B82F6;}
+.lane-card .lane-name{font-size:11px;font-weight:600;color:#64748B;margin-top:4px;}
+.lane-card.filled .lane-name{color:#1E293B;}
+
+/* RUMAH COLORS */
+.rumah-MERAH{background:#FEF2F2;border-left:3px solid #EF4444;color:#991B1B;}
+.rumah-BIRU{background:#EFF6FF;border-left:3px solid #3B82F6;color:#1D4ED8;}
+.rumah-HIJAU{background:#ECFDF5;border-left:3px solid #10B981;color:#065F46;}
+.rumah-KUNING{background:#FFFBEB;border-left:3px solid #F59E0B;color:#92400E;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  #sidebar{transform:translateX(-100%);}
+  #sidebar.open{transform:translateX(0);}
+  #main-content{margin-left:0;padding:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="app-header">
+  <div class="logo">
+    🏃 <span>ADMIN</span>&nbsp;OPS
+    <span style="font-size:11px;background:rgba(16,185,129,0.2);color:#34D399;padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:1px;">OPERASI</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span style="font-size:12px;color:#64748B;" id="hdr-user">—</span>
+    <button class="header-btn" onclick="refreshTab()">🔄</button>
+    <button class="header-btn" onclick="goToSetup()">⚙️ Setup</button>
+    <button class="header-btn danger" onclick="confirmLogout()">🚪 Keluar</button>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading-overlay">
+  <div style="text-align:center;">
+    <div class="spinner"></div>
+    <div style="margin-top:10px;font-size:12px;color:#64748B;" id="loading-msg">Memuatkan...</div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: MURID ═══ -->
+<div class="modal-bg" id="modal-murid">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-murid-title">Tambah Murid</span>
+      <button class="modal-close" onclick="closeModal('modal-murid')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label required">No. Kad Pengenalan</label>
+          <input class="form-control" id="m-nokp" placeholder="contoh: 120101010001">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label required">Nama Penuh</label>
+          <input class="form-control" id="m-nama" placeholder="Nama seperti dalam IC">
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Rumah Sukan</label>
+          <select class="form-control" id="m-rumah">
+            <option value="">-- Pilih --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Kategori</label>
+          <select class="form-control" id="m-kat">
+            <option value="">-- Pilih --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Jantina</label>
+          <select class="form-control" id="m-jantina">
+            <option value="L">Lelaki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tarikh Lahir</label>
+          <input type="date" class="form-control" id="m-dob">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kelas</label>
+          <input class="form-control" id="m-kelas" placeholder="contoh: 6 Amanah">
+        </div>
+        <div class="form-group">
+          <label class="form-label">No. Dada</label>
+          <input class="form-control" id="m-nodada" placeholder="contoh: 001">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-murid')">Batal</button>
+      <button class="btn btn-primary" onclick="saveMurid()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: IMPORT CSV ═══ -->
+<div class="modal-bg" id="modal-import">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">📥 Import Murid (CSV)</span>
+      <button class="modal-close" onclick="closeModal('modal-import')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:#F8FAFC;border:2px dashed #CBD5E1;border-radius:10px;padding:24px;text-align:center;margin-bottom:16px;">
+        <div style="font-size:28px;margin-bottom:8px;">📄</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Drag & Drop fail CSV</div>
+        <div style="font-size:12px;color:#64748B;margin-bottom:12px;">atau</div>
+        <input type="file" id="import-file" accept=".csv" style="display:none;" onchange="previewImport()">
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('import-file').click()">Pilih Fail</button>
+      </div>
+      <div style="background:#EFF6FF;border-radius:8px;padding:12px;font-size:12px;color:#1D4ED8;margin-bottom:8px;">
+        <strong>Format CSV (5 kolum sahaja):</strong><br>
+        <code style="font-size:11px;">no_kp, nama, darjah, kelas, nama_rumah</code><br><br>
+        <strong>Contoh:</strong><br>
+        <code style="font-size:11px;">901201-05-1234, Ahmad bin Ali, 5, 5 Bestari, BESTARI</code><br>
+        <span style="color:#6B7280;margin-top:4px;display:block;">✅ Jantina, kategori & tarikh lahir akan auto-jana dari No. KP</span>
+      </div>
+      <div style="background:#F0FDF4;border-radius:8px;padding:10px;font-size:11px;color:#166534;">
+        💡 Nama rumah mesti sama dengan yang ditetapkan dalam AdminSetup (contoh: BESTARI, GEMILANG)
+      </div>
+      <div id="import-preview" style="margin-top:12px;display:none;">
+        <div style="font-size:12px;font-weight:600;color:#475569;margin-bottom:8px;" id="import-count">—</div>
+        <div style="max-height:150px;overflow-y:auto;border:1px solid #E2E8F0;border-radius:8px;">
+          <table class="data-table" style="font-size:11px;" id="import-table"></table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-import')">Batal</button>
+      <button class="btn btn-primary" onclick="uploadImport()" id="btn-import-upload" disabled>📥 Import</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: DAFTAR ACARA ═══ -->
+<div class="modal-bg" id="modal-daftar">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">📋 Daftar Murid ke Acara</span>
+      <button class="modal-close" onclick="closeModal('modal-daftar')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label required">Kategori</label>
+          <select class="form-control" id="d-kat" onchange="loadAcaraForDaftar()">
+            <option value="">-- Pilih --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Acara</label>
+          <select class="form-control" id="d-acara">
+            <option value="">-- Pilih Kategori Dahulu --</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label required">Murid (No. KP)</label>
+          <input class="form-control" id="d-nokp" placeholder="Taip No. KP atau nama...">
+          <div id="d-murid-suggest" style="display:none;border:1px solid #E2E8F0;border-radius:8px;margin-top:4px;max-height:150px;overflow-y:auto;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>
+        </div>
+        <div class="form-group" id="d-murid-info" style="grid-column:1/-1;display:none;">
+          <div style="background:#ECFDF5;border-radius:8px;padding:12px;font-size:12px;" id="d-murid-info-content"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-daftar')">Batal</button>
+      <button class="btn btn-primary" onclick="saveDaftar()">📋 Daftar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CONFIRM DELETE ═══ -->
+<div class="modal-bg" id="modal-confirm">
+  <div class="modal-box" style="max-width:400px;">
+    <div class="modal-header">
+      <span class="modal-title">⚠️ Pengesahan</span>
+      <button class="modal-close" onclick="closeModal('modal-confirm')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:#475569;margin:0;" id="confirm-msg">Adakah anda pasti?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-confirm')">Batal</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">Padam</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ JAVASCRIPT ═══ -->
+
 </body>
 </html>

@@ -4,10 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pencatat Keputusan</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
+@keyframes rpop{
+  0%{opacity:0;transform:scale(0.7) translateY(20px)}
+  100%{opacity:1;transform:scale(1) translateY(0)}
+}
+
 :root{
   --bg:#F4F6FA;--bg2:#FFFFFF;--bg3:#EEF1F7;
   --card:#FFFFFF;--card2:#F8FAFD;
@@ -23,7 +28,7 @@
   --shadow-lg:0 10px 30px rgba(0,0,0,.10);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
 .hdr{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
 .hdr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,var(--blue),var(--cyan));}
 .hdr-title{font-size:15px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px;padding-left:8px;}
@@ -50,14 +55,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
 .form-group{display:flex;flex-direction:column;gap:6px;}
 .form-label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;}
-.form-select,.form-input{background:#fff;border:1.5px solid var(--border2);border-radius:8px;padding:10px 13px;color:var(--text);font-size:13px;font-weight:500;width:100%;outline:none;transition:all .2s;font-family:'DM Sans',system-ui;}
+.form-select,.form-input{background:#fff;border:1.5px solid var(--border2);border-radius:8px;padding:10px 13px;color:var(--text);font-size:13px;font-weight:500;width:100%;outline:none;transition:all .2s;font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;}
 .form-select:focus,.form-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.12);}
 .heat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
 .heat-card{background:#fff;border:2px solid var(--border);border-radius:12px;padding:18px 14px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:var(--shadow-sm);}
 .heat-card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(26,86,219,.15);transform:translateY(-2px);}
 .heat-card.selected{border-color:var(--blue);background:var(--blue-lt);}
 .heat-card.selesai{border-color:var(--green);background:var(--green-lt);}
-.heat-num{font-size:28px;font-weight:800;color:var(--blue);line-height:1;font-family:'DM Mono',monospace;}
+.heat-num{font-size:28px;font-weight:800;color:var(--blue);line-height:1;font-family:'Courier New',Courier,monospace;}
 .heat-card.selesai .heat-num{color:var(--green);}
 .heat-lbl{font-size:11px;color:var(--text2);margin-top:5px;font-weight:600;}
 .heat-status{font-size:10px;padding:3px 10px;border-radius:20px;margin-top:8px;display:inline-block;font-weight:700;}
@@ -71,19 +76,19 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .ktbl td{padding:11px 14px;border-bottom:1px solid #EEF1F7;font-size:13px;vertical-align:middle;}
 .ktbl tbody tr:hover td{background:#F8FAFD;}
 .ktbl tbody tr:nth-child(even) td{background:#FAFBFE;}
-.lorong-badge{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;box-shadow:0 2px 6px rgba(26,86,219,.3);font-family:'DM Mono',monospace;}
+.lorong-badge{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;box-shadow:0 2px 6px rgba(26,86,219,.3);font-family:'Courier New',Courier,monospace;}
 .rumah-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:7px;flex-shrink:0;}
-.prestasi-input{background:#F8FAFD;border:1.5px solid var(--border2);border-radius:8px;padding:7px 11px;color:var(--text);font-size:14px;font-weight:700;width:115px;text-align:center;outline:none;font-family:'DM Mono',monospace;transition:all .2s;}
+.prestasi-input{background:#F8FAFD;border:1.5px solid var(--border2);border-radius:8px;padding:7px 11px;color:var(--text);font-size:14px;font-weight:700;width:115px;text-align:center;outline:none;font-family:'Courier New',Courier,monospace;transition:all .2s;}
 .prestasi-input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(26,86,219,.1);}
 .prestasi-input.saved{border-color:var(--green);background:var(--green-lt);}
 .prestasi-input.disahkan{background:var(--bg3);cursor:not-allowed;opacity:.6;}
-.ked-select{background:#F8FAFD;border:2px solid var(--border2);border-radius:8px;padding:5px 6px;color:var(--text);font-size:13px;font-weight:700;width:64px;outline:none;cursor:pointer;transition:all .2s;text-align:center;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%239CA3AF'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px;font-family:'DM Mono','DM Sans',system-ui;}
+.ked-select{background:#F8FAFD;border:2px solid var(--border2);border-radius:8px;padding:5px 6px;color:var(--text);font-size:13px;font-weight:700;width:64px;outline:none;cursor:pointer;transition:all .2s;text-align:center;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%239CA3AF'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px;font-family:'Courier New',Courier,monospace;}
 .ked-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.12);background-color:#fff;}
 .ked-select.empty{border-color:var(--red);background:var(--red-lt);color:var(--red);}
 .ked-select:disabled{opacity:.5;cursor:not-allowed;}
 .th-required{color:var(--red);margin-left:4px;font-size:9.5px;font-weight:800;}
 .cubaan-wrap{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;}
-.cubaan-input{background:#F8FAFD;border:1.5px solid var(--border2);border-radius:8px;padding:6px 8px;color:var(--text);font-size:12px;font-weight:700;width:75px;text-align:center;outline:none;font-family:'DM Mono',monospace;}
+.cubaan-input{background:#F8FAFD;border:1.5px solid var(--border2);border-radius:8px;padding:6px 8px;color:var(--text);font-size:12px;font-weight:700;width:75px;text-align:center;outline:none;font-family:'Courier New',Courier,monospace;}
 .cubaan-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.1);background:#fff;}
 .cubaan-best{font-size:11px;font-weight:800;color:var(--green);min-width:54px;padding:4px 8px;background:var(--green-lt);border-radius:6px;text-align:center;}
 .cubaan-opt-label{font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.3px;text-transform:uppercase;}
@@ -91,7 +96,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .status-info{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
 .info-chip{font-size:12px;color:var(--text2);font-weight:500;}
 .info-chip strong{color:var(--text);font-weight:700;}
-.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:7px;font-family:'DM Sans',system-ui;}
+.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:7px;font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
 .btn-primary{background:linear-gradient(135deg,var(--blue),#2563EB);color:#fff;box-shadow:0 2px 8px rgba(26,86,219,.35);}
 .btn-primary:hover:not(:disabled){background:linear-gradient(135deg,var(--blue2),#1D4ED8);}
@@ -112,6 +117,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .tag-final{background:#EDE9FE;color:var(--purple);}
 .tag-saring{background:var(--amber-lt);color:var(--amber);}
 .toast-wrap{position:fixed;top:72px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast.success{background:#059669}.toast.error{background:#DC2626}.toast.warn{background:#D97706}.toast.info{background:#1E3A5F}
 .toast{background:#fff;border:1px solid var(--border);border-radius:12px;padding:13px 16px;font-size:13px;font-weight:500;min-width:280px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-lg);animation:slideIn .25s ease;color:var(--text);}
 .toast.success{border-left:4px solid var(--green);}
 .toast.error{border-left:4px solid var(--red);}
@@ -121,6 +127,62 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .empty{text-align:center;padding:40px;color:var(--text3);}
 .empty-icon{font-size:40px;margin-bottom:12px;}
 .publish-panel{background:linear-gradient(135deg,var(--green-lt),rgba(8,145,178,.06));border:1px solid rgba(15,158,106,.25);border-radius:14px;padding:24px;text-align:center;}
+.pub-acara-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow-sm);}
+.pub-acara-head{background:linear-gradient(135deg,#1E3A5F,#1A56DB);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.pub-acara-name{font-size:16px;font-weight:800;color:#fff;line-height:1.3;}
+.pub-acara-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.pub-meta-chip{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;background:rgba(255,255,255,.18);color:#fff;}
+.pub-status-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:800;flex-shrink:0;}
+.pub-badge-published{background:#D1FAE5;color:#065F46;border:2px solid #6EE7B7;}
+.pub-badge-ready{background:#FEF3C7;color:#92400E;border:2px solid #FDE68A;}
+.pub-badge-pending{background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.3);}
+.kep-table{width:100%;border-collapse:collapse;}
+.kep-table th{background:linear-gradient(to bottom,#F8FAFD,#EEF1F7);padding:10px 14px;font-size:10.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid var(--border);text-align:left;}
+.kep-table td{padding:11px 14px;border-bottom:1px solid #EEF1F7;font-size:13px;vertical-align:middle;}
+.kep-table tr.kep-1 td{background:linear-gradient(to right,#FFFBEB,#fff);}
+.kep-table tr.kep-2 td{background:linear-gradient(to right,#F9FAFB,#fff);}
+.kep-table tr.kep-3 td{background:linear-gradient(to right,#FEF3C7,#fff);}
+.kep-ked{width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;}
+.kep-1-ked{background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;}
+.kep-2-ked{background:linear-gradient(135deg,#9CA3AF,#6B7280);color:#fff;}
+.kep-3-ked{background:linear-gradient(135deg,#CD7C3A,#92400E);color:#fff;}
+.kep-x-ked{background:var(--bg3);color:var(--text2);}
+.btn-publish-big{background:linear-gradient(135deg,#0F9E6A,#059669);color:#fff;font-size:14px;font-weight:800;padding:13px 28px;border-radius:12px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:9px;box-shadow:0 4px 14px rgba(15,158,106,.4);transition:all .2s;}
+.btn-publish-big:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 20px rgba(15,158,106,.5);}
+.btn-publish-big:disabled{background:linear-gradient(135deg,#9CA3AF,#6B7280);box-shadow:none;cursor:not-allowed;}
+/* Progress bar */
+.prog-wrap{background:var(--border);border-radius:20px;height:7px;overflow:hidden;margin:8px 0;}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:20px;transition:width .4s ease;}
+.prog-lbl{font-size:11px;font-weight:700;color:var(--text2);}
+/* Row status dot */
+.row-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.row-dot-ok{background:var(--green);}
+.row-dot-empty{background:var(--border2);}
+/* Hantar modal */
+.hantar-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);z-index:600;align-items:center;justify-content:center;}
+.hantar-overlay.show{display:flex;}
+.hantar-box{background:#fff;border-radius:18px;padding:0;max-width:440px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.18);animation:popIn .22s ease;overflow:hidden;}
+.hantar-head{background:linear-gradient(135deg,#1E3A5F,#1A56DB);padding:20px 24px;color:#fff;}
+.hantar-head-title{font-size:17px;font-weight:800;margin-bottom:4px;}
+.hantar-head-sub{font-size:12px;opacity:.8;}
+.hantar-body{padding:20px 24px;}
+.hantar-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;margin-bottom:6px;border:1px solid var(--border);}
+.hantar-row.k1{background:linear-gradient(to right,#FFFBEB,#fff);border-color:#FDE68A;}
+.hantar-row.k2{background:linear-gradient(to right,#F9FAFB,#fff);}
+.hantar-row.k3{background:linear-gradient(to right,#FEF3C7,#fff);border-color:#FDE68A;}
+.hantar-medal{font-size:20px;width:28px;text-align:center;}
+.hantar-nama{flex:1;font-size:13px;font-weight:700;color:var(--text);}
+.hantar-masa{font-size:13px;font-weight:800;color:var(--cyan);font-family:monospace;}
+.hantar-rumah{font-size:11px;color:var(--text2);}
+.hantar-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+/* Sticky action bar */
+.sticky-action{position:sticky;bottom:0;background:#fff;border-top:2px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px;justify-content:space-between;z-index:50;border-radius:0 0 14px 14px;margin:-1px;}
+.btn-hantar{background:linear-gradient(135deg,#0F9E6A,#059669);color:#fff;font-size:14px;font-weight:800;padding:11px 24px;border-radius:10px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 3px 10px rgba(15,158,106,.35);transition:all .2s;}
+.btn-hantar:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 16px rgba(15,158,106,.45);}
+.btn-hantar:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-simpan2{background:#fff;border:1.5px solid var(--border2);color:var(--text2);font-size:13px;font-weight:600;padding:10px 18px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s;}
+.btn-simpan2:hover:not(:disabled){border-color:var(--blue);color:var(--blue);}
+.btn-simpan2:disabled{opacity:.4;cursor:not-allowed;}
 .rank-table{width:100%;border-collapse:collapse;}
 .rank-table th{background:linear-gradient(to bottom,#F8FAFD,#EEF1F7);padding:10px 14px;text-align:left;font-size:10.5px;color:var(--text2);font-weight:700;text-transform:uppercase;border-bottom:2px solid var(--border);}
 .rank-table td{padding:11px 14px;border-bottom:1px solid #EEF1F7;font-size:13px;}
@@ -133,7 +195,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .ked-3{background:linear-gradient(135deg,#CD7C3A,#92400E);color:#fff;}
 .ked-x{background:var(--bg3);color:var(--text3);}
 .flex-nav{display:flex;gap:6px;margin-bottom:20px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:6px;box-shadow:var(--shadow-sm);}
-.flex-nav-btn{flex:1;padding:9px 12px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',system-ui;color:var(--text2);background:transparent;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.flex-nav-btn{flex:1;padding:9px 12px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;color:var(--text2);background:transparent;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
 .flex-nav-btn:hover{background:var(--bg3);color:var(--text);}
 .flex-nav-btn.active{background:linear-gradient(135deg,var(--blue),#2563EB);color:#fff;box-shadow:0 2px 8px rgba(26,86,219,.3);}
 .nav-count{font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700;background:rgba(255,255,255,.25);}
@@ -162,8 +224,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .crud-tbl td{padding:10px 14px;border-bottom:1px solid #F1F4FB;font-size:13px;vertical-align:middle;}
 .crud-tbl tbody tr:hover td{background:#F8FAFD;}
 .crud-tbl tbody tr.editing td{background:#EBF0FD;}
-.crud-edit-inp{background:#fff;border:1.5px solid var(--blue);border-radius:7px;padding:5px 9px;color:var(--text);font-size:13px;font-weight:600;width:100px;text-align:center;outline:none;font-family:'DM Mono',monospace;box-shadow:0 0 0 3px rgba(26,86,219,.1);}
-.crud-ked-sel{background:#fff;border:1.5px solid var(--blue);border-radius:7px;padding:5px 8px;color:var(--text);font-size:13px;font-weight:700;width:72px;outline:none;cursor:pointer;appearance:none;font-family:'DM Sans',system-ui;box-shadow:0 0 0 3px rgba(26,86,219,.1);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%231A56DB'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:20px;}
+.crud-edit-inp{background:#fff;border:1.5px solid var(--blue);border-radius:7px;padding:5px 9px;color:var(--text);font-size:13px;font-weight:600;width:100px;text-align:center;outline:none;font-family:'Courier New',Courier,monospace;box-shadow:0 0 0 3px rgba(26,86,219,.1);}
+.crud-ked-sel{background:#fff;border:1.5px solid var(--blue);border-radius:7px;padding:5px 8px;color:var(--text);font-size:13px;font-weight:700;width:72px;outline:none;cursor:pointer;appearance:none;font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;box-shadow:0 0 0 3px rgba(26,86,219,.1);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%231A56DB'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:20px;}
 .crud-act{display:flex;gap:5px;align-items:center;}
 .btn-icon{width:30px;height:30px;border-radius:7px;border:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .15s;}
 .btn-icon:hover{transform:scale(1.1);}
@@ -185,10 +247,47 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .del-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px;line-height:1.5;}
 .del-actions{display:flex;gap:10px;justify-content:center;}
 @media(max-width:600px){.form-row{grid-template-columns:1fr;}.stepper{flex-wrap:wrap;}.step{min-width:50%;}.heat-grid{grid-template-columns:repeat(3,1fr);}}
+
+.pb-wrap{position:fixed;top:0;left:0;right:0;z-index:9999;display:none;flex-direction:column;}
+.pb-track{height:4px;background:rgba(26,86,219,.15);}
+.pb-fill{height:4px;width:0%;background:linear-gradient(90deg,#1A56DB,#0891B2);transition:width .25s;box-shadow:0 0 8px rgba(26,86,219,.6);}
+.pb-toast{background:rgba(15,23,42,.9);color:#fff;font-size:12px;font-weight:600;padding:7px 16px;border-radius:0 0 10px 10px;display:inline-flex;align-items:center;gap:8px;align-self:center;box-shadow:0 4px 16px rgba(0,0,0,.25);}
+.pb-spin{width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ── KED SELECT BARU ── */
+.ked-sel-wrap{position:relative;display:inline-block;}
+.ked-sel-new{
+  appearance:none;-webkit-appearance:none;
+  font-size:13px;font-weight:700;
+  padding:6px 28px 6px 10px;
+  border-radius:10px;border:2px solid var(--border2);
+  background:#fff;color:var(--text);
+  cursor:pointer;outline:none;
+  transition:all .15s;min-width:72px;
+  font-family:system-ui,-apple-system,sans-serif;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236B7280'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;
+}
+.ked-sel-new:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.12);}
+.ked-sel-new:hover:not(:disabled){border-color:var(--blue);background-color:var(--blue-lt);}
+.ked-sel-new.ked-1:hover,.ked-sel-new.ked-2:hover,.ked-sel-new.ked-3:hover{box-shadow:0 0 0 3px rgba(26,86,219,.2);cursor:pointer;}
+/* Tambah tanda boleh edit */
+.ked-sel-new.ked-1::after,.ked-sel-new.ked-2::after,.ked-sel-new.ked-3::after{content:" ✏️";font-size:10px;}
+.ked-sel-new.ked-1{background-color:#FFFBEB;border-color:#F59E0B;color:#92400E;}
+.ked-sel-new.ked-2{background-color:#F9FAFB;border-color:#9CA3AF;color:#374151;}
+.ked-sel-new.ked-3{background-color:#FEF3C7;border-color:#D97706;color:#78350F;}
+.ked-sel-new.ked-x{background-color:var(--blue-lt);border-color:var(--blue);color:var(--blue);}
+.ked-sel-new.ked-empty{border-color:#EF4444;background-color:#FEF2F2;color:#991B1B;animation:pulse-red 1.5s infinite;}
+.ked-sel-new:disabled{opacity:.5;cursor:not-allowed;}
+@keyframes pulse-red{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 3px rgba(239,68,68,.25);}}
+
+
+#rekod-pecah-overlay.show { display:flex !important; }
 </style>
 </head>
 <body>
 
+<div id="pb-wrap" class="pb-wrap"><div class="pb-track"><div id="pb-fill" class="pb-fill"></div></div><div class="pb-toast"><div class="pb-spin"></div><span id="pb-msg">Memproses...</span></div></div>
 <header class="hdr">
   <div class="hdr-title">
     <div class="app-icon">🏁</div>
@@ -219,13 +318,16 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
     </div>
     <div class="step locked" id="stp4" onclick="gotoStep(4)">
       <div class="step-num">4</div>
-      <div><div class="step-label">Sahkan & Publish</div><div class="step-sub" id="stp4-sub">Finalkan</div></div>
+      <div><div class="step-label">Terbit Keputusan</div><div class="step-sub" id="stp4-sub">Finalkan</div></div>
     </div>
   </div>
 
   <div class="flex-nav" id="flex-nav">
     <button class="flex-nav-btn active" id="fnav-catat" onclick="showFlexPanel('catat')">✏️ Catat Keputusan</button>
-    <button class="flex-nav-btn" id="fnav-semak" onclick="showFlexPanel('semak')">📋 Semak Keputusan <span class="nav-count" id="semak-count">0</span></button>
+    <button class="flex-nav-btn" id="fnav-semak" onclick="showFlexPanel('semak')">
+      📋 Semak &amp; Terbit
+      <span class="nav-count" id="semak-count">0</span>
+    </button>
   </div>
 
   <div id="flex-catat">
@@ -263,20 +365,35 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
     <!-- STEP 3 -->
     <div id="panel3" style="display:none">
       <div id="acara-info-s3"></div>
-      <div class="status-bar">
-        <div class="status-info">
-          <div class="info-chip">Heat: <strong id="s3-heat-lbl">—</strong></div>
-          <div class="info-chip">Jenis: <strong id="s3-jenis">—</strong></div>
-          <div class="info-chip">Peserta: <strong id="s3-peserta-count">—</strong></div>
-          <div class="info-chip">Kategori: <strong id="s3-kat-info">—</strong></div>
-          <div class="info-chip">Status: <strong id="s3-status">—</strong></div>
+      <!-- Status bar baru — ringkas & jelas -->
+      <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:12px;box-shadow:var(--shadow-sm);">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <div id="s3-status-dot" style="width:10px;height:10px;border-radius:50%;background:var(--amber);flex-shrink:0;"></div>
+              <span style="font-size:13px;font-weight:800;color:var(--text);" id="s3-heat-lbl">Heat 1</span>
+              <span id="s3-jenis-badge" style="font-size:10px;padding:2px 10px;border-radius:20px;background:var(--blue-lt);color:var(--blue);font-weight:700;">FINAL</span>
+            </div>
+            <span style="font-size:12px;color:var(--text2);" id="s3-peserta-count">— peserta</span>
+            <span style="font-size:12px;color:var(--text2);" id="s3-kat-info">—</span>
+          </div>
+          <div style="display:flex;gap:7px;align-items:center;">
+            <button class="btn btn-ghost btn-sm" onclick="gotoStep(2)" id="btn-heat-lain">← Heat Lain</button>
+            <button class="btn btn-amber btn-sm" id="btn-auto-rank" onclick="autoRank()">⚡ Auto Rank</button>
+            <button class="btn btn-ghost btn-sm" onclick="cetakHeatPdf()">🖨️ PDF</button>
+          </div>
         </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-ghost btn-sm" onclick="gotoStep(2)">← Heat Lain</button>
-          <button class="btn btn-amber btn-sm" id="btn-auto-rank" onclick="autoRank()">⚡ Auto Rank</button>
-          <button class="btn btn-ghost btn-sm" onclick="cetakHeatPdf()">🖨️ PDF</button>
+        <!-- Progress bar -->
+        <div style="margin-top:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span class="prog-lbl" id="prog-lbl">0 / 0 kedudukan lengkap</span>
+            <span class="prog-lbl" id="s3-status" style="color:var(--amber);">BELUM</span>
+          </div>
+          <div class="prog-wrap"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
         </div>
       </div>
+      <!-- Edit status banner -->
+      <div id="edit-status-banner" style="display:none;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;margin-bottom:10px;font-size:12px;font-weight:600;border:1.5px solid transparent;"></div>
       <div class="card" style="padding:0;overflow:hidden">
         <div class="ktbl-wrap">
           <table class="ktbl" id="ktbl-main">
@@ -294,40 +411,163 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
           </table>
         </div>
       </div>
-      <div class="action-bar">
-        <button class="btn btn-ghost" onclick="gotoStep(2)">← Kembali</button>
-        <button class="btn btn-primary" id="btn-simpan-semua" onclick="simpanSemua()">💾 Simpan Semua</button>
-        <button class="btn btn-success" id="btn-sahkan" onclick="sahkanHeat()">✅ Sahkan Heat</button>
+      <div class="sticky-action">
+        <button class="btn btn-ghost btn-sm" onclick="gotoStep(2)">← Kembali</button>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="btn-simpan2" id="btn-simpan-semua" onclick="simpanSemua()">💾 Simpan</button>
+          <button class="btn-hantar" id="btn-sahkan" onclick="bukaHantarModal()">✅ Hantar Keputusan</button>
+        </div>
       </div>
     </div>
 
     <!-- STEP 4 -->
     <div id="panel4" style="display:none">
-      <div id="acara-info-s4"></div>
-      <div class="card">
-        <div class="card-title">📊 Keputusan Akhir <span id="s4-acara-lbl"></span></div>
-        <div style="overflow-x:auto">
-          <table class="rank-table" id="rank-table">
-            <thead><tr><th>Ked.</th><th>Nama</th><th>Rumah</th><th>Prestasi</th><th>Heat</th><th>Status</th></tr></thead>
-            <tbody id="rank-body"><tr><td colspan="6" class="empty">Memuatkan...</td></tr></tbody>
+      <!-- ══ HEADER ACARA CARD ══ -->
+      <div class="pub-acara-card">
+        <div class="pub-acara-head">
+          <div>
+            <div class="pub-acara-name" id="pub-acara-name">—</div>
+            <div class="pub-acara-meta" style="margin-top:6px;">
+              <span class="pub-meta-chip" id="pub-kat-chip">—</span>
+              <span class="pub-meta-chip" id="pub-jenis-chip">—</span>
+              <span class="pub-meta-chip" id="pub-fmt-chip">—</span>
+            </div>
+          </div>
+          <div id="pub-status-badge" class="pub-status-badge pub-badge-pending">
+            <span id="pub-status-dot" style="width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.7;flex-shrink:0;"></span>
+            <span id="pub-status-txt">Belum Diterbit</span>
+          </div>
+        </div>
+        <!-- Heat status chips -->
+        <div style="padding:10px 18px;background:#F8FAFD;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border);">
+          <span style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;">Heat:</span>
+          <div id="pub-heat-badges" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        </div>
+      </div>
+
+      <!-- ══ KEPUTUSAN TABLE ══ -->
+      <div style="background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;">
+        <div style="padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:14px;font-weight:700;">📊 Keputusan Akhir</span>
+          <button class="btn btn-ghost btn-sm" onclick="cetakAcaraPdf()">🖨️ Cetak PDF</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="kep-table">
+            <thead>
+              <tr>
+                <th style="width:50px;text-align:center;">Ked.</th>
+                <th>Nama / Pasukan</th>
+                <th style="width:120px;">Rumah</th>
+                <th style="width:110px;text-align:center;">Prestasi</th>
+                <th style="width:90px;text-align:center;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="rank-body"><tr><td colspan="5" style="text-align:center;padding:32px;color:#94A3B8;">Memuatkan...</td></tr></tbody>
           </table>
         </div>
       </div>
-      <div class="publish-panel" id="publish-panel">
-        <div style="font-size:40px;margin-bottom:12px">🏆</div>
-        <div style="font-size:17px;font-weight:800;margin-bottom:6px">Semua Heat Selesai</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:18px" id="pub-sub">Sahkan dan publish keputusan rasmi</div>
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-          <button class="btn btn-ghost" onclick="cetakAcaraPdf()">🖨️ Cetak PDF</button>
-          <button class="btn btn-success" id="btn-publish" onclick="publishAcara()">🏆 Publish Keputusan Rasmi</button>
+
+      <!-- ══ PUBLISH PANEL ══ -->
+      <div id="publish-panel" style="display:none;">
+
+        <!-- ⏳ TUNGGU: Ada heat belum selesai -->
+        <div id="pp-wait" style="display:none;border:1.5px solid #FDE68A;background:#FFFBEB;border-radius:14px;padding:18px 20px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <div style="font-size:28px;">⏳</div>
+            <div>
+              <div style="font-size:14px;font-weight:800;color:#92400E;">Heat Belum Selesai</div>
+              <div style="font-size:12px;color:#92400E;margin-top:2px;" id="pp-wait-txt">Sila selesaikan semua heat dahulu.</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#92400E;background:#FEF3C7;padding:8px 12px;border-radius:8px;">
+            💡 <strong>Langkah:</strong> Pergi ke <strong>Step 3</strong> → Catat keputusan → Klik <strong>"✅ Hantar Keputusan"</strong> untuk setiap heat
+          </div>
+        </div>
+
+        <!-- ✅ SEDIA: Semua heat selesai -->
+        <div id="pp-ready" style="display:none;">
+
+          <!-- Status ringkasan -->
+          <div id="pub-bottom-wrap" style="border-radius:14px;overflow:hidden;border:1.5px solid #6EE7B7;">
+
+            <!-- Header hijau -->
+            <div style="background:linear-gradient(135deg,#0F9E6A,#059669);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+              <div>
+                <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:3px;" id="pub-ready-title">✅ Semua Heat Selesai</div>
+                <div style="font-size:12px;color:rgba(255,255,255,.8);" id="pub-sub">Keputusan sedia untuk diterbitkan.</div>
+              </div>
+              <div style="background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;color:#fff;" id="pub-rekod-count"></div>
+            </div>
+
+            <!-- Apa berlaku selepas terbit -->
+            <div style="background:#F0FDF4;padding:14px 20px;border-bottom:1px solid #D1FAE5;">
+              <div style="font-size:11px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Apa berlaku selepas terbit?</div>
+              <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#065F46;">🌐 Keputusan muncul di laman awam</div>
+                <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#065F46;">🏅 Kedudukan pingat dikemaskini</div>
+                <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#065F46;">🔒 Rekod tidak boleh diedit</div>
+              </div>
+            </div>
+
+            <!-- Butang Terbit BESAR -->
+            <div style="background:#fff;padding:18px 20px;text-align:center;">
+              <button class="btn-publish-big" id="btn-publish" onclick="publishAcara()" style="font-size:16px;padding:15px 40px;width:100%;justify-content:center;border-radius:12px;">
+                🏆&nbsp; Terbit Keputusan Rasmi
+              </button>
+              <div style="font-size:11px;color:#94A3B8;margin-top:8px;">Keputusan akan diterbit ke laman awam serta-merta</div>
+            </div>
+
+          </div>
         </div>
       </div>
-      <div class="action-bar"><button class="btn btn-ghost" onclick="gotoStep(2)">← Kembali</button></div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+        <button class="btn btn-ghost btn-sm" onclick="gotoStep(2)">← Kembali</button>
+      </div>
     </div>
+
+    <!-- Best Athlete Panel -->
+    <div id="best-athlete-wrap" style="display:none;margin-top:16px;" class="card">
+      <div class="card-title" style="margin-bottom:12px;">👑 Atlet Terbaik</div>
+      <div id="best-athlete-body" style="display:flex;gap:12px;flex-wrap:wrap;"></div>
+    </div>
+
+    <!-- Medal Tally Panel -->
+    <div id="medal-tally-wrap" style="display:none;margin-top:16px;" class="card">
+      <div class="card-title" style="margin-bottom:10px;">🏅 Kedudukan Rumah Sukan</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr style="background:var(--bg3);border-bottom:2px solid var(--border);">
+            <th style="padding:8px 10px;text-align:center;width:40px;">#</th>
+            <th style="padding:8px 10px;text-align:left;">Rumah Sukan</th>
+            <th style="padding:8px 10px;text-align:center;">🥇</th>
+            <th style="padding:8px 10px;text-align:center;">🥈</th>
+            <th style="padding:8px 10px;text-align:center;">🥉</th>
+            <th style="padding:8px 10px;text-align:center;">Mata</th>
+          </tr></thead>
+          <tbody id="medal-tally-body"></tbody>
+        </table>
+      </div>
+    </div>
+
   </div><!-- /flex-catat -->
 
   <!-- SEMAK PANEL -->
   <div id="flex-semak" style="display:none">
+    <!-- PANDUAN FLOW -->
+    <div id="semak-guide" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1.5px solid #93C5FD;border-radius:12px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:flex-start;gap:12px;">
+      <div style="font-size:22px;flex-shrink:0;">💡</div>
+      <div>
+        <div style="font-size:13px;font-weight:800;color:#1E3A5F;margin-bottom:6px;">Apa perlu dibuat di sini?</div>
+        <div style="font-size:12px;color:#1D4ED8;line-height:1.7;">
+          <span style="background:#DBEAFE;padding:1px 7px;border-radius:10px;font-weight:700;margin-right:4px;">1</span>Semak keputusan yang telah dimasukkan — pastikan kedudukan dan prestasi betul.<br>
+          <span style="background:#DBEAFE;padding:1px 7px;border-radius:10px;font-weight:700;margin-right:4px;">2</span>Jika ada kesilapan → klik <strong>✏️ Edit</strong> untuk betulkan.<br>
+          <span style="background:#D1FAE5;padding:1px 7px;border-radius:10px;font-weight:700;color:#065F46;margin-right:4px;">3</span><span style="color:#065F46;font-weight:700;">Semua DISAHKAN?</span> → Pergi ke <strong>Step 4: Terbit Keputusan</strong> → tekan butang besar hijau <strong>🏆 Terbit Keputusan Rasmi</strong>.
+        </div>
+      </div>
+    </div>
+    <!-- STATUS SUMMARY -->
+    <div id="semak-status-bar" style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;"></div>
     <div class="semak-filter-bar">
       <div class="form-group" style="flex:1;min-width:160px">
         <label class="form-label">Cari Acara / Peserta</label>
@@ -380,10 +620,97 @@ try { var USERNAME = '<?= USERNAME ?>'; } catch(e) { var USERNAME = ''; }
 <script>
 'use strict';
 
-// ── PATCH 7: toast dideklarasi PERTAMA sebelum gasRun ──────────
+// -- PATCH 7: toast dideklarasi PERTAMA sebelum gasRun ----------
+// -- SEMAK REKOD PECAH ------------------------------------
+async function _semakRekodPecah(){
+  if(!_peserta||!_peserta.length||!_curAcara) return;
+  var jenis=_curAcara.jenis||'TRACK';
+  var pecahAll=[];
+  for(var i=0;i<_peserta.length;i++){
+    var p=_peserta[i];
+    var sid=safeId(p.no_kp);
+    var prestasi='';
+    if(jenis==='FIELD'){
+      var bestEl=document.getElementById('best_'+sid);
+      if(bestEl&&bestEl.textContent) prestasi=parseFloat(bestEl.textContent.replace('m','').replace('?','').trim())||0;
+    } else {
+      var inpEl=document.getElementById('inp_'+sid);
+      if(inpEl&&inpEl.value) prestasi=parseFloat(inpEl.value)||0;
+    }
+    if(!prestasi) continue;
+    var r=await gasRun('semakRekodPecah',{
+      nama_acara:_curAcara.nama_acara,
+      id_acara_master:_curAcara.id_master||'',
+      id_kategori:_curAcara.id_kategori,
+      jenis:jenis,
+      prestasi:prestasi
+    });
+    var s=gasResult(r);
+    if(s&&s.pecah&&s.pecah.length){
+      s.pecah.forEach(function(rec){
+        pecahAll.push({nama:p.nama,prestasi:prestasi,rekod:rec});
+      });
+    }
+  }
+  if(!pecahAll.length) return;
+  // Papar modal rekod pecah
+  _tunjukRekodPecah(pecahAll);
+}
+
+function _tunjukRekodPecah(list){
+  var overlay=document.getElementById("rekod-pecah-overlay");
+  var body=document.getElementById("rekod-pecah-body");
+  if(!overlay||!body) return;
+  var peringkatColor={'SEKOLAH':'#6366F1','DAERAH':'#F59E0B','NEGERI':'#10B981','MSSM':'#EC4899'};
+  var peringkatIcon={'SEKOLAH':'🏫','DAERAH':'🏙️','NEGERI':'🗺️','MSSM':'🏆'};
+  body.innerHTML=list.map(function(x,xi){
+    var clr=peringkatColor[x.rekod.peringkat]||'#F59E0B';
+    var icon=peringkatIcon[x.rekod.peringkat]||'🥇';
+    var jenis=x.rekod.unit==='s'?'TRACK':'FIELD';
+    var label=jenis==='TRACK'?'lebih pantas':'lebih jauh';
+    return '<div style="position:relative;overflow:hidden;background:#0F172A;border-radius:16px;padding:24px 20px;margin-bottom:12px;border:1px solid '+clr+'44;animation:rpop '+(0.3+xi*0.1)+'s cubic-bezier(0.34,1.56,0.64,1) both">'
+      +'<div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:'+clr+'22;pointer-events:none"></div>'
+      +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,'+clr+',transparent)"></div>'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'
+        +'<span style="font-size:22px">'+icon+'</span>'
+        +'<span style="background:'+clr+';color:#fff;font-size:9px;font-weight:900;padding:3px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase">REKOD '+x.rekod.peringkat+' DIPECAHKAN</span>'
+      +'</div>'
+      +'<div style="font-size:18px;font-weight:900;color:#F8FAFC;margin-bottom:2px">'+x.nama+'</div>'
+      +'<div style="font-size:12px;color:#94A3B8;margin-bottom:12px">'+(_curAcara?_curAcara.nama_acara:'')+'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+        +'<div style="background:#1E293B;border-radius:10px;padding:10px;text-align:center">'
+          +'<div style="font-size:10px;color:#64748B;font-weight:700;margin-bottom:4px;text-transform:uppercase">Rekod Lama</div>'
+          +'<div style="font-size:20px;font-weight:900;color:#EF4444">'+x.rekod.rekod_lama+' <span style="font-size:12px">'+x.rekod.unit+'</span></div>'
+          +'<div style="font-size:10px;color:#64748B;margin-top:2px">'+x.rekod.nama_pemilik+' ('+x.rekod.tahun+')</div>'
+        +'</div>'
+        +'<div style="background:#1E293B;border-radius:10px;padding:10px;text-align:center">'
+          +'<div style="font-size:10px;color:#64748B;font-weight:700;margin-bottom:4px;text-transform:uppercase">Rekod Baru</div>'
+          +'<div style="font-size:20px;font-weight:900;color:'+clr+'">'+x.prestasi+' <span style="font-size:12px">'+x.rekod.unit+'</span></div>'
+          +'<div style="font-size:10px;color:#10B981;margin-top:2px">'+x.rekod.selisih+' '+x.rekod.unit+' '+label+' ▲</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+  overlay.classList.add('show');
+}
+
+var _pbT=null;
+function showProg(msg,pct){
+  var w=document.getElementById("pb-wrap"),f=document.getElementById("pb-fill"),t=document.getElementById("pb-msg");
+  if(w)w.style.display="flex"; if(f)f.style.width=(pct||5)+"%"; if(t)t.textContent=msg||"Memproses...";
+}
+function updateProg(msg,pct){
+  var f=document.getElementById("pb-fill"),t=document.getElementById("pb-msg");
+  if(f)f.style.width=Math.min(pct||0,95)+"%"; if(t)t.textContent=msg||"Memproses...";
+}
+function hideProg(msg){
+  var f=document.getElementById("pb-fill"),t=document.getElementById("pb-msg"),w=document.getElementById("pb-wrap");
+  if(f)f.style.width="100%"; if(t)t.textContent=msg||"Selesai";
+  clearTimeout(_pbT); _pbT=setTimeout(function(){if(w)w.style.display="none";if(f)f.style.width="0%";},700);
+}
 function toast(msg,type){
   type=type||'info';
-  var icons={success:'✅',error:'❌',warn:'⚠️',info:'ℹ️'};
+  var icons={success:'?',error:'?',warn:'?',info:'?'};
   var t=document.createElement('div');
   t.className='toast '+(type==='warn'?'warn':type);
   t.innerHTML='<span>'+icons[type]+'</span><span>'+msg+'</span>';
@@ -392,7 +719,7 @@ function toast(msg,type){
   else console.log('[toast]',msg);
 }
 
-// ── GAS WRAPPER ────────────────────────────────────────────────
+// -- GAS WRAPPER ------------------------------------------------
 var IS_GAS = typeof google !== 'undefined' && google.script;
 var _scriptUrl = '';
 var _GAS_USERNAME = (function(){
@@ -439,12 +766,12 @@ function gasResult(r){
   return r;
 }
 
-// ── STATE ──────────────────────────────────────────────────────
+// -- STATE ------------------------------------------------------
 var _session={},_acara=[],_pend=[],_kat=[],_rumah=[],_heat=[],_peserta=[],_keputusan=[];
 var _curAcara=null,_curHeat=null,_curStep=1,_rumahMap={},_settings={};
 var _semakData=[],_semakFiltered=[],_mockKptStore=[];
 
-// ── INIT ───────────────────────────────────────────────────────
+// -- INIT -------------------------------------------------------
 document.addEventListener('DOMContentLoaded',function(){
   if(IS_GAS){
     google.script.run.withSuccessHandler(function(u){if(u)_scriptUrl=u;}).withFailureHandler(function(){}).getScriptUrl();
@@ -455,14 +782,14 @@ document.addEventListener('DOMContentLoaded',function(){
         if(s&&s.success&&s.user){
           _session=s.user;
           if(s.user.username) _GAS_USERNAME=s.user.username;
-          if(chip) chip.innerHTML='👤 <span>'+(s.user.full_name||s.user.username||'Pencatat')+'</span>';
+          if(chip) chip.innerHTML='? <span>'+(s.user.full_name||s.user.username||'Pencatat')+'</span>';
         } else {
-          if(chip) chip.innerHTML='👤 <span>'+(_GAS_USERNAME||'Pencatat')+'</span>';
+          if(chip) chip.innerHTML='? <span>'+(_GAS_USERNAME||'Pencatat')+'</span>';
         }
       })
       .withFailureHandler(function(){
         var chip=document.getElementById('user-chip');
-        if(chip&&_GAS_USERNAME) chip.innerHTML='👤 <span>'+_GAS_USERNAME+'</span>';
+        if(chip&&_GAS_USERNAME) chip.innerHTML='? <span>'+_GAS_USERNAME+'</span>';
       })
       .getSession(_GAS_USERNAME?{username:_GAS_USERNAME}:{username:''});
     google.script.run
@@ -480,12 +807,13 @@ document.addEventListener('DOMContentLoaded',function(){
     _session={username:'pencatat1',full_name:'Pencatat 1',role:'Pencatat'};
     _settings={nama_sekolah:'SK SULTAN ISMAIL, KEMAMAN',nama_pertandingan:'SUKAN TAHUNAN',tahun:'2025',lokasi:'Padang SK Sultan Ismail'};
     var chip=document.getElementById('user-chip');
-    if(chip) chip.innerHTML='👤 <span>Pencatat 1</span>';
+    if(chip) chip.innerHTML='? <span>Pencatat 1</span>';
   }
   loadMasterData();
 });
 
 async function loadMasterData(){
+  showProg('Memuatkan data sistem...',10);
   var [rK,rR,rA,rP]=await Promise.all([
     gasRun('getKategori'),gasRun('getRumah'),gasRun('getAcaraJana'),gasRun('getPendaftaran')
   ]);
@@ -495,24 +823,27 @@ async function loadMasterData(){
   _acara=(a&&(a.acara||a.data))||[];
   _pend=(p&&(p.pendaftaran||p.data))||[];
   _rumah.forEach(function(r){_rumahMap[r.id]={nama:r.nama,warna:r.warna||'#64748b'};});
+  hideProg('Data dimuat');
   buildKatDropdown();
   var skSel=document.getElementById('semak-flt-kat');
   if(skSel){
     skSel.innerHTML='<option value="">Semua</option>';
     _kat.forEach(function(k){skSel.innerHTML+='<option value="'+(k.kod||k.id)+'">'+( k.kod||k.id )+'</option>';});
   }
+  // Load rekod untuk PDF
+  gasRun('getRekod').then(function(r){ var s=gasResult(r); if(s&&s.data) window._rekodListPencatat=s.data; });
 }
 
-// ── STEP 1 ─────────────────────────────────────────────────────
+// -- STEP 1 -----------------------------------------------------
 function buildKatDropdown(){
   var s=document.getElementById('sel-kat');
-  s.innerHTML='<option value="">— Pilih Kategori —</option>';
+  s.innerHTML='<option value="">? Pilih Kategori ?</option>';
   var seen={};
   _acara.forEach(function(a){
     if(!seen[a.id_kategori]){
       seen[a.id_kategori]=1;
       var k=_kat.find(function(k2){return k2.kod===a.id_kategori||k2.id===a.id_kategori;});
-      var lbl=k?(k.kod+' — '+k.nama):a.id_kategori;
+      var lbl=k?(k.kod+' - '+k.nama):a.id_kategori;
       s.innerHTML+='<option value="'+a.id_kategori+'">'+lbl+'</option>';
     }
   });
@@ -521,13 +852,13 @@ function buildKatDropdown(){
 function onKatChange(){
   var katId=document.getElementById('sel-kat').value;
   var s=document.getElementById('sel-acara');
-  s.innerHTML='<option value="">— Pilih Acara —</option>';
+  s.innerHTML='<option value="">? Pilih Acara ?</option>';
   document.getElementById('acara-info-wrap').style.display='none';
   document.getElementById('btn-next1').disabled=true;
   _curAcara=null;
   if(!katId) return;
   _acara.filter(function(a){return a.id_kategori===katId;}).forEach(function(a){
-    var jp=(a.jenis_pendaftaran||'INDIVIDU').toUpperCase()==='KUMPULAN'?'👥':'👤';
+    var jp=(a.jenis_pendaftaran||'INDIVIDU').toUpperCase()==='KUMPULAN'?'?':'?';
     s.innerHTML+='<option value="'+a.id_acara+'">'+jp+' ['+a.no_acara+'] '+a.nama_acara+'</option>';
   });
 }
@@ -540,39 +871,46 @@ function onAcaraChange(){
   if(!_curAcara) return;
   var jenis=_curAcara.jenis||'TRACK';
   var katObj=_kat.find(function(k){return k.id===_curAcara.id_kategori||k.kod===_curAcara.id_kategori;});
-  var katLbl=katObj?(katObj.kod+' — '+katObj.nama):_curAcara.id_kategori;
-  var katDetail=katObj?('Jantina: '+(katObj.jantina==='L'?'Lelaki':'Perempuan')+' | Umur: '+katObj.umin+'–'+katObj.umax+' thn'):'—';
+  var katLbl=katObj?(katObj.kod+' - '+katObj.nama):_curAcara.id_kategori;
+  var katDetail=katObj?('Jantina: '+(katObj.jantina==='L'?'Lelaki':'Perempuan')+' | Umur: '+katObj.umin+'?'+katObj.umax+' thn'):'?';
   document.getElementById('acara-info-wrap').style.display='flex';
   document.getElementById('acara-info-wrap').className='acara-info';
   document.getElementById('acara-info-wrap').innerHTML=
     ai('Acara','['+_curAcara.no_acara+'] '+_curAcara.nama_acara)+
     ai('Kategori',katLbl)+ai('Kelayakan',katDetail)+
     ai('Jenis','<span class="tag tag-'+(jenis==='TRACK'?'track':'field')+'">'+jenis+'</span>')+
-    ai('Format',(_curAcara.format_acara||'—').replace(/_/g,' '))+
+    ai('Format',(_curAcara.format_acara||'-').replace(/_/g,' '))+
     ai('Pendaftaran',_curAcara.jenis_pendaftaran||'INDIVIDU');
 }
 
 function ai(l,v){return '<div class="ai-item"><div class="ai-lbl">'+l+'</div><div class="ai-val">'+v+'</div></div>';}
 
-// ── STEP 2 ─────────────────────────────────────────────────────
+// -- STEP 2 -----------------------------------------------------
 async function loadHeat(){
-  document.getElementById('heat-grid').innerHTML='<div class="empty"><div class="empty-icon">⏳</div>Memuatkan...</div>';
+  showProg('Memuatkan heat...',20);
+  document.getElementById('heat-grid').innerHTML='<div class="empty"><div class="empty-icon">?</div>Memuatkan...</div>';
   var r=await gasRun('getHeat',{id_acara:_curAcara.id_acara});
   var s=gasResult(r);
+  updateProg('Heat dimuat...',80);
   _heat=(s&&s.heat)||[];
-  document.getElementById('heat-count-lbl').textContent=_heat.length+' heat';
+  var _visHeatCount=_heat.filter(function(h){return (h.status||'').toUpperCase()!=='VOID';}).length;
+  var _fmtLH=(_curAcara&&_curAcara.format_acara||'').toUpperCase(); var isTerusFinalLH=_curAcara&&(_fmtLH==='TERUS_FINAL'||_fmtLH==='FINAL');
+  document.getElementById('heat-count-lbl').textContent=isTerusFinalLH?_visHeatCount+' sesi final':_visHeatCount+' heat';
+  hideProg();
   renderHeatGrid();
 }
 
 function renderHeatGrid(){
   var g=document.getElementById('heat-grid');
-  if(!_heat.length){g.innerHTML='<div class="empty"><div class="empty-icon">📭</div>Tiada heat dijana.<br><small>Jana heat dalam AdminOps dahulu.</small></div>';return;}
-  g.innerHTML=_heat.map(function(h){
-    var sc='heat-card'+(h.status==='SELESAI'?' selesai':'');
+  if(!_heat.length){g.innerHTML='<div class="empty"><div class="empty-icon">?</div>Tiada heat dijana.<br><small>Jana heat dalam AdminOps dahulu.</small></div>';return;}
+  var _visHeat=_heat.filter(function(h){return (h.status||'').toUpperCase()!=='VOID';});
+  if(!_visHeat.length){g.innerHTML='<div class="empty"><div class="empty-icon">?</div>Tiada heat aktif.<br><small>Jana heat dalam AdminOps dahulu.</small></div>';return;}
+  g.innerHTML=_visHeat.map(function(h){
+    var sc='heat-card'+(h.status==='SELESAI'?' selesai':(h.status==='PUBLISHED'?' selesai':''));
     var stsCls='sts-'+(h.status||'belum').toLowerCase();
     return '<div class="'+sc+'" onclick="pilihHeat(\''+h.id_heat+'\')">'+
       '<div class="heat-num">'+h.no_heat+'</div>'+
-      '<div class="heat-lbl">Heat '+h.no_heat+' — '+h.jenis+'</div>'+
+      '<div class="heat-lbl">Heat '+h.no_heat+' - '+h.jenis+'</div>'+
       '<div class="heat-status '+stsCls+'">'+(h.status||'BELUM')+'</div></div>';
   }).join('');
 }
@@ -580,12 +918,29 @@ function renderHeatGrid(){
 async function pilihHeat(idHeat){
   _curHeat=_heat.find(function(h){return h.id_heat===idHeat;});
   if(!_curHeat) return;
-  gotoStep(3);
-  await loadPesertaKeputusan();
+  var _fmtPH=(_curAcara&&_curAcara.format_acara||'').toUpperCase(); var isTerusFinalPH=(_fmtPH==='TERUS_FINAL'||_fmtPH==='FINAL');
+  if(isTerusFinalPH){
+    // TERUS_FINAL: step 2 dimark done, terus ke 3
+    _curStep=3;
+    [1,2,3,4].forEach(function(i){
+      document.getElementById('panel'+i).style.display=i===3?'block':'none';
+      var el=document.getElementById('stp'+i);
+      el.classList.remove('active','done','locked');
+      if(i===3) el.classList.add('active');
+      else if(i<3) el.classList.add('done');
+      else el.classList.add('locked');
+    });
+    setAcaraInfoStrip();
+    await loadPesertaKeputusan();
+  } else {
+    gotoStep(3);
+    await loadPesertaKeputusan();
+  }
 }
 
-// ── STEP 3 ─────────────────────────────────────────────────────
+// -- STEP 3 -----------------------------------------------------
 async function loadPesertaKeputusan(){
+  showProg('Memuatkan peserta...',20);
   var [rP,rK]=await Promise.all([
     gasRun('getPesertaHeat',{id_heat:_curHeat.id_heat}),
     gasRun('getKeputusan',{id_heat:_curHeat.id_heat})
@@ -595,31 +950,108 @@ async function loadPesertaKeputusan(){
   _keputusan=(sk&&sk.keputusan)||[];
   updateS3Info();
   renderKtbl();
+  // Auto-semak rekod pecah bila load keputusan
+  setTimeout(async function(){ await _semakRekodPecah(); }, 500);
+  hideProg();
 }
 
 function updateS3Info(){
   var katS3=_kat.find(function(k){return k.id===_curAcara.id_kategori||k.kod===_curAcara.id_kategori;});
-  document.getElementById('s3-heat-lbl').textContent='Heat '+_curHeat.no_heat;
-  document.getElementById('s3-jenis').textContent=(_curHeat.jenis||'—')+' | '+_curAcara.jenis;
-  document.getElementById('s3-peserta-count').textContent=_peserta.length+' peserta';
-  document.getElementById('s3-status').textContent=_curHeat.status||'BELUM';
-  if(katS3){ var el=document.getElementById('s3-kat-info'); if(el) el.textContent=(katS3.jantina==='L'?'Lelaki':'Perempuan')+' | Umur '+katS3.umin+'–'+katS3.umax+' thn'; }
-  var isDisahkan=_keputusan.length>0&&_keputusan.every(function(k){return k.status==='DISAHKAN'||k.status==='PUBLISHED';});
-  document.getElementById('btn-sahkan').disabled=isDisahkan;
-  document.getElementById('btn-simpan-semua').disabled=isDisahkan;
-  document.getElementById('btn-auto-rank').disabled=isDisahkan;
+  // Heat label
+  var heatLbl=document.getElementById('s3-heat-lbl');
+  if(heatLbl) heatLbl.textContent='Heat '+_curHeat.no_heat;
+  // Jenis badge
+  var fmt=(_curAcara.format_acara||'').toUpperCase();
+  var jenisLbl=fmt==='TERUS_FINAL'||fmt==='FINAL'?'FINAL':fmt==='SARINGAN_FINAL'?'SARINGAN':(_curHeat.jenis||'FINAL');
+  var jenisBadge=document.getElementById('s3-jenis-badge');
+  if(jenisBadge){
+    jenisBadge.textContent=jenisLbl+' | '+(_curAcara.jenis||'TRACK');
+    var isF=jenisLbl==='FINAL';
+    jenisBadge.style.background=isF?'var(--green-lt)':'var(--amber-lt)';
+    jenisBadge.style.color=isF?'var(--green)':'var(--amber)';
+  }
+  // Peserta count
+  var pCount=document.getElementById('s3-peserta-count');
+  if(pCount) pCount.textContent=_peserta.length+' peserta';
+  // Kategori
+  if(katS3){ var el=document.getElementById('s3-kat-info'); if(el) el.textContent=(katS3.jantina==='L'?'Lelaki':'Perempuan')+' | Umur '+katS3.umin+'?'+katS3.umax+' thn'; }
+  // Status dot + label
+  var sts=_curHeat.status||'BELUM';
+  var stsDot=document.getElementById('s3-status-dot');
+  var stsLbl=document.getElementById('s3-status');
+  var stsColor=sts==='SELESAI'?'var(--green)':sts==='SEDANG'?'var(--amber)':'#94A3B8';
+  if(stsDot) stsDot.style.background=stsColor;
+  if(stsLbl){ 
+    stsLbl.textContent=sts+(sts==='SELESAI'?' ?':' ');
+    stsLbl.style.color=stsColor;
+    stsLbl.title=sts==='SELESAI'?'Heat selesai ? masih boleh edit sehingga keputusan diterbit':'Heat belum selesai';
+  }
+  // Progress bar
+  updateProgress();
+  // Lock hanya PUBLISHED
+  var isPublished=_keputusan.length>0&&_keputusan.every(function(k){return k.status==='PUBLISHED';});
+  var isDisahkanAll=_keputusan.length>0&&_keputusan.every(function(k){return k.status==='DISAHKAN'||k.status==='PUBLISHED';})&&!isPublished;
+  // Banner edit status
+  var editBanner=document.getElementById('edit-status-banner');
+  if(editBanner){
+    if(isPublished){
+      editBanner.style.display='flex';
+      editBanner.style.background='#EFF6FF'; editBanner.style.borderColor='#93C5FD';
+      editBanner.textContent='? Keputusan telah diterbit rasmi ? tidak boleh diedit.';
+      editBanner.style.color='#1D4ED8';
+    } else if(isDisahkanAll){
+      editBanner.style.display='flex';
+      editBanner.style.background='#FFFBEB'; editBanner.style.borderColor='#FDE68A';
+      editBanner.innerHTML='? <strong>Heat disahkan</strong> ? masih boleh edit dan hantar semula jika ada kesilapan.';
+      editBanner.style.color='#92400E';
+    } else {
+      editBanner.style.display='none';
+    }
+  }
+  var btnHantar=document.getElementById('btn-sahkan');
+  var btnSimpan=document.getElementById('btn-simpan-semua');
+  var btnRank=document.getElementById('btn-auto-rank');
+  if(btnHantar) btnHantar.disabled=isPublished;
+  if(btnSimpan) btnSimpan.disabled=isPublished;
+  if(btnRank) btnRank.disabled=isPublished;
+  // TERUS_FINAL: sembunyikan "Heat Lain"
+  var btnHeatLain=document.getElementById('btn-heat-lain');
+  if(btnHeatLain){
+    var isTF=(fmt==='TERUS_FINAL'||fmt==='FINAL');
+    btnHeatLain.style.display=isTF?'none':'';
+  }
+  // Prestasi header
   var jenis=_curAcara.jenis||'TRACK';
-  document.getElementById('th-prestasi').innerHTML=
-    jenis==='TRACK'?'Masa (saat) <span style="color:var(--text3);font-size:10px">— Pilihan</span>':
-    jenis==='FIELD'?'Jarak (m) Cubaan <span style="color:var(--text3);font-size:10px">— Pilihan</span>':
-    'Mata <span style="color:var(--text3);font-size:10px">— Pilihan</span>';
+  var thEl=document.getElementById('th-prestasi');
+  if(thEl) thEl.innerHTML=
+    jenis==='TRACK'?'Masa (saat) <span style="color:var(--text3);font-size:10px">? Pilihan</span>':
+    jenis==='FIELD'?'Jarak (m) Cubaan <span style="color:var(--text3);font-size:10px">? Pilihan</span>':
+    'Mata <span style="color:var(--text3);font-size:10px">? Pilihan</span>';
+}
+
+function updateProgress(){
+  var total=_peserta.length, done=0;
+  _peserta.forEach(function(p){
+    var el=document.getElementById('ked_'+safeId(p.no_kp));
+    if(el&&el.value&&el.value!=='') done++;
+  });
+  var pct=total>0?Math.round(done/total*100):0;
+  var bar=document.getElementById('prog-bar');
+  var lbl=document.getElementById('prog-lbl');
+  if(bar) bar.style.width=pct+'%';
+  if(lbl) lbl.textContent=done+' / '+total+' kedudukan lengkap';
+  if(bar){
+    bar.style.background=pct===100?'linear-gradient(90deg,var(--green),#059669)':'linear-gradient(90deg,var(--blue),var(--cyan))';
+  }
+  return {done:done,total:total,pct:pct};
 }
 
 function safeId(noKp){ return (noKp||'').replace(/[^a-zA-Z0-9]/g,'_'); }
 
 function renderKtbl(){
   var jenis=_curAcara.jenis||'TRACK',isField=jenis==='FIELD';
-  var isDisahkan=_keputusan.length>0&&_keputusan.every(function(k){return k.status==='DISAHKAN'||k.status==='PUBLISHED';});
+  // Lock input hanya jika PUBLISHED ? boleh edit semula jika DISAHKAN sahaja
+  var isDisahkan=_keputusan.length>0&&_keputusan.every(function(k){return k.status==='PUBLISHED';});
   var isKump=(_curAcara.jenis_pendaftaran||'').toUpperCase()==='KUMPULAN';
   var N=_peserta.length;
   var html=_peserta.map(function(p,idx){
@@ -630,27 +1062,21 @@ function renderKtbl(){
     var existingKed=kpt&&kpt.kedudukan&&kpt.kedudukan>0?parseInt(kpt.kedudukan):0;
     var lockedAttr=isDisahkan?' disabled':'';
     var hiddenInput='<input type="hidden" id="ked_'+sid+'" value="'+(existingKed||'')+'"/>';
-    var opts='<option value="">— Pilih —</option>';
+    // Bina select dropdown ? wajib hingga podium, optional selebihnya
+    var _podiumN=parseInt(_settings&&_settings.podium)||4;
+    var opts='<option value="">- Pilih Kedudukan -</option>';
     for(var n=1;n<=N;n++){
-      var lbl=n===1?'🥇 #1':n===2?'🥈 #2':n===3?'🥉 #3':'#'+n;
-      opts+='<option value="'+n+'" '+(existingKed===n?'selected':'')+'>'+lbl+'</option>';
+      var _isMedal=n<=_podiumN;
+      var _lbl=n===1?'[1] Tempat 1 *':n===2?'[2] Tempat 2 *':n===3?'[3] Tempat 3 *':n<=_podiumN?'['+n+'] Tempat '+n+' *':'['+n+'] Tempat '+n+' (optional)';
+      opts+='<option value="'+n+'" '+(existingKed===n?'selected':'')+' style="'+(n<=_podiumN?'font-weight:700;':'')+'">'+_lbl+'</option>';
     }
-    function badgeCssFor(v){
-      if(v===1) return 'background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;';
-      if(v===2) return 'background:linear-gradient(135deg,#9CA3AF,#6B7280);color:#fff;';
-      if(v===3) return 'background:linear-gradient(135deg,#CD7C3A,#92400E);color:#fff;';
-      return 'background:var(--blue-lt);color:var(--blue);border:1.5px solid rgba(26,86,219,.3);';
-    }
-    function medalFor(v){ return v===1?'🥇':v===2?'🥈':v===3?'🥉':v>0?'#'+v:''; }
-    var badgeDisplay=(existingKed>0&&!isDisahkan)?'inline-flex':'none';
-    var badge='<div id="kbadge_'+sid+'" style="width:36px;height:36px;border-radius:10px;display:'+badgeDisplay+
-      ';align-items:center;justify-content:center;font-size:'+(existingKed>0&&existingKed<=3?'18':'13')+'px;'+
-      'font-weight:800;cursor:pointer;transition:all .15s;box-shadow:0 2px 6px rgba(0,0,0,.12);flex-shrink:0;'+badgeCssFor(existingKed)+'"'+
-      ' onclick="showKedSel(\''+sid+'\')">'+medalFor(existingKed)+'</div>';
-    var selDisplay=(existingKed>0&&!isDisahkan)?'none':'';
-    var selectHtml=!isDisahkan?'<select class="ked-select" id="ksel_'+sid+'" style="display:'+selDisplay+';" onchange="onKedChange(\''+sid+'\')">'+opts+'</select>':'';
-    var lockedBadge=isDisahkan&&existingKed>0?'<div style="width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:'+(existingKed<=3?'18':'13')+'px;font-weight:800;opacity:.75;'+badgeCssFor(existingKed)+'">'+medalFor(existingKed)+'</div>':'';
-    var kedCell='<div id="kwrap_'+sid+'" style="display:flex;align-items:center;gap:4px;">'+hiddenInput+badge+selectHtml+lockedBadge+'</div>';
+    var kedCls=existingKed===1?'ked-1':existingKed===2?'ked-2':existingKed===3?'ked-3':existingKed>0?'ked-x':'ked-empty';
+    var kedCell='<div id="kwrap_'+sid+'" style="display:flex;align-items:center;">'+hiddenInput
+      +(isDisahkan
+        ?'<span style="font-size:'+(existingKed<=3?'20':'14')+'px;font-weight:800;padding:5px 8px;">'
+          +(existingKed===1?'#1':existingKed===2?'#2':existingKed===3?'#3':existingKed>0?'#'+existingKed:'-')+'</span>'
+        :'<select class="ked-sel-new '+kedCls+'" id="ksel_'+sid+'" title="Klik untuk tukar kedudukan" onchange="onKedChange(\''+sid+'\')">'+ opts+'</select>'
+      )+'</div>';
     var prestasiCell='';
     if(isField){
       var c1=(kpt&&kpt.catatan)?tryParse(kpt.catatan,0):'';
@@ -661,12 +1087,14 @@ function renderKtbl(){
         '<div style="display:flex;flex-direction:column;gap:2px"><span class="cubaan-opt-label">C1</span><input class="cubaan-input" type="number" step="0.01" min="0" placeholder="0.00" id="c1_'+sid+'" value="'+c1+'" oninput="calcBest(\''+sid+'\')"'+lockedAttr+'></div>'+
         '<div style="display:flex;flex-direction:column;gap:2px"><span class="cubaan-opt-label">C2</span><input class="cubaan-input" type="number" step="0.01" min="0" placeholder="0.00" id="c2_'+sid+'" value="'+c2+'" oninput="calcBest(\''+sid+'\')"'+lockedAttr+'></div>'+
         '<div style="display:flex;flex-direction:column;gap:2px"><span class="cubaan-opt-label">C3</span><input class="cubaan-input" type="number" step="0.01" min="0" placeholder="0.00" id="c3_'+sid+'" value="'+c3+'" oninput="calcBest(\''+sid+'\')"'+lockedAttr+'></div>'+
-        '<span class="cubaan-best" id="best_'+sid+'">'+(best?'✅ '+best+'m':'—')+'</span></div>';
+        '<span class="cubaan-best" id="best_'+sid+'">'+(best?'OK '+best+'m':'-')+'</span></div>';
     } else {
       var val=kpt&&kpt.prestasi!==undefined&&kpt.prestasi!==''?kpt.prestasi:'';
       prestasiCell='<input class="prestasi-input'+(val?' saved':'')+(isDisahkan?' disahkan':'')+'" type="number" step="0.01" min="0" placeholder="0.00" id="inp_'+sid+'" value="'+val+'"'+(isDisahkan?' readonly':'')+' oninput="onPrestasiInput(\''+sid+'\')">';
     }
-    var catVal=kpt&&kpt.catatan&&!isField?kpt.catatan:'';
+    // Buang catatan JSON (array cubaan FIELD) ? bukan catatan teks
+    var _rawCat=kpt&&kpt.catatan?kpt.catatan:'';
+    var catVal=(!isField&&_rawCat&&_rawCat.charAt(0)!=='[')?_rawCat:'';
     var catatanCell='<input class="form-input" style="padding:5px 8px;font-size:12px;width:130px" placeholder="Pilihan..." id="cat_'+sid+'" value="'+catVal+'"'+(isDisahkan?' readonly':'')+' title="Tidak wajib">';
     return '<tr id="row_'+sid+'">'+
       '<td><div class="lorong-badge">'+lor+'</div></td>'+
@@ -681,16 +1109,15 @@ function renderKtbl(){
 }
 
 function onKedChange(sid){
-  var selEl=document.getElementById('ksel_'+sid),hidEl=document.getElementById('ked_'+sid),badgeEl=document.getElementById('kbadge_'+sid);
+  var selEl=document.getElementById('ksel_'+sid);
+  var hidEl=document.getElementById('ked_'+sid);
   if(!selEl||!hidEl) return;
   var val=parseInt(selEl.value)||0;
   hidEl.value=val||'';
-  if(!val){ selEl.style.display=''; if(badgeEl) badgeEl.style.display='none'; selEl.className='ked-select empty'; _refreshAllKedOptions(); return; }
-  var medal=val===1?'🥇':val===2?'🥈':val===3?'🥉':'#'+val;
-  var css=val===1?'background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;':val===2?'background:linear-gradient(135deg,#9CA3AF,#6B7280);color:#fff;':val===3?'background:linear-gradient(135deg,#CD7C3A,#92400E);color:#fff;':'background:var(--blue-lt);color:var(--blue);border:1.5px solid rgba(26,86,219,.3);';
-  if(badgeEl){ badgeEl.textContent=medal; badgeEl.style.cssText='width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:'+(val<=3?'18':'13')+'px;font-weight:800;cursor:pointer;transition:all .15s;box-shadow:0 2px 6px rgba(0,0,0,.12);flex-shrink:0;'+css; }
-  selEl.style.display='none'; if(badgeEl) badgeEl.style.display='inline-flex';
+  // Update class untuk warna
+  selEl.className='ked-sel-new '+(val===1?'ked-1':val===2?'ked-2':val===3?'ked-3':val>0?'ked-x':'ked-empty');
   _refreshAllKedOptions();
+  updateProgress();
 }
 
 function _refreshAllKedOptions(){
@@ -698,16 +1125,20 @@ function _refreshAllKedOptions(){
   _peserta.forEach(function(p){ var h=document.getElementById('ked_'+safeId(p.no_kp)); if(h&&h.value) usedNums[parseInt(h.value)]=safeId(p.no_kp); });
   _peserta.forEach(function(p){
     var sid=safeId(p.no_kp),sel=document.getElementById('ksel_'+sid);
-    if(!sel||sel.style.display==='none') return;
+    if(!sel) return; // ked-sel-new sentiasa visible
     Array.from(sel.options).forEach(function(opt){
       var v=parseInt(opt.value)||0; if(!v) return;
       var usedBy=usedNums[v],usedByOther=usedBy&&usedBy!==sid;
-      opt.disabled=usedByOther; opt.style.display=usedByOther?'none':''; opt.style.color=usedByOther?'#ccc':'';
+      opt.disabled=usedByOther;
+      opt.style.color=usedByOther?'#D1D5DB':'';
+      opt.textContent=usedByOther
+        ?(v===1?'?':v===2?'?':v===3?'?':'#'+v)+' (diambil)'
+        :(v===1?'?  Tempat 1':v===2?'?  Tempat 2':v===3?'?  Tempat 3':'    #'+v);
     });
   });
 }
 
-function showKedSel(sid){ var sel=document.getElementById('ksel_'+sid),badge=document.getElementById('kbadge_'+sid); if(badge) badge.style.display='none'; if(sel){sel.style.display='';sel.focus();} _refreshAllKedOptions(); }
+function showKedSel(sid){ var sel=document.getElementById('ksel_'+sid); if(sel){sel.focus();} }
 function tryParse(catatan,idx){ try{var a=JSON.parse(catatan);return Array.isArray(a)?a[idx]||'':'';}catch(e){return '';} }
 function onPrestasiInput(noKp){ var inp=document.getElementById('inp_'+noKp); if(inp&&inp.value) inp.classList.add('saved'); else if(inp) inp.classList.remove('saved'); }
 function calcBest(noKp){
@@ -716,7 +1147,7 @@ function calcBest(noKp){
   var c3=parseFloat((document.getElementById('c3_'+noKp)||{}).value)||0;
   var vals=[c1,c2,c3].filter(function(v){return v>0;});
   var best=vals.length?Math.max.apply(null,vals):0;
-  var el=document.getElementById('best_'+noKp); if(el) el.textContent=best>0?'✅ '+best.toFixed(2)+'m':'—';
+  var el=document.getElementById('best_'+noKp); if(el) el.textContent=best>0?'OK '+best.toFixed(2)+'m':'?';
 }
 
 function autoRank(){
@@ -733,17 +1164,26 @@ function autoRank(){
     var selEl=document.getElementById('ksel_'+d.sid),hidEl=document.getElementById('ked_'+d.sid);
     if(selEl){selEl.value=i+1;onKedChange(d.sid);}else if(hidEl){hidEl.value=i+1;}
   });
-  toast('Kedudukan auto dikira ✅','success');
+  toast('Kedudukan auto dikira ?','success');
 }
 
 async function simpanSemua(){
+  // Semak kedudukan wajib (1 hingga podium setting)
+  var _pN=parseInt(_settings&&_settings.podium)||4;
+  // Kira ked yang telah diisi
+  var _assignedKed={};
+  _peserta.forEach(function(p){var el=document.getElementById('ked_'+safeId(p.no_kp));if(el&&el.value) _assignedKed[parseInt(el.value)]=p.nama;});
+  // Cari kedudukan wajib (1.._pN) yang tiada assignee
   var missingKed=[];
-  _peserta.forEach(function(p){ var el=document.getElementById('ked_'+safeId(p.no_kp)); if(!el||!el.value||el.value==='') missingKed.push(p.nama); });
-  if(missingKed.length>0){ toast('⚠️ Kedudukan WAJIB: '+missingKed.slice(0,3).join(', ')+(missingKed.length>3?' +lagi':''),'error'); return; }
+  for(var _wn=1;_wn<=Math.min(_pN,_peserta.length);_wn++){if(!_assignedKed[_wn]) missingKed.push('Tempat '+_wn);}
+  if(missingKed.length>0){ toast('Kedudukan wajib belum diisi: '+missingKed.join(', '),'warn'); return; }
   document.getElementById('btn-simpan-semua').disabled=true;
+  var _tot=_peserta.length;
+  showProg('Menyimpan (0/'+_tot+')...',5);
   var jenis=_curAcara.jenis||'TRACK',isField=jenis==='FIELD',unit=isField?'meter':jenis==='TRACK'?'saat':'mata';
   var ok=0,fail=0;
   for(var i=0;i<_peserta.length;i++){
+    updateProg('Menyimpan '+(i+1)+'/'+_tot+'...',5+Math.round((i+1)/_tot*80));
     var p=_peserta[i],sid=safeId(p.no_kp),prestasi='',catatan='';
     if(isField){
       var c1=parseFloat((document.getElementById('c1_'+sid)||{}).value)||0,c2=parseFloat((document.getElementById('c2_'+sid)||{}).value)||0,c3=parseFloat((document.getElementById('c3_'+sid)||{}).value)||0;
@@ -756,85 +1196,300 @@ async function simpanSemua(){
     var kedEl=document.getElementById('ked_'+sid),ked=kedEl&&kedEl.value?parseInt(kedEl.value)||0:0;
     var kpt=_keputusan.find(function(k){return k.no_kp===p.no_kp;});
     var existingId=kpt&&kpt.id?kpt.id:'';
-    var r=await gasRun('saveKeputusan',{id:existingId,id_heat:_curHeat.id_heat,id_acara:_curAcara.id_acara,no_kp:p.no_kp,nama:p.nama,id_rumah:p.id_rumah,id_kategori:p.id_kategori,jenis:_curHeat.jenis||'SARINGAN',prestasi:prestasi,unit:unit,kedudukan:ked,catatan:catatan,status:'DRAFT'});
+    var r=await gasRun('saveKeputusan',{id:existingId,id_heat:_curHeat.id_heat,id_acara:_curAcara.id_acara,no_kp:p.no_kp,nama:p.nama,id_rumah:p.id_rumah,id_kategori:p.id_kategori,jenis:(function(){var f=(_curAcara.format_acara||'').toUpperCase();return (f==='TERUS_FINAL'||f==='FINAL')?'FINAL':(_curHeat.jenis||'SARINGAN');})(),prestasi:prestasi,unit:unit,kedudukan:ked,catatan:catatan,status:'DRAFT'});
     if(gasResult(r).success) ok++; else fail++;
   }
   document.getElementById('btn-simpan-semua').disabled=false;
+  hideProg(ok+' disimpan');
   await loadPesertaKeputusan();
   toast(ok+' rekod disimpan'+(fail?' | '+fail+' gagal':''),'success');
+  // Semak rekod pecah
+  await _semakRekodPecah();
 }
 
+
+function bukaHantarModal(){
+  // Semak semua kedudukan ada
+  var _pN2=parseInt(_settings&&_settings.podium)||4;
+  var _assgn2={};
+  _peserta.forEach(function(p){var el=document.getElementById('ked_'+safeId(p.no_kp));if(el&&el.value) _assgn2[parseInt(el.value)]=p.nama;});
+  var missing=[];
+  for(var _wn2=1;_wn2<=Math.min(_pN2,_peserta.length);_wn2++){if(!_assgn2[_wn2]) missing.push('Tempat '+_wn2);}
+  var warn=document.getElementById('hm-warning'),warnTxt=document.getElementById('hm-warning-txt');
+  if(missing.length>0){
+    if(warn&&warnTxt){ warn.style.display='block'; warnTxt.textContent=missing.length+' peserta tiada kedudukan: '+missing.slice(0,2).join(', ')+(missing.length>2?' +'+( missing.length-2)+' lagi':''); }
+    document.getElementById('btn-hantar-confirm').disabled=true;
+  } else {
+    if(warn) warn.style.display='none';
+    document.getElementById('btn-hantar-confirm').disabled=false;
+  }
+  // Isi modal header
+  var fmt=(_curAcara.format_acara||'').toUpperCase();
+  var jenisLbl=fmt==='TERUS_FINAL'||fmt==='FINAL'?'FINAL':fmt==='SARINGAN_FINAL'?'SARINGAN':(_curHeat.jenis||'FINAL');
+  var hmAcara=document.getElementById('hm-acara');
+  var hmKat=document.getElementById('hm-kat');
+  var hmJenis=document.getElementById('hm-jenis');
+  var hmSub=document.getElementById('hm-sub');
+  if(hmAcara) hmAcara.textContent='['+_curAcara.no_acara+'] '+_curAcara.nama_acara;
+  if(hmKat) hmKat.textContent=_curAcara.id_kategori;
+  if(hmJenis) hmJenis.textContent=jenisLbl+' | '+(_curAcara.jenis||'TRACK');
+  if(hmSub) hmSub.textContent='Heat '+_curHeat.no_heat+' - '+_peserta.length+' peserta';
+  // Bina ringkasan kedudukan
+  var jenis=_curAcara.jenis||'TRACK',unit=jenis==='FIELD'?'m':jenis==='TRACK'?'s':'mata';
+  var sorted=_peserta.map(function(p){
+    var kedEl=document.getElementById('ked_'+safeId(p.no_kp));
+    var ked=kedEl&&kedEl.value?parseInt(kedEl.value)||0:0;
+    var rm=_rumahMap[p.id_rumah]||{nama:p.id_rumah,warna:'#64748b'};
+    var prestasi='';
+    if(jenis==='FIELD'){var bestEl=document.getElementById('best_'+safeId(p.no_kp));prestasi=bestEl?bestEl.textContent.replace('OK ',''):'?';}
+    else{var inpEl=document.getElementById('inp_'+safeId(p.no_kp));prestasi=inpEl&&inpEl.value?inpEl.value+' '+unit:'?';}
+    return {nama:p.nama,rumah:rm.nama,warna:rm.warna,ked:ked,prestasi:prestasi};
+  }).sort(function(a,b){return (a.ked||999)-(b.ked||999);});
+  var medal=['','1','2','3'];
+  var rows=sorted.map(function(s){
+    var klass=s.ked===1?'k1':s.ked===2?'k2':s.ked===3?'k3':'';
+    return '<div class="hantar-row '+klass+'">'+
+      '<div class="hantar-medal">'+(s.ked&&s.ked<=3?medal[s.ked]:'<span style="font-size:12px;font-weight:800;color:var(--text2);">#'+(s.ked||'?')+'</span>')+'</div>'+
+      '<div><div class="hantar-nama">'+s.nama+'</div><div class="hantar-rumah" style="display:flex;align-items:center;gap:4px;"><div style="width:7px;height:7px;border-radius:50%;background:'+s.warna+';"></div>'+s.rumah+'</div></div>'+
+      '<div class="hantar-masa">'+s.prestasi+'</div></div>';
+  }).join('');
+  var hmRows=document.getElementById('hm-rows');
+  if(hmRows) hmRows.innerHTML=rows||'<div style="text-align:center;padding:12px;color:var(--text3);font-size:12px;">Tiada data</div>';
+  document.getElementById('hantar-overlay').classList.add('show');
+}
+function tutupHantarModal(){document.getElementById('hantar-overlay').classList.remove('show');}
+
 async function sahkanHeat(){
-  var missingKed=[];
-  _peserta.forEach(function(p){ var el=document.getElementById('ked_'+safeId(p.no_kp)); if(!el||!el.value||el.value==='') missingKed.push(p.nama); });
-  if(missingKed.length>0){ toast('⚠️ Isi kedudukan semua peserta dahulu!','error'); return; }
-  if(!confirm('Sahkan semua keputusan heat ini?')) return;
+  // Tutup modal
+  tutupHantarModal();
   document.getElementById('btn-sahkan').disabled=true;
-  await simpanSemua();
+  showProg('Menghantar keputusan...',5);
+  // BUG5 FIX: simpan terus sebagai DISAHKAN, buang double-save
   var ok=0;
+  var jenis=(function(){var f=(_curAcara.format_acara||'').toUpperCase();return (f==='TERUS_FINAL'||f==='FINAL')?'FINAL':(_curHeat.jenis||'SARINGAN');})();
+  var unit=(_curAcara.jenis||'TRACK')==='FIELD'?'meter':(_curAcara.jenis||'TRACK')==='TRACK'?'saat':'mata';
+  var isField=(_curAcara.jenis||'TRACK')==='FIELD';
   for(var i=0;i<_peserta.length;i++){
     var p=_peserta[i];
+    var sid=safeId(p.no_kp);
     var kptSah=_keputusan.find(function(k){return k.no_kp===p.no_kp;});
-    var r=await gasRun('saveKeputusan',{id:kptSah&&kptSah.id?kptSah.id:'',id_heat:_curHeat.id_heat,id_acara:_curAcara.id_acara,no_kp:p.no_kp,jenis:_curHeat.jenis||'SARINGAN',status:'DISAHKAN'});
+    var _kedSah=0;
+    var _kedEl=document.getElementById('ked_'+sid);
+    if(_kedEl&&_kedEl.value) _kedSah=parseInt(_kedEl.value)||0;
+    else if(kptSah&&kptSah.kedudukan) _kedSah=parseInt(kptSah.kedudukan)||0;
+    // Ambil prestasi dari DOM
+    var prestasi='',catatan='';
+    if(isField){
+      var c1=parseFloat((document.getElementById('c1_'+sid)||{}).value)||0;
+      var c2=parseFloat((document.getElementById('c2_'+sid)||{}).value)||0;
+      var c3=parseFloat((document.getElementById('c3_'+sid)||{}).value)||0;
+      var best=Math.max(c1,c2,c3);
+      prestasi=best>0?best.toFixed(2):'';
+      catatan=JSON.stringify([c1||'',c2||'',c3||'']);
+    } else {
+      var inpEl=document.getElementById('inp_'+sid);
+      prestasi=inpEl?inpEl.value:'';
+      var catEl=document.getElementById('cat_'+sid);
+      catatan=catEl?catEl.value:'';
+    }
+    var r=await gasRun('saveKeputusan',{
+      id:kptSah&&kptSah.id?kptSah.id:'',
+      id_heat:_curHeat.id_heat,id_acara:_curAcara.id_acara,
+      no_kp:p.no_kp,nama:p.nama,id_rumah:p.id_rumah,
+      id_kategori:p.id_kategori,jenis:jenis,
+      prestasi:prestasi,unit:unit,catatan:catatan,
+      kedudukan:_kedSah,status:'DISAHKAN'
+    });
     if(gasResult(r).success) ok++;
   }
+  updateProg('Mengemas kini status heat...',85);
   await gasRun('updateHeatStatus',{id_heat:_curHeat.id_heat,status:'SELESAI'});
   _curHeat.status='SELESAI';
+  hideProg('Heat disahkan');
   await loadPesertaKeputusan();
-  toast(ok+' keputusan disahkan ✅','success');
+  toast(ok+' keputusan disahkan ?','success');
   await loadHeat();
   setTimeout(function(){
     var allSelesai=_heat.every(function(h){return h.status==='SELESAI';});
-    if(allSelesai){ toast('Semua heat selesai! Proceed ke Publish 🏆','warn'); setTimeout(function(){gotoStep(4);},1500); }
+    if(allSelesai){ toast('Semua heat selesai! Proceed ke Publish ?','warn'); setTimeout(function(){gotoStep(4);},1500); }
   },500);
 }
 
-// ── STEP 4 ─────────────────────────────────────────────────────
+// -- STEP 4 -----------------------------------------------------
 async function loadRankingAkhir(){
+  if(!_curAcara){ hideProg(); toast('Pilih acara dahulu','warn'); gotoStep(1); return; }
+  showProg('Memuatkan keputusan akhir...',20);
   var r=await gasRun('getKeputusan',{id_acara:_curAcara.id_acara});
   var s=gasResult(r);
   var all=(s&&s.keputusan)||[];
   var disahkan=all.filter(function(k){return k.status==='DISAHKAN'||k.status==='PUBLISHED';});
   var jenis=_curAcara.jenis||'TRACK',isAsc=jenis==='TRACK';
-  disahkan.sort(function(a,b){ var va=parseFloat(a.prestasi)||0,vb=parseFloat(b.prestasi)||0; if(!va&&!vb) return 0; if(!va) return 1; if(!vb) return -1; return isAsc?va-vb:vb-va; });
+  disahkan.sort(function(a,b){
+    var va=parseFloat(a.prestasi)||0,vb=parseFloat(b.prestasi)||0;
+    if(!va&&!vb) return (a.kedudukan||99)-(b.kedudukan||99);
+    if(!va) return 1; if(!vb) return -1;
+    return isAsc?va-vb:vb-va;
+  });
   var unit=jenis==='TRACK'?'s':jenis==='FIELD'?'m':'mata';
+  var isAllPub=disahkan.length>0&&disahkan.every(function(k){return k.status==='PUBLISHED';});
+  var fmt=(_curAcara.format_acara||'').toUpperCase();
+  var jenisLbl=fmt==='TERUS_FINAL'||fmt==='FINAL'?'FINAL':fmt==='SARINGAN_FINAL'?'SARINGAN':(_curHeat?_curHeat.jenis:'FINAL');
+  // -- Header acara --
+  var n=document.getElementById('pub-acara-name'); if(n) n.textContent='['+_curAcara.no_acara+'] '+_curAcara.nama_acara;
+  var c1=document.getElementById('pub-kat-chip'); if(c1) c1.textContent=_curAcara.id_kategori;
+  var c2=document.getElementById('pub-jenis-chip'); if(c2) c2.textContent=_curAcara.jenis||'TRACK';
+  var c3=document.getElementById('pub-fmt-chip'); if(c3) c3.textContent=jenisLbl;
+  // -- Status badge --
+  var badge=document.getElementById('pub-status-badge');
+  var badgeTxt=document.getElementById('pub-status-txt');
+  if(badge&&badgeTxt){
+    badge.className='pub-status-badge '+(isAllPub?'pub-badge-published':disahkan.length>0?'pub-badge-ready':'pub-badge-pending');
+    badgeTxt.textContent=isAllPub?'Telah Diterbit':disahkan.length>0?'Sedia Terbit':'Belum Dihantar';
+  }
+  // -- Heat chips --
+  var hb=document.getElementById('pub-heat-badges');
+  if(hb){
+    hb.innerHTML=_heat.map(function(h){
+      var sts=h.status||'BELUM';
+      var bg=sts==='SELESAI'?'#D1FAE5':sts==='SEDANG'?'#FEF3C7':'#F3F4F6';
+      var clr=sts==='SELESAI'?'#065F46':sts==='SEDANG'?'#92400E':'#6B7280';
+      var ic=sts==='SELESAI'?'checkmark':'circle';
+      return '<span style="background:'+bg+';color:'+clr+';padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">'+(sts==='SELESAI'?'OK ':'OK ')+'Heat '+h.no_heat+'</span>';
+    }).join('');
+  }
+  // -- Keputusan table --
+  var medal=['','1','2','3'];
   var html=disahkan.map(function(k,i){
     var rm=_rumahMap[k.id_rumah]||{nama:k.id_rumah,warna:'#64748b'};
     var ked=k.kedudukan>0?k.kedudukan:i+1;
-    var medal=ked===1?'🥇':ked===2?'🥈':ked===3?'🥉':'';
-    var kedBadge='<div class="ked-badge ked-'+(ked<=3?ked:'x')+'">'+medal+(ked>3?ked:'')+'</div>';
-    return '<tr class="'+(i<3?'rank-'+(i+1):'')+'"><td>'+kedBadge+'</td><td><div style="font-weight:600">'+k.nama+'</div></td>'+
-      '<td><div style="display:flex;align-items:center"><div class="rumah-dot" style="background:'+rm.warna+'"></div>'+rm.nama+'</div></td>'+
-      '<td><strong style="color:var(--cyan)">'+k.prestasi+' '+unit+'</strong></td>'+
-      '<td><span style="font-size:11px;color:var(--text2)">'+k.jenis+'</span></td>'+
-      '<td><span class="tag" style="background:rgba(34,197,94,.2);color:var(--green)">'+k.status+'</span></td></tr>';
+    var kedCls='kep-ked kep-'+(ked<=3?ked:'x')+'-ked';
+    var kedHtml='<div class="'+kedCls+'">'+(ked<=3?medal[ked]:ked)+'</div>';
+    var stsBg=k.status==='PUBLISHED'?'#DBEAFE':k.status==='DISAHKAN'?'#D1FAE5':'#F3F4F6';
+    var stsClr=k.status==='PUBLISHED'?'#1D4ED8':k.status==='DISAHKAN'?'#065F46':'#6B7280';
+    var stsTxt=k.status==='PUBLISHED'?'Diterbit':k.status==='DISAHKAN'?'Disahkan':'Draft';
+    return '<tr class="'+(ked<=3?'kep-'+ked:'')+'">'
+      +'<td style="text-align:center;">'+kedHtml+'</td>'
+      +'<td><div style="font-weight:700;">'+k.nama+'</div></td>'
+      +'<td><div style="display:flex;align-items:center;gap:7px;"><div style="width:10px;height:10px;border-radius:50%;background:'+rm.warna+';flex-shrink:0;"></div><span style="font-size:12px;font-weight:600;">'+rm.nama+'</span></div></td>'
+      +'<td style="text-align:center;"><strong style="color:var(--cyan);">'+k.prestasi+' '+unit+'</strong></td>'
+      +'<td style="text-align:center;"><span style="background:'+stsBg+';color:'+stsClr+';padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">'+stsTxt+'</span></td>'
+      +'</tr>';
   }).join('');
-  document.getElementById('rank-body').innerHTML=html||'<tr><td colspan="6" class="empty">Tiada keputusan disahkan.</td></tr>';
-  document.getElementById('s4-acara-lbl').textContent='['+_curAcara.no_acara+'] '+_curAcara.nama_acara;
-  var allSelesai=_heat.every(function(h){return h.status==='SELESAI';});
+  var rb=document.getElementById('rank-body');
+  if(rb) rb.innerHTML=html||'<tr><td colspan="5" style="text-align:center;padding:32px;color:#94A3B8;">Tiada keputusan disahkan.</td></tr>';
+  hideProg();
+  // -- Publish panel --
   var pp=document.getElementById('publish-panel');
+  if(!pp) return;
+    // BUG1 FIX: skip VOID heat dalam allSelesai check
+  var _activeHeat=_heat.filter(function(h){return (h.status||'').toUpperCase()!=='VOID';});
+  var allSelesai=_activeHeat.length>0&&_activeHeat.every(function(h){return h.status==='SELESAI';});
+  pp.style.display='block';
+  var ppW=document.getElementById('pp-wait');
+  var ppR=document.getElementById('pp-ready');
   if(allSelesai){
-    pp.style.display='block';
-    document.getElementById('pub-sub').textContent=disahkan.length+' keputusan sedia untuk dipublish';
-    document.getElementById('btn-publish').disabled=disahkan.filter(function(k){return k.status==='PUBLISHED';}).length===disahkan.length;
+    if(ppW) ppW.style.display='none';
+    if(ppR) ppR.style.display='block';
+    var pubSub=document.getElementById('pub-sub');
+    if(pubSub) pubSub.textContent=isAllPub?'Keputusan telah diterbitkan secara rasmi.':disahkan.length+' keputusan sedia untuk diterbitkan.';
+    // BUG2 FIX: declare pubCnt sebelum guna
+    var pubCnt=document.getElementById('pub-rekod-count');
+    if(pubCnt) pubCnt.textContent=isAllPub?'Diterbit':disahkan.length+' rekod disahkan';
+    var pubTitle=document.getElementById('pub-ready-title');
+    var pubWrap=document.getElementById('pub-bottom-wrap');
+    if(isAllPub){
+      if(pubTitle){pubTitle.textContent='Keputusan Telah Diterbit';pubTitle.style.color='var(--blue)';}
+      if(pubWrap){pubWrap.style.background='linear-gradient(135deg,#EFF6FF,#DBEAFE)';pubWrap.style.borderColor='#93C5FD';}
+    } else {
+      if(pubTitle){pubTitle.textContent='Semua Heat Selesai';pubTitle.style.color='var(--green)';}
+    }
+    var btnP=document.getElementById('btn-publish'); if(btnP) btnP.disabled=isAllPub;
   } else {
-    pp.innerHTML='<div class="empty"><div class="empty-icon">⏳</div>'+(_heat.filter(function(h){return h.status!=='SELESAI';}).length)+' heat belum selesai.</div>';
+    if(ppW){ppW.style.display='flex'; var pt=document.getElementById('pp-wait-txt'); if(pt) pt.textContent=(_heat.filter(function(h){return h.status!=='SELESAI';}).length)+' heat belum selesai.';}
+    if(ppR) ppR.style.display='none';
   }
 }
 
 async function publishAcara(){
-  if(!confirm('Publish keputusan rasmi acara ini?')) return;
-  document.getElementById('btn-publish').disabled=true;
+  var btnP=document.getElementById('btn-publish'); if(btnP) btnP.disabled=true;
+  showProg('Menerbitkan keputusan rasmi...',15);
+  updateProg('Menghantar ke pelayan...',40);
   var r=await gasRun('publishKeputusan',{id_acara:_curAcara.id_acara});
   var s=gasResult(r);
-  if(s&&s.success){ toast(s.message||'Dipublish! 🏆','success'); await loadRankingAkhir(); }
-  else{ document.getElementById('btn-publish').disabled=false; toast((s&&s.message)||'Gagal publish','error'); }
+  if(s&&s.success){
+    updateProg('Mengemas kini keputusan...',70);
+    await loadRankingAkhir();
+    updateProg('Mengira pingat...',87);
+    await loadMedalTallyPanel();
+    await loadBestAthletePanel();
+    hideProg('Keputusan rasmi diterbit');
+    toast(s.message||'Keputusan rasmi diterbit!','success');
+  } else {
+    hideProg('Gagal diterbit');
+    if(btnP) btnP.disabled=false;
+    toast((s&&s.message)||'Gagal terbit','error');
+  }
+}
+async function loadMedalTallyPanel(){
+  var el=document.getElementById('medal-tally-wrap'); if(!el) return;
+  var r=await gasRun('getMedalTally'); var s=gasResult(r);
+  var tally=(s&&s.tally)||[];
+  if(!tally.length){ el.style.display='none'; return; }
+  el.style.display='block';
+  var rows=tally.map(function(t,i){
+    var w=t.warna||'#64748b';
+    return '<tr>'
+      +'<td style="text-align:center;font-weight:800;font-size:15px;">'+(i===0?'#1':i===1?'#2':i===2?'#3':'#'+(i+1))+'</td>'
+      +'<td><div style="display:flex;align-items:center;gap:8px;"><div style="width:12px;height:12px;border-radius:50%;background:'+w+';flex-shrink:0;"></div><span style="font-weight:700;">'+t.nama+'</span></div></td>'
+      +'<td style="text-align:center;"><span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:12px;font-weight:700;font-size:12px;">'+t.emas+'</span></td>'
+      +'<td style="text-align:center;"><span style="background:#F3F4F6;color:#374151;padding:2px 8px;border-radius:12px;font-weight:700;font-size:12px;">'+t.perak+'</span></td>'
+      +'<td style="text-align:center;"><span style="background:#FEF0E7;color:#92400E;padding:2px 8px;border-radius:12px;font-weight:700;font-size:12px;">'+t.gangsa+'</span></td>'
+      +'<td style="text-align:center;font-weight:700;color:var(--blue);">'+t.mata+'</td>'
+      +'</tr>';
+  }).join('');
+  document.getElementById('medal-tally-body').innerHTML=rows;
 }
 
-// ── NAVIGATION ─────────────────────────────────────────────────
-function gotoStep(n){
+async function loadBestAthletePanel(){
+  var el=document.getElementById('best-athlete-wrap'); if(!el) return;
+  var r=await gasRun('getBestAthlete'); var s=gasResult(r);
+  if(!s||!s.success){ el.style.display='none'; return; }
+  el.style.display='block';
+  function cardHtml(b,label,icon){
+    if(!b) return '';
+    var w=(_rumahMap[b.id_rumah]||{}).warna||'#64748b';
+    return '<div style="flex:1;min-width:200px;background:var(--bg2);border-radius:12px;padding:16px;text-align:center;">'
+      +'<div style="font-size:28px;margin-bottom:6px;">'+icon+'</div>'
+      +'<div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:4px;">'+label+'</div>'
+      +'<div style="font-weight:800;font-size:16px;color:var(--text1);">'+b.nama+'</div>'
+      +'<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px;">'
+      +'<div style="width:10px;height:10px;border-radius:50%;background:'+w+'"></div>'
+      +'<span style="font-size:12px;color:var(--text2);">'+((_rumahMap[b.id_rumah]||{}).nama||b.id_rumah)+'</span></div>'
+      +'<div style="margin-top:8px;font-size:20px;font-weight:800;color:var(--amber);">'+b.mata+' mata</div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-top:2px;">'+b.acara_count+' acara</div>'
+      +'</div>';
+  }
+  document.getElementById('best-athlete-body').innerHTML=cardHtml(s.best_l,'Atlet Terbaik Lelaki','L')
+    +cardHtml(s.best_p,'Atlet Terbaik Perempuan','P');
+}
+
+// -- NAVIGATION -------------------------------------------------
+async function gotoStep(n){
+  if(!_curAcara&&n>1){toast('Pilih acara dahulu ? pergi ke Step 1','warn');gotoStep(1);return;}
   if(n===2&&!_curAcara){toast('Pilih acara dahulu','warn');return;}
-  if(n===3&&!_curHeat){toast('Pilih heat dahulu','warn');return;}
+  // TERUS_FINAL: skip step 2, terus ke step 3
+  var _fmt=(_curAcara&&_curAcara.format_acara||'').toUpperCase(); var isTerusFinal=_curAcara&&(_fmt==='TERUS_FINAL'||_fmt==='FINAL');
+  if(n===2&&isTerusFinal){
+    // TERUS_FINAL: load heat dulu (belum tentu diload)
+    if(!_heat||!_heat.length){ await loadHeat(); }
+    if(!_heat||!_heat.length){ toast('Jana heat dahulu dalam AdminOps','warn'); return; }
+    if(!_curHeat) _curHeat=_heat[0];
+    gotoStep(3); return;
+  }
+  if(n===3&&!isTerusFinal&&!_curHeat){toast('Pilih heat dahulu','warn');return;}
+  if(n===3&&isTerusFinal&&!_curHeat){
+    if(_heat&&_heat.length>0){ _curHeat=_heat[0]; } else { toast('Jana heat dahulu','warn'); return; }
+  }
   showFlexPanel('catat');
   _curStep=n;
   [1,2,3,4].forEach(function(i){
@@ -844,9 +1499,16 @@ function gotoStep(n){
     if(i===n) el.classList.add('active'); else if(i<n) el.classList.add('done'); else el.classList.add('locked');
   });
   if(_curAcara) document.getElementById('stp1-sub').textContent=_curAcara.nama_acara;
-  if(_curHeat) document.getElementById('stp2-sub').textContent='Heat '+_curHeat.no_heat;
+  if(isTerusFinal){
+    document.getElementById('stp2-sub').textContent='Terus Final';
+    var stp2=document.getElementById('stp2');
+    if(stp2&&n===3){ stp2.classList.remove('locked'); stp2.classList.add('done'); }
+  } else if(_curHeat){
+    document.getElementById('stp2-sub').textContent='Heat '+_curHeat.no_heat;
+  }
   if(n>=2) setAcaraInfoStrip();
   if(n===2) loadHeat();
+  if(n===3&&isTerusFinal) loadPesertaKeputusan();
   if(n===4) loadRankingAkhir();
 }
 
@@ -854,13 +1516,13 @@ function setAcaraInfoStrip(){
   if(!_curAcara) return;
   var jenis=_curAcara.jenis||'TRACK';
   var katO=_kat.find(function(k){return k.id===_curAcara.id_kategori||k.kod===_curAcara.id_kategori;});
-  var katN=katO?(katO.kod+' — '+katO.nama):_curAcara.id_kategori;
-  var kelayakan=katO?('Jantina: '+(katO.jantina==='L'?'Lelaki':'Perempuan')+' | Umur: '+katO.umin+'–'+katO.umax+' thn'):'—';
+  var katN=katO?(katO.kod+' - '+katO.nama):_curAcara.id_kategori;
+  var kelayakan=katO?('Jantina: '+(katO.jantina==='L'?'Lelaki':'Perempuan')+' | Umur: '+katO.umin+'?'+katO.umax+' thn'):'?';
   var html='<div class="acara-info" style="margin-bottom:16px">'+
     ai('Acara','['+_curAcara.no_acara+'] '+_curAcara.nama_acara)+ai('Kategori',katN)+ai('Kelayakan',kelayakan)+
     ai('Unit',jenis==='TRACK'?'saat':jenis==='FIELD'?'meter':'mata')+
     ai('Jenis','<span class="tag tag-'+(jenis==='TRACK'?'track':'field')+'">'+jenis+'</span>')+
-    ai('Format',(_curAcara.format_acara||'—').replace(/_/g,' '))+'</div>';
+    ai('Format',(_curAcara.format_acara||'-').replace(/_/g,' '))+'</div>';
   ['s2','s3','s4'].forEach(function(id){ var el=document.getElementById('acara-info-'+id); if(el) el.innerHTML=html; });
 }
 
@@ -872,17 +1534,35 @@ function showFlexPanel(panel){
   if(panel==='semak') loadSemak();
 }
 
-// ── SEMAK PANEL ────────────────────────────────────────────────
+// -- SEMAK PANEL ------------------------------------------------
+function teribtAcara(idAcara){ publishTerus(idAcara); }
+
+async function publishTerus(idAcara){
+  var d=_semakData.find(function(x){return x.acara&&x.acara.id_acara===idAcara;});
+  var nama=d&&d.acara?(d.acara.nama_acara||d.acara.no_acara||idAcara):idAcara;
+  if(!confirm('Terbit keputusan rasmi untuk:\n\n'+nama+'?\n\nKeputusan akan muncul di laman awam.')) return;
+  showProg('Menerbitkan '+nama+'...',20);
+  var r=await gasRun('publishKeputusan',{id_acara:idAcara});
+  var s=gasResult(r);
+  hideProg();
+  if(s&&s.success){
+    toast('Keputusan diterbit! Tahniah!','success');
+    await loadSemak();
+  } else {
+    toast((s&&s.message)||'Gagal terbit','error');
+  }
+}
+
 async function loadSemak(){
   document.getElementById('semak-result-lbl').textContent='Memuatkan...';
-  document.getElementById('semak-acara-grid').innerHTML='<div class="semak-empty"><div style="font-size:32px;margin-bottom:8px">⏳</div><div>Memuatkan...</div></div>';
+  document.getElementById('semak-acara-grid').innerHTML='<div class="semak-empty"><div style="font-size:32px;margin-bottom:8px">?</div><div>Memuatkan...</div></div>';
   var r=await gasRun('getAllKeputusan');
   var s=gasResult(r);
   var allKpt=(s&&s.keputusan)||[];
   var acaraMap={};
   allKpt.forEach(function(k){
     if(!acaraMap[k.id_acara]){
-      var ac=_acara.find(function(a){return a.id_acara===k.id_acara;})||{id_acara:k.id_acara,no_acara:k.no_acara||'—',nama_acara:k.nama_acara||'Acara #'+k.id_acara,id_kategori:k.id_kategori||'—',jenis:k.jenis||'TRACK'};
+      var ac=_acara.find(function(a){return a.id_acara===k.id_acara;})||{id_acara:k.id_acara,no_acara:k.no_acara||'-',nama_acara:k.nama_acara||'Acara #'+k.id_acara,id_kategori:k.id_kategori||'-',jenis:k.jenis||'TRACK'};
       acaraMap[k.id_acara]={acara:ac,keputusan:[]};
     }
     acaraMap[k.id_acara].keputusan.push(k);
@@ -895,6 +1575,29 @@ async function loadSemak(){
   _semakData.forEach(function(d){ var k=d.acara.id_kategori; if(k&&!seenKat[k]){seenKat[k]=1;katSel.innerHTML+='<option value="'+k+'">'+k+'</option>';} });
   if(curKat) katSel.value=curKat;
   filterSemak();
+  // Update status summary bar
+  var allKpts=[];
+  _semakData.forEach(function(d){allKpts=allKpts.concat(d.keputusan||[]);});
+  var nD=allKpts.filter(function(k){return k.status==='DRAFT';}).length;
+  var nS=allKpts.filter(function(k){return k.status==='DISAHKAN';}).length;
+  var nP=allKpts.filter(function(k){return k.status==='PUBLISHED';}).length;
+  var sb=document.getElementById('semak-status-bar');
+  if(sb){
+    var total=allKpts.length;
+    var pctOK=total>0?Math.round((nS+nP)/total*100):0;
+    sb.innerHTML=
+      '<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex:1;">'+
+        '<div style="font-size:11px;color:var(--text2);font-weight:700;">STATUS KESELURUHAN</div>'+
+        (nD>0?'<div style="display:flex;align-items:center;gap:5px;font-size:12px;color:#92400E;"><div style="width:8px;height:8px;border-radius:50%;background:#F59E0B;"></div><strong>'+nD+'</strong> Draft</div>':'')+
+        (nS>0?'<div style="display:flex;align-items:center;gap:5px;font-size:12px;color:#065F46;"><div style="width:8px;height:8px;border-radius:50%;background:#10B981;"></div><strong>'+nS+'</strong> Disahkan</div>':'')+
+        (nP>0?'<div style="display:flex;align-items:center;gap:5px;font-size:12px;color:#1D4ED8;"><div style="width:8px;height:8px;border-radius:50%;background:#3B82F6;"></div><strong>'+nP+'</strong> Diterbit</div>':'')+
+        '<div style="flex:1;"></div>'+
+        '<div style="font-size:12px;font-weight:800;color:'+(pctOK===100?'var(--green)':'var(--amber)')+';">'+pctOK+'% siap</div>'+
+      '</div>'+
+      (nD===0&&nS>0&&nP===0?
+        '<button onclick="toast(\'Pilih acara dahulu dalam tab Catat Keputusan, kemudian Step 4\',\'info\')" style="background:linear-gradient(135deg,#0F9E6A,#059669);color:#fff;border:none;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;">? Sedia Terbit Semua</button>':
+        '');
+  }
 }
 
 function filterSemak(){
@@ -920,12 +1623,12 @@ function filterSemak(){
 
 function renderSemakGrid(cari,sts){
   var grid=document.getElementById('semak-acara-grid');
-  if(!_semakFiltered.length){ grid.innerHTML='<div class="semak-empty"><div style="font-size:36px;margin-bottom:10px">🔍</div><div style="font-weight:700;font-size:14px;margin-bottom:4px">Tiada Rekod</div><div style="font-size:12px">Cuba ubah carian atau filter</div></div>'; return; }
+  if(!_semakFiltered.length){ grid.innerHTML='<div class="semak-empty"><div style="font-size:36px;margin-bottom:10px">?</div><div style="font-weight:700;font-size:14px;margin-bottom:4px">Tiada Rekod</div><div style="font-size:12px">Cuba ubah carian atau filter</div></div>'; return; }
   grid.innerHTML='';
   _semakFiltered.forEach(function(d,dIdx){
     var acara=d.acara,kpts=d.keputusan;
     if(sts) kpts=kpts.filter(function(k){return k.status===sts;});
-    var jenis=acara.jenis||'TRACK',icon=jenis==='TRACK'?'🏃':jenis==='FIELD'?'🏅':'⚽';
+    var jenis=acara.jenis||'TRACK',icon=jenis==='TRACK'?'T':jenis==='FIELD'?'F':'-';
     var iconBg=jenis==='TRACK'?'linear-gradient(135deg,#1A56DB,#0891B2)':'linear-gradient(135deg,#0F9E6A,#059669)';
     var cntD=d.keputusan.filter(function(k){return k.status==='DRAFT';}).length;
     var cntS=d.keputusan.filter(function(k){return k.status==='DISAHKAN';}).length;
@@ -933,20 +1636,20 @@ function renderSemakGrid(cari,sts){
     var unit=jenis==='TRACK'?'s':jenis==='FIELD'?'m':'mata';
     var N=kpts.length;
     var tableRows=kpts.map(function(k,rIdx){
-      var rm=_rumahMap[k.id_rumah]||{nama:k.id_rumah||'—',warna:'#94a3b8'};
-      var medal=k.kedudukan===1?'🥇':k.kedudukan===2?'🥈':k.kedudukan===3?'🥉':k.kedudukan>0?'#'+k.kedudukan:'—';
+      var rm=_rumahMap[k.id_rumah]||{nama:k.id_rumah||'-',warna:'#94a3b8'};
+      var medal=k.kedudukan===1?'#1':k.kedudukan===2?'#2':k.kedudukan===3?'#3':k.kedudukan>0?'#'+k.kedudukan:'?';
       var spClass='sp-'+(k.status||'draft').toLowerCase();
       var rowId='row-'+k.id_heat+'-'+(k.no_kp||'').replace(/[^a-z0-9]/gi,'');
       return '<tr id="'+rowId+'">'+
         '<td style="width:40px;text-align:center;font-family:monospace;color:var(--text2);font-size:11px;">'+(rIdx+1)+'</td>'+
         '<td><div style="font-weight:700;font-size:13px;">'+k.nama+'</div><div style="font-size:10px;color:var(--text2);font-family:monospace;">'+k.no_kp+'</div></td>'+
         '<td style="width:100px"><div style="display:flex;align-items:center;gap:6px"><div style="width:9px;height:9px;border-radius:50%;background:'+rm.warna+';flex-shrink:0"></div><span style="font-size:12px;font-weight:600">'+rm.nama+'</span></div></td>'+
-        '<td style="width:120px;font-family:monospace;font-weight:700;color:var(--cyan)">'+(k.prestasi?k.prestasi+' '+unit:'—')+'</td>'+
+        '<td style="width:120px;font-family:monospace;font-weight:700;color:var(--cyan)">'+(k.prestasi?k.prestasi+' '+unit:'-')+'</td>'+
         '<td style="width:70px;text-align:center;font-size:16px">'+medal+'</td>'+
-        '<td style="width:90px"><span class="status-pill '+spClass+'">'+(k.status==='DISAHKAN'?'✅ Sah':k.status==='PUBLISHED'?'🏆 Pub':'📝 Draft')+'</span></td>'+
+        '<td style="width:90px"><span class="status-pill '+spClass+'">'+(k.status==='DISAHKAN'?'Sah':k.status==='PUBLISHED'?'? Pub':'? Draft')+'</span></td>'+
         '<td style="width:90px"><div class="crud-act" id="act-'+rowId+'">'+
-          (k.status!=='PUBLISHED'?'<button class="btn-icon btn-icon-edit" title="Edit" onclick="crudEdit(\''+acara.id_acara+'\',\''+k.id_heat+'\',\''+k.no_kp+'\',\''+rowId+'\','+N+',\''+jenis+'\')">✏️</button>':'<button class="btn-icon btn-icon-edit" style="opacity:.3" disabled title="Published">✏️</button>')+
-          (k.status!=='PUBLISHED'?'<button class="btn-icon btn-icon-del" title="Padam" onclick="crudDelete(\''+k.id_heat+'\',\''+k.no_kp+'\',\''+k.nama+'\',\''+rowId+'\')">🗑️</button>':'<button class="btn-icon btn-icon-del" style="opacity:.3" disabled title="Published">🗑️</button>')+
+          '<button class="btn-icon btn-icon-edit" title="Edit" onclick="crudEdit(\''+acara.id_acara+'\',\''+k.id_heat+'\',\''+k.no_kp+'\',\''+rowId+'\','+N+',\''+jenis+'\')">&#9998;</button>'+
+          '<button class="btn-icon btn-icon-del" title="Padam" onclick="crudDelete(\''+k.id_heat+'\',\''+k.no_kp+'\',\''+k.nama+'\',\''+rowId+'\')">&#10005;</button>'+
         '</div></td></tr>';
     }).join('');
     var cardEl=document.createElement('div');
@@ -956,15 +1659,17 @@ function renderSemakGrid(cari,sts){
         '<div class="semak-card-icon" style="background:'+iconBg+'">'+icon+'</div>'+
         '<div class="semak-card-meta">'+
           '<div class="semak-card-title">['+acara.no_acara+'] '+acara.nama_acara+'</div>'+
-          '<div class="semak-card-sub"><span>📌 '+acara.id_kategori+'</span><span>'+jenis+'</span><span>'+kpts.length+' rekod</span></div>'+
+          '<div class="semak-card-sub"><span>? '+acara.id_kategori+'</span><span>'+jenis+'</span><span>'+kpts.length+' rekod</span></div>'+
         '</div>'+
-        '<div class="semak-card-chips">'+
-          (cntD>0?'<span class="semak-count-chip chip-amber">📝 '+cntD+'</span>':'')+
-          (cntS>0?'<span class="semak-count-chip chip-green">✅ '+cntS+'</span>':'')+
-          (cntP>0?'<span class="semak-count-chip chip-blue">🏆 '+cntP+'</span>':'')+
-          '<button class="btn btn-ghost btn-sm" style="font-size:11px;padding:4px 10px" onclick="event.stopPropagation();cetakSemakPdf(\''+acara.id_acara+'\')">🖨️ PDF</button>'+
+        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'+
+          (cntP>0?'<span class="semak-count-chip chip-blue">Diterbit</span>':
+           cntD>0?'<span class="semak-count-chip chip-amber" title="Pergi ke Tab Catat, Step 3, klik Sahkan Heat">'+cntD+' Draft - Perlu Sahkan</span>':
+           cntS>0?'<span class="semak-count-chip chip-green">'+cntS+' Disahkan - Sedia Terbit</span>':'')+
+          (cntP===0&&cntD===0&&cntS>0?'<button style="background:#0F9E6A;color:#fff;border:none;padding:7px 18px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(15,158,106,.35);" onclick="event.stopPropagation();publishTerus(\''+acara.id_acara+'\')">&nbsp;Terbit Sekarang</button>':'')+
+          '<button class="btn btn-ghost btn-sm" style="font-size:11px;padding:4px 10px" onclick="event.stopPropagation();cetakSemakPdf(\''+acara.id_acara+'\')">&nbsp;PDF</button>'+
+          '<button style="background:#FEE2E2;color:#991B1B;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;" onclick="event.stopPropagation();padamSemuaKeputusan(\''+acara.id_acara+'\',\''+acara.nama_acara+'\')" title="Padam semua keputusan acara ini">&#10005; Padam Semua</button>'+
         '</div>'+
-        '<span class="expand-arrow">▼</span>'+
+        '<span class="expand-arrow">v</span>'+
       '</div>'+
       '<div class="semak-body"><div style="overflow-x:auto">'+
         '<table class="crud-tbl"><thead><tr>'+
@@ -980,19 +1685,19 @@ function renderSemakGrid(cari,sts){
 function toggleSemakCard(idx){ var c=document.getElementById('semak-card-'+idx); if(c) c.classList.toggle('expanded'); }
 function semakExpandAll(){ document.querySelectorAll('.semak-card').forEach(function(c){c.classList.add('expanded');}); }
 
-// ── CRUD EDIT ──────────────────────────────────────────────────
+// -- CRUD EDIT --------------------------------------------------
 function crudEdit(idAcara,idHeat,noKp,rowId,N,jenis){
   var row=document.getElementById(rowId); if(!row) return;
   row.classList.add('editing');
   var d=_semakData.find(function(x){return x.acara.id_acara===idAcara;});
   var k=d?d.keputusan.find(function(x){return x.no_kp===noKp&&x.id_heat===idHeat;}):null;
   var prestasi=k&&k.prestasi?k.prestasi:'',ked=k&&k.kedudukan?k.kedudukan:0;
-  var kedOpts='<option value="">—</option>';
-  for(var n=1;n<=N;n++){ var m=n===1?'🥇':n===2?'🥈':n===3?'🥉':'#'+n; kedOpts+='<option value="'+n+'" '+(ked===n?'selected':'')+'>'+m+'</option>'; }
+  var kedOpts='<option value="">- Pilih -</option>';
+  for(var n=1;n<=N;n++){ var m=n===1?'#1':n===2?'#2':n===3?'#3':'#'+n; kedOpts+='<option value="'+n+'" '+(ked===n?'selected':'')+'>'+m+'</option>'; }
   var cells=row.querySelectorAll('td');
   cells[3].innerHTML='<input class="crud-edit-inp" id="cedit-pre-'+rowId+'" type="number" step="0.01" min="0" value="'+prestasi+'" style="width:90px">';
   cells[4].innerHTML='<select class="crud-ked-sel" id="cedit-ked-'+rowId+'">'+kedOpts+'</select>';
-  cells[6].innerHTML='<div class="crud-act"><button class="btn-icon btn-icon-save" onclick="crudSave(\''+idAcara+'\',\''+idHeat+'\',\''+noKp+'\',\''+rowId+'\',\''+jenis+'\')">💾</button><button class="btn-icon btn-icon-cancel" onclick="loadSemak()">✕</button></div>';
+  cells[6].innerHTML='<div class="crud-act"><button class="btn-icon btn-icon-save" onclick="crudSave(\''+idAcara+'\',\''+idHeat+'\',\''+noKp+'\',\''+rowId+'\',\''+jenis+'\')">?</button><button class="btn-icon btn-icon-cancel" onclick="loadSemak()">?</button></div>';
   var inp=document.getElementById('cedit-pre-'+rowId); if(inp) setTimeout(function(){inp.focus();inp.select();},50);
 }
 
@@ -1006,18 +1711,21 @@ async function crudSave(idAcara,idHeat,noKp,rowId,jenis){
   var existKpt=null;
   var dSemak=_semakData.find(function(x){return x.acara.id_acara===idAcara;});
   if(dSemak) existKpt=dSemak.keputusan.find(function(k){return k.no_kp===noKp&&k.id_heat===idHeat;});
+  // BUG4 FIX: kekalkan status asal, jangan hardcode DRAFT
+  var _existStatus=(existKpt&&existKpt.status)||'DRAFT';
+  var _newStatus=_existStatus==='PUBLISHED'?'PUBLISHED':_existStatus==='DISAHKAN'?'DISAHKAN':'DRAFT';
   var payload={
     id:existKpt&&existKpt.id?existKpt.id:'',
     id_heat:idHeat,id_acara:idAcara,no_kp:noKp,
-    prestasi:prestasi,kedudukan:ked,unit:unit,status:'DRAFT'
+    prestasi:prestasi,kedudukan:ked,unit:unit,status:_newStatus
   };
   var r=await gasRun('saveKeputusan',payload);
   var s=gasResult(r);
-  if(s&&s.success){ toast('✅ Rekod dikemaskini','success'); loadSemak(); }
+  if(s&&s.success){ toast('? Rekod dikemaskini','success'); loadSemak(); }
   else{ toast((s&&s.message)||'Gagal simpan','error'); }
 }
 
-// ── CRUD DELETE ────────────────────────────────────────────────
+// -- CRUD DELETE ------------------------------------------------
 var _pendingDel={};
 function crudDelete(idHeat,noKp,nama,rowId){
   _pendingDel={idHeat:idHeat,noKp:noKp,rowId:rowId};
@@ -1025,6 +1733,38 @@ function crudDelete(idHeat,noKp,nama,rowId){
   document.getElementById('del-confirm-btn').onclick=doCrudDelete;
   document.getElementById('del-overlay').classList.add('show');
 }
+
+function padamSemuaKeputusan(idAcara, namaAcara){
+  if(!confirm('Padam SEMUA keputusan untuk "'+namaAcara+'"?\nTindakan tidak boleh diundur.')) return;
+  // _semakData: [{acara:{id_acara,...}, keputusan:[{id,...}]}]
+  var allKpts=[];
+  (_semakData||[]).forEach(function(d){
+    var aId=(d.acara&&d.acara.id_acara)?d.acara.id_acara:d.id_acara;
+    if(aId===idAcara){
+      (d.keputusan||[]).forEach(function(k){ if(k.id) allKpts.push({id:k.id,id_heat:k.id_heat||"",no_kp:k.no_kp||""}); });
+    }
+  });
+  if(!allKpts.length){ toast('Tiada keputusan untuk dipadam','info'); return; }
+  showProg('Mempadam '+allKpts.length+' keputusan...',5);
+  var done=0, fail=0;
+  function doNext(idx){
+    if(idx>=allKpts.length){
+      hideProg(done+' dipadam');
+      toast(done+' keputusan dipadam'+(fail?' | '+fail+' gagal':''),done>0?'success':'error');
+      if(done>0) loadSemak();
+      return;
+    }
+    updateProg('Mempadam '+(idx+1)+'/'+allKpts.length+'...',5+Math.round((idx+1)/allKpts.length*90));
+    var item=allKpts[idx];
+    gasRun('deleteKeputusan',{id:item.id,id_heat:item.id_heat,no_kp:item.no_kp}).then(function(r){
+      var ok=gasResult(r);
+      if(ok&&ok.success) done++; else fail++;
+      doNext(idx+1);
+    });
+  }
+  doNext(0);
+}
+
 function closeDelOverlay(){ document.getElementById('del-overlay').classList.remove('show'); }
 async function doCrudDelete(){
   closeDelOverlay();
@@ -1032,25 +1772,35 @@ async function doCrudDelete(){
   var r=await gasRun('deleteKeputusan',{id_heat:p.idHeat,no_kp:p.noKp});
   var s=gasResult(r);
   if(s&&s.success){
-    toast('🗑️ Rekod dipadam','success');
+    toast('? Rekod dipadam','success');
     var row=document.getElementById(p.rowId);
     if(row){ row.style.opacity='0'; row.style.transition='opacity .3s'; setTimeout(function(){loadSemak();},300); }
     else loadSemak();
   } else{ toast((s&&s.message)||'Gagal padam','error'); }
 }
 
-// ── LOGOUT ─────────────────────────────────────────────────────
+// -- LOGOUT -----------------------------------------------------
 function confirmLogout(){
   if(!confirm('Log keluar?')) return;
   if(IS_GAS){
     try{
-      if(_scriptUrl){ window.top.location.href=_scriptUrl+'?page=home'; }
-      else{ google.script.run.withSuccessHandler(function(url){if(url) window.top.location.href=url+'?page=home';}).withFailureHandler(function(){toast('Gagal log keluar','error');}).getScriptUrl(); }
+      var homeUrl=(_scriptUrl||GAS_EXEC_URL||'')+'?page=home';
+      if(homeUrl&&homeUrl!=='?page=home'){
+        window.location.assign(homeUrl);
+      } else {
+        google.script.run
+          .withSuccessHandler(function(url){
+            if(url) window.location.assign(url+'?page=home');
+            else toast('Sila tutup tab ini.','info');
+          })
+          .withFailureHandler(function(){ toast('Sila tutup tab ini.','info'); })
+          .getScriptUrl();
+      }
     }catch(e){ toast('Sila tutup tab ini.','info'); }
   } else { toast('Log keluar (dev mode)','info'); }
 }
 
-// ── PDF ────────────────────────────────────────────────────────
+// -- PDF --------------------------------------------------------
 var PDF_NAVY=[30,58,95],PDF_BLUE=[26,86,219],PDF_GOLD=[180,83,9],PDF_SILVER=[107,114,128],PDF_BRONZE=[146,64,14];
 var PDF_WHITE=[255,255,255],PDF_LIGHT=[248,250,253],PDF_BORDER=[221,226,238],PDF_TEXT=[17,24,39],PDF_SUBTEXT=[75,85,99];
 
@@ -1078,12 +1828,12 @@ function _pdfHeader(doc,ss,noAcara,namaAcara,idKat,jenis){
   y+=boxH+6; return y;
 }
 
-// PATCH 1: _pdfFooter — var colW2 deklarasi SEBELUM dipakai
+// PATCH 1: _pdfFooter ? var colW2 deklarasi SEBELUM dipakai
 function _pdfFooter(doc,y,ss){
   var pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
   var footY=ph-38;
   doc.setDrawColor(PDF_BORDER[0],PDF_BORDER[1],PDF_BORDER[2]); doc.setLineWidth(0.4); doc.line(15,footY,pw-15,footY); footY+=6;
-  var colW2=(pw-30)/3;  // ← PATCH 1: deklarasi colW2 SEBELUM guna
+  var colW2=(pw-30)/3;  // ? PATCH 1: deklarasi colW2 SEBELUM guna
   var signs=[{title:'Pengurus Acara',sub:'Tarikh:____________'},{title:'Pengadil Utama',sub:'Tarikh:____________'},{title:'Pengetua / Guru Besar',sub:'Cop Rasmi'}];
   signs.forEach(function(sg,i){
     var cx=15+i*colW2;
@@ -1092,16 +1842,16 @@ function _pdfFooter(doc,y,ss){
     doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(PDF_SUBTEXT[0],PDF_SUBTEXT[1],PDF_SUBTEXT[2]); doc.text(sg.sub,cx+colW2/2,footY+24,{align:'center'});
   });
   doc.setFontSize(7); doc.setTextColor(180,180,180);
-  doc.text('Dicetak: '+new Date().toLocaleString('ms-MY')+' · Sistem Sukan · '+(ss.nama_sekolah||'SK Sultan Ismail'),pw/2,ph-8,{align:'center'});
+  doc.text('Dicetak: '+new Date().toLocaleString('ms-MY')+' . Sistem Sukan . '+(ss.nama_sekolah||'SK Sultan Ismail'),pw/2,ph-8,{align:'center'});
 }
 
 function _pdfAcaraTable(doc,startY,kpts,jenis,unit,acara){
   var pw=doc.internal.pageSize.getWidth();
   var sorted=kpts.slice().sort(function(a,b){var ka=a.kedudukan||999,kb=b.kedudukan||999;return ka-kb;});
   var tableRows=sorted.map(function(k,i){
-    var rm=_rumahMap[k.id_rumah]||{nama:k.id_rumah||'—'};
+    var rm=_rumahMap[k.id_rumah]||{nama:k.id_rumah||'-'};
     var ked=k.kedudukan||0;
-    return {ked:ked===1?'#1 🥇':ked===2?'#2 🥈':ked===3?'#3 🥉':ked>0?'#'+ked:'—',nama:k.nama||'—',nokp:k.no_kp||'—',rumah:rm.nama||'—',prestasi:k.prestasi?k.prestasi+' '+unit:'—',status:k.status||'DRAFT',_ked:ked,_status:k.status};
+    return {ked:ked===1?'#1':ked===2?'#2':ked===3?'#3':ked>0?'#'+ked:'-',nama:k.nama||'-',nokp:k.no_kp||'-',rumah:rm.nama||'-',prestasi:k.prestasi?k.prestasi+' '+unit:'-',status:k.status||'DRAFT',_ked:ked,_status:k.status};
   });
   doc.autoTable({
     startY:startY,margin:{left:15,right:15},tableWidth:pw-30,
@@ -1132,21 +1882,42 @@ function _pdfAcaraTable(doc,startY,kpts,jenis,unit,acara){
   return doc.lastAutoTable.finalY;
 }
 
+
+function _semakRekodForPDF(p, prestasi, jenis){
+  if(!prestasi||!_curAcara) return null;
+  var isTrack=(jenis||'TRACK').toUpperCase()!=='FIELD';
+  var prestasiBar=parseFloat(prestasi); if(isNaN(prestasiBar)||!prestasiBar) return null;
+  var found=null;
+  (window._rekodListPencatat||[]).forEach(function(r){
+    var na=(r.nama_acara||'').toUpperCase();
+    var pa=(_curAcara.nama_acara||'').toUpperCase();
+    if(na.indexOf(pa)===-1&&pa.indexOf(na)===-1) return;
+    var _rk=(r.id_kategori||'').replace(/^KAT-/i,'');
+    var _ak=(_curAcara.id_kategori||'').replace(/^KAT-/i,'');
+    if(_rk&&_ak&&_rk!==_ak) return;
+    var rp=parseFloat(r.prestasi); if(isNaN(rp)) return;
+    var isPecah=isTrack?(prestasiBar<rp):(prestasiBar>rp);
+    if(isPecah) found='REKOD '+r.peringkat+' (lama:'+rp+r.unit+')';
+  });
+  return found;
+}
+
 function cetakHeatPdf(){
   var {jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   var pw=doc.internal.pageSize.getWidth(),y=15;
   doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(PDF_NAVY[0],PDF_NAVY[1],PDF_NAVY[2]);
   doc.text('KEPUTUSAN HEAT',pw/2,y,{align:'center'}); y+=7;
-  doc.setFontSize(10); doc.text(_curAcara.nama_acara+' — Heat '+_curHeat.no_heat,pw/2,y,{align:'center'}); y+=5;
+  doc.setFontSize(10); doc.text(_curAcara.nama_acara+' ? Heat '+_curHeat.no_heat,pw/2,y,{align:'center'}); y+=5;
   doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(PDF_SUBTEXT[0],PDF_SUBTEXT[1],PDF_SUBTEXT[2]);
-  doc.text('Kategori: '+_curAcara.id_kategori+' | Jenis: '+(_curHeat.jenis||'—')+' | Tarikh: '+new Date().toLocaleDateString('ms-MY'),pw/2,y,{align:'center'}); y+=8;
+  doc.text('Kategori: '+_curAcara.id_kategori+' | Jenis: '+(_curHeat.jenis||'?')+' | Tarikh: '+new Date().toLocaleDateString('ms-MY'),pw/2,y,{align:'center'}); y+=8;
   var jenis=_curAcara.jenis||'TRACK',isField=jenis==='FIELD',unit=isField?'meter':jenis==='TRACK'?'saat':'mata';
   var rows=_peserta.map(function(p,i){
     var rm=_rumahMap[p.id_rumah]||{nama:p.id_rumah},kpt=_keputusan.find(function(k){return k.no_kp===p.no_kp;});
-    var prestasi=kpt&&kpt.prestasi?kpt.prestasi+' '+unit:'—';
+    var prestasi=kpt&&kpt.prestasi?kpt.prestasi+' '+unit:'-';
     var kedEl=document.getElementById('ked_'+safeId(p.no_kp));
-    var ked=kedEl&&kedEl.value?kedEl.value:'—';
-    return [p.lorong||i+1,p.nama,p.no_kp||'—',rm.nama,prestasi,ked,kpt?kpt.status:'DRAFT'];
+    var ked=kedEl&&kedEl.value?kedEl.value:'-';
+    var _rp=_semakRekodForPDF(p,prestasi,_curAcara.jenis||'TRACK');
+    return [p.lorong||i+1,p.nama,rm.nama,prestasi,ked,kpt?kpt.status:'DRAFT',_rp||'-'];
   });
   doc.autoTable({startY:y,margin:{left:15,right:15},head:[['Lor.','Nama Peserta','No. K/P','Rumah','Prestasi','Ked.','Status']],body:rows,styles:{fontSize:8.5,overflow:'linebreak',cellPadding:{top:3,right:4,bottom:3,left:4},valign:'middle'},headStyles:{fillColor:PDF_NAVY,textColor:PDF_WHITE,fontStyle:'bold',fontSize:7.5,halign:'center'},columnStyles:{0:{cellWidth:12,halign:'center'},1:{cellWidth:'auto'},2:{cellWidth:30,halign:'center',fontSize:7.5},3:{cellWidth:22,halign:'center'},4:{cellWidth:22,halign:'center',fontStyle:'bold'},5:{cellWidth:14,halign:'center',fontStyle:'bold'},6:{cellWidth:20,halign:'center',fontSize:7.5}},alternateRowStyles:{fillColor:PDF_LIGHT}});
   doc.save('Heat_'+_curAcara.nama_acara.replace(/\s+/g,'_')+'_Heat'+_curHeat.no_heat+'.pdf');
@@ -1155,13 +1926,13 @@ function cetakHeatPdf(){
 function cetakAcaraPdf(){
   var {jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}),y=15;
   doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('KEPUTUSAN RASMI',14,y); y+=7;
-  doc.setFontSize(12); doc.text(_curAcara.nama_acara+' — '+_curAcara.id_kategori,14,y); y+=6;
+  doc.setFontSize(12); doc.text(_curAcara.nama_acara+' - '+_curAcara.id_kategori,14,y); y+=6;
   doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.text('Tarikh: '+new Date().toLocaleDateString('ms-MY'),14,y); y+=8;
   var jenis=_curAcara.jenis||'TRACK',unit=jenis==='FIELD'?'meter':jenis==='TRACK'?'saat':'mata';
   _heat.forEach(function(h){
     var kpts=_keputusan.filter(function(k){return k.id_heat===h.id_heat;}); if(!kpts.length) return;
-    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('Heat '+h.no_heat+' ('+h.jenis+') — '+(h.status||'—'),14,y); y+=5;
-    var rows=kpts.sort(function(a,b){var va=parseFloat(a.prestasi)||0,vb=parseFloat(b.prestasi)||0;return jenis==='TRACK'?va-vb:vb-va;}).map(function(k,i){var rm=_rumahMap[k.id_rumah]||{nama:k.id_rumah};return [k.kedudukan||i+1,k.nama,rm.nama,k.prestasi?k.prestasi+' '+unit:'—',k.status];});
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('Heat '+h.no_heat+' ('+h.jenis+') ? '+(h.status||'?'),14,y); y+=5;
+    var rows=kpts.sort(function(a,b){var va=parseFloat(a.prestasi)||0,vb=parseFloat(b.prestasi)||0;return jenis==='TRACK'?va-vb:vb-va;}).map(function(k,i){var rm=_rumahMap[k.id_rumah]||{nama:k.id_rumah};return [k.kedudukan||i+1,k.nama,rm.nama,k.prestasi?k.prestasi+' '+unit:'-',k.status];});
     doc.autoTable({startY:y,head:[['Ked.','Nama','Rumah','Prestasi','Status']],body:rows,theme:'striped',headStyles:{fillColor:[30,50,80],textColor:255,fontSize:8},bodyStyles:{fontSize:8},margin:{left:14}});
     y=doc.lastAutoTable.finalY+8;
   });
@@ -1173,7 +1944,7 @@ function cetakSemakPdf(idAcara){
   if(!d||!d.keputusan.length){toast('Tiada data','warn');return;}
   var {jsPDF}=window.jspdf,doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   var ss=_settings,acara=d.acara,jenis=acara.jenis||'TRACK',unit=jenis==='TRACK'?'saat':jenis==='FIELD'?'meter':'mata';
-  var y=_pdfHeader(doc,ss,acara.no_acara||'—',acara.nama_acara,acara.id_kategori||'—',jenis);
+  var y=_pdfHeader(doc,ss,acara.no_acara||'-',acara.nama_acara,acara.id_kategori||'-',jenis);
   y=_pdfAcaraTable(doc,y,d.keputusan,jenis,unit,acara);
   _pdfFooter(doc,y,ss);
   doc.save('Keputusan_'+(acara.nama_acara||'Acara').replace(/\s+/g,'_')+'_'+(acara.id_kategori||'')+'.pdf');
@@ -1186,7 +1957,7 @@ function cetakSemuaSemakPdf(){
   _semakFiltered.forEach(function(d,idx){
     if(idx>0) doc.addPage();
     var acara=d.acara,jenis=acara.jenis||'TRACK',unit=jenis==='TRACK'?'saat':jenis==='FIELD'?'meter':'mata';
-    var y=_pdfHeader(doc,ss,acara.no_acara||'—',acara.nama_acara,acara.id_kategori||'—',jenis);
+    var y=_pdfHeader(doc,ss,acara.no_acara||'-',acara.nama_acara,acara.id_kategori||'-',jenis);
     y=_pdfAcaraTable(doc,y,d.keputusan,jenis,unit,acara);
     _pdfFooter(doc,y,ss);
   });
@@ -1194,7 +1965,7 @@ function cetakSemuaSemakPdf(){
   toast('PDF lengkap dijana ('+_semakFiltered.length+' acara)','success');
 }
 
-// ── PATCH 8: _mockAllKeputusan SEBELUM mockApi ─────────────────
+// -- PATCH 8: _mockAllKeputusan SEBELUM mockApi -----------------
 function _mockAllKeputusan(){
   return [
     {id:'KPT-1',id_heat:'HT-001',id_acara:'ACR-001',no_kp:'000101-11-0001',nama:'Siti Aminah',id_rumah:'RMH-MERAH',id_kategori:'P4',nama_acara:'100m',jenis:'TRACK',prestasi:'13.45',unit:'saat',kedudukan:1,status:'DISAHKAN'},
@@ -1205,7 +1976,7 @@ function _mockAllKeputusan(){
   ];
 }
 
-// ── MOCK API ────────────────────────────────────────────────────
+// -- MOCK API ----------------------------------------------------
 function mockApi(fn,args){
   var mocks={
     getScriptUrl:function(){return 'https://script.google.com/test';},
@@ -1219,7 +1990,7 @@ function mockApi(fn,args){
       {id_acara:'ACR-003',no_acara:'03',nama_acara:'Relay 4x100m',id_kategori:'P4',jenis:'TRACK',format_acara:'TERUS_FINAL',jenis_pendaftaran:'KUMPULAN',min_ahli:4,max_ahli:4,guna_lorong:true,kuota_ind_rumah:0,kuota_pasukan_rumah:2,ahli_utama:4,ahli_simpanan:1},
       {id_acara:'ACR-004',no_acara:'04',nama_acara:'100m (L4)',id_kategori:'L4',jenis:'TRACK',format_acara:'TERUS_FINAL',jenis_pendaftaran:'INDIVIDU',min_ahli:1,max_ahli:1,guna_lorong:true,kuota_ind_rumah:2,kuota_pasukan_rumah:0,ahli_utama:1,ahli_simpanan:0},
     ]};},
-    // PATCH 2: getHeat mock — guna parameter 'a' bukan global 'args'
+    // PATCH 2: getHeat mock ? guna parameter 'a' bukan global 'args'
     getHeat:function(a){var idA=(a&&a.id_acara)||'ACR-001';return {success:true,heat:[{id_heat:'HT-001',id_acara:idA,jenis:'FINAL',no_heat:1,status:'BELUM'},{id_heat:'HT-002',id_acara:idA,jenis:'FINAL',no_heat:2,status:'SELESAI'}],total:2};},
     getPesertaHeat:function(a){
       var all={'HT-001':[{id:'PH-1',id_heat:'HT-001',no_kp:'000101-11-0001',nama:'Siti Aminah',id_rumah:'RMH-MERAH',lorong:1,giliran:1,status:'AKTIF',source:'INDIVIDU'},{id:'PH-2',id_heat:'HT-001',no_kp:'000202-11-0002',nama:'Nurul Hana',id_rumah:'RMH-BIRU',lorong:2,giliran:2,status:'AKTIF',source:'INDIVIDU'},{id:'PH-3',id_heat:'HT-001',no_kp:'000303-11-0003',nama:'Aisha Rania',id_rumah:'RMH-HIJAU',lorong:3,giliran:3,status:'AKTIF',source:'INDIVIDU'},{id:'PH-4',id_heat:'HT-001',no_kp:'000404-11-0004',nama:'Fatin Husna',id_rumah:'RMH-KUNING',lorong:4,giliran:4,status:'AKTIF',source:'INDIVIDU'}],'HT-002':[{id:'PH-5',id_heat:'HT-002',no_kp:'KMP-MERAH-A',nama:'MERAH A',id_rumah:'RMH-MERAH',lorong:1,giliran:1,status:'AKTIF',source:'KUMPULAN'},{id:'PH-6',id_heat:'HT-002',no_kp:'KMP-BIRU-A',nama:'BIRU A',id_rumah:'RMH-BIRU',lorong:2,giliran:2,status:'AKTIF',source:'KUMPULAN'}]};
@@ -1245,6 +2016,111 @@ function mockApi(fn,args){
   };
   return (mocks[fn]&&mocks[fn](args))||{success:false,message:'mock tiada: '+fn};
 }
+
+// ── Expose all functions to window (GAS sandbox) ──
+if(typeof _semakRekodPecah!=="undefined") window._semakRekodPecah=_semakRekodPecah;
+if(typeof _tunjukRekodPecah!=="undefined") window._tunjukRekodPecah=_tunjukRekodPecah;
+if(typeof showProg!=="undefined") window.showProg=showProg;
+if(typeof updateProg!=="undefined") window.updateProg=updateProg;
+if(typeof hideProg!=="undefined") window.hideProg=hideProg;
+if(typeof toast!=="undefined") window.toast=toast;
+if(typeof gasRun!=="undefined") window.gasRun=gasRun;
+if(typeof gasResult!=="undefined") window.gasResult=gasResult;
+if(typeof loadMasterData!=="undefined") window.loadMasterData=loadMasterData;
+if(typeof buildKatDropdown!=="undefined") window.buildKatDropdown=buildKatDropdown;
+if(typeof onKatChange!=="undefined") window.onKatChange=onKatChange;
+if(typeof onAcaraChange!=="undefined") window.onAcaraChange=onAcaraChange;
+if(typeof ai!=="undefined") window.ai=ai;
+if(typeof loadHeat!=="undefined") window.loadHeat=loadHeat;
+if(typeof renderHeatGrid!=="undefined") window.renderHeatGrid=renderHeatGrid;
+if(typeof pilihHeat!=="undefined") window.pilihHeat=pilihHeat;
+if(typeof loadPesertaKeputusan!=="undefined") window.loadPesertaKeputusan=loadPesertaKeputusan;
+if(typeof updateS3Info!=="undefined") window.updateS3Info=updateS3Info;
+if(typeof updateProgress!=="undefined") window.updateProgress=updateProgress;
+if(typeof safeId!=="undefined") window.safeId=safeId;
+if(typeof renderKtbl!=="undefined") window.renderKtbl=renderKtbl;
+if(typeof onKedChange!=="undefined") window.onKedChange=onKedChange;
+if(typeof _refreshAllKedOptions!=="undefined") window._refreshAllKedOptions=_refreshAllKedOptions;
+if(typeof showKedSel!=="undefined") window.showKedSel=showKedSel;
+if(typeof tryParse!=="undefined") window.tryParse=tryParse;
+if(typeof onPrestasiInput!=="undefined") window.onPrestasiInput=onPrestasiInput;
+if(typeof calcBest!=="undefined") window.calcBest=calcBest;
+if(typeof autoRank!=="undefined") window.autoRank=autoRank;
+if(typeof simpanSemua!=="undefined") window.simpanSemua=simpanSemua;
+if(typeof bukaHantarModal!=="undefined") window.bukaHantarModal=bukaHantarModal;
+if(typeof tutupHantarModal!=="undefined") window.tutupHantarModal=tutupHantarModal;
+if(typeof sahkanHeat!=="undefined") window.sahkanHeat=sahkanHeat;
+if(typeof loadRankingAkhir!=="undefined") window.loadRankingAkhir=loadRankingAkhir;
+if(typeof publishAcara!=="undefined") window.publishAcara=publishAcara;
+if(typeof loadMedalTallyPanel!=="undefined") window.loadMedalTallyPanel=loadMedalTallyPanel;
+if(typeof loadBestAthletePanel!=="undefined") window.loadBestAthletePanel=loadBestAthletePanel;
+if(typeof cardHtml!=="undefined") window.cardHtml=cardHtml;
+if(typeof gotoStep!=="undefined") window.gotoStep=gotoStep;
+if(typeof setAcaraInfoStrip!=="undefined") window.setAcaraInfoStrip=setAcaraInfoStrip;
+if(typeof showFlexPanel!=="undefined") window.showFlexPanel=showFlexPanel;
+if(typeof teribtAcara!=="undefined") window.teribtAcara=teribtAcara;
+if(typeof publishTerus!=="undefined") window.publishTerus=publishTerus;
+if(typeof loadSemak!=="undefined") window.loadSemak=loadSemak;
+if(typeof filterSemak!=="undefined") window.filterSemak=filterSemak;
+if(typeof renderSemakGrid!=="undefined") window.renderSemakGrid=renderSemakGrid;
+if(typeof toggleSemakCard!=="undefined") window.toggleSemakCard=toggleSemakCard;
+if(typeof semakExpandAll!=="undefined") window.semakExpandAll=semakExpandAll;
+if(typeof crudEdit!=="undefined") window.crudEdit=crudEdit;
+if(typeof crudSave!=="undefined") window.crudSave=crudSave;
+if(typeof crudDelete!=="undefined") window.crudDelete=crudDelete;
+if(typeof closeDelOverlay!=="undefined") window.closeDelOverlay=closeDelOverlay;
+if(typeof doCrudDelete!=="undefined") window.doCrudDelete=doCrudDelete;
+if(typeof confirmLogout!=="undefined") window.confirmLogout=confirmLogout;
+if(typeof _pdfHeader!=="undefined") window._pdfHeader=_pdfHeader;
+if(typeof _pdfFooter!=="undefined") window._pdfFooter=_pdfFooter;
+if(typeof _pdfAcaraTable!=="undefined") window._pdfAcaraTable=_pdfAcaraTable;
+if(typeof cetakHeatPdf!=="undefined") window.cetakHeatPdf=cetakHeatPdf;
+if(typeof cetakAcaraPdf!=="undefined") window.cetakAcaraPdf=cetakAcaraPdf;
+if(typeof cetakSemakPdf!=="undefined") window.cetakSemakPdf=cetakSemakPdf;
+if(typeof cetakSemuaSemakPdf!=="undefined") window.cetakSemuaSemakPdf=cetakSemuaSemakPdf;
+if(typeof _mockAllKeputusan!=="undefined") window._mockAllKeputusan=_mockAllKeputusan;
+if(typeof mockApi!=="undefined") window.mockApi=mockApi;
+if(typeof padamSemuaKeputusan!=="undefined") window.padamSemuaKeputusan=padamSemuaKeputusan;
 </script>
+<!-- HANTAR MODAL -->
+<div class="hantar-overlay" id="hantar-overlay">
+  <div class="hantar-box">
+    <div class="hantar-head">
+      <div class="hantar-head-title">✅ Hantar Keputusan</div>
+      <div class="hantar-head-sub" id="hm-sub">Semak sebelum hantar</div>
+    </div>
+    <div class="hantar-body">
+      <div style="margin-bottom:12px;padding:10px 12px;background:var(--bg3);border-radius:10px;font-size:12px;line-height:1.8;">
+        <div><span style="color:var(--text2);">Acara:</span> <strong id="hm-acara">—</strong></div>
+        <div><span style="color:var(--text2);">Kategori:</span> <span id="hm-kat">—</span> &nbsp;|&nbsp; <span id="hm-jenis">—</span></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Ringkasan Kedudukan</div>
+      <div id="hm-rows"></div>
+      <div id="hm-warning" style="display:none;margin-top:10px;padding:9px 12px;background:var(--amber-lt);border-radius:8px;font-size:12px;color:var(--amber);border:1px solid #FDE68A;">
+        ⚠️ <span id="hm-warning-txt"></span>
+      </div>
+    </div>
+    <div class="hantar-foot">
+      <button class="btn btn-ghost btn-sm" onclick="tutupHantarModal()">Batal</button>
+      <button class="btn-hantar" id="btn-hantar-confirm" onclick="sahkanHeat()" style="font-size:13px;padding:9px 20px;">✅ Ya, Hantar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ REKOD PECAH OVERLAY ══ -->
+<div id="rekod-pecah-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px">
+  <div style="width:100%;max-width:480px;max-height:80vh;overflow-y:auto">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:36px;animation:rpop 0.5s cubic-bezier(0.34,1.56,0.64,1)">🏆</div>
+      <div style="font-family:monospace;font-size:11px;font-weight:900;color:#F59E0B;letter-spacing:3px;text-transform:uppercase;margin-top:4px">REKOD DIPECAHKAN</div>
+    </div>
+    <div id="rekod-pecah-body"></div>
+    <button onclick="document.getElementById('rekod-pecah-overlay').style.display='none'" 
+      style="width:100%;margin-top:12px;padding:12px;background:#1E293B;border:1px solid #334155;color:#94A3B8;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.5px">
+      TUTUP
+    </button>
+  </div>
+</div>
 </body>
 </html>

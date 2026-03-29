@@ -113,9 +113,9 @@ tbody td{padding:11px 14px;color:var(--text2);vertical-align:middle}
 .badge-purple{background:rgba(139,92,246,0.15);color:var(--purple);border:1px solid rgba(139,92,246,0.25)}
 .badge-cyan{background:rgba(34,211,238,0.15);color:var(--cyan);border:1px solid rgba(34,211,238,0.25)}
 .badge-gray{background:rgba(100,116,139,0.15);color:var(--text3);border:1px solid rgba(100,116,139,0.2)}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:400;align-items:center;justify-content:center;padding:20px;pointer-events:none}
 .modal-overlay.show{display:flex}
-.modal{background:var(--card);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:modal-in 0.2s ease}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:modal-in 0.2s ease;pointer-events:auto}
 @keyframes modal-in{from{opacity:0;transform:scale(0.95) translateY(10px)}to{opacity:1;transform:none}}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border)}
 .modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--text)
@@ -196,6 +196,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
 </style>
 </head>
 <body>
+<form onsubmit="return false;" id="gs-form-block">
 <div id="loading-overlay"><div style="text-align:center"><div class="spinner" style="margin:auto"></div><div style="color:var(--text2);font-size:12px;margin-top:10px" id="loading-msg">Memuatkan...</div></div></div>
 <div id="toast-container"></div>
 <header id="header">
@@ -266,7 +267,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
         </div>
       </div>
       <div class="card">
-        <div class="section-header"><div class="section-title">🕐 Log Aktiviti Terkini</div><button class="btn btn-ghost btn-xs" onclick="loadActivityLog()">Muat semula</button></div>
+        <div class="section-header"><div class="section-title">🕐 Log Aktiviti Terkini</div><div class="btn btn-ghost btn-xs" onclick="loadActivityLog()" style="cursor:pointer">Muat semula</div></div>
         <div id="activity-log"><div style="color:var(--text3);font-size:12px;text-align:center;padding:20px">Memuatkan log...</div></div>
       </div>
     </div>
@@ -310,7 +311,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
   <div id="stpane-asas" class="stpane active" style="display:block">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div class="card">
-        <div class="section-header"><div><div class="section-title">🏫 Maklumat Pertandingan</div></div><button class="btn btn-success btn-sm" onclick="saveSettings()">💾 Simpan</button></div>
+        <div class="section-header"><div><div class="section-title">🏫 Maklumat Pertandingan</div></div><div class="btn btn-success btn-sm" onclick="saveSettings()" style="cursor:pointer">💾 Simpan</div></div>
         <div class="form-group"><label class="form-label">Nama Sekolah</label><input class="form-input" id="set-sekolah" placeholder="cth: SK Sultan Ismail"></div>
         <div class="form-group"><label class="form-label">Nama Pertandingan</label><input class="form-input" id="set-nama" placeholder="cth: Sukan Tahunan 2025"></div>
         <div class="form-row">
@@ -333,7 +334,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
           <div class="form-group"><label class="form-label">Bilangan Lorong Trek</label><select class="form-select" id="set-lorong" onchange="updateLorongPreview();saveTrekSettings()"><option value="4">4 Lorong</option><option value="6">6 Lorong</option><option value="8">8 Lorong</option></select><div class="form-hint">Digunakan untuk undian lorong acara balapan</div></div>
           <div id="lorong-preview" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"></div>
           <div style="margin-top:12px;">
-            <button class="btn btn-primary btn-sm" onclick="saveTrekSettings()">💾 Simpan Lorong</button>
+            <div class="btn btn-primary btn-sm" onclick="saveTrekSettings()" style="cursor:pointer">💾 Simpan Lorong</div>
           </div>
         </div>
         <div class="card">
@@ -349,7 +350,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
   <div id="stpane-mata" class="stpane" style="display:none">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div class="card">
-        <div class="section-header"><div><div class="section-title">🥇 Konfigurasi Mata Tempat</div><div class="section-sub">Standard MSSD / MSSM / SUKMA</div></div><button class="btn btn-success btn-sm" onclick="saveMata()">💾 Simpan</button></div>
+        <div class="section-header"><div><div class="section-title">🥇 Konfigurasi Mata Tempat</div><div class="section-sub">Standard MSSD / MSSM / SUKMA</div></div><div class="btn btn-success btn-sm" onclick="saveMata()" style="cursor:pointer">💾 Simpan</div></div>
         <div class="alert alert-info"><span>ℹ️</span><span>Standard Malaysia: Johan 5, Naib 3, Ke-3 2, Ke-4 1. Boleh disesuaikan mengikut perlembagaan sekolah.</span></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div class="form-group"><label class="form-label">🥇 Johan (1st)</label><input class="form-input" type="number" id="mata-1" value="5" min="1" max="20" oninput="updateMataPreview()"></div>
@@ -385,7 +386,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
   <!-- KATEGORI -->
   <div id="stpane-kategori" class="stpane" style="display:none">
     <div class="card">
-      <div class="section-header"><div><div class="section-title">📋 Kategori Peserta</div><div class="section-sub">Urus kategori L1, L2, P1, P2 — umur & jantina</div></div><button class="btn btn-primary btn-sm" onclick="openKatModal()">＋ Tambah Kategori</button></div>
+      <div class="section-header"><div><div class="section-title">📋 Kategori Peserta</div><div class="section-sub">Urus kategori L1, L2, P1, P2 — umur & jantina</div></div><div class="btn btn-primary btn-sm" onclick="openKatModal()" style="cursor:pointer">＋ Tambah Kategori</div></div>
       <div class="tbl-wrap"><table><thead><tr><th>KOD</th><th>NAMA KATEGORI</th><th>JANTINA</th><th>UMUR</th><th>KUOTA/ACARA</th><th>WARNA</th><th>STATUS</th><th>TINDAKAN</th></tr></thead><tbody id="kat-tbody"><tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px">Memuatkan...</td></tr></tbody></table></div>
     </div>
   </div>
@@ -393,7 +394,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
   <!-- RUMAH -->
   <div id="stpane-rumah" class="stpane" style="display:none">
     <div class="card">
-      <div class="section-header"><div><div class="section-title">🏠 Rumah Sukan</div><div class="section-sub">Urus rumah sukan, warna identiti & dropdown Sheet untuk guru</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-ghost btn-sm" onclick="doSetupSheetValidation()" title="Pasang dropdown darjah & rumah sukan dalam tbl_murid Sheet untuk kegunaan guru">📋 Setup Dropdown Sheet</button><button class="btn btn-warning btn-sm" id="btn-repair-murid" onclick="doRepairMuridData()" title="Auto-isi id_kategori, jantina, tarikh_lahir & id_rumah dalam tbl_murid" disabled>🔄 Jana Data Murid</button><button class="btn btn-primary btn-sm" onclick="openRumahModal()">＋ Tambah Rumah</button></div></div>
+      <div class="section-header"><div><div class="section-title">🏠 Rumah Sukan</div><div class="section-sub">Urus rumah sukan, warna identiti & dropdown Sheet untuk guru</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;"><div class="btn btn-ghost btn-sm" onclick="doSetupSheetValidation()" title="Pasang dropdown darjah & rumah sukan dalam tbl_murid Sheet untuk kegunaan guru" style="cursor:pointer">📋 Setup Dropdown Sheet</div><div class="btn btn-warning btn-sm" id="btn-repair-murid" onclick="doRepairMuridData()" title="Auto-isi id_kategori, jantina, tarikh_lahir & id_rumah dalam tbl_murid" disabled style="cursor:pointer">🔄 Jana Data Murid</div><div class="btn btn-primary btn-sm" onclick="openRumahModal()" style="cursor:pointer">＋ Tambah Rumah</div></div></div>
       <div class="rumah-grid" id="rumah-grid"><div style="color:var(--text3);font-size:12px;text-align:center;padding:24px;grid-column:1/-1">Memuatkan...</div></div>
     </div>
   </div>
@@ -405,7 +406,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
         <div><div class="section-title">🏃 Acara Master</div><div class="section-sub">Senarai acara track, field & road</div></div>
         <div style="display:flex;gap:8px">
           <select class="form-select" id="acara-filter" style="width:auto;font-size:12px;padding:5px 10px" onchange="filterAcara()"><option value="">Semua Jenis</option><option value="track">🏃 Track</option><option value="field">🏋️ Field</option><option value="road">🚶 Road</option></select>
-          <button class="btn btn-primary btn-sm" onclick="openAcaraModal()">＋ Tambah Acara</button>
+          <div class="btn btn-primary btn-sm" onclick="openAcaraModal()" style="cursor:pointer">＋ Tambah Acara</div>
         </div>
       </div>
       <div class="tbl-wrap"><table><thead><tr><th>EMOJI</th><th>KOD</th><th>NAMA ACARA</th><th>JENIS</th><th>KATEGORI</th><th>LORONG</th><th>FORMAT</th><th style='text-align:center'>KUOTA/RUMAH</th><th>STATUS</th><th>TINDAKAN</th></tr></thead><tbody id="acara-tbody"><tr><td colspan="10" style="text-align:center;color:var(--text3);padding:24px">Memuatkan...</td></tr></tbody></table></div>
@@ -422,7 +423,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
       <h2 style="font-size:18px;font-weight:800;margin:0 0 4px;">📅 Jadual Acara Pertandingan</h2>
       <p style="font-size:13px;color:#64748B;margin:0;">Tetapkan tarikh, masa dan lokasi untuk setiap acara dan peringkat</p>
     </div>
-    <button class="btn btn-primary" onclick="openJadualModal()">+ Tambah Jadual</button>
+    <div class="btn btn-primary" onclick="openJadualModal()" style="cursor:pointer">+ Tambah Jadual</div>
   </div>
  
   <!-- Filter bar -->
@@ -446,9 +447,9 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
         <div style="font-size:11px;font-weight:600;color:#64748B;margin-bottom:4px;">CARI</div>
         <input id="jdl-flt-cari" style="border:1.5px solid #E2E8F0;border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;width:100%;" placeholder="No. acara / nama acara..." oninput="filterJadual()">
       </div>
-      <button style="border:1.5px solid #E2E8F0;border-radius:8px;padding:7px 12px;font-size:12px;background:#fff;cursor:pointer;font-family:inherit;" onclick="clearJadualFilter()">Reset</button>
-      <button style="border:none;border-radius:8px;padding:7px 12px;font-size:12px;background:#F1F5F9;color:#475569;cursor:pointer;font-family:inherit;" onclick="loadJadual()">🔄</button>
-      <button style="border:none;border-radius:8px;padding:7px 12px;font-size:12px;background:#1E3A5F;color:#fff;cursor:pointer;font-family:inherit;" onclick="cetakJadualAcara()">🖨️ Cetak Jadual</button>
+      <div style="border:1.5px solid #E2E8F0;border-radius:8px;padding:7px 12px;font-size:12px;background:#fff;cursor:pointer;font-family:inherit;;cursor:pointer" onclick="clearJadualFilter()">Reset</div>
+      <div style="border:none;border-radius:8px;padding:7px 12px;font-size:12px;background:#F1F5F9;color:#475569;cursor:pointer;font-family:inherit;;cursor:pointer" onclick="loadJadual()">🔄</div>
+      <div style="border:none;border-radius:8px;padding:7px 12px;font-size:12px;background:#1E3A5F;color:#fff;cursor:pointer;font-family:inherit;;cursor:pointer" onclick="cetakJadualAcara()">🖨️ Cetak Jadual</div>
     </div>
   </div>
  
@@ -485,7 +486,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
 </div>
  
 <!-- ══════════════════════════════════════════════════════════════════
-     LANGKAH 4: Tambah MODAL — letak sebelum </body>
+     LANGKAH 4: MODAL
      ══════════════════════════════════════════════════════════════════ -->
  
 <!-- ③ MODAL TAMBAH/EDIT -->
@@ -493,7 +494,7 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
   <div class="modal" style="max-width:540px;">
     <div class="modal-header">
       <span class="modal-title" id="modal-jadual-title">📅 Tambah Jadual Acara</span>
-      <button class="modal-close" onclick="closeModal('modal-jadual')">✕</button>
+      <div class="modal-close" onclick="closeModal('modal-jadual')" style="cursor:pointer">✕</div>
     </div>
     <div class="modal-body">
  
@@ -562,8 +563,8 @@ input[type=color]{width:36px;height:36px;padding:2px;border-radius:8px;border:1p
  
     </div>
     <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modal-jadual')">Batal</button>
-      <button class="btn btn-primary" onclick="saveJadualAcara()">💾 Simpan</button>
+      <div class="btn btn-ghost" onclick="closeModal('modal-jadual')" style="cursor:pointer">Batal</div>
+      <div class="btn btn-primary" onclick="saveJadualAcara()" style="cursor:pointer">💾 Simpan</div>
     </div>
   </div>
 </div>
@@ -705,8 +706,8 @@ function renderJadual() {
       '<td>' + slBtn + '</td>' +
       '<td>' +
         '<div style="display:flex;gap:4px;">' +
-          '<button onclick="editJadual(\'' + j.id_jadual + '\')" style="padding:4px 8px;border-radius:6px;border:1px solid #E2E8F0;background:#F8FAFC;cursor:pointer;font-size:11px;">✏️</button>' +
-          '<button onclick="deleteJadualUI(\'' + j.id_jadual + '\')" style="padding:4px 8px;border-radius:6px;border:none;background:#FEF2F2;color:#991B1B;cursor:pointer;font-size:11px;">🗑️</button>' +
+          '<div onclick="editJadual(\'' + j.id_jadual + '\')" style="padding:4px 8px;border-radius:6px;border:1px solid #E2E8F0;background:#F8FAFC;cursor:pointer;font-size:11px;;cursor:pointer">✏️</div>' +
+          '<div onclick="deleteJadualUI(\'' + j.id_jadual + '\')" style="padding:4px 8px;border-radius:6px;border:none;background:#FEF2F2;color:#991B1B;cursor:pointer;font-size:11px;;cursor:pointer">🗑️</div>' +
         '</div>' +
       '</td>' +
     '</tr>';
@@ -736,13 +737,22 @@ async function openJadualModal(data) {
   var today = new Date().toISOString().split('T')[0];
  
   if (data) {
+    // Format tarikh: ambil yyyy-MM-dd sahaja
+    var fmtTarikh = (data.tarikh||'').toString().length>=10 ? (data.tarikh||'').toString().substring(0,10) : today;
+    // Format masa: ambil HH:mm sahaja
+    var rawMasa = (data.masa_mula||'').toString();
+    var fmtMasa = '';
+    if(rawMasa) {
+      if(rawMasa.includes('T')) fmtMasa = rawMasa.substring(11,16); // ISO string
+      else if(rawMasa.length>=5) fmtMasa = rawMasa.substring(0,5);  // HH:mm:ss
+    }
     document.getElementById('jdl-no-acara').value    = data.no_acara || '';
     document.getElementById('jdl-peringkat').value   = data.peringkat || 'AKHIR';
     document.getElementById('jdl-nama-acara').value  = data.nama_acara || '';
     document.getElementById('jdl-kategori').value    = data.kategori || '';
-    document.getElementById('jdl-tarikh').value      = data.tarikh || today;
-    document.getElementById('jdl-hari').value        = data.hari || _jdlAutoHariStr(data.tarikh || today);
-    document.getElementById('jdl-masa').value        = data.masa_mula || '';
+    document.getElementById('jdl-tarikh').value      = fmtTarikh;
+    document.getElementById('jdl-hari').value        = data.hari || _jdlAutoHariStr(fmtTarikh);
+    document.getElementById('jdl-masa').value        = fmtMasa;
     document.getElementById('jdl-lokasi').value      = data.lokasi || '';
     document.getElementById('jdl-link-acara').value  = data.id_acara_link || '';
     document.getElementById('modal-jadual-title').textContent = '✏️ Edit Jadual Acara';
@@ -914,8 +924,31 @@ function cetakJadualAcara() {
 <div class="tab-pane" id="pane-users">
   <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
     <div><div class="page-title">👥 Pengurusan Pengguna</div><div class="page-sub">Urus akaun, kata laluan & hak akses sistem</div></div>
-    <button class="btn btn-primary" onclick="openUserModal()">＋ Tambah Pengguna</button>
+    <div class="btn btn-primary" role="button" tabindex="0" onclick="openUserModal()" style="cursor:pointer;user-select:none;">＋ Tambah Pengguna</div>
   </div>
+<div id="user-inline-panel" style="display:none;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+    <div style="font-weight:700;font-size:15px;color:var(--text)" id="user-panel-title">Tambah Pengguna</div>
+    <div onclick="closeUserPanel()" style="cursor:pointer;font-size:18px;color:var(--text3);padding:4px 8px;">✕</div>
+  </div>
+  <input type="hidden" id="user-id">
+  <div class="form-row">
+    <div class="form-group"><label class="form-label">Username</label><input class="form-input" id="user-username" placeholder="cth: cg_merah"></div>
+    <div class="form-group"><label class="form-label">Kata Laluan</label><input class="form-input" type="text" id="user-password" placeholder="Min 6 aksara"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label class="form-label">Nama Penuh</label><input class="form-input" id="user-nama" placeholder="Nama penuh"></div>
+    <div class="form-group"><label class="form-label">E-mel</label><input class="form-input" id="user-email" placeholder="email@sekolah.edu.my"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label class="form-label">Role</label><select class="form-select" id="user-role" onchange="toggleRumahField()"><option value="Admin">Admin</option><option value="Pengurus">Pengurus</option><option value="Urusetia">Urusetia</option><option value="Pencatat">Pencatat</option></select></div>
+    <div class="form-group" id="user-rumah-group"><label class="form-label">Rumah Sukan</label><select class="form-select" id="user-rumah"><option value="">— Pilih Rumah —</option></select></div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">
+    <div class="btn btn-ghost" onclick="closeUserPanel()" style="cursor:pointer;">Batal</div>
+    <div class="btn btn-primary" onclick="saveUser()" style="cursor:pointer;">💾 Simpan</div>
+  </div>
+</div>
   <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
     <input class="form-input" id="user-search" placeholder="🔍 Cari nama / username..." style="max-width:240px;font-size:12px" oninput="filterUsers()">
     <select class="form-select" id="user-role-filter" style="width:auto;font-size:12px;padding:5px 10px" onchange="filterUsers()"><option value="">Semua Role</option><option value="Admin">Admin</option><option value="Pengurus">Pengurus</option><option value="Urusetia">Urusetia</option><option value="Pencatat">Pencatat</option></select>
@@ -927,7 +960,7 @@ function cetakJadualAcara() {
 
 <!-- MODALS -->
 <div class="modal-overlay" id="modal-kat">
-  <div class="modal"><div class="modal-header"><div class="modal-title" id="kat-modal-title">Tambah Kategori</div><button class="modal-close" onclick="closeModal('modal-kat')">✕</button></div>
+  <div class="modal"><div class="modal-header"><div class="modal-title" id="kat-modal-title">Tambah Kategori</div><div class="modal-close" onclick="closeModal('modal-kat')" style="cursor:pointer">✕</div></div>
   <div class="modal-body">
     <input type="hidden" id="kat-id">
     <div class="form-row"><div class="form-group"><label class="form-label">Kod Kategori</label><input class="form-input" id="kat-kod" placeholder="cth: L1" maxlength="5" style="text-transform:uppercase"></div><div class="form-group"><label class="form-label">Nama Kategori</label><input class="form-input" id="kat-nama" placeholder="cth: Lelaki Bawah 12"></div></div>
@@ -936,11 +969,11 @@ function cetakJadualAcara() {
     <div class="form-row"><div class="form-group"><label class="form-label">Umur Minimum</label><input class="form-input" type="number" id="kat-umin" placeholder="7" min="5" max="19"></div><div class="form-group"><label class="form-label">Umur Maksimum</label><input class="form-input" type="number" id="kat-umax" placeholder="11" min="5" max="19"></div></div>
     <div class="form-group"><label class="form-label">Warna Identiti</label><div style="display:flex;align-items:center;gap:10px"><input type="color" id="kat-warna" value="#4F8EF7" oninput="updateKatPreview()"><div class="colour-preview" id="kat-colour-prev" style="background:#4F8EF7;color:#fff">L1</div><span style="font-size:11px;color:var(--text3)" id="kat-contrast-msg"></span></div></div>
   </div>
-  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-kat')">Batal</button><button class="btn btn-primary" onclick="saveKategori()">💾 Simpan</button></div></div>
+  <div class="modal-footer"><div class="btn btn-ghost" onclick="closeModal('modal-kat')" style="cursor:pointer">Batal</div><div class="btn btn-primary" onclick="saveKategori()" style="cursor:pointer">💾 Simpan</div></div></div>
 </div>
 
 <div class="modal-overlay" id="modal-rumah">
-  <div class="modal"><div class="modal-header"><div class="modal-title" id="rumah-modal-title">Tambah Rumah Sukan</div><button class="modal-close" onclick="closeModal('modal-rumah')">✕</button></div>
+  <div class="modal"><div class="modal-header"><div class="modal-title" id="rumah-modal-title">Tambah Rumah Sukan</div><div class="modal-close" onclick="closeModal('modal-rumah')" style="cursor:pointer">✕</div></div>
   <div class="modal-body">
     <input type="hidden" id="rumah-id">
     <div class="form-row"><div class="form-group"><label class="form-label">Nama Rumah</label><input class="form-input" id="rumah-nama" placeholder="cth: MERAH" style="text-transform:uppercase"></div><div class="form-group"><label class="form-label">Kod Rumah</label><input class="form-input" id="rumah-kod" placeholder="cth: R1" maxlength="5" style="text-transform:uppercase"></div></div>
@@ -948,11 +981,11 @@ function cetakJadualAcara() {
     <div class="form-group"><label class="form-label">Warna Teks</label><div style="display:flex;gap:12px"><label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer"><input type="radio" name="rumah-txt" value="#ffffff" checked onchange="updateRumahPreview()"> Putih</label><label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer"><input type="radio" name="rumah-txt" value="#000000" onchange="updateRumahPreview()"> Hitam</label></div><div class="form-hint" id="rumah-contrast-msg">—</div></div>
     <div class="form-row"><div class="form-group"><label class="form-label">Guru Rumah</label><input class="form-input" id="rumah-guru" placeholder="Nama guru rumah"></div><div class="form-group"><label class="form-label">Pengurus Rumah</label><input class="form-input" id="rumah-pengurus" placeholder="Nama pengurus"></div></div>
   </div>
-  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-rumah')">Batal</button><button class="btn btn-primary" onclick="saveRumah()">💾 Simpan</button></div></div>
+  <div class="modal-footer"><div class="btn btn-ghost" onclick="closeModal('modal-rumah')" style="cursor:pointer">Batal</div><div class="btn btn-primary" onclick="saveRumah()" style="cursor:pointer">💾 Simpan</div></div></div>
 </div>
 
 <div class="modal-overlay" id="modal-acara">
-  <div class="modal" style="max-width:600px"><div class="modal-header"><div class="modal-title" id="acara-modal-title">Tambah Acara Master</div><button class="modal-close" onclick="closeModal('modal-acara')">✕</button></div>
+  <div class="modal" style="max-width:600px"><div class="modal-header"><div class="modal-title" id="acara-modal-title">Tambah Acara Master</div><div class="modal-close" onclick="closeModal('modal-acara')" style="cursor:pointer">✕</div></div>
   <div class="modal-body">
     <input type="hidden" id="acara-id">
     <div class="form-row"><div class="form-group"><label class="form-label">Kod Acara</label><input class="form-input" id="acara-kod" placeholder="cth: 100M" style="text-transform:uppercase"></div><div class="form-group"><label class="form-label">Nama Acara</label><input class="form-input" id="acara-nama" placeholder="cth: Lari 100 Meter"></div></div>
@@ -1012,25 +1045,10 @@ function cetakJadualAcara() {
     </div>
     <div class="form-group"><label class="form-label">Catatan</label><textarea class="form-textarea" id="acara-catatan" placeholder="Catatan tambahan..."></textarea></div>
   </div>
-  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-acara')">Batal</button><button class="btn btn-amber btn-sm" id="acara-clone-btn" onclick="cloneAcara()" style="display:none">📋 Klon</button><button class="btn btn-primary" onclick="saveAcara()">💾 Simpan</button></div></div>
+  <div class="modal-footer"><div class="btn btn-ghost" onclick="closeModal('modal-acara')" style="cursor:pointer">Batal</div><div class="btn btn-amber btn-sm" id="acara-clone-btn" onclick="cloneAcara()" style="display:none;cursor:pointer">📋 Klon</div><div class="btn btn-primary" onclick="saveAcara()" style="cursor:pointer">💾 Simpan</div></div></div>
 </div>
 
-<div class="modal-overlay" id="modal-user">
-  <div class="modal"><div class="modal-header"><div class="modal-title" id="user-modal-title">Tambah Pengguna</div><button class="modal-close" onclick="closeModal('modal-user')">✕</button></div>
-  <div class="modal-body">
-    <input type="hidden" id="user-id">
-    <div class="form-row"><div class="form-group"><label class="form-label">Username</label><input class="form-input" id="user-username" placeholder="cth: cg_merah"></div><div class="form-group"><label class="form-label">Kata Laluan</label><div style="position:relative"><input class="form-input" type="password" id="user-password" placeholder="Min 6 aksara"><button type="button" onclick="toggleUserPw()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px">👁️</button></div></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Nama Penuh</label><input class="form-input" id="user-nama" placeholder="Nama penuh"></div><div class="form-group"><label class="form-label">E-mel</label><input class="form-input" type="email" id="user-email" placeholder="email@sekolah.edu.my"></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Role / Peranan</label><select class="form-select" id="user-role" onchange="toggleRumahField()"><option value="Admin">Admin</option><option value="Pengurus">Pengurus</option><option value="Urusetia">Urusetia</option><option value="Pencatat">Pencatat</option></select></div><div class="form-group" id="user-rumah-group"><label class="form-label">Rumah Sukan</label><select class="form-select" id="user-rumah"><option value="">— Pilih Rumah —</option></select></div></div>
-  </div>
-  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-user')">Batal</button><button class="btn btn-primary" onclick="saveUser()">💾 Simpan</button></div></div>
-</div>
 
-<div class="modal-overlay" id="modal-confirm">
-  <div class="modal" style="max-width:400px"><div class="modal-header"><div class="modal-title">⚠️ Sahkan Tindakan</div><button class="modal-close" onclick="closeModal('modal-confirm')">✕</button></div>
-  <div class="modal-body"><div class="alert alert-danger"><span>🗑️</span><span id="confirm-msg">Padam rekod ini?</span></div><div style="font-size:12px;color:var(--text3)">Tindakan ini tidak boleh dibatalkan.</div></div>
-  <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-confirm')">Batal</button><button class="btn btn-danger" id="confirm-ok-btn">Ya, Padam</button></div></div>
-</div>
 
 <script>
 // ═══════════════════════════════════════════════════
@@ -1300,9 +1318,20 @@ async function loadSettings() {
   Object.assign(_settings,d);
   setValue('set-sekolah',d.nama_sekolah);setValue('set-nama',d.nama_pertandingan);
   setValue('set-tahun',d.tahun);setValue('set-jenis',d.jenis_sekolah);
-  setValue('set-tarikh',d.tarikh_sukan);setValue('set-lokasi',d.lokasi);
+  // Format tarikh: ambil yyyy-MM-dd sahaja
+  const _fmtD = v => v ? v.toString().substring(0,10) : '';
+  // Format masa: ambil HH:mm sahaja, buang tarikh 1899 jika ada
+  const _fmtT = v => {
+    if(!v) return '23:59';
+    var s = v.toString();
+    if(s.includes('T')) return s.substring(11,16);  // ISO
+    if(s.length===5) return s;                       // HH:mm
+    if(s.length>=8) return s.substring(0,5);         // HH:mm:ss
+    return '23:59';
+  };
+  setValue('set-tarikh', _fmtD(d.tarikh_sukan));setValue('set-lokasi',d.lokasi);
   setValue('set-tema',d.tema);setValue('set-lorong', String(d.lorong_trek||'6'));
-  setValue('set-tarikh-tutup',d.tarikh_tutup_daftar||'');setValue('set-masa-tutup',d.masa_tutup_daftar||'23:59');
+  setValue('set-tarikh-tutup', _fmtD(d.tarikh_tutup_daftar));setValue('set-masa-tutup', _fmtT(d.masa_tutup_daftar));
   setValue('set-podium', String(d.podium||'4'));setValue('set-nama-format',d.nama_format||'penuh');
   setToggle('tgl-reg',d.pendaftaran_buka);setToggle('tgl-pub',d.paparan_awam);setToggle('tgl-maint',d.mod_penyelenggaraan);
   updateLorongPreview();
@@ -1320,7 +1349,7 @@ async function saveSettings() {
   showLoading('Menyimpan tetapan...');
   const r = await gasRun('saveSettings', payload);
   hideLoading();
-  if(r&&r.success){Object.assign(_settings,payload);showToast('Tetapan berjaya disimpan ✅','success');buildChecklist();}
+  if(r&&r.success){Object.assign(_settings,payload);showToast('Tetapan berjaya disimpan ✅','success');buildChecklist();await loadSettings();}
   else showToast('Gagal simpan tetapan','error');
 }
 
@@ -1428,8 +1457,8 @@ async function loadKategori() {
       <td><span class="badge ${k.aktif?'badge-green':'badge-gray'}">${k.aktif?'Aktif':'Tidak Aktif'}</span></td>
       <td>
         <div style="display:flex;gap:6px">
-          <button class="btn btn-ghost btn-xs" onclick="editKategori('${k.id}')">✏️</button>
-          <button class="btn btn-danger btn-xs" onclick="confirmDelete('Padam kategori ${k.kod}?',()=>deleteKategori('${k.id}'))">🗑️</button>
+          <div class="btn btn-ghost btn-xs" onclick="editKategori('${k.id}')">✏️</div>
+          <div class="btn btn-danger btn-xs" onclick="confirmDelete('Padam kategori ${k.kod}?',()=>deleteKategori('${k.id}'))">🗑️</div>
         </div>
       </td>
     </tr>`).join('');
@@ -1575,8 +1604,8 @@ async function loadRumah() {
       </div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:4px">👨‍🏫 ${r.pengurus||'—'}</div>
       <div style="display:flex;gap:6px;margin-top:12px">
-        <button class="btn btn-ghost btn-xs" style="flex:1" onclick="editRumah('${r.id}')">✏️ Edit</button>
-        <button class="btn btn-danger btn-xs" onclick="confirmDelete('Padam rumah ${r.nama}?',()=>deleteRumah('${r.id}'))">🗑️</button>
+        <div class="btn btn-ghost btn-xs" style="flex:1" onclick="editRumah('${r.id}')">✏️ Edit</div>
+        <div class="btn btn-danger btn-xs" onclick="confirmDelete('Padam rumah ${r.nama}?',()=>deleteRumah('${r.id}'))">🗑️</div>
       </div>
     </div>`).join('');
   populateUserRumahSelect();
@@ -1704,7 +1733,7 @@ function renderAcaraTable(data){
           : `<span style="color:var(--cyan)">${a.kuota_ind_rumah||2} wakil</span>`}
       </td>
       <td><span class="badge ${a.aktif?'badge-green':'badge-gray'}">${a.aktif?'Aktif':'Tidak'}</span></td>
-      <td><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-xs" onclick="editAcara('${a.id}')">✏️</button><button class="btn btn-amber btn-xs" onclick="cloneAcaraById('${a.id}')">📋</button><button class="btn btn-danger btn-xs" onclick="confirmDelete('Padam acara ${a.kod}?',()=>deleteAcara('${a.id}'))">🗑️</button></div></td>
+      <td><div style="display:flex;gap:6px"><div class="btn btn-ghost btn-xs" onclick="editAcara('${a.id}')">✏️</div><div class="btn btn-amber btn-xs" onclick="cloneAcaraById('${a.id}')">📋</div><div class="btn btn-danger btn-xs" onclick="confirmDelete('Padam acara ${a.kod}?',()=>deleteAcara('${a.id}'))">🗑️</div></div></td>
     </tr>`).join('');
 }
 
@@ -1874,10 +1903,10 @@ function renderUsersTable(data){
       <td style="font-size:11px;color:var(--text3)">${u.last_login?formatDateTime(u.last_login):'Belum log masuk'}</td>
       <td><span class="badge ${u.is_active?'badge-green':'badge-gray'}">${u.is_active?'Aktif':'Tidak Aktif'}</span></td>
       <td><div style="display:flex;gap:5px">
-        <button class="btn btn-ghost btn-xs" onclick="editUser('${u.id}')">✏️</button>
-        <button class="btn btn-amber btn-xs" onclick="resetPassword('${u.id}','${u.username}')">🔑</button>
-        <button class="btn btn-${u.is_active?'danger':'success'} btn-xs" onclick="toggleUserStatus('${u.id}',${!u.is_active})">${u.is_active?'🚫':'✅'}</button>
-        ${u.role!=='Admin'?`<button class="btn btn-danger btn-xs" onclick="confirmDelete('Padam pengguna ${u.username}?',()=>deleteUser('${u.id}'))">🗑️</button>`:''}
+        <div class="btn btn-ghost btn-xs" onclick="editUser('${u.id}')" style="cursor:pointer">✏️</div>
+        <div class="btn btn-amber btn-xs" onclick="resetPassword('${u.id}','${u.username}')" style="cursor:pointer">🔑</div>
+        <div class="btn btn-${u.is_active?'danger':'success'} btn-xs" onclick="toggleUserStatus('${u.id}',${!u.is_active})" style="cursor:pointer">${u.is_active?'🚫':'✅'}</div>
+        ${u.role!=='Admin'?`<div class="btn btn-danger btn-xs" onclick="confirmDelete('Padam pengguna ${u.username}?',()=>deleteUser('${u.id}'))" style="cursor:pointer">🗑️</div>`:''}
       </div></td>
     </tr>`).join('');
 }
@@ -1894,11 +1923,15 @@ function filterUsers(){
 
 function getRumahNama(id){const r=_rumah.find(x=>x.id===id);return r?r.nama:'';}
 
-function openUserModal(id=null){
+function openUserModal(id){
+  id = id || null;
+  console.log('[openUserModal] dipanggil, id=', id);
   clearUserForm();
-  document.getElementById('user-modal-title').textContent=id?'Edit Pengguna':'Tambah Pengguna';
+  document.getElementById('user-panel-title').textContent=id?'Edit Pengguna':'Tambah Pengguna';
   populateUserRumahSelect();
-  openModal('modal-user');
+  document.getElementById('user-inline-panel').style.display='block';
+  document.getElementById('user-inline-panel').scrollIntoView({behavior:'smooth',block:'start'});
+  console.log('[openUserModal] panel dibuka');
   if(id){
     const u=_users.find(x=>x.id===id);
     if(!u)return;
@@ -1908,6 +1941,10 @@ function openUserModal(id=null){
     document.getElementById('user-password').placeholder='Kosong = tak tukar kata laluan';
     toggleRumahField();
   }
+}
+function closeUserPanel(){
+  document.getElementById('user-inline-panel').style.display='none';
+  clearUserForm();
 }
 function editUser(id){openUserModal(id);}
 function clearUserForm(){['user-id','user-username','user-password','user-nama','user-email'].forEach(id=>setValue(id,''));setValue('user-role','Admin');setValue('user-rumah','');toggleRumahField();}
@@ -1930,6 +1967,7 @@ function toggleUserPw(){
 }
 
 async function saveUser(){
+  console.log('[saveUser] dipanggil');
   const username=getVal('user-username');
   const nama=getVal('user-nama');
   if(!username||!nama){showToast('Username dan nama wajib diisi','error');return;}
@@ -1940,9 +1978,14 @@ async function saveUser(){
   else if(!id){showToast('Kata laluan wajib untuk pengguna baru','error');return;}
   showLoading('Menyimpan pengguna...');
   const r=await gasRun(id?'updateUser':'createUser',payload);
-  hideLoading();closeModal('modal-user');
-  if(r&&r.success){showToast(id?'Pengguna dikemaskini ✅':'Pengguna ditambah ✅','success');loadUsers();}
-  else showToast('Gagal simpan pengguna','error');
+  hideLoading();
+  if(r&&r.success){
+    closeUserPanel();
+    showToast(id?'Pengguna dikemaskini ✅':'Pengguna ditambah ✅','success');
+    loadUsers();
+  } else {
+    showToast((r&&r.message)||'Gagal simpan pengguna — cuba semula','error');
+  }
 }
 
 async function toggleUserStatus(id,newStatus){
@@ -1975,16 +2018,15 @@ function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 
 function confirmDelete(msg,cb){
-  document.getElementById('confirm-msg').textContent=msg;
-  const btn=document.getElementById('confirm-ok-btn');
-  btn.onclick=()=>{closeModal('modal-confirm');cb();};
-  openModal('modal-confirm');
+  if(window.confirm(msg)) cb();
 }
 
 // Close modal on overlay click
 document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click',e=>{if(e.target===o) o.classList.remove('show');});
 });
+
+// modal-user: guna inline panel, tiada modal overlay
 
 // ═══════════════════════════════════════════════════
 // SIDEBAR & HEADER
@@ -2124,6 +2166,17 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   // Init settings for year select default
   document.getElementById('set-tahun').value='2025';
 });
+
+// Block ALL form submissions (GAS sandbox inject <form> automatically)
+document.addEventListener('submit', function(e){ 
+  console.log('[SUBMIT BLOCKED] target:', e.target, 'submitter:', e.submitter);
+  e.preventDefault(); return false; 
+}, true);
+
+// DEBUG: log every click
+document.addEventListener('click', function(e){
+  console.log('[CLICK]', e.target.tagName, e.target.id||e.target.className||e.target.textContent.trim().substring(0,20), '| formAction:', e.target.formAction||'n/a');
+}, true);
 
 // Keyboard shortcuts
 document.addEventListener('keydown',e=>{

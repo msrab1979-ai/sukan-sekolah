@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Urusetia Sukan</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+:root{
+  --navy:#0F1F3D;--navy2:#1A2F52;--blue:#1A56DB;--blue2:#1648C0;
+  --cyan:#0891B2;--green:#059669;--green-lt:#D1FAE5;
+  --amber:#D97706;--amber-lt:#FEF3C7;
+  --red:#DC2626;--red-lt:#FEE2E2;
+  --gold:#F59E0B;--silver:#9CA3AF;--bronze:#CD7C3A;
+  --bg:#F0F4F8;--card:#fff;--border:#E2E8F0;--border2:#CBD5E1;
+  --text:#0F172A;--text2:#475569;--text3:#94A3B8;
+  --shadow:0 2px 8px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;min-height:100vh;}
+.hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.2);position:sticky;top:0;z-index:100;}
+.hdr-brand{display:flex;align-items:center;gap:12px;}
+.hdr-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(26,86,219,.4);}
+.hdr-title{font-size:16px;font-weight:800;color:#fff;}
+.hdr-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:1px;}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.user-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;}
+.btn-keluar{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn-keluar:hover{background:rgba(255,255,255,.2);}
+.tab-bar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:0;overflow-x:auto;}
+.tab{padding:14px 20px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:8px;}
+.tab:hover{color:var(--blue);background:#F8FAFD;}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);background:#F0F5FF;}
+.tab-count{background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;min-width:18px;text-align:center;}
+.main{max-width:1100px;margin:0 auto;padding:20px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;}
+.card-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:700;}
+.card-body{padding:16px 18px;}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;box-shadow:var(--shadow);}
+.stat-val{font-size:28px;font-weight:900;line-height:1;}
+.stat-lbl{font-size:11px;color:var(--text2);font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:.4px;}
+.stat-icon{font-size:22px;margin-bottom:8px;}
+.sv-blue{color:var(--blue);}
+.sv-green{color:var(--green);}
+.sv-amber{color:var(--amber);}
+.sv-red{color:var(--red);}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.sel{background:#fff;border:1.5px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--text);outline:none;cursor:pointer;}
+.sel:focus{border-color:var(--blue);}
+.inp{background:#fff;border:1.5px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--text);outline:none;width:220px;}
+.inp:focus{border-color:var(--blue);}
+.btn{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;transition:all .15s;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:var(--blue2);}
+.btn-ghost{background:#fff;border:1.5px solid var(--border2);color:var(--text2);}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-amber{background:var(--amber);color:#fff;}
+.btn-navy{background:var(--navy);color:#fff;}
+.btn-sm{padding:5px 12px;font-size:11px;}
+.tbl-wrap{overflow-x:auto;}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{background:linear-gradient(to bottom,#F8FAFD,#EEF1F7);padding:9px 12px;text-align:left;font-size:10.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid var(--border);white-space:nowrap;}
+.tbl td{padding:10px 12px;border-bottom:1px solid #F1F5F9;vertical-align:middle;}
+.tbl tr:hover td{background:#F8FAFD;}
+.tbl tr:last-child td{border-bottom:none;}
+.badge{padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block;}
+.b-aktif{background:#D1FAE5;color:#065F46;}
+.b-draft{background:#F3F4F6;color:#6B7280;}
+.b-disahkan{background:#DBEAFE;color:#1D4ED8;}
+.b-published{background:#EDE9FE;color:#5B21B6;}
+.b-track{background:#DBEAFE;color:#1D4ED8;}
+.b-field{background:#D1FAE5;color:#065F46;}
+.b-selesai{background:#D1FAE5;color:#065F46;}
+.b-belum{background:#F3F4F6;color:#6B7280;}
+.b-penuh{background:#FEE2E2;color:#991B1B;}
+.r-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.medal-1{color:#F59E0B;font-size:18px;}
+.medal-2{color:#9CA3AF;font-size:18px;}
+.medal-3{color:#CD7C3A;font-size:18px;}
+.status-wrap{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.status-chip{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:rgba(255,255,255,.9);}
+.status-chip strong{color:#fff;font-size:14px;}
+.prog-outer{background:rgba(255,255,255,.2);border-radius:20px;height:6px;overflow:hidden;flex:1;min-width:100px;}
+.prog-inner{height:100%;border-radius:20px;background:linear-gradient(90deg,#34D399,#10B981);transition:width .4s;}
+.heat-strip{display:flex;gap:6px;flex-wrap:wrap;}
+.heat-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.hp-selesai{background:#D1FAE5;color:#065F46;}
+.hp-belum{background:#F3F4F6;color:#6B7280;}
+.hp-sedang{background:#FEF3C7;color:#92400E;}
+.pend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+.pend-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.pend-card-hd{padding:10px 14px;display:flex;align-items:center;gap:8px;}
+.pend-card-name{font-size:13px;font-weight:700;}
+.pend-card-body{padding:0 14px 12px;}
+.pend-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #F8FAFD;font-size:12px;}
+.pend-row:last-child{border-bottom:none;}
+.pend-acara{color:var(--text2);}
+.pend-count{font-weight:700;}
+.loading{text-align:center;padding:40px;color:var(--text3);}
+.loading-icon{font-size:32px;margin-bottom:10px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.empty{text-align:center;padding:40px;color:var(--text3);}
+.empty-icon{font-size:36px;margin-bottom:10px;}
+@media print{.hdr,.tab-bar,.filter-row,.btn{display:none!important;}.card{box-shadow:none;border:1px solid #ccc;}body{background:#fff;}}
+.toast-wrap{position:fixed;top:70px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:500;min-width:260px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg);animation:slideIn .25s ease;}
+.toast.success{border-left:4px solid var(--green);}
+.toast.error{border-left:4px solid var(--red);}
+.toast.info{border-left:4px solid var(--blue);}
+@keyframes slideIn{from{transform:translateX(110%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.pb-wrap{position:fixed;top:0;left:0;right:0;z-index:9999;display:none;flex-direction:column;}
+.pb-track{height:3px;background:rgba(26,86,219,.15);}
+.pb-fill{height:3px;width:0%;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .25s;}
+.pb-msg{background:rgba(15,23,42,.88);color:#fff;font-size:11px;font-weight:600;padding:5px 14px;border-radius:0 0 8px 8px;display:inline-flex;align-items:center;gap:6px;align-self:center;}
+.ola-hero{background:linear-gradient(135deg,#0F1F3D 0%,#1A2F52 50%,#1A56DB 100%);border-radius:16px;padding:24px;margin-bottom:20px;position:relative;overflow:hidden;}
+.ola-hero::before{content:'🏆';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:80px;opacity:.08;}
+.ola-crown{display:flex;gap:16px;flex-wrap:wrap;}
+.ola-card{flex:1;min-width:200px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:16px;text-align:center;position:relative;}
+.ola-card.lelaki{border-color:rgba(59,130,246,.5);background:rgba(59,130,246,.15);}
+.ola-card.perempuan{border-color:rgba(236,72,153,.5);background:rgba(236,72,153,.1);}
+.ola-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.6);font-weight:700;margin-bottom:8px;}
+.ola-name{font-size:18px;font-weight:900;color:#fff;margin-bottom:4px;line-height:1.2;}
+.ola-rumah{font-size:12px;color:rgba(255,255,255,.75);margin-bottom:8px;}
+.ola-stats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.ola-stat{background:rgba(255,255,255,.15);border-radius:8px;padding:4px 10px;text-align:center;}
+.ola-stat-v{font-size:16px;font-weight:900;color:#fff;}
+.ola-stat-l{font-size:9px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;}
+.ola-medal-strip{display:flex;gap:4px;justify-content:center;margin-top:8px;}
+.ola-med{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;}
+.om-emas{background:#FEF3C7;color:#92400E;}
+.om-perak{background:#F3F4F6;color:#374151;}
+.om-gangsa{background:#FEF0E7;color:#92400E;}
+.rank-tbl{width:100%;border-collapse:collapse;}
+.rank-tbl th{background:linear-gradient(to bottom,#0F1F3D,#1A2F52);color:#fff;padding:9px 12px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;text-align:left;}
+.rank-tbl td{padding:10px 12px;border-bottom:1px solid #F1F5F9;font-size:13px;vertical-align:middle;cursor:pointer;}
+.rank-tbl tr:hover td{background:#EFF6FF;}
+.rank-tbl tr.rank-1 td{background:linear-gradient(to right,#FFFBEB,#fff);}
+.rank-tbl tr.rank-2 td{background:linear-gradient(to right,#F9FAFB,#fff);}
+.rank-tbl tr.rank-3 td{background:linear-gradient(to right,#FEF3C7,#fff);}
+.rank-num{width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;}
+.rn-1{background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;}
+.rn-2{background:linear-gradient(135deg,#9CA3AF,#6B7280);color:#fff;}
+.rn-3{background:linear-gradient(135deg,#CD7C3A,#92400E);color:#fff;}
+.rn-x{background:#F1F5F9;color:#94A3B8;}
+.mata-bar-wrap{width:80px;background:#F1F5F9;border-radius:20px;height:6px;overflow:hidden;display:inline-block;}
+.mata-bar{height:100%;background:linear-gradient(90deg,#1A56DB,#0891B2);border-radius:20px;}
+.tr-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,40,.6);backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center;}
+.tr-overlay.show{display:flex;}
+.tr-box{background:#fff;border-radius:18px;width:92%;max-width:560px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:popIn .2s ease;}
+@keyframes popIn{from{transform:scale(.92);opacity:0;}to{transform:scale(1);opacity:1;}}
+.tr-head{background:linear-gradient(135deg,#0F1F3D,#1A56DB);padding:18px 22px;flex-shrink:0;}
+.tr-head-name{font-size:18px;font-weight:900;color:#fff;margin-bottom:4px;}
+.tr-head-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.tr-head-chip{background:rgba(255,255,255,.18);color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.tr-body{padding:18px 22px;overflow-y:auto;}
+.tr-summary{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.tr-sum-box{flex:1;min-width:70px;background:#F8FAFD;border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;}
+.tr-sum-val{font-size:20px;font-weight:900;color:var(--blue);}
+.tr-sum-lbl{font-size:10px;color:var(--text2);font-weight:600;text-transform:uppercase;margin-top:3px;}
+.tr-acara-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F1F5F9;}
+.tr-acara-row:last-child{border-bottom:none;}
+.tr-ked{width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.tr-acara-info{flex:1;}
+.tr-acara-name{font-size:13px;font-weight:700;color:var(--text);}
+.tr-acara-meta{font-size:11px;color:var(--text2);margin-top:2px;}
+.tr-prestasi{font-size:14px;font-weight:900;color:var(--cyan);font-family:monospace;}
+.tr-mata{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:#DBEAFE;color:#1D4ED8;}
+.tr-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div id="pb-wrap" class="pb-wrap">
+  <div class="pb-track"><div id="pb-fill" class="pb-fill"></div></div>
+  <div class="pb-msg"><span id="pb-msg-txt">Memuatkan...</span></div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<header class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-icon">📋</div>
+    <div>
+      <div class="hdr-title">Urusetia Sukan</div>
+      <div class="hdr-sub" id="hdr-sub">SK Sultan Ismail · Kemaman</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="user-pill" id="user-chip">👤 Urusetia</div>
+    <button class="btn-keluar" onclick="confirmLogout()">Keluar</button>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="goTab('dashboard')" id="tab-dashboard">📊 Dashboard</div>
+  <div class="tab" onclick="goTab('startlist')" id="tab-startlist">📋 Start List <span class="tab-count" id="cnt-startlist">—</span></div>
+  <div class="tab" onclick="goTab('pemenang')" id="tab-pemenang">🏆 Pemenang <span class="tab-count" id="cnt-pemenang">—</span></div>
+  <div class="tab" onclick="goTab('pendaftaran')" id="tab-pendaftaran">📝 Status Daftar <span class="tab-count" id="cnt-daftar">—</span></div>
+  <div class="tab" onclick="goTab('jadual')" id="tab-jadual">📅 Jadual</div>
+  <div class="tab" onclick="goTab('olahragawan')" id="tab-olahragawan">👑 Olahragawan/wati</div>
+  <div class="tab" onclick="goTab('cetakan')" id="tab-cetakan">🖨️ Cetakan</div>
+</div>
+
+<div class="main">
+
+<div id="pane-dashboard">
+  <div class="stat-grid" id="stat-grid">
+    <div class="stat-box"><div class="stat-icon">🏃</div><div class="stat-val sv-blue" id="s-acara">—</div><div class="stat-lbl">Acara</div></div>
+    <div class="stat-box"><div class="stat-icon">👤</div><div class="stat-val sv-blue" id="s-peserta">—</div><div class="stat-lbl">Peserta Daftar</div></div>
+    <div class="stat-box"><div class="stat-icon">🔥</div><div class="stat-val sv-amber" id="s-heat">—</div><div class="stat-lbl">Heat Dijana</div></div>
+    <div class="stat-box"><div class="stat-icon">✅</div><div class="stat-val sv-green" id="s-selesai">—</div><div class="stat-lbl">Heat Selesai</div></div>
+    <div class="stat-box"><div class="stat-icon">🏆</div><div class="stat-val sv-blue" id="s-published">—</div><div class="stat-lbl">Keputusan Diterbit</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">📊 Status Keseluruhan Kejohanan</span><button class="btn btn-ghost btn-sm" onclick="loadDashboard()">🔄 Refresh</button></div>
+    <div class="card-body" id="dash-status"><div class="loading"><div class="loading-icon">⏳</div><div>Memuatkan...</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">🏅 Kedudukan Pingat Semasa</span></div>
+    <div class="card-body" style="padding:0;">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th style="width:40px;">#</th><th>Rumah Sukan</th><th style="text-align:center;">🥇</th><th style="text-align:center;">🥈</th><th style="text-align:center;">🥉</th><th style="text-align:center;">Ke-4</th><th style="text-align:center;">Mata</th></tr></thead>
+          <tbody id="tally-tbody"><tr><td colspan="7" class="loading"><div class="loading-icon">⏳</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pane-startlist" style="display:none;">
+  <div class="card">
+    <div class="card-hd"><span class="card-title">📋 Start List Acara</span><div style="display:flex;gap:8px;"><button class="btn btn-ghost btn-sm" onclick="loadStartList()">🔄 Refresh</button><button class="btn btn-navy btn-sm" onclick="cetakStartList()">🖨️ Cetak Start List</button></div></div>
+    <div class="card-body">
+      <div class="filter-row">
+        <select class="sel" id="sl-kat" onchange="filterStartList()"><option value="">Semua Kategori</option></select>
+        <select class="sel" id="sl-acara" onchange="onSlAcaraChange()"><option value="">— Pilih Acara —</option></select>
+        <select class="sel" id="sl-heat" onchange="renderStartList()"><option value="">Semua Heat</option></select>
+        <input class="inp" id="sl-cari" placeholder="🔍 Cari nama peserta..." oninput="renderStartList()">
+      </div>
+      <div id="startlist-wrap"><div class="loading"><div class="loading-icon">📋</div><div>Pilih acara untuk lihat start list</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="pane-pemenang" style="display:none;">
+  <div class="card">
+    <div class="card-hd"><span class="card-title">🏆 Senarai Pemenang</span><div style="display:flex;gap:8px;"><button class="btn btn-ghost btn-sm" onclick="loadPemenang()">🔄 Refresh</button><button class="btn btn-navy btn-sm" onclick="cetakPemenang()">🖨️ Cetak Semua</button></div></div>
+    <div class="card-body">
+      <div class="filter-row">
+        <select class="sel" id="pw-kat" onchange="filterPemenang()"><option value="">Semua Kategori</option></select>
+        <select class="sel" id="pw-jenis" onchange="filterPemenang()"><option value="">Semua Jenis</option><option value="TRACK">Track</option><option value="FIELD">Field</option></select>
+        <input class="inp" id="pw-cari" placeholder="🔍 Cari acara atau peserta..." oninput="filterPemenang()">
+        <select class="sel" id="pw-status" onchange="filterPemenang()"><option value="">Semua Status</option><option value="PUBLISHED">Diterbit</option><option value="DISAHKAN">Disahkan</option></select>
+      </div>
+      <div id="pemenang-wrap"><div class="loading"><div class="loading-icon">🏆</div><div>Memuatkan keputusan...</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="pane-pendaftaran" style="display:none;">
+  <div class="card">
+    <div class="card-hd"><span class="card-title">📝 Status Pendaftaran per Acara & Rumah</span><button class="btn btn-ghost btn-sm" onclick="loadPendaftaran()">🔄 Refresh</button></div>
+    <div class="card-body">
+      <div class="filter-row">
+        <select class="sel" id="pd-kat" onchange="filterPendaftaran()"><option value="">Semua Kategori</option></select>
+        <select class="sel" id="pd-rumah" onchange="filterPendaftaran()"><option value="">Semua Rumah</option></select>
+        <select class="sel" id="pd-jenis-pend" onchange="filterPendaftaran()"><option value="">Semua Jenis</option><option value="INDIVIDU">Individu</option><option value="KUMPULAN">Kumpulan</option></select>
+      </div>
+      <div id="pend-wrap"><div class="loading"><div class="loading-icon">📝</div><div>Memuatkan status pendaftaran...</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="pane-jadual" style="display:none;">
+  <div class="card">
+    <div class="card-hd"><span class="card-title">📅 Jadual Kejohanan</span><button class="btn btn-navy btn-sm" onclick="cetakJadual()">🖨️ Cetak Jadual</button></div>
+    <div class="card-body" style="padding:0;">
+      <div class="tbl-wrap">
+        <table class="tbl" id="jadual-tbl">
+          <thead><tr><th style="width:80px;">Masa</th><th style="width:60px;">No.</th><th>Nama Acara</th><th style="width:80px;">Kategori</th><th style="width:80px;">Jenis</th><th style="width:120px;">Status</th></tr></thead>
+          <tbody id="jadual-tbody"><tr><td colspan="6" class="loading"><div class="loading-icon">📅</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pane-olahragawan" style="display:none;">
+  <div class="ola-hero">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+      <div id="ola-hero-title" style="font-size:13px;font-weight:800;color:rgba(255,255,255,.9);text-transform:uppercase;letter-spacing:.8px;">👑 OLAHRAGAWAN & OLAHRAGAWATI KEJOHANAN</div>
+      <div id="ola-mata-info" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+    <div class="ola-crown" id="ola-crown"><div style="color:rgba(255,255,255,.5);font-size:13px;padding:20px;">Memuatkan...</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-title">📊 Ranking Atlet Terbaik</span><div style="display:flex;gap:8px;"><button class="btn btn-ghost btn-sm" onclick="loadOlahragawan()">🔄 Refresh</button><button class="btn btn-navy btn-sm" onclick="cetakOlahragawan()">🖨️ Cetak PDF</button></div></div>
+    <div class="card-body">
+      <div class="filter-row">
+        <select class="sel" id="ola-kat" onchange="filterOlahragawan()"><option value="">Semua Kategori</option></select>
+        <select class="sel" id="ola-jantina" onchange="filterOlahragawan()"><option value="">Lelaki & Perempuan</option><option value="L">♂ Lelaki sahaja</option><option value="P">♀ Perempuan sahaja</option></select>
+        <div style="font-size:12px;color:var(--text2);padding:6px 10px;background:#F8FAFD;border-radius:8px;border:1px solid var(--border);">💡 Klik nama murid untuk lihat rekod acara</div>
+      </div>
+      <div id="ola-section-l">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 0;margin-bottom:8px;border-bottom:2px solid #DBEAFE;"><span style="font-size:18px;">♂</span><span style="font-size:14px;font-weight:800;color:var(--blue);">Atlet Lelaki Terbaik</span></div>
+        <div class="tbl-wrap">
+          <table class="rank-tbl" id="ola-tbl-l">
+            <thead><tr><th style="width:50px;">#</th><th>Nama Murid</th><th style="width:80px;">Kelas</th><th style="width:100px;">Rumah</th><th style="width:60px;">Kat.</th><th style="text-align:center;width:50px;">🥇</th><th style="text-align:center;width:50px;">🥈</th><th style="text-align:center;width:50px;">🥉</th><th style="text-align:center;width:80px;">Acara</th><th style="text-align:right;width:80px;">Markah</th></tr></thead>
+            <tbody id="ola-body-l"><tr><td colspan="10" class="loading"><div class="loading-icon">⏳</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div style="height:24px;"></div>
+      <div id="ola-section-p">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 0;margin-bottom:8px;border-bottom:2px solid #FCE7F3;"><span style="font-size:18px;">♀</span><span style="font-size:14px;font-weight:800;color:#BE185D;">Atlet Perempuan Terbaik</span></div>
+        <div class="tbl-wrap">
+          <table class="rank-tbl" id="ola-tbl-p">
+            <thead><tr><th style="width:50px;">#</th><th>Nama Murid</th><th style="width:80px;">Kelas</th><th style="width:100px;">Rumah</th><th style="width:60px;">Kat.</th><th style="text-align:center;width:50px;">🥇</th><th style="text-align:center;width:50px;">🥈</th><th style="text-align:center;width:50px;">🥉</th><th style="text-align:center;width:80px;">Acara</th><th style="text-align:right;width:80px;">Markah</th></tr></thead>
+            <tbody id="ola-body-p"><tr><td colspan="10" class="loading"><div class="loading-icon">⏳</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRACK RECORD MODAL -->
+<div class="tr-overlay" id="tr-overlay">
+  <div class="tr-box">
+    <div class="tr-head">
+      <div class="tr-head-name" id="tr-nama">—</div>
+      <div class="tr-head-meta"><span class="tr-head-chip" id="tr-rumah">—</span><span class="tr-head-chip" id="tr-kat">—</span><span class="tr-head-chip" id="tr-kelas">—</span><span class="tr-head-chip" id="tr-jantina">—</span></div>
+    </div>
+    <div class="tr-body">
+      <div class="tr-summary" id="tr-summary"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Rekod Acara</div>
+      <div id="tr-acara-list"></div>
+    </div>
+    <div class="tr-foot"><button class="btn btn-ghost btn-sm" onclick="cetakTrackRecord()">🖨️ Cetak PDF</button><button class="btn btn-primary btn-sm" onclick="tutupTrackRecord()">Tutup</button></div>
+  </div>
+</div>
+
+<div id="pane-cetakan" style="display:none;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;">
+    <div class="card"><div class="card-hd"><span class="card-title">📋 Start List</span></div><div class="card-body"><p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Senarai peserta mengikut lorong/giliran untuk setiap heat acara.</p><div class="filter-row" style="flex-direction:column;align-items:stretch;"><select class="sel" id="ct-sl-acara" style="width:100%;"><option value="">— Pilih Acara —</option></select><select class="sel" id="ct-sl-heat" style="width:100%;margin-top:6px;"><option value="">Semua Heat</option></select></div><button class="btn btn-navy" style="width:100%;justify-content:center;margin-top:10px;" onclick="cetakStartListDariCetakan()">🖨️ Cetak Start List PDF</button></div></div>
+    <div class="card"><div class="card-hd"><span class="card-title">🏆 Senarai Pemenang</span></div><div class="card-body"><p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Senarai pemenang mengikut kedudukan untuk setiap acara.</p><div class="filter-row" style="flex-direction:column;align-items:stretch;"><select class="sel" id="ct-pw-kat" style="width:100%;"><option value="">Semua Kategori</option></select></div><button class="btn btn-green" style="width:100%;justify-content:center;margin-top:10px;" onclick="cetakPemenangPDF()">🖨️ Cetak Pemenang PDF</button></div></div>
+    <div class="card"><div class="card-hd"><span class="card-title">🏅 Jadual Pingat</span></div><div class="card-body"><p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Kedudukan keseluruhan pingat setiap rumah sukan.</p><button class="btn btn-amber" style="width:100%;justify-content:center;margin-top:10px;" onclick="cetakTally()">🖨️ Cetak Jadual Pingat PDF</button></div></div>
+    <div class="card"><div class="card-hd"><span class="card-title">📝 Laporan Pendaftaran</span></div><div class="card-body"><p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Ringkasan status pendaftaran semua rumah untuk semua acara.</p><button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:10px;" onclick="cetakLaporanPendaftaran()">🖨️ Cetak Laporan Pendaftaran PDF</button></div></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+try{ var SCRIPT_URL='<?= SCRIPT_URL ?>';} catch(e){var SCRIPT_URL='';}
+try{ var USERNAME='<?= USERNAME ?>';} catch(e){var USERNAME='';}
+var IS_GAS=typeof google!=='undefined'&&google.script;
+var GAS_EXEC_URL=(function(){try{return SCRIPT_URL;}catch(e){return '';}})();
+
+var S={
+  _rekodList:[],
+  acara:[],rumah:[],kat:[],peserta_heat:[],heat:[],
+  pend:[],kumpulan:[],keputusan:[],tally:[],jadual:[],
+  settings:{},rumahMap:{},acaraMap:{}
+};
+
+var _pbT=null;
+function showProg(msg,pct){var w=document.getElementById('pb-wrap'),f=document.getElementById('pb-fill'),t=document.getElementById('pb-msg-txt');if(w)w.style.display='flex';if(f)f.style.width=(pct||5)+'%';if(t)t.textContent=msg||'Memuatkan...';}
+function hideProg(){var f=document.getElementById('pb-fill'),w=document.getElementById('pb-wrap');if(f)f.style.width='100%';clearTimeout(_pbT);_pbT=setTimeout(function(){if(w)w.style.display='none';if(f)f.style.width='0%';},600);}
+
+function toast(msg,type){
+  var icons={success:'✓',error:'✗',info:'i'};
+  var el=document.createElement('div');
+  el.className='toast '+(type||'info');
+  el.innerHTML='<span>'+(icons[type||'info']||'')+'</span><span>'+msg+'</span>';
+  var w=document.getElementById('toast-wrap');
+  if(w){w.appendChild(el);setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},3500);}
+}
+
+function gasRun(fn,arg){
+  return new Promise(function(resolve){
+    if(IS_GAS){
+      google.script.run
+        .withSuccessHandler(function(r){resolve(typeof r==='string'?JSON.parse(r):r);})
+        .withFailureHandler(function(e){console.error(fn,e);resolve(null);})[fn](arg);
+    } else {
+      setTimeout(function(){resolve({success:false,message:'Dev mode: '+fn});},300);
+    }
+  });
+}
+function gr(r){if(!r)return{success:false};if(typeof r==='string'){try{return JSON.parse(r);}catch(e){return{success:false};}}return r;}
+
+document.addEventListener('DOMContentLoaded',async function(){
+  if(IS_GAS){
+    var u=USERNAME||new URLSearchParams(window.location.search).get('u')||'urusetia';
+    var chip=document.getElementById('user-chip');
+    if(chip) chip.textContent='👤 '+u;
+    google.script.run.withSuccessHandler(function(r){var s=gr(r);if(s&&s.data){S.settings=s.data;var sub=document.getElementById('hdr-sub');if(sub)sub.textContent=(s.data.nama_sekolah||'SK Sultan Ismail')+' · '+(s.data.nama_pertandingan||'Sukan Tahunan');}}).withFailureHandler(function(){}).getSettings();
+  }
+  showProg('Memuatkan data...',15);
+  var rRekod=await gasRun('getRekod'); S._rekodList=(gr(rRekod)&&gr(rRekod).data)||[];
+  await loadMaster();
+  hideProg();
+  loadDashboard();
+});
+
+async function loadMaster(){
+  showProg('Memuatkan data asas...',20);
+  var [rA,rR,rK,rH,rP,rKump,rKept,rTally,rJadual]=await Promise.all([
+    gasRun('getAcaraJana'),gasRun('getRumah'),gasRun('getKategori'),
+    gasRun('getHeat',{}),gasRun('getPendaftaran'),gasRun('getKumpulan'),
+    gasRun('getAllKeputusan'),gasRun('getMedalTally'),gasRun('getJadualAcara')
+  ]);
+  showProg('Memproses data...',70);
+  S.acara=(gr(rA).acara||gr(rA).data||[]);
+  S.rumah=(gr(rR).data||[]);
+  S.kat=(gr(rK).data||[]);
+  S.heat=(gr(rH).heat||[]);
+  S.pend=(gr(rP).pendaftaran||[]);
+  S.kumpulan=(gr(rKump).kumpulan||[]);
+  S.keputusan=(gr(rKept).keputusan||[]);
+  S.tally=(gr(rTally).tally||[]);
+  S.jadual=(gr(rJadual).jadual||[]);
+  S.rumah.forEach(function(r){S.rumahMap[r.id]={nama:r.nama,warna:r.warna||'#64748b'};});
+  S.acara.forEach(function(a){S.acaraMap[a.id_acara]=a;});
+  S.muridMap={};
+  if(!S.muridMap._loaded){
+    gasRun('getMurid',{}).then(function(r){var s=gr(r);if(s&&s.murid){s.murid.forEach(function(m){S.muridMap[m.no_kp]={kelas:(m.darjah?m.darjah+' ':'')+m.kelas,nama:m.nama};});S.muridMap._loaded=true;}});
+  }
+  _el('cnt-startlist',S.heat.length);
+  _el('cnt-pemenang',S.keputusan.filter(function(k){return k.status==='PUBLISHED';}).length);
+  _el('cnt-daftar',S.pend.length+S.kumpulan.length);
+  hideProg();
+  populateFilters();
+}
+
+function _el(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
+
+var _olaAll=[], _olaCurAtlet=null;
+
+async function loadOlahragawan(){
+  showProg('Memuatkan data olahragawan...',20);
+  var kat=(document.getElementById('ola-kat')||{}).value||'';
+  var payload=kat?{id_kategori:kat}:{};
+  var r=await gasRun('getBestAthlete',payload);
+  var s=gr(r);
+  if(!s||!s.success){
+    hideProg();
+    document.getElementById('ola-body-l').innerHTML='<tr><td colspan="10" class="empty"><div class="empty-icon">⚠</div>Gagal muatkan data</td></tr>';
+    return;
+  }
+  _olaAll=s.all||[];
+  var katSel=document.getElementById('ola-kat');
+  if(katSel&&S.kat.length){
+    var cur=katSel.value;
+    katSel.innerHTML='<option value="">Semua Kategori</option>';
+    [...new Set(S.acara.map(function(a){return a.id_kategori;}).filter(Boolean))].sort().forEach(function(k){
+      katSel.innerHTML+='<option value="'+k+'">'+k+'</option>';
+    });
+    if(cur) katSel.value=cur;
+  }
+  _renderMataInfo();
+  _renderOlaHero(s.best_l, s.best_p, kat);
+  filterOlahragawan();
+  hideProg();
+}
+
+function _renderMataInfo(){
+  var wrap=document.getElementById('ola-mata-info');
+  if(!wrap) return;
+  var ss=S.settings||{};
+  var m1=ss.mata_1!==undefined?ss.mata_1:5;
+  var m2=ss.mata_2!==undefined?ss.mata_2:3;
+  var m3=ss.mata_3!==undefined?ss.mata_3:2;
+  var m4=ss.mata_4!==undefined?ss.mata_4:1;
+  wrap.innerHTML='<span style="font-size:11px;color:rgba(255,255,255,.65);font-weight:700;">MARKAH:</span>'
+    +'<span style="background:rgba(255,255,255,.2);color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:800;">Emas='+m1+'</span>'
+    +'<span style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">Perak='+m2+'</span>'
+    +'<span style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">Gangsa='+m3+'</span>'
+    +'<span style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);padding:2px 10px;border-radius:20px;font-size:11px;">Ke-4='+m4+'</span>';
+}
+
+function _renderOlaHero(bl, bp, filterKat){
+  var wrap=document.getElementById('ola-crown');
+  if(!wrap) return;
+  var titleEl=document.getElementById('ola-hero-title');
+  if(titleEl) titleEl.textContent=filterKat?'👑 OLAHRAGAWAN & OLAHRAGAWATI - KATEGORI '+filterKat:'👑 OLAHRAGAWAN & OLAHRAGAWATI KEJOHANAN';
+  function heroCard(m, jantina){
+    if(!m) return '<div class="ola-card" style="opacity:.4;"><div class="ola-label">'+(jantina==='L'?'Olahragawan':'Olahragawati')+'</div><div style="color:rgba(255,255,255,.5);font-size:13px;margin-top:8px;">Belum ditentukan</div></div>';
+    var rm=S.rumahMap[m.id_rumah]||{nama:m.id_rumah||'-',warna:'#64748b'};
+    var cls=jantina==='L'?'lelaki':'perempuan';
+    return '<div class="ola-card '+cls+'" onclick="bukaTrackRecord(\''+m.no_kp+'\')">'+
+      '<div class="ola-label">'+(jantina==='L'?'Olahragawan':'Olahragawati')+'</div>'+
+      '<div style="font-size:28px;margin-bottom:6px;">'+(jantina==='L'?'🏃':'🏃‍♀️')+'</div>'+
+      '<div class="ola-name">'+m.nama+'</div>'+
+      '<div class="ola-rumah"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+rm.warna+';margin-right:4px;"></span>'+rm.nama+(m.kelas?' · '+m.kelas:'')+'</div>'+
+      '<div class="ola-stats">'+
+        '<div class="ola-stat"><div class="ola-stat-v">'+m.mata+'</div><div class="ola-stat-l">Markah</div></div>'+
+        '<div class="ola-stat"><div class="ola-stat-v">'+m.acara_count+'</div><div class="ola-stat-l">Acara</div></div>'+
+      '</div>'+
+      '<div class="ola-medal-strip">'+
+        (m.emas>0?'<span class="ola-med om-emas">🥇×'+m.emas+'</span>':'')+
+        (m.perak>0?'<span class="ola-med om-perak">🥈×'+m.perak+'</span>':'')+
+        (m.gangsa>0?'<span class="ola-med om-gangsa">🥉×'+m.gangsa+'</span>':'')+
+      '</div>'+
+    '</div>';
+  }
+  wrap.innerHTML=heroCard(bl,'L')+heroCard(bp,'P');
+}
+
+function filterOlahragawan(){
+  var jantina=(document.getElementById('ola-jantina')||{}).value||'';
+  var kat=(document.getElementById('ola-kat')||{}).value||'';
+  var topLall=_olaAll.filter(function(m){return m.jantina==='L'&&(!kat||m.id_kategori===kat);});
+  var topPall=_olaAll.filter(function(m){return m.jantina==='P'&&(!kat||m.id_kategori===kat);});
+  _renderOlaHero(topLall[0]||null, topPall[0]||null, kat);
+  _renderMataInfo();
+  var topL=_olaAll.filter(function(m){return m.jantina==='L'&&(!kat||m.id_kategori===kat);});
+  var topP=_olaAll.filter(function(m){return m.jantina==='P'&&(!kat||m.id_kategori===kat);});
+  var secL=document.getElementById('ola-section-l');
+  var secP=document.getElementById('ola-section-p');
+  if(secL) secL.style.display=(jantina===''||jantina==='L')?'block':'none';
+  if(secP) secP.style.display=(jantina===''||jantina==='P')?'block':'none';
+  var maxMataL=topL.length?topL[0].mata:1;
+  var maxMataP=topP.length?topP[0].mata:1;
+  _renderOlaTable('ola-body-l', topL, maxMataL, '♂');
+  _renderOlaTable('ola-body-p', topP, maxMataP, '♀');
+}
+
+function _renderOlaTable(tbodyId, list, maxMata, icon){
+  var tbody=document.getElementById(tbodyId);
+  if(!tbody) return;
+  if(!list.length){tbody.innerHTML='<tr><td colspan="10" class="empty"><div class="empty-icon">'+icon+'</div>Tiada data atlet</td></tr>';return;}
+  var medal=['','🥇','🥈','🥉'];
+  tbody.innerHTML=list.slice(0,20).map(function(m,i){
+    var rm=S.rumahMap[m.id_rumah]||{nama:m.id_rumah||'-',warna:'#64748b'};
+    var rankCls=i<3?'rn-'+(i+1):'rn-x';
+    var rankHtml='<div class="rank-num '+rankCls+'">'+(i<3?medal[i+1]:'#'+(i+1))+'</div>';
+    var pct=maxMata>0?Math.min(Math.round(m.mata/maxMata*100),100):0;
+    return '<tr class="'+(i<3?'rank-'+(i+1):'')+'" onclick="bukaTrackRecord(\''+m.no_kp+'\')">'+
+      '<td>'+rankHtml+'</td>'+
+      '<td><div style="font-weight:800;font-size:13px;">'+m.nama+'</div></td>'+
+      '<td style="font-size:12px;color:var(--text2);">'+m.kelas+'</td>'+
+      '<td><div style="display:flex;align-items:center;gap:6px;"><div class="r-dot" style="background:'+rm.warna+';"></div><span style="font-size:12px;font-weight:600;">'+rm.nama+'</span></div></td>'+
+      '<td><span class="badge" style="background:#F3E8FF;color:#6D28D9;">'+m.id_kategori+'</span></td>'+
+      '<td style="text-align:center;font-weight:700;color:#92400E;">'+(m.emas||'-')+'</td>'+
+      '<td style="text-align:center;font-weight:700;color:#6B7280;">'+(m.perak||'-')+'</td>'+
+      '<td style="text-align:center;font-weight:700;color:#92400E;">'+(m.gangsa||'-')+'</td>'+
+      '<td style="text-align:center;font-size:12px;color:var(--text2);">'+m.acara_count+'</td>'+
+      '<td style="text-align:right;"><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><div class="mata-bar-wrap"><div class="mata-bar" style="width:'+pct+'%;"></div></div><strong style="color:var(--blue);font-size:15px;">'+m.mata+'</strong></div></td>'+
+    '</tr>';
+  }).join('');
+}
+
+// ── PATCH 2: bukaTrackRecord dengan rekod badge ──
+function bukaTrackRecord(noKp){
+  var m=_olaAll.find(function(x){return x.no_kp===noKp;});
+  if(!m) return;
+  _olaCurAtlet=m;
+  var rm=S.rumahMap[m.id_rumah]||{nama:m.id_rumah,warna:'#64748b'};
+  var el=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  el('tr-nama',m.nama);
+  el('tr-rumah',rm.nama);
+  el('tr-kat','Kategori: '+m.id_kategori);
+  el('tr-kelas',m.kelas||'-');
+  el('tr-jantina',m.jantina==='L'?'♂ Lelaki':'♀ Perempuan');
+  var sum=document.getElementById('tr-summary');
+  if(sum) sum.innerHTML=[
+    {v:m.mata,l:'Jumlah Markah',c:'var(--blue)'},
+    {v:m.acara_count,l:'Acara',c:'var(--text)'},
+    {v:m.emas,l:'Emas 🥇',c:'#92400E'},
+    {v:m.perak,l:'Perak 🥈',c:'#6B7280'},
+    {v:m.gangsa,l:'Gangsa 🥉',c:'#92400E'},
+  ].map(function(s){
+    return '<div class="tr-sum-box"><div class="tr-sum-val" style="color:'+s.c+';">'+s.v+'</div><div class="tr-sum-lbl">'+s.l+'</div></div>';
+  }).join('');
+  var medal=['','🥇','🥈','🥉'];
+  var al=document.getElementById('tr-acara-list');
+  if(al) al.innerHTML=(m.acara_list||[]).map(function(a){
+    var ked=a.kedudukan||0;
+    var medHtml=ked<=3&&ked>0?medal[ked]:'<span style="font-weight:800;font-size:12px;color:var(--text2);">#'+ked+'</span>';
+    var bg=ked===1?'background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;':ked===2?'background:linear-gradient(135deg,#9CA3AF,#6B7280);color:#fff;':ked===3?'background:linear-gradient(135deg,#CD7C3A,#92400E);color:#fff;':'background:#F1F5F9;color:#94A3B8;';
+    // ── PATCH: tambah rekod badge ──
+    var _trRp=_cekRekodPecah({prestasi:a.prestasi,id_kategori:m.id_kategori,nama_acara:a.nama_acara},(a.jenis||'TRACK'));
+    var _trBadge=_trRp?'<span style="display:inline-block;background:#FEF3C7;border:1px solid #F59E0B;color:#92400E;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:3px;">&#9733; REKOD '+_trRp.peringkat+' | lama: '+_trRp.rekod_lama+' '+_trRp.unit+'</span>':'';
+    return '<div class="tr-acara-row">'+
+      '<div class="tr-ked" style="'+bg+'">'+medHtml+'</div>'+
+      '<div class="tr-acara-info">'+
+        '<div class="tr-acara-name">['+a.no_acara+'] '+a.nama_acara+'</div>'+
+        '<div class="tr-acara-meta">'+a.jenis+' · Kedudukan #'+ked+'</div>'+
+        _trBadge+
+      '</div>'+
+      '<div style="text-align:right;">'+
+        (a.prestasi?'<div class="tr-prestasi">'+a.prestasi+' '+(a.unit||'')+'</div>':'')+
+        '<div class="tr-mata">'+a.mata+' mata</div>'+
+      '</div>'+
+    '</div>';
+  }).join('')||'<div class="empty" style="padding:20px;"><div class="empty-icon">—</div>Tiada rekod acara</div>';
+  document.getElementById('tr-overlay').classList.add('show');
+}
+
+function tutupTrackRecord(){ document.getElementById('tr-overlay').classList.remove('show'); }
+
+// Semak rekod pecah (client-side dari S._rekodList)
+function _cekRekodPecah(keputusan, jenis){
+  var isTrack = (jenis||"TRACK").toUpperCase()!=="FIELD";
+  var prestasiBar = parseFloat(keputusan.prestasi);
+  if(isNaN(prestasiBar)||!prestasiBar) return null;
+  var found = null;
+  (S._rekodList||[]).forEach(function(r){
+    var namaAcara=(r.nama_acara||"").toUpperCase();
+    var payloadAcara=(keputusan.nama_acara||"").toUpperCase();
+    if(namaAcara.indexOf(payloadAcara)===-1&&payloadAcara.indexOf(namaAcara)===-1) return;
+    // Normalize id_kategori: KAT-L6 == L6
+    var _rKat=(r.id_kategori||'').replace(/^KAT-/i,'');
+    var _pKat=(keputusan.id_kategori||'').replace(/^KAT-/i,'');
+    if(_rKat&&_pKat&&_rKat!==_pKat) return;
+    var prestasiRekod=parseFloat(r.prestasi); if(isNaN(prestasiRekod)) return;
+    var isPecah=isTrack?(prestasiBar<prestasiRekod):(prestasiBar>prestasiRekod);
+    if(isPecah){
+      found={pecah:true,peringkat:r.peringkat||"-",rekod_lama:prestasiRekod,unit:r.unit||"",selisih:Math.abs(prestasiBar-prestasiRekod).toFixed(2),tahun:r.tahun||"",nama_pemilik:r.nama_pemilik||""};
+    }
+  });
+  return found;
+}
+
+function cetakTrackRecord(){
+  var m=_olaCurAtlet; if(!m) return;
+  var {jsPDF}=window.jspdf;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var pw=doc.internal.pageSize.getWidth();
+  var ss=S.settings;
+  var rm=S.rumahMap[m.id_rumah]||{nama:m.id_rumah};
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(15,31,61);
+  doc.text((ss.nama_sekolah||'SK SULTAN ISMAIL').toUpperCase(),pw/2,14,{align:'center'});
+  doc.setFontSize(10);doc.text((ss.nama_pertandingan||'SUKAN TAHUNAN').toUpperCase(),pw/2,20,{align:'center'});
+  doc.setFillColor(15,31,61);doc.rect(15,22,pw-30,10,'F');
+  doc.setFontSize(11);doc.setTextColor(255,255,255);doc.text('REKOD PRESTASI ATLET',pw/2,27.5,{align:'center'});
+  var y=36;
+  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(15,31,61);
+  doc.text(m.nama,pw/2,y,{align:'center'}); y+=7;
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(71,85,105);
+  doc.text(rm.nama+' | Kategori: '+m.id_kategori+' | '+(m.jantina==='L'?'Lelaki':'Perempuan')+(m.kelas?' | '+m.kelas:''),pw/2,y,{align:'center'}); y+=8;
+  var boxes=[{l:'Jumlah Markah',v:m.mata},{l:'Acara Disertai',v:m.acara_count},{l:'Pingat Emas',v:m.emas},{l:'Perak',v:m.perak},{l:'Gangsa',v:m.gangsa}];
+  var bw=(pw-30)/boxes.length;
+  boxes.forEach(function(b,i){
+    var x=15+i*bw;
+    doc.setFillColor(248,250,253);doc.rect(x,y,bw-2,16,'F');
+    doc.setDrawColor(226,232,240);doc.rect(x,y,bw-2,16,'S');
+    doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(26,86,219);
+    doc.text(String(b.v),x+bw/2-1,y+9,{align:'center'});
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(100,116,139);
+    doc.text(b.l,x+bw/2-1,y+14,{align:'center'});
+  });
+  y+=22;
+  var rows=(m.acara_list||[]).map(function(a){
+    var ked=a.kedudukan||0;
+    var medLbl=ked===1?'#1 (Emas)':ked===2?'#2 (Perak)':ked===3?'#3 (Gangsa)':'#'+ked;
+    return [a.no_acara,a.nama_acara,a.jenis,medLbl,a.prestasi?a.prestasi+' '+(a.unit||''):'-',a.mata];
+  });
+  doc.autoTable({startY:y,margin:{left:15,right:15},
+    columns:[{header:'No.'},{header:'Nama Acara'},{header:'Jenis'},{header:'Kedudukan'},{header:'Prestasi'},{header:'Mata'}],
+    body:rows,
+    headStyles:{fillColor:[15,31,61],textColor:[255,255,255],fontStyle:'bold',fontSize:8},
+    bodyStyles:{fontSize:9},
+    columnStyles:{0:{cellWidth:14,halign:'center'},2:{cellWidth:20,halign:'center'},3:{cellWidth:28,fontStyle:'bold'},4:{cellWidth:28,halign:'center'},5:{cellWidth:18,halign:'center',fontStyle:'bold'}},
+    alternateRowStyles:{fillColor:[248,250,253]},
+    didParseCell:function(d){if(d.section==='body'&&d.column.index===3){var v=d.row.raw[3];if(v.includes('Emas'))d.cell.styles.textColor=[180,83,9];else if(v.includes('Perak'))d.cell.styles.textColor=[107,114,128];else if(v.includes('Gangsa'))d.cell.styles.textColor=[120,53,15];}}
+  });
+  var fy=doc.lastAutoTable.finalY+8;
+  doc.setFontSize(7.5);doc.setTextColor(150,150,150);
+  doc.text('Dicetak: '+new Date().toLocaleString('ms-MY'),15,fy);
+  doc.text(ss.nama_sekolah||'SK Sultan Ismail',pw-15,fy,{align:'right'});
+  doc.save('TrackRecord_'+m.nama.replace(/\s+/g,'_')+'.pdf');
+  toast('Track Record PDF dijana','success');
+}
+
+function cetakOlahragawan(){
+  if(!_olaAll.length){toast('Tiada data - muat dahulu','info');return;}
+  var {jsPDF}=window.jspdf;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var ss=S.settings;
+  var pw=doc.internal.pageSize.getWidth();
+  var topL=_olaAll.filter(function(m){return m.jantina==='L';}).slice(0,10);
+  var topP=_olaAll.filter(function(m){return m.jantina==='P';}).slice(0,10);
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(15,31,61);
+  doc.text((ss.nama_sekolah||'SK SULTAN ISMAIL').toUpperCase(),pw/2,14,{align:'center'});
+  doc.setFontSize(10);doc.text((ss.nama_pertandingan||'SUKAN TAHUNAN').toUpperCase(),pw/2,20,{align:'center'});
+  doc.setFillColor(15,31,61);doc.rect(15,22,pw-30,10,'F');
+  doc.setFontSize(11);doc.setTextColor(255,255,255);doc.text('RANKING ATLET LELAKI TERBAIK',pw/2,27.5,{align:'center'});
+  var y=36;
+  if(topL.length){var best=topL[0];var rm=S.rumahMap[best.id_rumah]||{nama:best.id_rumah};doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(15,31,61);doc.text('Olahragawan: '+best.nama+' ('+rm.nama+')',pw/2,y,{align:'center'});doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(71,85,105);doc.text('Kategori: '+best.id_kategori+' | Markah: '+best.mata+' | '+best.emas+' Emas, '+best.perak+' Perak, '+best.gangsa+' Gangsa',pw/2,y+5,{align:'center'});y+=14;}
+  var rows=topL.map(function(m,i){var rm=S.rumahMap[m.id_rumah]||{nama:m.id_rumah};return [i+1,m.nama,rm.nama,m.id_kategori,m.kelas||'-',m.emas,m.perak,m.gangsa,m.acara_count,m.mata];});
+  doc.autoTable({startY:y,margin:{left:15,right:15},head:[['#','Nama Murid','Rumah','Kat.','Kelas','🥇','🥈','🥉','Acara','Markah']],body:rows,headStyles:{fillColor:[15,31,61],textColor:[255,255,255],fontStyle:'bold',fontSize:8},bodyStyles:{fontSize:9},columnStyles:{0:{cellWidth:12,halign:'center'},3:{cellWidth:16,halign:'center'},5:{cellWidth:14,halign:'center'},6:{cellWidth:14,halign:'center'},7:{cellWidth:14,halign:'center'},8:{cellWidth:16,halign:'center'},9:{cellWidth:20,halign:'center',fontStyle:'bold'}},alternateRowStyles:{fillColor:[248,250,253]}});
+  doc.addPage();
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(15,31,61);
+  doc.text((ss.nama_sekolah||'SK SULTAN ISMAIL').toUpperCase(),pw/2,14,{align:'center'});
+  doc.setFontSize(10);doc.text((ss.nama_pertandingan||'SUKAN TAHUNAN').toUpperCase(),pw/2,20,{align:'center'});
+  doc.setFillColor(190,24,93);doc.rect(15,22,pw-30,10,'F');
+  doc.setFontSize(11);doc.setTextColor(255,255,255);doc.text('RANKING ATLET PEREMPUAN TERBAIK',pw/2,27.5,{align:'center'});
+  y=36;
+  if(topP.length){var bestP=topP[0];var rmP=S.rumahMap[bestP.id_rumah]||{nama:bestP.id_rumah};doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(190,24,93);doc.text('Olahragawati: '+bestP.nama+' ('+rmP.nama+')',pw/2,y,{align:'center'});doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(71,85,105);doc.text('Kategori: '+bestP.id_kategori+' | Markah: '+bestP.mata+' | '+bestP.emas+' Emas, '+bestP.perak+' Perak, '+bestP.gangsa+' Gangsa',pw/2,y+5,{align:'center'});y+=14;}
+  var rowsP=topP.map(function(m,i){var rm=S.rumahMap[m.id_rumah]||{nama:m.id_rumah};return [i+1,m.nama,rm.nama,m.id_kategori,m.kelas||'-',m.emas,m.perak,m.gangsa,m.acara_count,m.mata];});
+  doc.autoTable({startY:y,margin:{left:15,right:15},head:[['#','Nama Murid','Rumah','Kat.','Kelas','🥇','🥈','🥉','Acara','Markah']],body:rowsP,headStyles:{fillColor:[190,24,93],textColor:[255,255,255],fontStyle:'bold',fontSize:8},bodyStyles:{fontSize:9},columnStyles:{0:{cellWidth:12,halign:'center'},3:{cellWidth:16,halign:'center'},5:{cellWidth:14,halign:'center'},6:{cellWidth:14,halign:'center'},7:{cellWidth:14,halign:'center'},8:{cellWidth:16,halign:'center'},9:{cellWidth:20,halign:'center',fontStyle:'bold'}},alternateRowStyles:{fillColor:[252,231,243]}});
+  doc.save('Olahragawan_Olahragawati.pdf');
+  toast('PDF Olahragawan/wati dijana ('+topL.length+' L + '+topP.length+' P)','success');
+}
+
+function populateFilters(){
+  var kats=[...new Set(S.acara.map(function(a){return a.id_kategori;}).filter(Boolean))].sort();
+  ['sl-kat','pw-kat','pd-kat','ct-pw-kat'].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    var cur=el.value;
+    el.innerHTML='<option value="">Semua Kategori</option>';
+    kats.forEach(function(k){el.innerHTML+='<option value="'+k+'">'+k+'</option>';});
+    if(cur) el.value=cur;
+  });
+  var pdRumah=document.getElementById('pd-rumah');
+  if(pdRumah){pdRumah.innerHTML='<option value="">Semua Rumah</option>';S.rumah.forEach(function(r){pdRumah.innerHTML+='<option value="'+r.id+'">'+r.nama+'</option>';});}
+  populateAcaraDropdown('sl-acara');
+  populateAcaraDropdown('ct-sl-acara');
+}
+
+function populateAcaraDropdown(id){
+  var el=document.getElementById(id); if(!el) return;
+  var kat=id==='sl-acara'?(document.getElementById('sl-kat')||{}).value:'';
+  var list=kat?S.acara.filter(function(a){return a.id_kategori===kat;}):S.acara;
+  el.innerHTML='<option value="">- Pilih Acara -</option>';
+  list.forEach(function(a){el.innerHTML+='<option value="'+a.id_acara+'">['+a.no_acara+'] '+a.nama_acara+' ('+a.id_kategori+')</option>';});
+}
+
+function goTab(tab){
+  ['dashboard','startlist','pemenang','pendaftaran','jadual','olahragawan','cetakan'].forEach(function(t){
+    var p=document.getElementById('pane-'+t),tEl=document.getElementById('tab-'+t);
+    if(p) p.style.display=t===tab?'block':'none';
+    if(tEl) tEl.classList.toggle('active',t===tab);
+  });
+  if(tab==='startlist') loadStartList();
+  else if(tab==='pemenang') loadPemenang();
+  else if(tab==='pendaftaran') loadPendaftaran();
+  else if(tab==='jadual') loadJadual();
+  else if(tab==='olahragawan') loadOlahragawan();
+  else if(tab==='cetakan') populateCetakan();
+}
+
+async function loadDashboard(){
+  showProg('Memuatkan dashboard...',30);
+  if(!S.acara.length) await loadMaster();
+  var heatJana=S.heat.length;
+  var heatSelesai=S.heat.filter(function(h){return h.status==='SELESAI';}).length;
+  var published=S.keputusan.filter(function(k){return k.status==='PUBLISHED';});
+  var acaraPublished=[...new Set(published.map(function(k){return k.id_acara;}))].length;
+  var totalPeserta=S.pend.filter(function(p){return p.status==='AKTIF';}).length+S.kumpulan.filter(function(k){return k.status==='AKTIF';}).length;
+  _el('s-acara',S.acara.length);_el('s-peserta',totalPeserta);_el('s-heat',heatJana);_el('s-selesai',heatSelesai+'/'+heatJana);_el('s-published',acaraPublished+'/'+S.acara.length);
+  var wrap=document.getElementById('dash-status');
+  if(wrap){
+    var rows=S.acara.slice().sort(function(a,b){return parseInt(a.no_acara)-parseInt(b.no_acara);}).map(function(a){
+      var heatA=S.heat.filter(function(h){return h.id_acara===a.id_acara;});
+      var heatSelesaiA=heatA.filter(function(h){return h.status==='SELESAI';}).length;
+      var keptA=S.keputusan.filter(function(k){return k.id_acara===a.id_acara;});
+      var isPublished=keptA.some(function(k){return k.status==='PUBLISHED';});
+      var isDisahkan=!isPublished&&keptA.some(function(k){return k.status==='DISAHKAN';});
+      var statusBadge=isPublished?'<span class="badge" style="background:#EDE9FE;color:#5B21B6;">🏆 Diterbit</span>':isDisahkan?'<span class="badge b-disahkan">✓ Disahkan</span>':heatA.length>0?'<span class="badge b-selesai">🔥 Heat Ada</span>':'<span class="badge b-belum">… Belum</span>';
+      return '<tr>'
+        +'<td><span style="font-size:12px;font-weight:700;color:var(--text2);">['+a.no_acara+']</span></td>'
+        +'<td style="font-weight:700;">'+a.nama_acara+'</td>'
+        +'<td><span class="badge '+(a.jenis==='FIELD'?'b-field':'b-track')+'">'+a.jenis+'</span></td>'
+        +'<td><span class="badge" style="background:#F3E8FF;color:#6D28D9;">'+a.id_kategori+'</span></td>'
+        +'<td style="text-align:center;">'+heatSelesaiA+' / '+heatA.length+'</td>'
+        +'<td>'+statusBadge+'</td>'
+        +'</tr>';
+    }).join('');
+    wrap.innerHTML='<div class="tbl-wrap"><table class="tbl"><thead><tr><th>No.</th><th>Acara</th><th>Jenis</th><th>Kat.</th><th style="text-align:center;">Heat Selesai</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }
+  var tb=document.getElementById('tally-tbody');
+  if(tb&&S.tally.length){
+    var medal=['🥇','🥈','🥉'];
+    tb.innerHTML=S.tally.map(function(r,i){
+      var rm=S.rumahMap[r.id]||{};
+      return '<tr>'
+        +'<td style="text-align:center;font-size:16px;">'+(medal[i]||'<span style="font-size:12px;font-weight:700;">#'+(i+1)+'</span>')+'</td>'
+        +'<td><div style="display:flex;align-items:center;gap:8px;"><div style="width:12px;height:12px;border-radius:50%;background:'+(r.warna||rm.warna||'#64748b')+';flex-shrink:0;"></div><strong>'+r.nama+'</strong></div></td>'
+        +'<td style="text-align:center;"><span style="background:#FEF3C7;color:#92400E;padding:2px 10px;border-radius:10px;font-weight:800;">'+r.emas+'</span></td>'
+        +'<td style="text-align:center;"><span style="background:#F3F4F6;color:#374151;padding:2px 10px;border-radius:10px;font-weight:700;">'+r.perak+'</span></td>'
+        +'<td style="text-align:center;"><span style="background:#FEF0E7;color:#92400E;padding:2px 10px;border-radius:10px;font-weight:700;">'+r.gangsa+'</span></td>'
+        +'<td style="text-align:center;font-weight:600;">'+(r.keempat||0)+'</td>'
+        +'<td style="text-align:center;"><strong style="font-size:15px;color:var(--blue);">'+r.mata+'</strong></td>'
+        +'</tr>';
+    }).join('');
+  } else if(tb){tb.innerHTML='<tr><td colspan="7" class="empty"><div class="empty-icon">?</div>Tiada data pingat lagi</td></tr>';}
+  hideProg();
+}
+
+var _slData=[];
+async function loadStartList(){if(!S.heat.length) await loadMaster();document.getElementById('startlist-wrap').innerHTML='<div class="loading"><div class="loading-icon">📋</div><div>Pilih acara untuk lihat start list</div></div>';}
+
+function filterStartList(){
+  var kat=document.getElementById('sl-kat').value;
+  var sel=document.getElementById('sl-acara');
+  sel.innerHTML='<option value="">- Pilih Acara -</option>';
+  var list=kat?S.acara.filter(function(a){return a.id_kategori===kat;}):S.acara;
+  list.sort(function(a,b){return parseInt(a.no_acara)-parseInt(b.no_acara);});
+  list.forEach(function(a){sel.innerHTML+='<option value="'+a.id_acara+'">['+a.no_acara+'] '+a.nama_acara+'</option>';});
+  document.getElementById('startlist-wrap').innerHTML='<div class="loading"><div class="loading-icon">📋</div><div>Pilih acara untuk lihat start list</div></div>';
+}
+
+async function onSlAcaraChange(){
+  var idAcara=document.getElementById('sl-acara').value;
+  if(!idAcara){document.getElementById('startlist-wrap').innerHTML='<div class="loading"><div class="loading-icon">📋</div><div>Pilih acara</div></div>';return;}
+  showProg('Memuatkan peserta heat...',30);
+  var heatSel=document.getElementById('sl-heat');
+  var heatA=S.heat.filter(function(h){return h.id_acara===idAcara;}).sort(function(a,b){return a.no_heat-b.no_heat;});
+  heatSel.innerHTML='<option value="">Semua Heat</option>';
+  heatA.forEach(function(h){heatSel.innerHTML+='<option value="'+h.id_heat+'">Heat '+h.no_heat+' - '+h.jenis+'</option>';});
+  var allP=[];
+  for(var i=0;i<heatA.length;i++){var rP=await gasRun('getPesertaHeat',{id_heat:heatA[i].id_heat});var sP=gr(rP);if(sP&&sP.peserta) allP=allP.concat(sP.peserta.map(function(p){return Object.assign({},p,{_heat:heatA[i]});}));}
+  _slData=allP;
+  hideProg();
+  renderStartList();
+}
+
+function renderStartList(){
+  var wrap=document.getElementById('startlist-wrap');
+  var idHeat=document.getElementById('sl-heat').value;
+  var cari=(document.getElementById('sl-cari').value||'').toLowerCase();
+  var idAcara=document.getElementById('sl-acara').value;
+  if(!idAcara){wrap.innerHTML='<div class="loading"><div class="loading-icon">📋</div><div>Pilih acara</div></div>';return;}
+  var acara=S.acaraMap[idAcara]||{};
+  var data=_slData.filter(function(p){if(idHeat&&p.id_heat!==idHeat) return false;if(cari&&!(p.nama||'').toLowerCase().includes(cari)) return false;return true;});
+  if(!data.length){wrap.innerHTML='<div class="empty"><div class="empty-icon">—</div>Tiada peserta</div>';return;}
+  var heatGroups={};
+  data.forEach(function(p){var hid=p.id_heat;if(!heatGroups[hid]) heatGroups[hid]={heat:p._heat,peserta:[]};heatGroups[hid].peserta.push(p);});
+  var isField=(acara.jenis||'').toUpperCase()==='FIELD';
+  var html=Object.values(heatGroups).sort(function(a,b){return a.heat.no_heat-b.heat.no_heat;}).map(function(g){
+    var rows=g.peserta.sort(function(a,b){return (a.lorong||a.giliran||0)-(b.lorong||b.giliran||0);}).map(function(p,i){
+      var rm=S.rumahMap[p.id_rumah]||{nama:p.id_rumah,warna:'#64748b'};
+      return '<tr>'
+        +'<td style="text-align:center;width:40px;"><div style="width:28px;height:28px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;">'+(isField?p.giliran||i+1:p.lorong||i+1)+'</div></td>'
+        +'<td style="font-weight:700;">'+p.nama+'</td>'
+        +'<td style="font-size:12px;color:var(--text2);">'+(S.muridMap&&S.muridMap[p.no_kp]?S.muridMap[p.no_kp].kelas:'')+'</td>'
+        +'<td><div style="display:flex;align-items:center;gap:6px;"><div class="r-dot" style="background:'+rm.warna+';"></div><span style="font-size:12px;font-weight:600;">'+rm.nama+'</span></div></td>'
+        +'<td style="text-align:center;width:80px;border:1px dashed var(--border2);color:var(--text3);font-size:11px;">Masa / Jarak</td>'
+        +'</tr>';
+    }).join('');
+    var stsCls=g.heat.status==='SELESAI'?'hp-selesai':g.heat.status==='SEDANG'?'hp-sedang':'hp-belum';
+    return '<div style="margin-bottom:16px;">'
+      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:10px 14px;background:linear-gradient(to right,#1E3A5F,#1A56DB);border-radius:10px 10px 0 0;">'
+        +'<span style="font-size:14px;font-weight:800;color:#fff;">Heat '+g.heat.no_heat+'</span>'
+        +'<span class="badge" style="background:rgba(255,255,255,.2);color:#fff;">'+g.heat.jenis+'</span>'
+        +'<span class="heat-pill '+stsCls+'">'+g.heat.status+'</span>'
+        +'<span style="margin-left:auto;font-size:11px;color:rgba(255,255,255,.7);">'+g.peserta.length+' peserta</span>'
+      +'</div>'
+      +'<div class="tbl-wrap"><table class="tbl"><thead><tr><th style="width:50px;">'+(isField?'Giliran':'Lorong')+'</th><th>Nama Peserta</th><th style="width:100px;">Kelas</th><th style="width:100px;">Rumah Sukan</th><th style="width:110px;">Prestasi</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      +'</div>';
+  }).join('');
+  wrap.innerHTML='<div style="font-size:12px;color:var(--text2);margin-bottom:10px;font-weight:700;">'+acara.nama_acara+' ('+acara.id_kategori+') - '+data.length+' peserta</div>'+html;
+}
+
+// ── PATCH 1: renderPemenang — syntax error dibaiki ──
+var _pwAll=[];
+
+async function loadPemenang(){
+  showProg('Memuatkan keputusan...',30);
+  var r=await gasRun('getPublishedResults');
+  var s=gr(r);
+  var results=s.results||[];
+  var map={};
+  results.forEach(function(r){
+    var key=r.id_acara;
+    if(!map[key]){
+      var ac=S.acaraMap[key]||{};
+      map[key]={id_acara:key,nama_acara:r.nama_acara||ac.nama_acara||key,no_acara:r.no_acara||ac.no_acara||'',id_kategori:r.id_kategori||ac.id_kategori||'',jenis:(r.jenis||ac.jenis||'TRACK').toUpperCase(),keputusan:[]};
+    }
+    map[key].keputusan.push(r);
+  });
+  Object.values(map).forEach(function(a){a.keputusan.sort(function(x,y){return x.kedudukan-y.kedudukan;});});
+  _pwAll=Object.values(map).sort(function(a,b){return parseInt(a.no_acara)-parseInt(b.no_acara);});
+  _el('cnt-pemenang',results.length);
+  hideProg();
+  filterPemenang();
+}
+
+function filterPemenang(){
+  var kat=(document.getElementById('pw-kat')||{}).value||'';
+  var jenis=(document.getElementById('pw-jenis')||{}).value||'';
+  var cari=((document.getElementById('pw-cari')||{}).value||'').toLowerCase();
+  var sts=(document.getElementById('pw-status')||{}).value||'';
+  var data=_pwAll.filter(function(a){
+    if(kat&&a.id_kategori!==kat) return false;
+    if(jenis&&a.jenis!==jenis) return false;
+    if(cari&&!(a.nama_acara||'').toLowerCase().includes(cari)&&!a.keputusan.some(function(k){return (k.nama||'').toLowerCase().includes(cari);})) return false;
+    if(sts&&!a.keputusan.some(function(k){return k.status===sts;})) return false;
+    return true;
+  });
+  renderPemenang(data);
+}
+
+function renderPemenang(data){
+  var wrap=document.getElementById('pemenang-wrap');
+  if(!data||!data.length){
+    wrap.innerHTML='<div class="empty"><div class="empty-icon">🏆</div><div style="font-weight:700;margin-bottom:4px;">Tiada keputusan diterbit</div><div style="font-size:12px;">Keputusan akan muncul selepas pencatat terbit keputusan</div></div>';
+    return;
+  }
+  var medal=['','🥇','🥈','🥉'];
+  wrap.innerHTML=data.map(function(a){
+    var unit=(a.jenis||'TRACK')==='FIELD'?'m':'s';
+    var rows=a.keputusan.map(function(k){
+      var rm=S.rumahMap[k.id_rumah]||{nama:k.nama_rumah||k.id_rumah,warna:'#64748b'};
+      var ked=k.kedudukan||0;
+      var medLbl=ked<=3&&ked>0?medal[ked]:'<span style="font-weight:800;color:var(--text2);">#'+ked+'</span>';
+      var rowBg=ked===1?'background:#FFFBEB;':ked===2?'background:#F9FAFB;':ked===3?'background:#FEF3C7;':'';
+      // ── PATCH: var diangkat ke atas return ──
+      var _rp=_cekRekodPecah(k,(a.jenis||'TRACK'));
+      var _rpBadge=_rp
+        ?'<span style="display:inline-flex;flex-direction:column;background:#FEF3C7;border:1px solid #F59E0B;color:#92400E;font-size:9px;font-weight:700;padding:3px 8px;border-radius:8px;margin-left:6px;line-height:1.6;">'
+          +'<span style="font-size:10px;font-weight:800;">&#9733; REKOD '+_rp.peringkat+' DIPECAHKAN</span>'
+          +'<span style="font-weight:500;">Rekod lama: '+_rp.rekod_lama+' '+_rp.unit+(_rp.tahun?' ('+_rp.tahun+')':'')+'</span>'
+          +'<span style="font-weight:500;">Rekod baru: '+k.prestasi+' '+_rp.unit+' | Lebih baik: '+_rp.selisih+' '+_rp.unit+'</span>'
+        +'</span>'
+        :'';
+      return '<tr style="'+rowBg+'">'
+        +'<td style="text-align:center;width:44px;font-size:18px;">'+medLbl+'</td>'
+        +'<td style="font-weight:700;">'+k.nama+_rpBadge+'</td>'
+        +'<td><div style="display:flex;align-items:center;gap:6px;"><div class="r-dot" style="background:'+(rm.warna||'#64748b')+';"></div><span style="font-size:12px;font-weight:600;">'+rm.nama+'</span></div></td>'
+        +'<td style="font-family:monospace;font-weight:700;color:var(--cyan);">'+(k.prestasi?k.prestasi+' '+unit:'-')+'</td>'
+        +'<td style="text-align:center;"><span class="badge '+(k.status==='PUBLISHED'?'b-published':'b-disahkan')+'">'+( k.status==='PUBLISHED'?'Diterbit':'Disahkan')+'</span></td>'
+        +'</tr>';
+    }).join('');
+    return '<div class="card" style="margin-bottom:12px;">'
+      +'<div class="card-hd" style="background:linear-gradient(to right,#F8FAFD,#fff);">'
+        +'<div style="display:flex;align-items:center;gap:10px;">'
+          +'<span style="font-size:13px;font-weight:700;color:var(--text2);">['+a.no_acara+']</span>'
+          +'<span style="font-size:14px;font-weight:800;">'+a.nama_acara+'</span>'
+          +'<span class="badge '+(a.jenis==='FIELD'?'b-field':'b-track')+'">'+a.jenis+'</span>'
+          +'<span class="badge" style="background:#F3E8FF;color:#6D28D9;">'+a.id_kategori+'</span>'
+        +'</div>'
+        +'<span style="font-size:12px;color:var(--text2);">'+a.keputusan.length+' rekod</span>'
+      +'</div>'
+      +'<div class="tbl-wrap"><table class="tbl">'
+        +'<thead><tr><th>Ked.</th><th>Nama / Pasukan</th><th>Rumah Sukan</th><th>Prestasi</th><th>Status</th></tr></thead>'
+        +'<tbody>'+rows+'</tbody>'
+      +'</table></div>'
+      +'</div>';
+  }).join('');
+}
+
+async function loadPendaftaran(){showProg('Memuatkan status pendaftaran...',30);if(!S.pend.length&&!S.kumpulan.length) await loadMaster();hideProg();filterPendaftaran();}
+
+function filterPendaftaran(){
+  var kat=(document.getElementById('pd-kat')||{}).value||'';
+  var rumah=(document.getElementById('pd-rumah')||{}).value||'';
+  var jenisPend=(document.getElementById('pd-jenis-pend')||{}).value||'';
+  var wrap=document.getElementById('pend-wrap');
+  var acaraList=S.acara.filter(function(a){if(kat&&a.id_kategori!==kat) return false;if(jenisPend&&(a.jenis_pendaftaran||'INDIVIDU')!==jenisPend) return false;return true;}).sort(function(a,b){return parseInt(a.no_acara)-parseInt(b.no_acara);});
+  var rumahList=rumah?S.rumah.filter(function(r){return r.id===rumah;}):S.rumah;
+  if(!acaraList.length){wrap.innerHTML='<div class="empty"><div class="empty-icon">📝</div>Tiada acara dijumpai</div>';return;}
+  var thead='<tr><th>No.</th><th>Acara</th><th>Jenis</th>';
+  rumahList.forEach(function(r){thead+='<th style="text-align:center;"><div style="display:flex;align-items:center;gap:4px;justify-content:center;"><div class="r-dot" style="background:'+(r.warna||'#64748b')+';"></div>'+r.nama+'</div></th>';});
+  thead+='<th style="text-align:center;">Jumlah</th></tr>';
+  var tbody=acaraList.map(function(a){
+    var isKump=(a.jenis_pendaftaran||'INDIVIDU').toUpperCase()==='KUMPULAN';
+    var kuotaPerRumah=isKump?a.kuota_pasukan_rumah:a.kuota_ind_rumah;
+    var cols=rumahList.map(function(r){
+      var count=isKump?S.kumpulan.filter(function(k){return k.id_acara===a.id_acara&&k.id_rumah===r.id&&k.status==='AKTIF';}).length:S.pend.filter(function(p){return p.id_acara===a.id_acara&&p.id_rumah===r.id&&p.status==='AKTIF';}).length;
+      var isFull=kuotaPerRumah>0&&count>=kuotaPerRumah;
+      var isEmpty=count===0;
+      var bg=isFull?'background:#D1FAE5;':isEmpty?'':'background:#FEF3C7;';
+      var clr=isFull?'color:#065F46;font-weight:800;':isEmpty?'color:var(--text3);':'color:#92400E;font-weight:700;';
+      return '<td style="text-align:center;'+bg+'"><span style="'+clr+'font-size:13px;">'+(isEmpty?'-':count+(kuotaPerRumah>0?'/'+kuotaPerRumah:''))+'</span></td>';
+    }).join('');
+    var total=isKump?S.kumpulan.filter(function(k){return k.id_acara===a.id_acara&&k.status==='AKTIF';}).length:S.pend.filter(function(p){return p.id_acara===a.id_acara&&p.status==='AKTIF';}).length;
+    return '<tr><td style="font-size:11px;font-weight:700;color:var(--text2);">'+a.no_acara+'</td><td style="font-weight:700;font-size:13px;">'+a.nama_acara+'</td><td><span class="badge '+(a.jenis==='FIELD'?'b-field':'b-track')+'">'+a.jenis+'</span>&nbsp;<span class="badge" style="background:#F3E8FF;color:#6D28D9;font-size:10px;">'+a.id_kategori+'</span></td>'+cols+'<td style="text-align:center;font-weight:800;font-size:14px;color:var(--blue);">'+total+'</td></tr>';
+  }).join('');
+  wrap.innerHTML='<div class="tbl-wrap"><table class="tbl"><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table></div>'
+    +'<div style="margin-top:10px;font-size:11px;color:var(--text2);display:flex;gap:16px;"><span>🟢 Penuh kuota</span><span>🟡 Ada daftar</span><span>— Tiada daftar</span></div>';
+}
+
+async function loadJadual(){
+  showProg('Memuatkan jadual...',30);
+  if(!S.jadual.length) await loadMaster();
+  var tbody=document.getElementById('jadual-tbody');
+  if(!tbody){hideProg();return;}
+  var sorted=S.jadual.slice().sort(function(a,b){var ka=(a.tarikh||'')+(a.masa_mula||''),kb=(b.tarikh||'')+(b.masa_mula||'');return ka>kb?1:ka<kb?-1:0;});
+  if(!sorted.length){tbody.innerHTML='<tr><td colspan="6" class="empty"><div class="empty-icon">📅</div>Tiada jadual ditetapkan</td></tr>';hideProg();return;}
+  tbody.innerHTML=sorted.map(function(j){
+    var isRasmi=(j.auto_status||j.status)==='RASMI';
+    var sts=isRasmi?'<span class="badge b-published">✓ Keputusan Rasmi</span>':'<span class="badge b-belum">… Belum Mula</span>';
+    var ac=S.acaraMap[j.id_acara_link]||{};
+    return '<tr><td style="font-weight:700;font-family:monospace;">'+j.masa_mula+'</td><td style="font-weight:800;color:var(--blue);">'+j.no_acara+'</td><td style="font-weight:700;">'+j.nama_acara+'</td><td><span class="badge" style="background:#F3E8FF;color:#6D28D9;">'+j.kategori+'</span></td><td><span class="badge '+(ac.jenis==='FIELD'?'b-field':'b-track')+'">'+(ac.jenis||'TRACK')+'</span></td><td>'+sts+'</td></tr>';
+  }).join('');
+  hideProg();
+}
+
+function populateCetakan(){
+  var sel=document.getElementById('ct-sl-acara');
+  if(sel){
+    sel.innerHTML='<option value="">- Pilih Acara -</option>';
+    S.acara.sort(function(a,b){return parseInt(a.no_acara)-parseInt(b.no_acara);}).forEach(function(a){sel.innerHTML+='<option value="'+a.id_acara+'">['+a.no_acara+'] '+a.nama_acara+' ('+a.id_kategori+')</option>';});
+    sel.onchange=function(){var heatSel=document.getElementById('ct-sl-heat');if(!heatSel) return;var heatA=S.heat.filter(function(h){return h.id_acara===sel.value;}).sort(function(a,b){return a.no_heat-b.no_heat;});heatSel.innerHTML='<option value="">Semua Heat</option>';heatA.forEach(function(h){heatSel.innerHTML+='<option value="'+h.id_heat+'">Heat '+h.no_heat+'</option>';});};
+  }
+  var katSel=document.getElementById('ct-pw-kat');
+  if(katSel){var kats=[...new Set(S.acara.map(function(a){return a.id_kategori;}).filter(Boolean))].sort();katSel.innerHTML='<option value="">Semua Kategori</option>';kats.forEach(function(k){katSel.innerHTML+='<option value="'+k+'">'+k+'</option>';});}
+}
+
+var NAVY=[30,58,95],BLUE=[26,86,219],WHITE=[255,255,255],LIGHT=[248,250,253],BORDER=[226,232,240];
+
+function _pdfHeader(doc,title,sub){
+  var pw=doc.internal.pageSize.getWidth();
+  var ss=S.settings;
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(14);doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+  doc.text((ss.nama_sekolah||'SK SULTAN ISMAIL').toUpperCase(),pw/2,14,{align:'center'});
+  doc.setFontSize(11);doc.text((ss.nama_pertandingan||'SUKAN TAHUNAN').toUpperCase(),pw/2,19,{align:'center'});
+  doc.setDrawColor(NAVY[0],NAVY[1],NAVY[2]);doc.setLineWidth(1.5);doc.line(15,22,pw-15,22);
+  doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);doc.rect(15,23,pw-30,10,'F');
+  doc.setFontSize(11);doc.setTextColor(255,255,255);doc.text(title.toUpperCase(),pw/2,29.5,{align:'center'});
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+  doc.text(sub,pw/2,38,{align:'center'});
+  return 42;
+}
+
+function cetakStartList(){
+  var idAcara=document.getElementById('sl-acara').value;
+  if(!idAcara){toast('Pilih acara dahulu','info');return;}
+  var acara=S.acaraMap[idAcara];if(!acara){toast('Acara tidak dijumpai','error');return;}
+  if(!_slData.length){toast('Tiada data peserta - pilih acara dahulu','info');return;}
+  var {jsPDF}=window.jspdf;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var idHeat=document.getElementById('sl-heat').value;
+  var isField=(acara.jenis||'').toUpperCase()==='FIELD';
+  var heatGroups={};
+  _slData.filter(function(p){return !idHeat||p.id_heat===idHeat;}).forEach(function(p){if(!heatGroups[p.id_heat]) heatGroups[p.id_heat]={heat:p._heat,peserta:[]};heatGroups[p.id_heat].peserta.push(p);});
+  var pageNum=0;
+  Object.values(heatGroups).sort(function(a,b){return a.heat.no_heat-b.heat.no_heat;}).forEach(function(g){
+    if(pageNum>0) doc.addPage();pageNum++;
+    var y=_pdfHeader(doc,'START LIST - '+acara.nama_acara,'Kategori: '+acara.id_kategori+' | Heat '+g.heat.no_heat+' ('+g.heat.jenis+') | '+g.peserta.length+' peserta');
+    var rows=g.peserta.sort(function(a,b){return (a.lorong||a.giliran||0)-(b.lorong||b.giliran||0);}).map(function(p,i){var rm=S.rumahMap[p.id_rumah]||{nama:p.id_rumah};var pKelas=S.muridMap&&S.muridMap[p.no_kp]?S.muridMap[p.no_kp].kelas:'';return [isField?p.giliran||i+1:p.lorong||i+1,p.nama,pKelas,rm.nama,''];});
+    doc.autoTable({startY:y,margin:{left:15,right:15},columns:[{header:isField?'Giliran':'Lorong',dataKey:'0'},{header:'Nama Peserta',dataKey:'1'},{header:'Rumah Sukan',dataKey:'2'},{header:'Masa / Jarak',dataKey:'4'}],body:rows,headStyles:{fillColor:NAVY,textColor:WHITE,fontStyle:'bold',fontSize:8},bodyStyles:{fontSize:9},columnStyles:{0:{cellWidth:18,halign:'center',fontStyle:'bold'},2:{cellWidth:32,fontSize:7.5},3:{cellWidth:25},4:{cellWidth:28,halign:'center'}},alternateRowStyles:{fillColor:LIGHT}});
+    var y2=doc.lastAutoTable.finalY+8;doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('Dicetak: '+new Date().toLocaleString('ms-MY'),15,y2);doc.text('Tandatangan Pengadil: ________________________',doc.internal.pageSize.getWidth()-15,y2,{align:'right'});
+  });
+  doc.save('StartList_'+acara.nama_acara.replace(/\s+/g,'_')+'_'+acara.id_kategori+'.pdf');
+  toast('Start List PDF dijana','success');
+}
+
+function cetakPemenang(){
+  if(!_pwAll.length){toast('Tiada keputusan diterbit','info');return;}
+  var kat=(document.getElementById('pw-kat')||{}).value||'';
+  var data=kat?_pwAll.filter(function(a){return a.id_kategori===kat;}):_pwAll;
+  _doCetakPemenang(data);
+}
+
+function cetakPemenangPDF(){if(!_pwAll.length){toast('Muat data dahulu - pergi tab Pemenang','info');loadPemenang();return;}_doCetakPemenang(_pwAll);}
+
+function _doCetakPemenang(data){
+  var {jsPDF}=window.jspdf;var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});var ss=S.settings;
+  data.forEach(function(a,ai){
+    if(ai>0) doc.addPage();
+    var unit=a.jenis==='FIELD'?'m':'s';
+    var y=_pdfHeader(doc,'KEPUTUSAN RASMI - '+a.nama_acara,'Kategori: '+a.id_kategori+' | Jenis: '+a.jenis);
+    var rows=a.keputusan.map(function(k){var ked=k.kedudukan||0;var medal=ked===1?'#1 (Emas)':ked===2?'#2 (Perak)':ked===3?'#3 (Gangsa)':'#'+ked;var rm=S.rumahMap[k.id_rumah]||{nama:k.nama_rumah||k.id_rumah};return [medal,k.nama,rm.nama,k.prestasi?k.prestasi+' '+unit:'-',k.status];});
+    doc.autoTable({startY:y,margin:{left:15,right:15},columns:[{header:'Kedudukan'},{header:'Nama Peserta'},{header:'Rumah Sukan'},{header:'Prestasi'},{header:'Status'}],body:rows,headStyles:{fillColor:NAVY,textColor:WHITE,fontStyle:'bold',fontSize:8},bodyStyles:{fontSize:9},columnStyles:{0:{cellWidth:30,fontStyle:'bold'},3:{cellWidth:28,halign:'center'}},alternateRowStyles:{fillColor:LIGHT},didParseCell:function(data){if(data.section==='body'&&data.column.index===0){var v=data.row.raw[0];if(v.includes('Emas')) data.cell.styles.textColor=[180,83,9];else if(v.includes('Perak')) data.cell.styles.textColor=[107,114,128];else if(v.includes('Gangsa')) data.cell.styles.textColor=[120,53,15];}}});
+    var fy=doc.lastAutoTable.finalY+6;doc.setFontSize(7.5);doc.setTextColor(150,150,150);doc.text('Dicetak: '+new Date().toLocaleString('ms-MY'),15,fy);doc.text('Disahkan oleh: ________________________',doc.internal.pageSize.getWidth()-15,fy,{align:'right'});
+  });
+  doc.save('Pemenang_Sukan_'+new Date().toLocaleDateString('ms-MY').replace(/\//g,'-')+'.pdf');
+  toast('PDF Pemenang dijana','success');
+}
+
+function cetakTally(){
+  if(!S.tally.length){toast('Tiada data pingat','info');return;}
+  var {jsPDF}=window.jspdf;var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var y=_pdfHeader(doc,'JADUAL KEDUDUKAN PINGAT','Kemaskini: '+new Date().toLocaleString('ms-MY'));
+  var rows=S.tally.map(function(r,i){return [i+1,r.nama,r.emas,r.perak,r.gangsa,r.keempat||0,r.mata];});
+  doc.autoTable({startY:y,margin:{left:15,right:15},columns:[{header:'#'},{header:'Rumah Sukan'},{header:'Emas 🥇'},{header:'Perak 🥈'},{header:'Gangsa 🥉'},{header:'Ke-4'},{header:'Markah'}],body:rows,headStyles:{fillColor:NAVY,textColor:WHITE,fontStyle:'bold',fontSize:9},bodyStyles:{fontSize:10},columnStyles:{0:{cellWidth:12,halign:'center'},2:{cellWidth:22,halign:'center'},3:{cellWidth:22,halign:'center'},4:{cellWidth:22,halign:'center'},5:{cellWidth:16,halign:'center'},6:{cellWidth:22,halign:'center',fontStyle:'bold'}},alternateRowStyles:{fillColor:LIGHT}});
+  doc.save('Jadual_Pingat.pdf');toast('Jadual Pingat PDF dijana','success');
+}
+
+function cetakJadual(){
+  if(!S.jadual.length){toast('Tiada jadual','info');return;}
+  var {jsPDF}=window.jspdf;var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var sorted=S.jadual.slice().sort(function(a,b){var ka=(a.tarikh||'')+(a.masa_mula||''),kb=(b.tarikh||'')+(b.masa_mula||'');return ka>kb?1:ka<kb?-1:0;});
+  var y=_pdfHeader(doc,'JADUAL KEJOHANAN SUKAN','Tarikh Cetak: '+new Date().toLocaleDateString('ms-MY'));
+  var rows=sorted.map(function(j){return [j.masa_mula,j.no_acara,j.nama_acara,j.kategori,(S.acaraMap[j.id_acara_link]||{}).jenis||'-',(j.auto_status||j.status)==='RASMI'?'Keputusan Rasmi':'Belum Mula'];});
+  doc.autoTable({startY:y,margin:{left:15,right:15},columns:[{header:'Masa'},{header:'No.'},{header:'Nama Acara'},{header:'Kat.'},{header:'Jenis'},{header:'Status'}],body:rows,headStyles:{fillColor:NAVY,textColor:WHITE,fontStyle:'bold',fontSize:8},bodyStyles:{fontSize:9},columnStyles:{0:{cellWidth:20,fontStyle:'bold'},1:{cellWidth:14,halign:'center'},3:{cellWidth:18,halign:'center'},4:{cellWidth:18,halign:'center'},5:{cellWidth:32,halign:'center'}},alternateRowStyles:{fillColor:LIGHT}});
+  doc.save('Jadual_Kejohanan.pdf');toast('Jadual PDF dijana','success');
+}
+
+function cetakLaporanPendaftaran(){
+  var {jsPDF}=window.jspdf;var doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});var pw=doc.internal.pageSize.getWidth();
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+  doc.text((S.settings.nama_sekolah||'SK SULTAN ISMAIL').toUpperCase(),pw/2,14,{align:'center'});
+  doc.setFontSize(10);doc.text('LAPORAN STATUS PENDAFTARAN ACARA',pw/2,20,{align:'center'});
+  doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);doc.rect(15,22,pw-30,9,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(9);doc.text('RINGKASAN PENDAFTARAN MENGIKUT ACARA DAN RUMAH SUKAN',pw/2,27.5,{align:'center'});
+  var y=35;
+  var headers=[{header:'No.'},{header:'Acara'},{header:'Kat.'},{header:'Jenis Daftar'}];
+  S.rumah.forEach(function(r){headers.push({header:r.nama});});headers.push({header:'Jumlah'});
+  var rows=S.acara.sort(function(a,b){return parseInt(a.no_acara)-parseInt(b.no_acara);}).map(function(a){
+    var isKump=(a.jenis_pendaftaran||'INDIVIDU').toUpperCase()==='KUMPULAN';
+    var row=[a.no_acara,a.nama_acara,a.id_kategori,isKump?'Kumpulan':'Individu'];
+    var total=0;S.rumah.forEach(function(r){var cnt=isKump?S.kumpulan.filter(function(k){return k.id_acara===a.id_acara&&k.id_rumah===r.id&&k.status==='AKTIF';}).length:S.pend.filter(function(p){return p.id_acara===a.id_acara&&p.id_rumah===r.id&&p.status==='AKTIF';}).length;total+=cnt;row.push(cnt||'-');});
+    row.push(total||'-');return row;
+  });
+  doc.autoTable({startY:y,margin:{left:15,right:15},columns:headers,body:rows,headStyles:{fillColor:NAVY,textColor:WHITE,fontStyle:'bold',fontSize:7},bodyStyles:{fontSize:8},columnStyles:{0:{cellWidth:12,halign:'center'},2:{cellWidth:14,halign:'center'},3:{cellWidth:20,halign:'center'}},alternateRowStyles:{fillColor:LIGHT}});
+  doc.save('Laporan_Pendaftaran.pdf');toast('Laporan PDF dijana','success');
+}
+
+function cetakStartListDariCetakan(){
+  var idAcara=document.getElementById('ct-sl-acara').value;
+  if(!idAcara){toast('Pilih acara dahulu','info');return;}
+  document.getElementById('sl-acara').value=idAcara;
+  goTab('startlist');
+  onSlAcaraChange().then(function(){var idHeat=document.getElementById('ct-sl-heat').value;if(idHeat) document.getElementById('sl-heat').value=idHeat;cetakStartList();});
+}
+
+// ── FIX: confirmLogout tanpa setTimeout ──
+function confirmLogout(){
+  if(!confirm('Log keluar?')) return;
+  var base=typeof GAS_EXEC_URL!=='undefined'?GAS_EXEC_URL:'';
+  var url=(base||'')+'?page=home';
+  window.location.assign(url);
+}
+</script>
+</body>
+</html>

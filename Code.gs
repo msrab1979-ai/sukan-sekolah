@@ -157,6 +157,23 @@ function getSettings() {
     // auto-cast boolean strings
     if (v === 'true' || v === 'TRUE')   v = true;
     if (v === 'false' || v === 'FALSE') v = false;
+    // format Date object
+    if (v instanceof Date && !isNaN(v.getTime())) {
+      // key bermula 'masa_' atau mengandungi '_masa' = format HH:mm
+      if (k.indexOf('masa_') === 0 || k.indexOf('_masa') >= 0) {
+        v = ('0'+v.getHours()).slice(-2) + ':' + ('0'+v.getMinutes()).slice(-2);
+      } else {
+        // default = YYYY-MM-DD
+        var dd = ('0'+(v.getDate())).slice(-2);
+        var mm = ('0'+(v.getMonth()+1)).slice(-2);
+        v = v.getFullYear() + '-' + mm + '-' + dd;
+      }
+    }
+    // convert dd/mm/yyyy string -> yyyy-MM-dd
+    if (typeof v === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(v.trim())) {
+      var parts = v.trim().split('/');
+      v = parts[2] + '-' + parts[1] + '-' + parts[0];
+    }
     data[k] = v;
   }
   _SETTINGS_CACHE = data;
@@ -2069,6 +2086,11 @@ function saveKeputusan(payload) {
       sh.appendRow(rowData);
     }
 
+    // Jika status PUBLISHED, kemaskini medal tally
+    if (p.status === 'PUBLISHED') {
+      try { _updateMedalTally(); } catch(e2) { Logger.log('_updateMedalTally err: '+e2); }
+    }
+
     return JSON.stringify({success: true, message: "Keputusan disimpan"});
   } catch(e) {
     Logger.log('saveKeputusan error: ' + e);
@@ -2246,30 +2268,234 @@ function getMedalTally() {
   return JSON.stringify({ success: true, tally: list });
 }
 
+// ══════════════════════════════════════════════════════════════════
+// GET BEST ATHLETE
+// Kira atlet terbaik berdasarkan mata dari tbl_keputusan_akhir
+// payload: { id_kategori } — optional filter
+// Return: { success, best_l, best_p, all: [{no_kp,nama,id_rumah,
+//   id_kategori,jantina,kelas,mata,acara_count,emas,perak,gangsa,
+//   acara_list:[{id_acara,no_acara,nama_acara,jenis,kedudukan,
+//               prestasi,unit,mata}]}] }
+// ══════════════════════════════════════════════════════════════════
+function getBestAthlete(payload) {
+  try {
+    var filterKat = payload && payload.id_kategori ? payload.id_kategori : '';
+
+    // Ambil settings mata
+    var _sRaw = getSettings();
+    var settings = (typeof _sRaw === 'string' ? JSON.parse(_sRaw) : _sRaw).data || {};
+    var MATA = [
+      0,
+      parseInt(settings.mata_1) || 5,
+      parseInt(settings.mata_2) || 3,
+      parseInt(settings.mata_3) || 2,
+      parseInt(settings.mata_4) || 1
+    ];
+
+    // Baca tbl_keputusan_akhir
+    var akhirSheet = _sheet('tbl_keputusan_akhir');
+    if (!akhirSheet) return JSON.stringify({ success: true, best_l: null, best_p: null, all: [] });
+    var akhirData = akhirSheet.getDataRange().getValues();
+
+    // Baca tbl_acara_jana untuk nama_acara, no_acara, jenis
+    var acaraMap = {};
+    var acaraSheet = _sheet('tbl_acara_jana');
+    if (acaraSheet) {
+      var aData = acaraSheet.getDataRange().getValues();
+      for (var a = 1; a < aData.length; a++) {
+        if (!aData[a][0]) continue;
+        acaraMap[aData[a][0]] = {
+          no_acara   : aData[a][1] || '',
+          nama_acara : aData[a][2] || aData[a][0],
+          jenis      : (aData[a][5] || 'TRACK').toUpperCase()
+        };
+      }
+    }
+
+    // Baca tbl_murid untuk kelas, darjah, jantina
+    var muridMap = {};
+    var muridSheet = _sheet('tbl_murid');
+    if (muridSheet) {
+      var mData = muridSheet.getDataRange().getValues();
+      for (var m = 1; m < mData.length; m++) {
+        if (!mData[m][1]) continue;
+        var mkp = _normalizeKp((mData[m][1] || '').toString());
+        if (mkp) muridMap[mkp] = {
+          jantina : (mData[m][5] || '').toString().trim().toUpperCase(),
+          darjah  : mData[m][17] ? mData[m][17].toString().trim() : '',
+          kelas   : mData[m][7]  ? mData[m][7].toString().trim()  : ''
+        };
+      }
+    }
+
+    // Kumpul mata per murid
+    var atletMap = {};
+    for (var i = 1; i < akhirData.length; i++) {
+      if (!akhirData[i][0]) continue;
+      if (akhirData[i][10] !== 'PUBLISHED') continue;
+      var kat = (akhirData[i][5] || '').toString().trim();
+      if (filterKat && kat !== filterKat) continue;
+
+      var noKp    = _normalizeKp((akhirData[i][2] || '').toString());
+      var idAcara = (akhirData[i][1] || '').toString();
+      var ked     = parseInt(akhirData[i][8]) || 0;
+      var mata    = parseInt(akhirData[i][9]) || (ked >= 1 && ked <= 4 ? (MATA[ked] || 0) : 0);
+
+      if (!noKp || ked <= 0) continue;
+
+      var mInfo = muridMap[noKp] || {};
+      var jantina = mInfo.jantina || _jantinaFromKp(noKp) || '';
+      // Derive jantina dari kategori jika tiada
+      if (!jantina) {
+        if (kat.indexOf('L') !== -1) jantina = 'L';
+        else if (kat.indexOf('P') !== -1) jantina = 'P';
+      }
+      var kelas = (mInfo.darjah ? mInfo.darjah + ' ' : '') + (mInfo.kelas || '');
+
+      if (!atletMap[noKp]) {
+        atletMap[noKp] = {
+          no_kp       : akhirData[i][2],
+          nama        : akhirData[i][3] || '',
+          id_rumah    : akhirData[i][4] || '',
+          id_kategori : kat,
+          jantina     : jantina,
+          kelas       : kelas.trim(),
+          mata        : 0,
+          acara_count : 0,
+          emas        : 0,
+          perak       : 0,
+          gangsa      : 0,
+          acara_list  : []
+        };
+      }
+
+      var ac = acaraMap[idAcara] || { no_acara: '', nama_acara: idAcara, jenis: 'TRACK' };
+      atletMap[noKp].mata        += mata;
+      atletMap[noKp].acara_count += 1;
+      if (ked === 1) atletMap[noKp].emas++;
+      else if (ked === 2) atletMap[noKp].perak++;
+      else if (ked === 3) atletMap[noKp].gangsa++;
+
+      atletMap[noKp].acara_list.push({
+        id_acara   : idAcara,
+        no_acara   : ac.no_acara,
+        nama_acara : ac.nama_acara,
+        jenis      : ac.jenis,
+        kedudukan  : ked,
+        prestasi   : akhirData[i][6] !== undefined ? akhirData[i][6].toString() : '',
+        unit       : akhirData[i][7] || '',
+        mata       : mata
+      });
+    }
+
+    // Sort acara_list tiap atlet by kedudukan
+    var all = Object.values(atletMap);
+    all.forEach(function(a) {
+      a.acara_list.sort(function(x, y) { return x.kedudukan - y.kedudukan; });
+    });
+
+    // Sort all by mata desc
+    all.sort(function(a, b) {
+      if (b.mata !== a.mata) return b.mata - a.mata;
+      if (b.emas !== a.emas) return b.emas - a.emas;
+      if (b.perak !== a.perak) return b.perak - a.perak;
+      return b.gangsa - a.gangsa;
+    });
+
+    var topL = all.filter(function(a) { return a.jantina === 'L'; });
+    var topP = all.filter(function(a) { return a.jantina === 'P'; });
+
+    return JSON.stringify({
+      success : true,
+      best_l  : topL[0] || null,
+      best_p  : topP[0] || null,
+      all     : all
+    });
+  } catch (e) {
+    Logger.log('getBestAthlete error: ' + e);
+    return JSON.stringify({ success: false, message: e.toString(), best_l: null, best_p: null, all: [] });
+  }
+}
+
 function getPublishedResults(payload) {
   var sheet = _sheet('tbl_keputusan_akhir');
   if (!sheet) return JSON.stringify({ success: true, results: [], total: 0 });
+
+  // JOIN: rumah map
+  var rumahMap = {};
+  var rumahSheet = _sheet('tbl_rumah_sukan');
+  if (rumahSheet) {
+    var rData = rumahSheet.getDataRange().getValues();
+    for (var r = 1; r < rData.length; r++) {
+      if (!rData[r][0]) continue;
+      rumahMap[rData[r][0]] = { nama: rData[r][1] || rData[r][0], warna: rData[r][2] || '#64748b' };
+    }
+  }
+
+  // JOIN: acara map
+  var acaraMap = {};
+  var acaraSheet = _sheet('tbl_acara_jana');
+  if (acaraSheet) {
+    var aData = acaraSheet.getDataRange().getValues();
+    for (var a = 1; a < aData.length; a++) {
+      if (!aData[a][0]) continue;
+      acaraMap[aData[a][0]] = {
+        nama_acara  : aData[a][2] || aData[a][0],
+        no_acara    : aData[a][1] || '',
+        id_kategori : aData[a][3] || '',
+        jenis       : (aData[a][5] || 'TRACK').toUpperCase()
+      };
+    }
+  }
+
+  // JOIN: murid map — darjah[17] + kelas[7]
+  var muridMapPR = {};
+  var muridSheetPR = _sheet('tbl_murid');
+  if (muridSheetPR) {
+    var mData = muridSheetPR.getDataRange().getValues();
+    for (var m = 1; m < mData.length; m++) {
+      if (!mData[m][1]) continue;
+      var mkp = _normalizeKp((mData[m][1] || '').toString());
+      if (mkp) muridMapPR[mkp] = {
+        darjah : mData[m][17] ? mData[m][17].toString().trim() : '',
+        kelas  : mData[m][7]  ? mData[m][7].toString().trim()  : ''
+      };
+    }
+  }
+
   var data = sheet.getDataRange().getValues();
   var list = [];
   for (var i = 1; i < data.length; i++) {
     if (!data[i][0]) continue;
     if (payload && payload.id_acara && data[i][1] !== payload.id_acara) continue;
+    var idAcara = data[i][1];
+    var idRumah = data[i][4];
+    var acInfo  = acaraMap[idAcara] || {};
+    var rmInfo  = rumahMap[idRumah] || {};
+    var mInfo   = muridMapPR[_normalizeKp((data[i][2] || '').toString())] || {};
     list.push({
       id          : data[i][0],
-      id_acara    : data[i][1],
+      id_acara    : idAcara,
+      no_acara    : acInfo.no_acara    || '',
+      nama_acara  : acInfo.nama_acara  || idAcara,
+      id_kategori : acInfo.id_kategori || data[i][5] || '',
+      jenis       : acInfo.jenis       || 'TRACK',
       no_kp       : data[i][2],
       nama        : data[i][3],
-      id_rumah    : data[i][4],
-      id_kategori : data[i][5],
-      prestasi    : data[i][6],
-      unit        : data[i][7],
-      kedudukan   : data[i][8],
-      mata        : data[i][9],
-      status      : data[i][10],
-      created_at  : data[i][11] ? data[i][11].toString() : ''
+      id_rumah    : idRumah,
+      nama_rumah  : rmInfo.nama  || idRumah,
+      warna       : rmInfo.warna || '#64748b',
+      prestasi    : data[i][6] !== undefined && data[i][6] !== '' ? data[i][6].toString() : '',
+      unit        : data[i][7]  || '',
+      kedudukan   : parseInt(data[i][8]) || 0,
+      mata        : data[i][9]  || 0,
+      status      : data[i][10] || 'PUBLISHED',
+      created_at  : data[i][11] ? data[i][11].toString() : '',
+      darjah      : mInfo.darjah || '',
+      kelas       : mInfo.kelas  || ''
     });
   }
-  return { success: true, results: list, total: list.length };
+  return JSON.stringify({ success: true, results: list, total: list.length });
 }
 
 // ── DASHBOARD ──────────────────────────────────────────────────────
@@ -2352,13 +2578,34 @@ function getJadualAcara(payload) {
       peringkat     : data[i][4] || 'AKHIR',
       tarikh        : data[i][5] ? (data[i][5] instanceof Date ? data[i][5].toISOString().split('T')[0] : data[i][5].toString().split('T')[0]) : '',
       hari          : data[i][6] || '',
-      masa_mula     : data[i][7] || '',
+      masa_mula     : data[i][7] ? (data[i][7] instanceof Date
+                      ? (('0'+data[i][7].getHours()).slice(-2)+':'+('0'+data[i][7].getMinutes()).slice(-2))
+                      : data[i][7].toString().replace(/T.*$/,'').length===10
+                        ? data[i][7].toString()
+                        : data[i][7].toString().substring(11,16)) : '',
       lokasi        : data[i][8] || '',
       id_acara_link : data[i][9] || '',
       status        : data[i][10] || 'AKTIF',
       created_at    : data[i][11] ? data[i][11].toString() : ''
     });
   }
+
+  // Semak auto_status dari tbl_keputusan_akhir — ada PUBLISHED = RASMI
+  var akhirSheet = _sheet('tbl_keputusan_akhir');
+  var publishedAcara = {};
+  if (akhirSheet) {
+    var aData = akhirSheet.getDataRange().getValues();
+    for (var a = 1; a < aData.length; a++) {
+      if (!aData[a][0]) continue;
+      if (aData[a][10] === 'PUBLISHED') {
+        publishedAcara[aData[a][1]] = true; // id_acara[1]
+      }
+    }
+  }
+  list.forEach(function(j) {
+    j.auto_status = (j.id_acara_link && publishedAcara[j.id_acara_link]) ? 'RASMI' : 'BELUM';
+  });
+
   // Sort by tarikh + masa_mula
   list.sort(function(a, b) {
     var keyA = (a.tarikh || '') + (a.masa_mula || '');
@@ -3130,17 +3377,38 @@ function deleteKeputusan(payload) {
   try {
     var p = typeof payload==="string" ? JSON.parse(payload) : payload;
     var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // Padam dari tbl_keputusan
     var sh = ss.getSheetByName("tbl_keputusan");
     if (!sh) return JSON.stringify({success:false,message:"tbl_keputusan tidak dijumpai"});
     var data = sh.getDataRange().getValues();
     var headers = data[0];
     var idHeatIdx = headers.indexOf("id_heat");
-    var noKpIdx = headers.indexOf("no_kp");
+    var noKpIdx   = headers.indexOf("no_kp");
     for (var i = data.length-1; i >= 1; i--) {
       if (data[i][idHeatIdx]===p.id_heat && data[i][noKpIdx]===p.no_kp) {
         sh.deleteRow(i+1); break;
       }
     }
+
+    // Padam juga dari tbl_keputusan_akhir (by id_acara + no_kp)
+    var akhirSh = ss.getSheetByName("tbl_keputusan_akhir");
+    if (akhirSh && p.no_kp) {
+      var aData = akhirSh.getDataRange().getValues();
+      var aHeaders = aData[0];
+      var aAcaraIdx = aHeaders.indexOf("id_acara");
+      var aNoKpIdx  = aHeaders.indexOf("no_kp");
+      for (var j = aData.length-1; j >= 1; j--) {
+        if (aData[j][aNoKpIdx]===p.no_kp &&
+            (!p.id_acara || aData[j][aAcaraIdx]===p.id_acara)) {
+          akhirSh.deleteRow(j+1);
+        }
+      }
+    }
+
+    // Kemaskini medal tally
+    _updateMedalTally();
+
     return JSON.stringify({success:true,message:"Rekod dipadam"});
   } catch(e) {
     return JSON.stringify({success:false,message:e.toString()});
@@ -3161,17 +3429,26 @@ function getRekod(payload) {
   var list = [];
   for (var i = 1; i < data.length; i++) {
     if (!data[i][0]) continue;
+    // tbl_rekod: [0]id_rekod [1]id_acara_master [2]nama_acara [3]id_kategori
+    // [4]jantina [5]peringkat [6]prestasi [7]unit [8]nama_pemilik [9]tahun
+    // [10]catatan [11]aktif [12]created_at
     if (payload && payload.peringkat && data[i][5] !== payload.peringkat) continue;
     if (payload && payload.jantina   && data[i][4] !== payload.jantina)   continue;
-    if (data[i][11] === false || data[i][11] === 'FALSE') continue;
+    if (data[i][11] === false || data[i][11] === 'FALSE' || data[i][11] === 0) continue;
+    var _jantina = (data[i][4] || '').toString().trim();
+    if (!_jantina) {
+      var _kat = (data[i][3] || '').toString().toUpperCase();
+      if (_kat.indexOf('L') !== -1) _jantina = 'L';
+      else if (_kat.indexOf('P') !== -1) _jantina = 'P';
+    }
     list.push({
       id_rekod     : data[i][0],
       id_acara     : data[i][1] || '',
       nama_acara   : data[i][2] || '',
       id_kategori  : data[i][3] || '',
-      jantina      : data[i][4] || '',
+      jantina      : _jantina,
       peringkat    : data[i][5] || '',
-      prestasi     : data[i][6] || '',
+      prestasi     : data[i][6] !== undefined && data[i][6] !== '' ? data[i][6].toString() : '',
       unit         : data[i][7] || '',
       nama_pemilik : data[i][8] || '',
       tahun        : data[i][9] || '',
@@ -3240,6 +3517,79 @@ function deleteRekod(payload) {
     }
   }
   return JSON.stringify({ success: false, message: 'Rekod tidak dijumpai' });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SEMAK REKOD PECAH
+// payload: { nama_acara, id_acara_master, id_kategori, jenis, prestasi }
+// Return:  { success, pecah: [{id_rekod, peringkat, rekod_lama, prestasi_baru,
+//             unit, nama_pemilik, tahun, selisih}] }
+// Logik: TRACK = lebih kecil lebih baik, FIELD = lebih besar lebih baik
+// ══════════════════════════════════════════════════════════════════
+function semakRekodPecah(payload) {
+  try {
+    if (!payload || !payload.prestasi) return JSON.stringify({ success: true, pecah: [] });
+    var sheet = _sheet('tbl_rekod');
+    if (!sheet) return JSON.stringify({ success: true, pecah: [] });
+
+    var prestasiBar = parseFloat(payload.prestasi);
+    if (isNaN(prestasiBar) || prestasiBar <= 0) return JSON.stringify({ success: true, pecah: [] });
+
+    var jenis   = (payload.jenis || 'TRACK').toString().toUpperCase();
+    var isTrack = jenis !== 'FIELD'; // TRACK & ROAD = lebih kecil lebih baik
+    var payloadAcara   = (payload.nama_acara     || '').toString().replace(/[^\w\s]/g, '').trim().toUpperCase();
+    var payloadMasterId= (payload.id_acara_master || '').toString().trim();
+    var payloadKat     = (payload.id_kategori     || '').toString().trim();
+
+    var data = sheet.getDataRange().getValues();
+    var pecah = [];
+
+    for (var i = 1; i < data.length; i++) {
+      if (!data[i][0]) continue;
+      // Skip jika tidak aktif
+      if (data[i][11] === false || data[i][11] === 'FALSE' || data[i][11] === 0) continue;
+
+      // tbl_rekod: [0]id_rekod [1]id_acara_master [2]nama_acara [3]id_kategori
+      // [4]jantina [5]peringkat [6]prestasi [7]unit [8]nama_pemilik [9]tahun [11]aktif
+      var rekodAcara    = (data[i][2] || '').toString().replace(/[^\w\s]/g, '').trim().toUpperCase();
+      var rekodKat      = (data[i][3] || '').toString().trim().replace(/^KAT-/i,'');
+      var rekodPrestasi = parseFloat(data[i][6]);
+      if (isNaN(rekodPrestasi) || rekodPrestasi <= 0) continue;
+
+      // Match nama_acara partial
+      var namaMatch = false;
+      if (payloadAcara && rekodAcara) {
+        namaMatch = rekodAcara.indexOf(payloadAcara) !== -1 ||
+                    payloadAcara.indexOf(rekodAcara) !== -1;
+      }
+      if (!namaMatch) continue;
+
+      // Match id_kategori — normalize strip prefix KAT-
+      var payloadKatNorm = payloadKat.replace(/^KAT-/i,'');
+      if (payloadKatNorm && rekodKat && payloadKatNorm !== rekodKat) continue;
+
+      // Semak pecah
+      var isPecah = isTrack ? (prestasiBar < rekodPrestasi) : (prestasiBar > rekodPrestasi);
+      if (isPecah) {
+        pecah.push({
+          id_rekod     : data[i][0],
+          peringkat    : data[i][5] || '',
+          nama_acara   : data[i][2] || '',
+          id_kategori  : data[i][3] || '',
+          rekod_lama   : rekodPrestasi,
+          prestasi_baru: prestasiBar,
+          unit         : data[i][7] || '',
+          nama_pemilik : data[i][8] || '',
+          tahun        : data[i][9] || '',
+          selisih      : Math.abs(prestasiBar - rekodPrestasi).toFixed(2)
+        });
+      }
+    }
+    return JSON.stringify({ success: true, pecah: pecah });
+  } catch (e) {
+    Logger.log('semakRekodPecah error: ' + e);
+    return JSON.stringify({ success: true, pecah: [] });
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════

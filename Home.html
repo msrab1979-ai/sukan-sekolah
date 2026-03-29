@@ -2,7 +2,7 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sistem Sukan Tahunan — SK Sultan Ismail</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -56,7 +56,8 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .tile-wide .t-lbl{text-align:left;font-size:13px;color:var(--gov-blue);}
 .tile-wide .t-dsc{text-align:left;}
 .tile-wide:hover .t-lbl{color:#003087;}
-.tile-arrow{margin-left:auto;color:var(--gov-blue);font-size:20px;}
+.tile-arrow{margin-left:auto;color:var(--gov-blue);font-size:20px;transition:transform .2s;}
+/* Tally */
 .tally-section{padding-top:4px;padding-bottom:20px;}
 .tally-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .tally-upd{font-size:9px;color:var(--text3);font-family:'Rajdhani',sans-serif;letter-spacing:0.3px;white-space:nowrap;}
@@ -92,63 +93,49 @@ tr.rank-3{background:linear-gradient(90deg,rgba(160,97,58,0.05),transparent 50%)
 .pts-l{font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:1px;}
 .skeleton{background:linear-gradient(90deg,var(--bg) 25%,var(--bg2) 50%,var(--bg) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.empty-state{text-align:center;padding:30px;color:var(--text3);font-size:13px;}
-.empty-icon{font-size:26px;margin-bottom:8px;}
-.rekod-section{padding-top:4px;padding-bottom:40px;}
-.rekod-filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
-.rekod-fbtn{padding:5px 14px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2);transition:all 0.18s;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;}
-.rekod-fbtn.active,.rekod-fbtn:hover{background:var(--gov-blue);border-color:var(--gov-blue);color:#fff;}
-.rekod-fbtn.f-jantina.active{background:var(--gov-gold);border-color:var(--gov-gold);}
-.rekod-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
-table.rekod-tbl{width:100%;border-collapse:collapse;}
-table.rekod-tbl thead tr{background:linear-gradient(135deg,var(--gov-navy),var(--gov-blue));}
-table.rekod-tbl thead th{padding:10px 14px;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.75);text-transform:uppercase;font-family:'Rajdhani',sans-serif;font-weight:700;text-align:left;}
-table.rekod-tbl thead th.tc{text-align:center;}
-table.rekod-tbl tbody tr{border-bottom:1px solid var(--border);transition:background 0.12s;}
-table.rekod-tbl tbody tr:last-child{border-bottom:none;}
-table.rekod-tbl tbody tr:hover{background:var(--bg2);}
-table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
-.rekod-nama-acara{font-size:13px;font-weight:700;color:var(--text);}
-.rekod-prestasi{font-size:16px;font-weight:800;color:var(--gov-blue);font-family:'Rajdhani',sans-serif;}
-.rekod-unit{font-size:10px;color:var(--text3);margin-left:2px;}
-.rekod-pemilik{font-size:12px;color:var(--text2);}
-.rekod-tahun{font-size:11px;color:var(--text3);font-family:'Rajdhani',sans-serif;font-weight:600;}
-.badge-prd{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;font-family:'Rajdhani',sans-serif;}
-.prd-sekolah{background:rgba(0,85,179,0.1);color:var(--gov-blue);border:1px solid rgba(0,85,179,0.2);}
-.prd-daerah{background:rgba(16,130,90,0.1);color:#108250;border:1px solid rgba(16,130,90,0.2);}
-.prd-negeri{background:rgba(200,150,42,0.12);color:var(--gov-gold);border:1px solid rgba(200,150,42,0.25);}
-.prd-kebangsaan{background:rgba(220,38,38,0.1);color:#DC2626;border:1px solid rgba(220,38,38,0.2);}
-.jantina-chip{font-size:10px;font-weight:700;font-family:'Rajdhani',sans-serif;padding:2px 8px;border-radius:4px;}
-.j-l{background:rgba(0,85,179,0.08);color:var(--gov-blue);}
-.j-p{background:rgba(236,72,153,0.08);color:#BE185D;}
-.badge-baru{display:inline-flex;align-items:center;gap:3px;background:rgba(200,150,42,0.12);border:1px solid rgba(200,150,42,0.3);color:var(--gov-gold);font-size:8px;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:0.5px;font-family:'Rajdhani',sans-serif;vertical-align:middle;margin-left:5px;animation:pulse-gld 2s infinite;}
-@keyframes pulse-gld{0%,100%{opacity:1}50%{opacity:0.65}}
-.rekod-upd{font-size:9px;color:var(--text3);font-family:'Rajdhani',sans-serif;letter-spacing:0.3px;white-space:nowrap;}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,20,60,0.58);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:16px;}
-.modal-bg.show{display:flex;}
-.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:mIn 0.2s ease;}
-@keyframes mIn{from{opacity:0;transform:scale(0.96) translateY(10px)}to{opacity:1;transform:none}}
-.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:linear-gradient(135deg,var(--gov-navy),var(--gov-blue));border-radius:16px 16px 0 0;z-index:1;}
-.modal-ttl{font-size:14px;font-weight:700;color:#fff;}
-.modal-x{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-.modal-x:hover{background:rgba(255,255,255,0.25);}
-.modal-body{padding:16px 20px 20px;}
-.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
-.fbtn{padding:5px 14px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--card2);color:var(--text2);transition:all 0.18s;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;}
-.fbtn.active,.fbtn:hover{background:var(--gov-blue);border-color:var(--gov-blue);color:#fff;}
-.result-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;}
-.rc-hd{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--gov-light);border-bottom:1px solid var(--border);}
-.rc-ttl{font-size:13px;font-weight:700;color:var(--text);}
-.rc-bgs{display:flex;gap:5px;}
-.badge{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;letter-spacing:0.5px;font-family:'Rajdhani',sans-serif;}
-.b-track{background:rgba(0,85,179,0.1);color:var(--gov-blue);border:1px solid rgba(0,85,179,0.2);}
-.b-field{background:rgba(16,130,90,0.1);color:#108250;border:1px solid rgba(16,130,90,0.2);}
-.b-road{background:rgba(200,150,42,0.1);color:var(--gov-gold);border:1px solid rgba(200,150,42,0.2);}
-.b-kat{background:var(--bg2);color:var(--text3);border:1px solid var(--border);}
-.rc-rows table{width:100%;border-collapse:collapse;font-size:12px;}
-.rc-rows tr:not(:last-child){border-bottom:1px solid var(--border);}
-.rc-rows td{padding:8px 14px;vertical-align:middle;color:var(--text);}
-.r-chip{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:800;letter-spacing:0.5px;font-family:'Rajdhani',sans-serif;}
+/* Kep Panel */
+#kep-panel{display:none;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow-md);}
+.kep-header{background:linear-gradient(135deg,#1E3A5F,#1A56DB);padding:16px 20px;}
+.kep-header-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:12px;}
+.kep-search{width:100%;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:10px;padding:9px 14px;color:#fff;font-size:13px;outline:none;}
+.kep-search::placeholder{color:rgba(255,255,255,.55);}
+.kep-search:focus{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.5);}
+.kep-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.kep-fbtn{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);transition:all .15s;}
+.kep-fbtn.active,.kep-fbtn:hover{background:#fff;color:#1A56DB;border-color:#fff;}
+.kep-body{padding:16px 18px;max-height:70vh;overflow-y:auto;}
+.kep-acara{background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.kep-acara-hd{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .15s;user-select:none;}
+.kep-acara-hd:hover{background:#F8FAFD;}
+.kep-acara.open .kep-acara-hd{background:linear-gradient(to right,#EFF6FF,#F8FAFD);border-bottom:1px solid #DBEAFE;}
+.kep-acara-info{display:flex;flex-direction:column;gap:3px;}
+.kep-acara-name{font-size:14px;font-weight:800;color:var(--text);}
+.kep-acara-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.kep-badge{padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.kb-track{background:#DBEAFE;color:#1D4ED8;}
+.kb-field{background:#D1FAE5;color:#065F46;}
+.kb-kat{background:#F3E8FF;color:#6D28D9;}
+.kep-arrow{font-size:13px;color:var(--text3);transition:transform .2s;flex-shrink:0;}
+.kep-acara.open .kep-arrow{transform:rotate(180deg);}
+.kep-acara-body{display:none;}
+.kep-acara.open .kep-acara-body{display:block;}
+/* Simple table dalam acara body */
+.kep-tbl{width:100%;border-collapse:collapse;}
+.kep-tbl thead tr{background:#F8FAFD;}
+.kep-tbl th{padding:8px 14px;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);text-align:left;}
+.kep-tbl th:first-child{text-align:center;width:44px;}
+.kep-tbl td{padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:13px;vertical-align:middle;}
+.kep-tbl tbody tr:last-child td{border-bottom:none;}
+.kep-tbl tbody tr:hover td{background:#F8FAFD;}
+.kep-stats{display:flex;border-top:1px solid #F1F5F9;}
+.kep-stat{flex:1;text-align:center;padding:9px 6px;border-right:1px solid #F1F5F9;}
+.kep-stat:last-child{border-right:none;}
+.kep-stat-val{font-size:17px;font-weight:900;color:var(--gov-blue);}
+.kep-stat-lbl{font-size:9px;color:var(--text2);font-weight:600;margin-top:1px;text-transform:uppercase;letter-spacing:.3px;}
+/* Rekod */
+.rekod-btn{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:11px;cursor:pointer;color:var(--text2);transition:all .15s;font-weight:600;}
+.rekod-btn.active,.rekod-btn:hover{background:#1E3A5F;color:#fff;border-color:#1E3A5F;}
+/* Login */
 .login-modal{display:none;position:fixed;inset:0;background:rgba(0,20,60,0.7);backdrop-filter:blur(6px);z-index:200;align-items:center;justify-content:center;padding:20px;}
 .login-modal.show{display:flex;}
 .login-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:380px;overflow:hidden;box-shadow:var(--shadow-lg);}
@@ -162,12 +149,10 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
 .fi:focus{border-color:var(--gov-blue);box-shadow:0 0 0 3px rgba(0,85,179,0.1);background:#fff;}
 .btn-login{width:100%;padding:11px;border-radius:8px;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--gov-navy),var(--gov-blue));color:#fff;border:none;cursor:pointer;transition:all 0.2s;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;}
 .btn-login:hover{opacity:0.9;transform:translateY(-1px);}
-.btn-batal{width:100%;margin-top:8px;padding:9px;border-radius:8px;background:none;border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.18s;}
-.btn-batal:hover{background:var(--bg2);}
 .lerr{font-size:11px;color:#DC2626;margin-top:8px;display:none;padding:8px 10px;background:#FEF2F2;border-radius:6px;border:1px solid #FECACA;}
-.footer{text-align:center;padding:18px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);font-family:'Rajdhani',sans-serif;letter-spacing:0.3px;}
+.footer{text-align:center;padding:18px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);font-family:'Rajdhani',sans-serif;}
 #toast{position:fixed;bottom:20px;right:20px;background:var(--gov-navy);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 16px;font-size:12px;color:#fff;display:none;box-shadow:var(--shadow-lg);z-index:999;font-weight:600;}
-@media(max-width:480px){table.tally thead th,table.tally tbody td{padding:9px 7px;}.rumah-name{font-size:12px;}.mc-val{font-size:14px;}.pts-v{font-size:13px;}.hero{padding:28px 14px 42px;}table.rekod-tbl thead th,table.rekod-tbl tbody td{padding:9px 8px;}.rekod-nama-acara{font-size:12px;}}
+@media(max-width:480px){table.tally thead th,table.tally tbody td{padding:9px 7px;}.hero{padding:28px 14px 42px;}.mc-val{font-size:14px;}.pts-v{font-size:13px;}}
 </style>
 </head>
 <body>
@@ -177,7 +162,7 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
     <div class="hb-icon">🏫</div>
     <div>
       <div class="hb-title" id="hb-nama-sekolah">SK Sultan Ismail, Kemaman</div>
-      <div class="hb-sub">Kemaman &middot; Terengganu</div>
+      <div class="hb-sub">Kemaman · Terengganu</div>
     </div>
   </div>
   <div class="hb-badge" id="hb-tahun">Sukan 2025</div>
@@ -216,24 +201,103 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
       <div class="t-dsc">Input masa &amp; keputusan</div>
     </a>
   </div>
-  <a class="menu-tile tile-wide" href="javascript:void(0)" onclick="openKeputusan()">
+
+  <!-- Tile: Jadual Kejohanan -->
+  <a class="menu-tile tile-wide" href="javascript:void(0)" onclick="toggleJadualPanel(this)" id="tile-jadual" style="display:none;">
+    <div class="t-icon"><span class="ticon">📅</span></div>
+    <div style="flex:1;">
+      <div class="t-lbl">Jadual Kejohanan</div>
+      <div class="t-dsc" id="jadual-subtitle">Jadual acara pertandingan</div>
+    </div>
+    <span class="tile-arrow" id="arrow-jadual">›</span>
+  </a>
+  <div id="acc-jadual" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:0 0 12px 12px;margin-top:-8px;overflow:hidden;">
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="background:#1E3A5F;color:#fff;">
+            <th style="padding:9px 14px;text-align:center;width:55px;">No.</th>
+            <th style="padding:9px 14px;text-align:left;">Nama Acara</th>
+            <th style="padding:9px 14px;text-align:center;width:65px;">Kat.</th>
+            <th style="padding:9px 14px;text-align:center;width:95px;">Tarikh</th>
+            <th style="padding:9px 14px;text-align:center;width:65px;">Masa</th>
+            <th style="padding:9px 14px;text-align:center;width:115px;">Status</th>
+          </tr>
+        </thead>
+        <tbody id="jadual-tbody-home">
+          <tr><td colspan="6" style="text-align:center;padding:24px;color:#94A3B8;">Memuatkan...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tile: Keputusan Acara -->
+  <a class="menu-tile tile-wide" href="javascript:void(0)" onclick="toggleKepPanel(this)" id="tile-keputusan">
     <div class="t-icon"><span class="ticon">🏅</span></div>
     <div style="flex:1;">
       <div class="t-lbl">Keputusan Acara</div>
-      <div class="t-dsc">Semak keputusan terbuka awam — tanpa log masuk</div>
+      <div class="t-dsc" id="kep-tile-dsc">Semak keputusan rasmi — tanpa log masuk</div>
     </div>
-    <span class="tile-arrow">›</span>
+    <span class="tile-arrow" id="arrow-keputusan">›</span>
   </a>
-  <a class="menu-tile tile-wide" href="javascript:void(0)" onclick="scrollToRekod()">
+
+  <!-- Kep Panel inline -->
+  <div id="kep-panel">
+    <div class="kep-header">
+      <div class="kep-header-title">🏅 Keputusan Rasmi</div>
+      <input class="kep-search" id="kep-search" placeholder="🔍  Cari acara atau nama peserta..." oninput="filterKep()">
+      <div class="kep-filter-row" id="kep-filter-row">
+        <button class="kep-fbtn active" onclick="filterKepKat(this,'')">Semua</button>
+      </div>
+    </div>
+    <div class="kep-body" id="kep-body">
+      <div style="text-align:center;padding:40px;color:#94A3B8;">
+        <div style="font-size:36px;margin-bottom:8px;">🏅</div>
+        <div style="font-weight:700;font-size:14px;">Memuatkan keputusan...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tile: Rekod Kejohanan -->
+  <a class="menu-tile tile-wide" href="javascript:void(0)" onclick="toggleRekodSection(this)" id="tile-rekod" style="display:none;">
     <div class="t-icon"><span class="ticon">🏆</span></div>
     <div style="flex:1;">
       <div class="t-lbl">Rekod Kejohanan</div>
       <div class="t-dsc">Rekod rasmi peringkat Sekolah, Daerah, Negeri &amp; MSSM</div>
     </div>
-    <span class="tile-arrow">›</span>
+    <span class="tile-arrow" id="arrow-rekod">›</span>
   </a>
-</div>
+  <div id="acc-rekod" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:0 0 12px 12px;margin-top:-8px;padding:16px;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="rekod-btn active" onclick="filterRekod('',this)">Semua</button>
+        <button class="rekod-btn" onclick="filterRekod('SEKOLAH',this)">Sekolah</button>
+        <button class="rekod-btn" onclick="filterRekod('DAERAH',this)">Daerah</button>
+        <button class="rekod-btn" onclick="filterRekod('NEGERI',this)">Negeri</button>
+        <button class="rekod-btn" onclick="filterRekod('MSSM',this)">MSSM</button>
+      </div>
+      <span id="rekod-upd2" style="font-size:10px;color:var(--text3);"></span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="background:#1E3A5F;color:#fff;">
+          <th style="padding:9px 12px;text-align:left;">Nama Acara</th>
+          <th style="padding:9px 12px;text-align:center;">Jantina</th>
+          <th style="padding:9px 12px;text-align:center;">Peringkat</th>
+          <th style="padding:9px 12px;text-align:center;">Rekod</th>
+          <th style="padding:9px 12px;text-align:left;">Pemegang</th>
+          <th style="padding:9px 12px;text-align:center;">Tahun</th>
+        </tr></thead>
+        <tbody id="rekod-tbody2">
+          <tr><td colspan="6" style="text-align:center;padding:20px;color:#94A3B8;">Memuatkan...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
+</div><!-- /menu-section -->
+
+<!-- Kedudukan Pingat -->
 <div class="section-wrap tally-section">
   <div class="tally-top">
     <div class="sec-lbl" style="flex:1;margin-bottom:0;">Kedudukan Pingat&nbsp;&nbsp;</div>
@@ -256,40 +320,9 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
         </tr>
       </thead>
       <tbody id="tally-tbody">
-        <tr><td colspan="7" style="padding:24px;text-align:center;"><div class="skeleton" style="height:14px;width:55%;margin:auto;"></div></td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="section-wrap rekod-section" id="section-rekod">
-  <div class="tally-top">
-    <div class="sec-lbl" style="flex:1;margin-bottom:0;">Rekod Kejohanan&nbsp;&nbsp;</div>
-    <div class="rekod-upd" id="rekod-upd">MEMUATKAN...</div>
-  </div>
-  <div class="rekod-filter-bar">
-    <button class="rekod-fbtn active" onclick="filterRekodAwam(this,'all')">Semua</button>
-    <button class="rekod-fbtn" onclick="filterRekodAwam(this,'SEKOLAH')">Sekolah</button>
-    <button class="rekod-fbtn" onclick="filterRekodAwam(this,'DAERAH')">Daerah</button>
-    <button class="rekod-fbtn" onclick="filterRekodAwam(this,'NEGERI')">Negeri</button>
-    <button class="rekod-fbtn" onclick="filterRekodAwam(this,'MSSM')">MSSM</button>
-    <button class="rekod-fbtn f-jantina" onclick="filterRekodJantina(this,'L')">♂ Lelaki</button>
-    <button class="rekod-fbtn f-jantina" onclick="filterRekodJantina(this,'P')">♀ Perempuan</button>
-  </div>
-  <div class="rekod-wrap">
-    <table class="rekod-tbl">
-      <thead>
-        <tr>
-          <th>Nama Acara</th>
-          <th class="tc">Jantina</th>
-          <th class="tc">Peringkat</th>
-          <th>Rekod</th>
-          <th>Pemegang Rekod</th>
-          <th class="tc">Tahun</th>
-        </tr>
-      </thead>
-      <tbody id="rekod-tbody">
-        <tr><td colspan="6" style="padding:24px;text-align:center;"><div class="skeleton" style="height:14px;width:55%;margin:auto;"></div></td></tr>
+        <tr><td colspan="7" style="padding:24px;text-align:center;">
+          <div class="skeleton" style="height:14px;width:55%;margin:auto;"></div>
+        </td></tr>
       </tbody>
     </table>
   </div>
@@ -299,25 +332,14 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
   Sistem Sukan Tahunan · SK Sultan Ismail Kemaman · 2025
 </div>
 
-<div class="modal-bg" id="modal-keputusan">
-  <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-ttl">🏅 Keputusan Acara</div>
-      <button class="modal-x" onclick="closeKeputusan()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="filter-bar" id="result-filter-bar">
-        <button class="fbtn active" onclick="filterResult(this,'')">Semua</button>
-      </div>
-      <div id="result-cards"></div>
-    </div>
-  </div>
-</div>
-
+<!-- Login Modal -->
 <div class="login-modal" id="login-modal">
   <div class="login-box">
     <div class="lb-hd">
-      <div class="lb-title">Log Masuk</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <div class="lb-title">Log Masuk</div>
+        <button onclick="closeLogin()" style="background:none;border:none;cursor:pointer;font-size:18px;color:#94A3B8;line-height:1;padding:2px 6px;">✕</button>
+      </div>
       <div class="lb-sub" id="login-sub">Masukkan kelayakan anda</div>
     </div>
     <div class="lb-body">
@@ -329,15 +351,16 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
         <label class="fl">Kata Laluan</label>
         <div style="position:relative;">
           <input class="fi" type="password" id="login-pass" placeholder="••••••••"
-            onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:42px;"
+            onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:44px;"
             autocomplete="current-password">
-          <button type="button" onclick="togglePass()" id="btn-eye"
-            style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:15px;padding:4px;line-height:1;">👁</button>
+          <button type="button" id="btn-eye"
+            onclick="var i=document.getElementById('login-pass');var b=document.getElementById('btn-eye');if(i.type==='password'){i.type='text';b.textContent='🙈';}else{i.type='password';b.textContent='👁️';}"
+            style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:2px;">👁️</button>
         </div>
       </div>
       <div class="lerr" id="login-err">⚠️ Username atau kata laluan salah.</div>
       <button class="btn-login" onclick="doLogin()">Log Masuk →</button>
-      <button class="btn-batal" onclick="closeLogin()">Batal</button>
+      <button onclick="closeLogin()" style="width:100%;margin-top:8px;padding:9px;background:none;border:1.5px solid #E2E8F0;border-radius:8px;color:#64748B;font-size:13px;font-weight:600;cursor:pointer;">← Kembali</button>
     </div>
   </div>
 </div>
@@ -346,77 +369,94 @@ table.rekod-tbl tbody td{padding:11px 14px;vertical-align:middle;}
 
 <script>
 var IS_GAS=(typeof google!=='undefined'&&google.script);
-var GAS_EXEC_URL=(function(){ try{ return <?= SCRIPT_URL ?>; }catch(e){ return ''; } })();
+var GAS_EXEC_URL=(function(){try{return <?= SCRIPT_URL ?>;}catch(e){return '';}})();
 var _loginRole='';
 var _allResults=[];
-var _allRekod=[];
-var _rekodFltPeringkat='';
-var _rekodFltJantina='';
+var _allRekodData=[];
 var _sysSettings={};
+var _kepOpen=false;
+var _kepKatF='',_kepSrch='';
 
-var _mockSettings={nama_sekolah:'SK SULTAN ISMAIL',nama_pertandingan:'SUKAN TAHUNAN 2025',tahun:2025,lokasi:'SK SULTAN ISMAIL, KEMAMAN'};
+// ── MOCK ──────────────────────────────────────────────────────────
 var _mockTally=[
   {nama:'CEMERLANG',warna:'#EF4444',emas:8,perak:5,gangsa:4,keempat:3,mata:71},
-  {nama:'BESTARI',warna:'#3B82F6',emas:6,perak:7,gangsa:5,keempat:2,mata:63},
-  {nama:'AMAL',warna:'#10B981',emas:5,perak:4,gangsa:6,keempat:5,mata:57},
-  {nama:'GEMILANG',warna:'#F59E0B',emas:3,perak:4,gangsa:3,keempat:6,mata:42},
+  {nama:'BESTARI',  warna:'#3B82F6',emas:6,perak:7,gangsa:5,keempat:2,mata:63},
+  {nama:'AMAL',     warna:'#10B981',emas:5,perak:4,gangsa:6,keempat:5,mata:57},
+  {nama:'GEMILANG', warna:'#F59E0B',emas:3,perak:4,gangsa:3,keempat:6,mata:42},
 ];
 var _mockResults=[
-  {acara:'Lari 100 Meter',kod:'100M-L1',kategori:'L1',jenis:'track',keputusan:[
-    {rank:1,nama:'Ahmad Zikri',rumah:'CEMERLANG',warna:'#EF4444',masa:'12.34s'},
-    {rank:2,nama:'Chong Wei',rumah:'BESTARI',warna:'#3B82F6',masa:'12.67s'},
-    {rank:3,nama:'Kumar A/L',rumah:'AMAL',warna:'#10B981',masa:'12.89s'},
-  ]},
-  {acara:'Lompat Jauh',kod:'LJK-P1',kategori:'P1',jenis:'field',keputusan:[
-    {rank:1,nama:'Nurul Ain',rumah:'AMAL',warna:'#10B981',masa:'3.45m'},
-    {rank:2,nama:'Siti Nor',rumah:'CEMERLANG',warna:'#EF4444',masa:'3.28m'},
-  ]},
+  {id_acara:'A1',no_acara:'35',nama_acara:'100M (L4)',id_kategori:'L4',jenis:'TRACK',nama:'Ahmad Sharif',nama_rumah:'HIJAU',warna:'#10B981',kedudukan:1,darjah:'6',kelas:'Bestari'},
+  {id_acara:'A1',no_acara:'35',nama_acara:'100M (L4)',id_kategori:'L4',jenis:'TRACK',nama:'Hafiz Zaril', nama_rumah:'MERAH', warna:'#EF4444',kedudukan:2,darjah:'6',kelas:'Cemerlang'},
+  {id_acara:'A1',no_acara:'35',nama_acara:'100M (L4)',id_kategori:'L4',jenis:'TRACK',nama:'Azri Hakimi', nama_rumah:'BIRU',  warna:'#3B82F6',kedudukan:3,darjah:'5',kelas:'Wira'},
+  {id_acara:'A2',no_acara:'28',nama_acara:'Lompat Jauh (P6)',id_kategori:'P6',jenis:'FIELD',nama:'Areesya Syakira',nama_rumah:'KUNING',warna:'#F59E0B',kedudukan:1,darjah:'6',kelas:'Cemerlang'},
+  {id_acara:'A2',no_acara:'28',nama_acara:'Lompat Jauh (P6)',id_kategori:'P6',jenis:'FIELD',nama:'Dhia Humaira',   nama_rumah:'KUNING',warna:'#F59E0B',kedudukan:2,darjah:'6',kelas:'Amanah'},
+  {id_acara:'A2',no_acara:'28',nama_acara:'Lompat Jauh (P6)',id_kategori:'P6',jenis:'FIELD',nama:'Nazra Hana',     nama_rumah:'MERAH', warna:'#EF4444',kedudukan:3,darjah:'5',kelas:'Bestari'},
+  {id_acara:'A2',no_acara:'28',nama_acara:'Lompat Jauh (P6)',id_kategori:'P6',jenis:'FIELD',nama:'Adriana Nur',    nama_rumah:'HIJAU', warna:'#10B981',kedudukan:0,darjah:'5',kelas:'Wira'},
 ];
 var _mockRekod=[
-  {id_rekod:'R001',nama_acara:'Lari 100m',jantina:'L',peringkat:'SEKOLAH',prestasi:'11.20',unit:'s',nama_pemilik:'Ahmad Zikri',tahun:2024},
-  {id_rekod:'R002',nama_acara:'Lari 100m',jantina:'P',peringkat:'SEKOLAH',prestasi:'13.45',unit:'s',nama_pemilik:'Nurul Ain',tahun:2023},
-  {id_rekod:'R003',nama_acara:'Lompat Jauh',jantina:'L',peringkat:'DAERAH',prestasi:'4.82',unit:'m',nama_pemilik:'Hafiz Azri',tahun:2025},
-  {id_rekod:'R004',nama_acara:'Lompat Jauh',jantina:'P',peringkat:'SEKOLAH',prestasi:'3.67',unit:'m',nama_pemilik:'Siti Nor',tahun:2024},
-  {id_rekod:'R005',nama_acara:'4x100m Relay',jantina:'L',peringkat:'MSSM',prestasi:'48.21',unit:'s',nama_pemilik:'Pasukan Cemerlang',tahun:2025},
+  {nama_acara:'100M',jantina:'L',peringkat:'SEKOLAH',prestasi:'11.20',unit:'s',nama_pemilik:'Ahmad Zikri',tahun:2024},
+  {nama_acara:'Lompat Jauh',jantina:'P',peringkat:'DAERAH',prestasi:'4.10',unit:'m',nama_pemilik:'Nurul Ain',tahun:2023},
 ];
 
+// ── GAS ───────────────────────────────────────────────────────────
 function gasRun(fn,arg){
   return new Promise(function(resolve){
     if(IS_GAS){
       google.script.run
         .withSuccessHandler(function(r){if(typeof r==='string'){try{r=JSON.parse(r);}catch(e){}}resolve(r);})
-        .withFailureHandler(function(e){console.error('GAS ['+fn+']',e);resolve(null);})[fn](arg);
+        .withFailureHandler(function(e){console.error('GAS',fn,e);resolve(null);})
+        [fn](arg);
     } else {
       setTimeout(function(){
         if(fn==='getMedalTally')            resolve({success:true,tally:_mockTally});
-        else if(fn==='getPublishedResults') resolve({success:true,data:_mockResults});
-        else if(fn==='getSettings')         resolve({success:true,data:_mockSettings});
+        else if(fn==='getPublishedResults') resolve({success:true,results:_mockResults});
+        else if(fn==='getSettings')         resolve({success:true,data:{nama_sekolah:'SK SULTAN ISMAIL',nama_pertandingan:'SUKAN TAHUNAN 2025',tahun:2025,papar_rekod_awam:true}});
         else if(fn==='loginUser')           resolve(mockLogin(arg));
         else if(fn==='getRekod')            resolve({success:true,data:_mockRekod});
         else resolve(null);
-      },500);
+      },400);
     }
   });
 }
 
-async function init(){await loadSettings();loadTally();loadRekodAwam();}
+// ── INIT ──────────────────────────────────────────────────────────
+async function init(){
+  await loadSettings();
+  loadTally();
+  loadRekodAwam();
+  loadJadualAwam();
+}
 
 async function loadSettings(){
   var r=await gasRun('getSettings');
   if(!r||!r.success||!r.data) return;
-  var s=r.data;_sysSettings=s;
-  if(s.nama_sekolah){document.getElementById('hb-nama-sekolah').textContent=s.nama_sekolah;document.getElementById('hero-sekolah').textContent=s.nama_sekolah;}
-  if(s.tahun){document.getElementById('hb-tahun').textContent='Sukan '+s.tahun;document.getElementById('hero-pill').textContent='⚡ KEPUTUSAN RASMI '+s.tahun;}
+  var s=r.data; _sysSettings=s;
+  if(s.nama_sekolah){
+    document.getElementById('hb-nama-sekolah').textContent=s.nama_sekolah;
+    document.getElementById('hero-sekolah').textContent=s.nama_sekolah;
+  }
+  if(s.tahun){
+    document.getElementById('hb-tahun').textContent='Sukan '+s.tahun;
+    document.getElementById('hero-pill').textContent='⚡ KEPUTUSAN RASMI '+s.tahun;
+  }
   if(s.nama_pertandingan) document.getElementById('hero-nama-pertandingan').textContent=s.nama_pertandingan;
   if(s.nama_sekolah&&s.tahun) document.getElementById('footer-txt').textContent='Sistem Sukan Tahunan · '+s.nama_sekolah+' · '+s.tahun;
   if(s.nama_pertandingan) document.title=s.nama_pertandingan+' — '+(s.nama_sekolah||'SK Sultan Ismail');
+  var pr=(s.papar_rekod_awam===true||s.papar_rekod_awam==='true');
+  var rt=document.getElementById('tile-rekod');
+  if(rt) rt.style.display=pr?'':'none';
 }
 
+// ── TALLY ─────────────────────────────────────────────────────────
 async function loadTally(){
   var r=await gasRun('getMedalTally');
   var tb=document.getElementById('tally-tbody');
   var td=r&&r.success?(r.tally||r.data||null):null;
-  if(!td||!td.length){tb.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📊</div>Data tally belum tersedia.</div></td></tr>';document.getElementById('tally-upd').textContent='TIADA DATA';return;}
+  if(!td||!td.length){
+    tb.innerHTML='<tr><td colspan="7" style="padding:30px;text-align:center;color:var(--text3);">Data tally belum tersedia.</td></tr>';
+    document.getElementById('tally-upd').textContent='TIADA DATA';
+    return;
+  }
   var adaMedal=td.some(function(x){return x.emas>0||x.perak>0||x.gangsa>0||x.mata>0;});
   document.getElementById('tally-alert').style.display=adaMedal?'none':'flex';
   var rc=['rank-1','rank-2','rank-3'];
@@ -434,153 +474,429 @@ async function loadTally(){
   document.getElementById('tally-upd').textContent='DIKEMASKINI: '+new Date().toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
 }
 
-async function loadRekodAwam(){
-  var r=await gasRun('getRekod');
-  var td=r&&r.success?(r.data||null):null;
-  if(!td||!td.length){document.getElementById('rekod-tbody').innerHTML='<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3);font-size:12px;">Tiada rekod tersimpan lagi.</td></tr>';document.getElementById('rekod-upd').textContent='TIADA DATA';return;}
-  _allRekod=td;renderRekodAwam(_allRekod);
-  document.getElementById('rekod-upd').textContent='DIKEMASKINI: '+new Date().toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
+// ── KEPUTUSAN PANEL ───────────────────────────────────────────────
+function toggleKepPanel(tile){
+  var panel=document.getElementById('kep-panel');
+  var arrow=document.getElementById('arrow-keputusan');
+  _kepOpen=!_kepOpen;
+  panel.style.display=_kepOpen?'block':'none';
+  if(arrow) arrow.style.transform=_kepOpen?'rotate(90deg)':'rotate(0)';
+  if(tile) tile.style.borderRadius=_kepOpen?'12px 12px 0 0':'12px';
+  if(_kepOpen&&_allResults.length===0) loadKeputusan();
 }
 
-function filterRekodAwam(btn,peringkat){
-  document.querySelectorAll('.rekod-fbtn:not(.f-jantina)').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');_rekodFltPeringkat=(peringkat==='all')?'':peringkat;applyRekodFilter();
-}
-function filterRekodJantina(btn,jantina){
-  var isActive=btn.classList.contains('active');
-  document.querySelectorAll('.rekod-fbtn.f-jantina').forEach(function(b){b.classList.remove('active');});
-  if(!isActive){btn.classList.add('active');_rekodFltJantina=jantina;}else _rekodFltJantina='';
-  applyRekodFilter();
-}
-function applyRekodFilter(){
-  renderRekodAwam(_allRekod.filter(function(r){
-    if(_rekodFltPeringkat&&r.peringkat!==_rekodFltPeringkat) return false;
-    if(_rekodFltJantina&&r.jantina!==_rekodFltJantina) return false;
-    return true;
-  }));
-}
-function renderRekodAwam(data){
-  var tbody=document.getElementById('rekod-tbody');
-  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text3);font-size:12px;">Tiada rekod untuk paparan ini.</td></tr>';return;}
-  var PBADGE={SEKOLAH:'prd-sekolah',DAERAH:'prd-daerah',NEGERI:'prd-negeri',MSSM:'prd-negeri',KEBANGSAAN:'prd-kebangsaan'};
-  var tahunIni=new Date().getFullYear();
-  tbody.innerHTML=data.map(function(r){
-    var isRekodBaru=(parseInt(r.tahun)>=tahunIni);
-    return '<tr>'
-      +'<td><div class="rekod-nama-acara">'+(r.nama_acara||'—')+'</div>'+(isRekodBaru?'<span class="badge-baru">🏆 BARU '+r.tahun+'</span>':'')+'</td>'
-      +'<td style="text-align:center"><span class="jantina-chip '+(r.jantina==='L'?'j-l':'j-p')+'">'+(r.jantina==='L'?'♂ Lelaki':'♀ Perempuan')+'</span></td>'
-      +'<td style="text-align:center"><span class="badge-prd '+(PBADGE[r.peringkat]||'')+'">'+( r.peringkat||'—')+'</span></td>'
-      +'<td><span class="rekod-prestasi">'+(r.prestasi||'—')+'</span><span class="rekod-unit">'+(r.unit||'')+'</span></td>'
-      +'<td class="rekod-pemilik">'+(r.nama_pemilik||'—')+'</td>'
-      +'<td style="text-align:center" class="rekod-tahun">'+(r.tahun||'—')+'</td>'
-      +'</tr>';
-  }).join('');
-}
-
-function scrollToRekod(){document.getElementById('section-rekod').scrollIntoView({behavior:'smooth'});}
-
-async function openKeputusan(){
-  document.getElementById('modal-keputusan').classList.add('show');
-  document.getElementById('result-cards').innerHTML='<div class="empty-state"><div class="skeleton" style="height:12px;width:50%;margin:auto"></div></div>';
+async function loadKeputusan(){
+  var body=document.getElementById('kep-body');
+  body.innerHTML='<div style="text-align:center;padding:40px;color:#94A3B8;"><div style="font-size:36px;margin-bottom:8px;">🏅</div><div style="font-weight:700;">Memuatkan...</div></div>';
   var r=await gasRun('getPublishedResults');
-  var resData=r&&r.success?(r.data||r.results||null):null;
-  if(!resData||!resData.length){document.getElementById('result-cards').innerHTML='<div class="empty-state"><div class="empty-icon">📭</div>Tiada keputusan diterbitkan.</div>';return;}
-  _allResults=(resData[0]&&resData[0].keputusan!==undefined)?resData:groupResults(resData);
-  var cats=[...new Set(_allResults.map(function(a){return a.kategori;}))].filter(Boolean).sort();
-  var fb=document.getElementById('result-filter-bar');
-  fb.innerHTML='<button class="fbtn active" onclick="filterResult(this,\'\')">Semua</button>';
-  cats.forEach(function(c){fb.innerHTML+='<button class="fbtn" onclick="filterResult(this,\''+c+'\')">'+c+'</button>';});
-  renderResults(_allResults);
+  var flat=r&&r.success?(r.results||r.data||[]):[];
+  if(!flat.length){
+    body.innerHTML='<div style="text-align:center;padding:48px 20px;color:#94A3B8;"><div style="font-size:40px;margin-bottom:10px;">🏅</div><div style="font-size:15px;font-weight:700;margin-bottom:6px;">Tiada keputusan diterbit</div><div style="font-size:12px;">Keputusan akan muncul selepas admin publish.</div></div>';
+    var dsc=document.getElementById('kep-tile-dsc');
+    if(dsc) dsc.textContent='Tiada keputusan diterbit lagi';
+    return;
+  }
+  _allResults=groupResults(flat);
+  var dsc=document.getElementById('kep-tile-dsc');
+  var totalRekod=flat.filter(function(x){return parseInt(x.kedudukan||0)>0;}).length;
+  if(dsc) dsc.textContent=_allResults.length+' acara · '+totalRekod+' rekod';
+  // Build kategori filter buttons
+  var fb=document.getElementById('kep-filter-row');
+  if(fb){
+    var cats=[...new Set(_allResults.map(function(a){return a.kategori;}))].filter(Boolean).sort();
+    fb.innerHTML='<button class="kep-fbtn active" onclick="filterKepKat(this,\'\')">Semua ('+_allResults.length+')</button>';
+    cats.forEach(function(c){
+      var cnt=_allResults.filter(function(x){return x.kategori===c;}).length;
+      fb.innerHTML+='<button class="kep-fbtn" onclick="filterKepKat(this,\''+c+'\')">'+c+' ('+cnt+')</button>';
+    });
+  }
+  renderKep(_allResults);
+  _semakRekodBatch(_allResults);
 }
+
+// Group flat GAS results by id_acara
 function groupResults(rows){
   var map={};
   rows.forEach(function(r){
     var key=r.id_acara||'?';
-    if(!map[key]) map[key]={acara:r.nama_acara||key,kod:key,kategori:r.id_kategori||'',jenis:(r.jenis||'track').toLowerCase(),keputusan:[]};
-    map[key].keputusan.push({rank:parseInt(r.kedudukan)||0,nama:r.nama||'',rumah:r.id_rumah||'',warna:r.warna||'#999',masa:r.prestasi?(r.prestasi+(r.unit||'')):'—'});
+    if(!map[key]){
+      var noAcara=r.no_acara||'';
+      var acaraLabel=r.nama_acara&&r.nama_acara!==key?r.nama_acara:key;
+      map[key]={
+        acara    : noAcara?('['+noAcara+'] '+acaraLabel):acaraLabel,
+        kod      : key,
+        kategori : r.id_kategori||'',
+        jenis    : (r.jenis||'TRACK').toUpperCase(),
+        keputusan: []
+      };
+    }
+    map[key].keputusan.push({
+      rank        : parseInt(r.kedudukan)||0,
+      nama        : r.nama||'',
+      rumah       : r.nama_rumah||r.id_rumah||'',
+      warna       : r.warna||'#64748b',
+      darjah      : r.darjah||'',
+      kelas       : r.kelas||'',
+      prestasi    : r.prestasi||'',
+      unit        : r.unit||'',
+      jenis       : (r.jenis||'TRACK').toUpperCase(),
+      id_kategori : r.id_kategori||'',
+      rekod_pecah : null
+    });
   });
-  Object.values(map).forEach(function(a){a.keputusan.sort(function(x,y){return x.rank-y.rank;});});
+  // Sort tiap acara by rank (rank=0 akan berada di hujung)
+  Object.values(map).forEach(function(a){
+    a.keputusan.sort(function(x,y){
+      var rx=x.rank||999, ry=y.rank||999;
+      return rx-ry;
+    });
+  });
   return Object.values(map);
 }
-function closeKeputusan(){document.getElementById('modal-keputusan').classList.remove('show');}
-function filterResult(btn,kat){
-  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');
-  renderResults(kat?_allResults.filter(function(x){return x.kategori===kat;}):_allResults);
+
+function filterKepKat(btn,kat){
+  document.querySelectorAll('.kep-fbtn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  _kepKatF=kat;
+  _applyKepFilter();
 }
-function renderResults(data){
-  var cont=document.getElementById('result-cards');
-  if(!data||!data.length){cont.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div>Tiada keputusan untuk kategori ini.</div>';return;}
-  var pi={1:'🥇',2:'🥈',3:'🥉',4:'4️⃣'};var jb={track:'b-track',field:'b-field',road:'b-road'};
-  cont.innerHTML=data.map(function(a){
-    var rows=(a.keputusan||[]).map(function(k){
-      return '<tr><td style="width:34px;text-align:center;font-size:15px">'+(pi[k.rank]||k.rank)+'</td>'
-        +'<td style="font-weight:600;font-size:13px">'+k.nama+'</td>'
-        +'<td><span class="r-chip" style="background:'+k.warna+'22;color:'+k.warna+';border:1px solid '+k.warna+'44">'+k.rumah+'</span></td>'
-        +'<td style="text-align:right;font-family:Rajdhani,sans-serif;font-size:12px;color:var(--text2);font-weight:600">'+(k.masa||'—')+'</td></tr>';
+
+function filterKep(){
+  var s=document.getElementById('kep-search');
+  _kepSrch=(s?s.value:'').toLowerCase();
+  _applyKepFilter();
+}
+
+function _applyKepFilter(){
+  var filtered=_allResults.filter(function(a){
+    if(_kepKatF&&a.kategori!==_kepKatF) return false;
+    if(_kepSrch){
+      var inAcara=(a.acara||'').toLowerCase().includes(_kepSrch);
+      var inPeserta=(a.keputusan||[]).some(function(k){
+        return (k.nama||'').toLowerCase().includes(_kepSrch)||(k.rumah||'').toLowerCase().includes(_kepSrch);
+      });
+      if(!inAcara&&!inPeserta) return false;
+    }
+    return true;
+  });
+  renderKep(filtered);
+}
+
+function renderKep(data){
+  var body=document.getElementById('kep-body');
+  if(!data||!data.length){
+    body.innerHTML='<div style="text-align:center;padding:40px;color:#94A3B8;"><div style="font-size:32px;margin-bottom:8px;">🔍</div><div style="font-weight:700;">Tiada acara ditemui</div><div style="font-size:12px;margin-top:4px;">Cuba ubah carian atau filter</div></div>';
+    return;
+  }
+  var medal={1:'🥇',2:'🥈',3:'🥉'};
+  body.innerHTML=data.map(function(a,ai){
+    var kpts=a.keputusan||[];
+    // Hanya peserta dengan rank > 0
+    var valid=kpts.filter(function(k){return k.rank>0;});
+
+    // Bina table rows
+    var trows=valid.map(function(k){
+      var r=k.rank;
+      var medIcon=medal[r]
+        ?'<span style="font-size:16px;">'+medal[r]+'</span>'
+        :'<span style="font-size:11px;font-weight:800;color:#94A3B8;font-family:monospace;">#'+r+'</span>';
+      // Gabung darjah + kelas
+      var dk=[k.darjah,k.kelas].filter(Boolean).join(' ');
+      // Rekod pecah badge + tooltip
+      var rpBadge='';
+      if(k.rekod_pecah){
+        var rp=k.rekod_pecah;
+        var ttId='tt-'+ai+'-'+r;
+        rpBadge='<span onclick="_toggleRekodTip(\''+ttId+'\')" style="display:inline-flex;align-items:center;gap:3px;background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;cursor:pointer;margin-left:6px;">&#9733; rekod baru</span>'
+          +'<span id="'+ttId+'" style="display:none;margin-left:6px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 10px;font-size:11px;line-height:1.8;color:#92400E;">'
+          +'Rekod lama: <b>'+rp.rekod_lama+' '+rp.unit+'</b><br>'
+          +'Tahun: <b>'+rp.tahun+'</b><br>'
+          +'Nama: <b>'+rp.nama_pemilik+'</b><br>'
+          +'Peringkat: <b>'+rp.peringkat+'</b>'
+          +'</span>';
+      }
+      // Prestasi display
+      var _prestasiTxt=k.prestasi?(k.prestasi+' '+(k.unit||'')):'—';
+      return '<tr>'
+        +'<td style="text-align:center;">'+ medIcon +'</td>'
+        +'<td>'
+          +'<span style="font-weight:700;color:#1E293B;">'+k.nama+'</span>'
+          +(dk?'<span style="font-size:10px;color:#94A3B8;margin-left:7px;font-weight:500;">'+dk+'</span>':'')
+          +rpBadge
+        +'</td>'
+        +'<td>'
+          +'<span style="background:'+k.warna+'18;color:'+k.warna+';border:1px solid '+k.warna+'33;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">'+k.rumah+'</span>'
+        +'</td>'
+        +'<td style="text-align:right;">'
+          +'<span style="font-family:monospace;font-weight:700;font-size:13px;color:#0891B2;">'+_prestasiTxt+'</span>'
+        +'</td>'
+        +'</tr>';
     }).join('');
-    return '<div class="result-card"><div class="rc-hd"><div class="rc-ttl">'+a.acara+'</div>'
-      +'<div class="rc-bgs"><span class="badge '+(jb[a.jenis]||'b-track')+'">'+(a.jenis||'TRACK').toUpperCase()+'</span>'
-      +'<span class="badge b-kat">'+a.kategori+'</span></div></div>'
-      +'<div class="rc-rows"><table>'+rows+'</table></div></div>';
+
+    if(!trows) trows='<tr><td colspan="4" style="text-align:center;padding:14px;color:#94A3B8;font-size:12px;">Tiada rekod</td></tr>';
+
+    var jenisCls=a.jenis==='FIELD'?'kb-field':'kb-track';
+    var topNama=valid[0]?valid[0].nama:'';
+
+    // Stats bar
+    var rumahMap2={};
+    valid.forEach(function(k){rumahMap2[k.rumah]=(rumahMap2[k.rumah]||0)+1;});
+    var topRumah=Object.keys(rumahMap2).sort(function(a,b){return rumahMap2[b]-rumahMap2[a];})[0]||'';
+
+    return '<div class="kep-acara" id="kep-ac-'+ai+'">'
+      // Header (click to expand)
+      +'<div class="kep-acara-hd" onclick="toggleKepAcara('+ai+')">'
+        +'<div class="kep-acara-info">'
+          +'<div class="kep-acara-name">'+a.acara+'</div>'
+          +'<div class="kep-acara-meta">'
+            +'<span class="kep-badge '+jenisCls+'">'+a.jenis+'</span>'
+            +'<span class="kep-badge kb-kat">'+a.kategori+'</span>'
+            +(topNama?'<span style="font-size:11px;color:var(--text2);">🥇 '+topNama+'</span>':'')
+          +'</div>'
+        +'</div>'
+        +'<span class="kep-arrow">▾</span>'
+      +'</div>'
+      // Body: simple table
+      +'<div class="kep-acara-body">'
+        +'<table class="kep-tbl">'
+          +'<thead><tr>'
+            +'<th style="text-align:center;width:44px;">#</th>'
+            +'<th>Nama</th>'
+            +'<th>Rumah</th>'
+            +'<th style="text-align:right;width:90px;">'+(a.jenis==='FIELD'?'Jarak':'Masa')+'</th>'
+          +'</tr></thead>'
+          +'<tbody>'+trows+'</tbody>'
+        +'</table>'
+
+      +'</div>'
+    +'</div>';
+  }).join('');
+
+  // Auto-open pertama jika ada carian
+  if(_kepSrch&&data.length>0) toggleKepAcara(0);
+}
+
+function toggleKepAcara(idx){
+  var el=document.getElementById('kep-ac-'+idx);
+  if(el) el.classList.toggle('open');
+}
+
+// ── REKOD ─────────────────────────────────────────────────────────
+async function loadRekodAwam(){
+  var r=await gasRun('getRekod');
+  var td=r&&r.success?(r.data||null):null;
+  if(!td||!td.length) return;
+  _allRekodData=td;
+  renderRekodInline(_allRekodData);
+}
+
+async function loadJadualAwam(){
+  var rS=await gasRun('getSettings');
+  var s=(rS&&rS.success&&rS.data)?rS.data:{};
+  var papar=(s.papar_jadual_awam===true||s.papar_jadual_awam==='true'||s.papar_jadual_awam==='TRUE');
+  var tile=document.getElementById('tile-jadual');
+  var acc=document.getElementById('acc-jadual');
+  if(!tile) return;
+  if(!papar){ tile.style.display='none'; if(acc) acc.style.display='none'; return; }
+
+  // Load jadual
+  var r=await gasRun('getJadualAcara');
+  var list=(r&&r.success&&r.jadual)?r.jadual:[];
+
+  // Tunjuk tile
+  tile.style.display='';
+
+  // Update subtitle
+  var sub=document.getElementById('jadual-subtitle');
+  if(sub&&_sysSettings&&_sysSettings.nama_pertandingan) sub.textContent=_sysSettings.nama_pertandingan;
+
+  var tbody=document.getElementById('jadual-tbody-home');
+  if(!tbody) return;
+
+  if(!list.length){
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:#94A3B8;">Tiada jadual ditetapkan</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML=list.map(function(j,i){
+    var isSelesai=(j.auto_status==='RASMI');
+    var statusHtml=isSelesai
+      ?'<span style="background:#D1FAE5;color:#065F46;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;">✅ Selesai</span>'
+      :'<span style="background:#F1F5F9;color:#64748B;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:600;">⏳ Belum Mula</span>';
+    var bg=i%2===0?'#fff':'#F8FAFC';
+    return '<tr style="background:'+bg+';border-bottom:1px solid #F1F5F9;">'
+      +'<td style="padding:9px 14px;text-align:center;font-weight:700;color:#1E3A5F;">'+j.no_acara+'</td>'
+      +'<td style="padding:9px 14px;font-weight:600;">'+j.nama_acara+'</td>'
+      +'<td style="padding:9px 14px;text-align:center;">'
+        +'<span style="background:#EFF6FF;color:#1D4ED8;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;">'+j.kategori+'</span>'
+      +'</td>'
+      +'<td style="padding:9px 14px;text-align:center;font-size:12px;color:#475569;">'+(j.tarikh||'—')+'</td>'
+      +'<td style="padding:9px 14px;text-align:center;font-weight:700;font-family:monospace;">'+(j.masa_mula||'—')+'</td>'
+      +'<td style="padding:9px 14px;text-align:center;">'+statusHtml+'</td>'
+      +'</tr>';
   }).join('');
 }
 
-// FIX 1: mockLogin — return {success,user:{role,username}} sama format GAS loginUser
-function mockLogin(p){
-  // Mock users — sama dengan tbl_users dalam Google Sheets
-  var users=[
-    {username:'admin',    password:'admin123',     role:'Admin',    full_name:'Administrator'},
-    {username:'urusetia', password:'urusetiago123', role:'Urusetia', full_name:'Urusetia Sukan'},
-    {username:'merah',    password:'merah123',      role:'Pengurus', full_name:'mee',            id_rumah:'RMH-MERAH'},
-    {username:'biru',     password:'biru123',       role:'Pengurus', full_name:'biru2',          id_rumah:'RMH-BIRU'},
-    {username:'hijau',    password:'hijau123',      role:'Pengurus', full_name:'hijau12',        id_rumah:'RMH-HIJAU'},
-    {username:'kuning',   password:'kuning123',     role:'Pengurus', full_name:'kuning12',       id_rumah:'RMH-KUNING'},
-    {username:'pencatat1',password:'pencatat123',   role:'Pencatat', full_name:'Pencatat Sukan'},
-  ];
-  var u=users.find(function(x){return x.username===p.username&&x.password===p.password;});
-  if(!u) return {success:false,message:'Username atau kata laluan salah.'};
-  return {success:true,user:{role:u.role,username:u.username,full_name:u.full_name,id_rumah:u.id_rumah||''}};
+function toggleJadualPanel(tile){
+  var acc=document.getElementById('acc-jadual');
+  var arrow=document.getElementById('arrow-jadual');
+  if(!acc) return;
+  var isOpen=acc.style.display!=='none';
+  acc.style.display=isOpen?'none':'block';
+  if(arrow) arrow.style.transform=isOpen?'':'rotate(90deg)';
+  if(tile) tile.classList.toggle('active',!isOpen);
 }
 
+function toggleRekodSection(tile){
+  var acc=document.getElementById('acc-rekod');
+  var arrow=document.getElementById('arrow-rekod');
+  if(!acc) return;
+  var isOpen=acc.style.display!=='none';
+  acc.style.display=isOpen?'none':'block';
+  if(arrow) arrow.style.transform=isOpen?'rotate(0)':'rotate(90deg)';
+  if(tile) tile.style.borderRadius=isOpen?'12px':'12px 12px 0 0';
+}
+
+function filterRekod(val,btn){
+  document.querySelectorAll('.rekod-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  var filtered=!val?_allRekodData:_allRekodData.filter(function(r){return r.peringkat===val;});
+  renderRekodInline(filtered);
+}
+
+function renderRekodInline(data){
+  var tbody=document.getElementById('rekod-tbody2');
+  if(!tbody) return;
+  if(!data||!data.length){
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:#94A3B8;">Tiada rekod</td></tr>';
+    return;
+  }
+  var jb=function(j){return j==='L'
+    ?'<span style="background:#EFF6FF;color:#1D4ED8;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">♂ Lelaki</span>'
+    :'<span style="background:#FDF2F8;color:#9D174D;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">♀ Perempuan</span>';};
+  var pb=function(p){
+    var m={'SEKOLAH':'#E0F2FE:#075985','DAERAH':'#D1FAE5:#065F46','NEGERI':'#EDE9FE:#4C1D95','MSSM':'#FEF3C7:#92400E'}[p]||'#F3F4F6:#374151';
+    var cs=m.split(':');
+    return '<span style="background:'+cs[0]+';color:'+cs[1]+';padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">'+p+'</span>';
+  };
+  tbody.innerHTML=data.map(function(r){
+    return '<tr style="border-bottom:1px solid var(--border);">'
+      +'<td style="padding:9px 12px;font-weight:700;">'+r.nama_acara+'</td>'
+      +'<td style="padding:9px 12px;text-align:center;">'+jb(r.jantina)+'</td>'
+      +'<td style="padding:9px 12px;text-align:center;">'+pb(r.peringkat)+'</td>'
+      +'<td style="padding:9px 12px;text-align:center;font-size:18px;font-weight:900;color:#1D4ED8;">'+r.prestasi+'<span style="font-size:11px;font-weight:400;color:#94A3B8;"> '+r.unit+'</span></td>'
+      +'<td style="padding:9px 12px;">'+r.nama_pemilik+'</td>'
+      +'<td style="padding:9px 12px;text-align:center;color:#94A3B8;">'+r.tahun+'</td>'
+      +'</tr>';
+  }).join('');
+  var upd=document.getElementById('rekod-upd2');
+  if(upd) upd.textContent=new Date().toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────
 function loginAs(role){
   _loginRole=role;
-  var lab={'Admin':'Admin Sistem','Pengurus':'Guru Rumah / Pengurus','Urusetia':'Urusetia Sukan','Pencatat':'Pencatat Sukan'};
+  var lab={'Admin':'Admin Sistem','Pengurus':'Guru Rumah','Urusetia':'Urusetia Sukan','Pencatat':'Pencatat Sukan'};
   document.getElementById('login-sub').textContent='Log masuk sebagai '+(lab[role]||role);
-  document.getElementById('login-user').value='';document.getElementById('login-pass').value='';
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
   document.getElementById('login-err').style.display='none';
   document.getElementById('login-modal').classList.add('show');
   setTimeout(function(){document.getElementById('login-user').focus();},120);
 }
 function closeLogin(){document.getElementById('login-modal').classList.remove('show');}
-function togglePass(){var i=document.getElementById('login-pass'),b=document.getElementById('btn-eye');if(i.type==='password'){i.type='text';b.textContent='🚫';}else{i.type='password';b.textContent='👁';}}
 
-async function doLogin(){
+function mockLogin(p){
+  var u=[{username:'admin',password:'admin123',role:'admin'},{username:'urusetia',password:'urtia123',role:'urusetia'},{username:'pencatat1',password:'pencatat123',role:'pencatat'}];
+  var m=u.find(function(x){return x.username===p.username&&x.password===p.password;});
+  return m?{success:true,user:{username:m.username,full_name:m.username,role:m.role,id_rumah:''}}:{success:false,message:'Salah'};
+}
+
+function doLogin(){
   var u=document.getElementById('login-user').value.trim();
   var p=document.getElementById('login-pass').value;
   if(!u||!p) return;
-  var raw=await gasRun('loginUser',{username:u,password:p});
-  var r=(typeof raw==='string')?JSON.parse(raw):raw;
-  if(!r||!r.success){document.getElementById('login-err').style.display='block';return;}
-  document.getElementById('login-err').style.display='none';
-  var role=(r.user&&r.user.role)?r.user.role.toLowerCase():'';
-  var uname=(r.user&&r.user.username)?r.user.username:'';
-  // role dari GAS: admin→AdminSetup, urusetia→AdminOps, pengurus→PendaftaranPengurus, pencatat→Pencatat
-  var pageMap={'admin':'admin-setup','urusetia':'admin-ops','pengurus':'pendaftaran-pengurus','pencatat':'pencatat'};
-  var targetPage=pageMap[role]||'admin-setup';
-  var targetUrl='?page='+targetPage+(uname?'&u='+encodeURIComponent(uname):'');
-  showToast('Log masuk berjaya!');closeLogin();
-  if(IS_GAS){
-    var fullUrl=(GAS_EXEC_URL||'')+targetUrl;
-    var a=document.createElement('a');a.href=fullUrl;a.target='_top';a.style.display='none';
-    document.body.appendChild(a);a.click();
-  } else {showToast('Dev: redirect → '+targetPage);}
+  var errEl=document.getElementById('login-err');
+  errEl.style.display='none';
+  if(!IS_GAS){_handleLoginResult(mockLogin({username:u,password:p}));return;}
+  google.script.run
+    .withSuccessHandler(function(raw){
+      var r=(typeof raw==='string')?JSON.parse(raw):raw;
+      if(!r||!r.success){errEl.textContent='⚠️ '+(r&&r.message||'Username atau kata laluan salah.');errEl.style.display='block';return;}
+      _handleLoginResult(r);
+    })
+    .withFailureHandler(function(){errEl.textContent='⚠️ Ralat sistem. Cuba lagi.';errEl.style.display='block';})
+    .loginUser({username:u,password:p});
 }
 
-function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window._tt);window._tt=setTimeout(function(){t.style.display='none';},3000);}
+function _handleLoginResult(r){
+  if(!r||!r.success){
+    var errEl=document.getElementById('login-err');
+    errEl.textContent='⚠️ '+(r&&r.message||'Username atau kata laluan salah.');
+    errEl.style.display='block';
+    return;
+  }
+  var role=(r.user&&r.user.role)?r.user.role.toLowerCase():'';
+  var uname=(r.user&&r.user.username)?r.user.username:'';
+  var pageMap={'admin':'admin-setup','urusetia':'urusetia','guru rumah':'pendaftaran-pengurus','pengurus':'pendaftaran-pengurus','pencatat':'pencatat'};
+  var targetPage=pageMap[role]||'home';
+  var fullUrl=(GAS_EXEC_URL||'')+'?page='+targetPage+(uname?'&u='+encodeURIComponent(uname):'');
+  closeLogin();
+  showToast('Log masuk berjaya!');
+  try{window.top.location.href=fullUrl;}
+  catch(e){try{window.location.assign(fullUrl);}catch(e2){window.open(fullUrl,'_top');}}
+}
 
-document.getElementById('modal-keputusan').addEventListener('click',function(e){if(e.target===this)closeKeputusan();});
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(window._tt);
+  window._tt=setTimeout(function(){t.style.display='none';},3000);
+}
+
 document.getElementById('login-modal').addEventListener('click',function(e){if(e.target===this)closeLogin();});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeKeputusan();closeLogin();}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLogin();});
+
+// Auto-refresh tally setiap 60s
+setInterval(function(){loadTally();},60000);
+
+// ── SEMAK REKOD PECAH BATCH ──────────────────────────────────────
+// Panggil GAS semakRekodPecah untuk setiap peserta rank>0
+// Attach result ke k.rekod_pecah, kemudian re-render
+function _semakRekodBatch(allAcara){
+  if(!IS_GAS||!allAcara||!allAcara.length) return;
+  allAcara.forEach(function(a){
+    (a.keputusan||[]).forEach(function(k){
+      if(!k.rank||!k.prestasi) return;
+      // Strip prefix [no] dari nama_acara supaya match dengan tbl_rekod
+      var _namaClean=(a.acara||'').replace(/^\[\d+\]\s*/,'').replace(/\s*\([^)]*\)\s*$/,'').trim();
+      var payload={
+        nama_acara   : _namaClean||a.acara,
+        id_kategori  : (k.id_kategori||a.kategori||'').replace(/^KAT-/i,''),
+        jenis        : k.jenis||a.jenis||'TRACK',
+        prestasi     : k.prestasi
+      };
+      google.script.run
+        .withSuccessHandler(function(raw){
+          var r=(typeof raw==='string')?JSON.parse(raw):raw;
+          if(r&&r.success&&r.pecah&&r.pecah.length){
+            k.rekod_pecah=r.pecah[0];
+            // Re-render panel sahaja (bukan reload semua)
+            var _filtered=_allResults;
+            if(_kepKatF) _filtered=_allResults.filter(function(x){return x.kategori===_kepKatF;});
+            renderKep(_filtered);
+          }
+        })
+        .withFailureHandler(function(){})
+        .semakRekodPecah(payload);
+    });
+  });
+}
+
+function _toggleRekodTip(id){
+  var el=document.getElementById(id);
+  if(el) el.style.display=el.style.display==='none'?'block':'none';
+}
 
 init();
 </script>
